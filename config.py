@@ -111,15 +111,6 @@ def build_config(
             ),
         },
     )
-    # Tau base selection:
-    # configuration.add_config_parameters(
-    #     "global",
-    #     {
-    #         "min_tau_pt": 30.0,
-    #         "max_tau_eta": 2.3,
-    #         "max_tau_dz": 0.2,
-    #     },
-    # )
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
@@ -373,11 +364,11 @@ def build_config(
     configuration.add_config_parameters(
         ["et", "mt"],
         {
-            "min_tau_pt": 30.0,
+            "min_tau_pt": 20.0,
             "max_tau_eta": 2.3,
             "max_tau_dz": 0.2,
-            "vsjet_tau_id_bit": 4,
-            "vsele_tau_id_bit": 4,
+            "vsjet_tau_id_bit": 1,
+            "vsele_tau_id_bit": 1,
             "vsmu_tau_id_bit": 1,
         },
     )
@@ -891,7 +882,7 @@ def build_config(
     )
     configuration.add_modification_rule(
         scopes,
-        AppendProducer(producers=event.ZPtMassReweighting, samples="dy"),
+        AppendProducer(producers=event.ZPtMassReweighting, samples="dyjets"),
     )
     # changes needed for data
     # global scope
