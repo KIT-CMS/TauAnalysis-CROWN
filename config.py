@@ -882,7 +882,9 @@ def build_config(
     )
     configuration.add_modification_rule(
         scopes,
-        AppendProducer(producers=event.ZPtMassReweighting, samples="dyjets"),
+        AppendProducer(
+            producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
+        ),
     )
     # changes needed for data
     # global scope
@@ -1244,7 +1246,7 @@ def build_config(
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #
     #########################
-    if "dyjets" in sample:
+    if "dyjets" in sample or "electroweak_boson" in sample:
         configuration.add_shift(
             SystematicShift(
                 name="tauMuFakeEsDown",
