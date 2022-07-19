@@ -311,7 +311,7 @@ TauEmbeddingElectronIDSF_1_MC = Producer(
     name="TauEmbeddingElectronIDSF_1_MC",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_id_sf}")',
     input=[q.pt_1, q.eta_1],
-    output=[q.id_wgt_mu_1],
+    output=[q.id_wgt_ele_1],
     scopes=["et", "ee", "em"],
 )
 
@@ -319,7 +319,7 @@ TauEmbeddingElectronIDSF_2_MC = Producer(
     name="TauEmbeddingElectronIDSF_2_MC",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_id_sf}")',
     input=[q.pt_2, q.eta_2],
-    output=[q.id_wgt_mu_2],
+    output=[q.id_wgt_ele_2],
     scopes=["ee"],
 )
 
@@ -327,7 +327,7 @@ TauEmbeddingElectronIsoSF_1_MC = Producer(
     name="TauEmbeddingElectronIsoSF_1_MC",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_iso_sf}")',
     input=[q.pt_1, q.eta_1],
-    output=[q.iso_wgt_mu_1],
+    output=[q.iso_wgt_ele_1],
     scopes=["et", "ee", "em"],
 )
 
@@ -335,7 +335,7 @@ TauEmbeddingElectronIsoSF_2_MC = Producer(
     name="TauEmbeddingElectronIsoSF_2_MC",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_iso_sf}")',
     input=[q.pt_2, q.eta_2],
-    output=[q.iso_wgt_mu_2],
+    output=[q.iso_wgt_ele_2],
     scopes=["ee"],
 )
 #########################
