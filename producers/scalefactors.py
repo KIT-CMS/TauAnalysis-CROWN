@@ -254,7 +254,7 @@ EleID_SF = ProducerGroup(
 ###################################
 MTGenerateSingleMuonTriggerSF_MC = ExtendedVectorProducer(
     name="MTGenerateSingleMuonTriggerSF_MC",
-    call='scalefactor::embedding::muon_sf({df}, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_trigger_sf}")',
+    call='scalefactor::embedding::muon_sf({df}, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_trigger_sf}", {mc_muon_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["mt"],
@@ -263,7 +263,7 @@ MTGenerateSingleMuonTriggerSF_MC = ExtendedVectorProducer(
 
 ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(
     name="ETGenerateSingleElectronTriggerSF_MC",
-    call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_trigger_sf}")',
+    call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_trigger_sf}" , {mc_electron_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["et"],

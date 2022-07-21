@@ -543,6 +543,8 @@ def build_config(
             "mc_muon_sf_file": "data/embedding/muon_2018UL.json.gz",
             "mc_muon_id_sf": "ID_pt_eta_bins",
             "mc_muon_iso_sf": "Iso_pt_eta_bins",
+            "mc_muon_id_extrapolation": 1.0,  # for nominal case
+            "mc_muon_iso_extrapolation": 1.0,  # for nominal case
         },
     )
     # add electron scalefactors from embedding measurements
@@ -552,6 +554,8 @@ def build_config(
             "mc_electron_sf_file": "data/embedding/electron_2018UL.json.gz",
             "mc_electron_id_sf": "ID90_pt_eta_bins",
             "mc_electron_iso_sf": "Iso_pt_eta_bins",
+            "mc_electron_id_extrapolation": 1.0,  # for nominal case
+            "mc_electron_iso_extrapolation": 1.0,  # for nominal case
         },
     )
     # muon trigger SF settings from embedding measurements
@@ -562,14 +566,17 @@ def build_config(
                 {
                     "flagname": "trg_wgt_single_mu24",
                     "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_mu27",
                     "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_mu24ormu27",
                     "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
                 },
             ]
         },
@@ -582,18 +589,22 @@ def build_config(
                 {
                     "flagname": "trg_wgt_single_ele27",
                     "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_ele32",
                     "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_ele35",
                     "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_ele27orele32orele35",
                     "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                 },
             ]
         },
@@ -1540,6 +1551,149 @@ def build_config(
                     event.PUweights,
                 ],
             },
+        ),
+        samples=[
+            sample
+            for sample in available_sample_types
+            if sample not in ["data", "embedding", "embedding_mc"]
+        ],
+    )
+
+    #########################
+    # Trigger shifts
+    #########################
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFUp",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf_mc": [
+                        {
+                            "flagname": "trg_wgt_single_ele27",
+                            "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.02,
+                        },
+                    ]
+                }
+            },
+            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
+        ),
+        samples=[
+            sample
+            for sample in available_sample_types
+            if sample not in ["data", "embedding", "embedding_mc"]
+        ],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFDown",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf_mc": [
+                        {
+                            "flagname": "trg_wgt_single_ele27",
+                            "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 0.98,
+                        },
+                    ]
+                }
+            },
+            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
+        ),
+        samples=[
+            sample
+            for sample in available_sample_types
+            if sample not in ["data", "embedding", "embedding_mc"]
+        ],
+    )
+
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFUp",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf_mc": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.02,
+                        },
+                    ],
+                }
+            },
+            producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
+        ),
+        samples=[
+            sample
+            for sample in available_sample_types
+            if sample not in ["data", "embedding", "embedding_mc"]
+        ],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFDown",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf_mc": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 0.98,
+                        },
+                    ],
+                }
+            },
+            producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
         ),
         samples=[
             sample

@@ -8,6 +8,7 @@ from .producers import pairquantities as pairquantities
 from .producers import genparticles as genparticles
 from .producers import jets as jets
 from code_generation.configuration import Configuration
+from code_generation.systematics import SystematicShift
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -61,14 +62,17 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 {
                     "flagname": "trg_wgt_single_mu24",
                     "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                    "muon_trg_extrapolation": 1.0,
                 },
                 {
                     "flagname": "trg_wgt_single_mu27",
                     "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                    "muon_trg_extrapolation": 1.0,
                 },
                 {
                     "flagname": "trg_wgtsingle_mu24Ormu27",
                     "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                    "muon_trg_extrapolation": 1.0,
                 },
             ]
         },
@@ -81,18 +85,22 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 {
                     "flagname": "trg_wgt_single_ele27",
                     "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                    "electron_trg_extrapolation": 1.0,
                 },
                 {
                     "flagname": "trg_wgt_single_ele32",
                     "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                    "electron_trg_extrapolation": 1.0,
                 },
                 {
                     "flagname": "trg_wgt_single_ele35",
                     "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                    "electron_trg_extrapolation": 1.0,
                 },
                 {
                     "flagname": "trg_wgt_single_ele27orele32orele35",
                     "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
+                    "electron_trg_extrapolation": 1.0,
                 },
             ]
         },
@@ -179,6 +187,133 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         RemoveProducer(
             producers=jets.JetEnergyCorrection, samples=["embedding", "embdding_mc"]
         ),
+    )
+
+    #########################
+    # Trigger shifts
+    #########################
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFUp",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf": [
+                        {
+                            "flagname": "trg_wgt_single_ele27",
+                            "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 1.02,
+                        },
+                    ]
+                }
+            },
+            producers={("et"): embedding.ETGenerateSingleElectronTriggerSF},
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFDown",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf": [
+                        {
+                            "flagname": "trg_wgt_single_ele27",
+                            "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "electron_trg_extrapolation": 0.98,
+                        },
+                    ]
+                }
+            },
+            producers={("et"): embedding.ETGenerateSingleElectronTriggerSF},
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFUp",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,
+                        },
+                    ],
+                }
+            },
+            producers={("mt"): embedding.MTGenerateSingleMuonTriggerSF},
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFDown",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,
+                        },
+                    ],
+                }
+            },
+            producers={("mt"): embedding.MTGenerateSingleMuonTriggerSF},
+        ),
+        samples=["embedding", "embedding_mc"],
     )
 
     return configuration

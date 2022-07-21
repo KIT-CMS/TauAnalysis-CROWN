@@ -184,7 +184,7 @@ TauEmbeddingMuonIsoSF_2 = Producer(
 )
 MTGenerateSingleMuonTriggerSF = ExtendedVectorProducer(
     name="MTGenerateSingleMuonTriggerSF",
-    call='scalefactor::embedding::muon_sf({df}, {input}, {output}, "{embedding_muon_sf_file}", "emb", "{embedding_trigger_sf}")',
+    call='scalefactor::embedding::muon_sf({df}, {input}, {output}, "{embedding_muon_sf_file}", "emb", "{embedding_trigger_sf}", {muon_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["mt"],
@@ -226,7 +226,7 @@ TauEmbeddingElectronIsoSF_2 = Producer(
 )
 ETGenerateSingleElectronTriggerSF = ExtendedVectorProducer(
     name="ETGenerateSingleElectronTriggerSF",
-    call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_trigger_sf}")',
+    call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_trigger_sf}", {electron_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["et"],
