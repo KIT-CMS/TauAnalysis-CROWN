@@ -489,11 +489,11 @@ def build_config(
         scopes,
         {
             "propagateLeptons": SampleModifier(
-                {"data": False, "embedding": False},
+                {"data": False},
                 default=True,
             ),
             "propagateJets": SampleModifier(
-                {"data": False, "embedding": False},
+                {"data": False},
                 default=True,
             ),
             "recoil_corrections_file": EraModifier(
@@ -1123,6 +1123,13 @@ def build_config(
             q.genbosonmass,
             q.gen_match_1,
             q.gen_match_2,
+            q.pzetamissvis_pf,
+            q.mTdileptonMET_pf,
+            q.mt_1_pf,
+            q.mt_2_pf,
+            q.pt_tt_pf,
+            q.pt_ttjj_pf,
+            q.mt_tot_pf,
         ],
     )
     # add genWeight for everything but data

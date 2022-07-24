@@ -584,11 +584,76 @@ mt_tot = Producer(
     output=[q.mt_tot],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
+
+Pzetamissvis_pf = Producer(
+    name="Pzetamissvis_pf",
+    call="quantities::pzetamissvis({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.pzetamissvis_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+mTdileptonMET_pf = Producer(
+    name="mTdileptonMET_pf",
+    call="quantities::mTdileptonMET({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.mTdileptonMET_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+mt_1_pf = Producer(
+    name="mt_1_pf",
+    call="quantities::mT({df}, {output}, {input})",
+    input=[q.p4_1, q.pfmet_p4_recoilcorrected],
+    output=[q.mt_1_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+mt_2_pf = Producer(
+    name="mt_2_pf",
+    call="quantities::mT({df}, {output}, {input})",
+    input=[q.p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.mt_2_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+pt_tt_pf = Producer(
+    name="pt_tt_pf",
+    call="quantities::pt_tt({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.pt_tt_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+pt_ttjj_pf = Producer(
+    name="pt_ttjj_pf",
+    call="quantities::pt_ttjj({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.pt_ttjj_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+mt_tot_pf = Producer(
+    name="mt_tot_pf",
+    call="quantities::mt_tot({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    output=[q.mt_tot_pf],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
 DiTauPairMETQuantities = ProducerGroup(
     name="DiTauPairMETQuantities",
     call=None,
     input=None,
     output=None,
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
-    subproducers=[Pzetamissvis, mTdileptonMET, mt_1, mt_2, pt_tt, pt_ttjj, mt_tot],
+    subproducers=[
+        Pzetamissvis,
+        mTdileptonMET,
+        mt_1,
+        mt_2,
+        pt_tt,
+        pt_ttjj,
+        mt_tot,
+        Pzetamissvis_pf,
+        mTdileptonMET_pf,
+        mt_1_pf,
+        mt_2_pf,
+        pt_tt_pf,
+        pt_ttjj_pf,
+        mt_tot_pf,
+    ],
 )

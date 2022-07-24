@@ -10,9 +10,8 @@ from .producers import taus as taus
 from .producers import jets as jets
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
-import numpy as np
 
-measure_tauES = True
+measure_tauES = False
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -336,11 +335,15 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         configuration.add_modification_rule(
             "mt",
             ReplaceProducer(
-                producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_Embedding],
+                producers=[
+                    taus.TauEnergyCorrection,
+                    taus.TauEnergyCorrection_Embedding,
+                ],
                 samples=["embedding"],
             ),
         )
-        for tauESvariation in np.arange(-2.4, 2.4, 0.05):
+        tauESvariations = [-2.4 + 0.05 * i for i in range(0, 96)]
+        for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
                 SystematicShift(
