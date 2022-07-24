@@ -1,14 +1,18 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 
 from typing import List
-from code_generation.rules import AppendProducer, RemoveProducer
+from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from .producers import embedding as embedding
 from .producers import scalefactors as scalefactors
 from .producers import pairquantities as pairquantities
 from .producers import genparticles as genparticles
+from .producers import taus as taus
 from .producers import jets as jets
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
+import numpy as np
+
+measure_tauES = True
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -315,5 +319,47 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         ),
         samples=["embedding", "embedding_mc"],
     )
+    if measure_tauES:
+        ###################
+        # Tau ES variations for measurement
+        # first set the initial variation to nominal
+
+        configuration.add_config_parameters(
+            "mt",
+            {
+                "tau_ES_shift_DM0": 1.0,
+                "tau_ES_shift_DM1": 1.0,
+                "tau_ES_shift_DM10": 1.0,
+                "tau_ES_shift_DM11": 1.0,
+            },
+        )
+        configuration.add_modification_rule(
+            "mt",
+            ReplaceProducer(
+                producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_Embedding],
+                samples=["embedding"],
+            ),
+        )
+        for tauESvariation in np.arange(-2.4, 2.4, 0.05):
+            name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"EMBtauESshift_{name}",
+                    shift_config={
+                        ("mt"): {
+                            "tau_ES_shift_DM0": 1.0
+                            + (round(tauESvariation / 100.0, 5)),
+                            "tau_ES_shift_DM1": 1.0
+                            + (round(tauESvariation / 100.0, 5)),
+                            "tau_ES_shift_DM10": 1.0
+                            + (round(tauESvariation / 100.0, 5)),
+                            "tau_ES_shift_DM11": 1.0
+                            + (round(tauESvariation / 100.0, 5)),
+                        }
+                    },
+                    producers={("mt"): taus.TauPtCorrection_byValue},
+                ),
+                samples=["embedding"],
+            )
 
     return configuration

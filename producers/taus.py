@@ -41,7 +41,7 @@ TauPtCorrection_byValue = Producer(
         nanoAOD.Tau_decayMode,
     ],
     output=[q.Tau_pt_corrected],
-    scopes=["global"],
+    scopes=["et", "mt", "tt"],
 )
 TauPtCorrection_eleFake = Producer(
     name="TauPtCorrection_eleFake",
@@ -122,6 +122,17 @@ TauEnergyCorrection = ProducerGroup(
         TauPtCorrection_eleFake,
         TauPtCorrection_muFake,
         TauPtCorrection_genTau,
+        TauMassCorrection,
+    ],
+)
+TauEnergyCorrection_Embedding = ProducerGroup(
+    name="TauEnergyCorrection_Embedding",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["et", "mt", "tt"],
+    subproducers=[
+        TauPtCorrection_byValue,
         TauMassCorrection,
     ],
 )
