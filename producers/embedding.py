@@ -197,7 +197,7 @@ TauEmbeddingElectronIDSF_1 = Producer(
     name="TauEmbeddingElectronIDSF_1",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_electron_id_sf}")',
     input=[q.pt_1, q.eta_1],
-    output=[q.id_wgt_mu_1],
+    output=[q.id_wgt_ele_1],
     scopes=["et", "ee", "em"],
 )
 
@@ -205,7 +205,7 @@ TauEmbeddingElectronIDSF_2 = Producer(
     name="TauEmbeddingElectronIDSF_2",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_electron_id_sf}")',
     input=[q.pt_2, q.eta_2],
-    output=[q.id_wgt_mu_2],
+    output=[q.id_wgt_ele_2],
     scopes=["ee"],
 )
 
@@ -213,7 +213,7 @@ TauEmbeddingElectronIsoSF_1 = Producer(
     name="TauEmbeddingElectronIsoSF_1",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_electron_iso_sf}")',
     input=[q.pt_1, q.eta_1],
-    output=[q.iso_wgt_mu_1],
+    output=[q.iso_wgt_ele_1],
     scopes=["et", "ee", "em"],
 )
 
@@ -221,7 +221,7 @@ TauEmbeddingElectronIsoSF_2 = Producer(
     name="TauEmbeddingElectronIsoSF_2",
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{embedding_electron_sf_file}", "emb", "{embedding_electron_iso_sf}")',
     input=[q.pt_2, q.eta_2],
-    output=[q.iso_wgt_mu_2],
+    output=[q.iso_wgt_ele_2],
     scopes=["ee"],
 )
 ETGenerateSingleElectronTriggerSF = ExtendedVectorProducer(
