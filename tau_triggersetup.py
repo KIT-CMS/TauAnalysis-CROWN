@@ -79,7 +79,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p1_trigger_particle_id": 13,
                             "p2_ptcut": 32,
                             "p2_etacut": 2.1,
-                            "p2_filterbit": 4,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -93,7 +93,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p1_trigger_particle_id": 13,
                             "p2_ptcut": 32,
                             "p2_etacut": 2.1,
-                            "p2_filterbit": 4,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -227,7 +227,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p2_etacut": 2.1,
                             "p1_filterbit": 1,
                             "p1_trigger_particle_id": 11,
-                            "p2_filterbit": 4,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -295,9 +295,9 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
+                            "p1_filterbit": -1,  # TODO switch to "p1_filterbit": 6, if the bits are correct
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 6, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -309,9 +309,9 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
+                            "p1_filterbit": -1,  # TODO switch to "p1_filterbit": 6, if the bits are correct
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 6, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -322,9 +322,9 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
+                            "p1_filterbit": -1,  # TODO switch to "p1_filterbit": 6, if the bits are correct
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
+                            "p2_filterbit": -1,  # TODO switch to "p2_filterbit": 6, if the bits are correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
