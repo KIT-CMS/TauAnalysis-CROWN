@@ -711,6 +711,7 @@ def build_config(
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
             electrons.ExtraElectronsVeto,
+            muons.VetoMuons,
             muons.ExtraMuonsVeto,
             pairselection.ETPairSelection,
             pairselection.GoodETPairFilter,
@@ -732,6 +733,8 @@ def build_config(
     configuration.add_producers(
         "tt",
         [
+            electrons.ExtraElectronsVeto,
+            muons.ExtraMuonsVeto,
             taus.TauEnergyCorrection,
             # taus.BaseTaus,
             taus.GoodTaus,
@@ -1214,9 +1217,9 @@ def build_config(
             q.decaymode_2,
             q.tau_gen_match_1,
             q.tau_gen_match_2,
-            # q.muon_veto_flag,
-            # q.dimuon_veto,
-            # q.electron_veto_flag,
+            q.muon_veto_flag,
+            q.dimuon_veto,
+            q.electron_veto_flag,
         ],
     )
     configuration.add_outputs(
