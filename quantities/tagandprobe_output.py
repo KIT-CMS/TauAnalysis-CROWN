@@ -12,3 +12,7 @@ id_wp90_1 = Quantity("id_wp90_1")
 id_wp90_2 = Quantity("id_wp90_2")
 id_wp80_1 = Quantity("id_wp80_1")
 id_wp80_2 = Quantity("id_wp80_2")
+
+# FSR Veto flags
+fsr_photon_veto_1 = Quantity("fsr_photon_veto_1")
+fsr_photon_veto_2 = Quantity("fsr_photon_veto_2")

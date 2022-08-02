@@ -13,6 +13,11 @@ from ..producers.electrons import (
     GoodElectronPtCut,
     GoodElectronEtaCut,
 )
+from ..producers.photons import (
+    PhotonPtCut,
+    PhotonEtaCut,
+    PhotonElectronVeto,
+)
 from code_generation.producer import (
     Producer,
     ProducerGroup,
@@ -40,6 +45,19 @@ GoodMuons = ProducerGroup(
     subproducers=[
         GoodMuonPtCut,
         GoodMuonEtaCut,
+    ],
+)
+
+BasePhotons = ProducerGroup(
+    name="BasePhotons",
+    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    input=[],
+    output=[q.base_photons_mask],
+    scopes=["global"],
+    subproducers=[
+        PhotonPtCut,
+        PhotonEtaCut,
+        PhotonElectronVeto,
     ],
 )
 
@@ -304,5 +322,51 @@ ElectronIDs = ProducerGroup(
         ElectronID_WP90_2,
         ElectronID_WP80_1,
         ElectronID_WP80_2,
+    ],
+)
+
+########################################
+## FSR Photon Veto
+########################################
+
+FSR_Photon_Veto_1 = Producer(
+    name="FSR_Photon_Veto_1",
+    call="physicsobject::DeltaRParticleVeto({df}, {output}, {input}, {fsr_delta_r})",
+    input=[
+        q.p4_1,
+        q.base_photons_mask,
+        nanoAOD.Photon_pt,
+        nanoAOD.Photon_eta,
+        nanoAOD.Photon_phi,
+        nanoAOD.Photon_mass,
+    ],
+    output=[tp_q.fsr_photon_veto_1],
+    scopes=["ee", "mm"],
+)
+
+FSR_Photon_Veto_2 = Producer(
+    name="FSR_Photon_Veto_1",
+    call="physicsobject::DeltaRParticleVeto({df}, {output}, {input}, {fsr_delta_r})",
+    input=[
+        q.p4_2,
+        q.base_photons_mask,
+        nanoAOD.Photon_pt,
+        nanoAOD.Photon_eta,
+        nanoAOD.Photon_phi,
+        nanoAOD.Photon_mass,
+    ],
+    output=[tp_q.fsr_photon_veto_2],
+    scopes=["ee", "mm"],
+)
+
+FSR_Veto = ProducerGroup(
+    name="FSR_Veto",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["ee", "mm"],
+    subproducers=[
+        FSR_Photon_Veto_1,
+        FSR_Photon_Veto_2,
     ],
 )

@@ -49,6 +49,12 @@ Electron_indexToGen = NanoAODQuantity("Electron_genPartIdx")
 Electron_IDWP90 = NanoAODQuantity("Electron_mvaFall17V2noIso_WP90")
 Electron_IDWP80 = NanoAODQuantity("Electron_mvaFall17V2noIso_WP80")
 
+Photon_pt = NanoAODQuantity("Photon_pt")
+Photon_eta = NanoAODQuantity("Photon_eta")
+Photon_phi = NanoAODQuantity("Photon_phi")
+Photon_mass = NanoAODQuantity("Photon_mass")
+Photon_electronVeto = NanoAODQuantity("Photon_electronVeto")
+
 GenJet_pt = NanoAODQuantity("GenJet_pt")
 GenJet_eta = NanoAODQuantity("GenJet_eta")
 GenJet_phi = NanoAODQuantity("GenJet_phi")

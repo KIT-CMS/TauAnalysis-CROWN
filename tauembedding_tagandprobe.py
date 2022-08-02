@@ -5,6 +5,7 @@ from typing import List
 from .producers import event as event
 from .producers import muons as muons
 from .producers import electrons as electrons
+from .producers import photons as photons
 from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import embedding as emb
@@ -49,6 +50,8 @@ def build_config(
             "max_muon_eta": 2.5,
             "min_ele_pt": 7.0,
             "max_ele_eta": 2.5,
+            "min_photon_pt": 10.0,
+            "max_photon_eta": 2.5,
             "met_filters": [
                 "Flag_BadPFMuonFilter",
                 "Flag_METFilters",
@@ -56,6 +59,10 @@ def build_config(
             ],
         },
     )
+    ###############################
+    # FSR Veto flags
+    ###############################
+    configuration.add_config_parameters(["mm", "ee"], {"fsr_delta_r": 0.4})
     ###### Channel Specifics ######
     # MuMu channel Muon selection
     configuration.add_config_parameters(
@@ -201,6 +208,7 @@ def build_config(
             # event.MetFilter,
             tagandprobe.BaseMuons,
             tagandprobe.BaseElectrons,
+            tagandprobe.BasePhotons,
         ],
     )
     configuration.add_producers(
@@ -222,6 +230,7 @@ def build_config(
             tagandprobe.MuonIDs,
             tagandprobe.MuMuSingleMuonTriggerFlags_1,
             tagandprobe.MuMuSingleMuonTriggerFlags_2,
+            tagandprobe.FSR_Veto,
         ],
     )
 
@@ -241,6 +250,7 @@ def build_config(
             tagandprobe.ElectronIDs,
             tagandprobe.ElElSingleElectronTriggerFlags_1,
             tagandprobe.ElElSingleElectronTriggerFlags_2,
+            tagandprobe.FSR_Veto,
         ],
     )
 
@@ -276,6 +286,8 @@ def build_config(
             q.electron_veto_flag,
             tagandprobe.MuMuSingleMuonTriggerFlags_1.output_group,
             tagandprobe.MuMuSingleMuonTriggerFlags_2.output_group,
+            tp_q.fsr_photon_veto_1,
+            tp_q.fsr_photon_veto_2,
         ],
     )
 
@@ -306,11 +318,13 @@ def build_config(
             q.nelectrons,
             tagandprobe.ElElSingleElectronTriggerFlags_1.output_group,
             tagandprobe.ElElSingleElectronTriggerFlags_2.output_group,
+            tp_q.fsr_photon_veto_1,
+            tp_q.fsr_photon_veto_2,
         ],
     )
 
     configuration.add_modification_rule(
-        "global",
+        ["ee", "mm"],
         AppendProducer(
             producers=emb.EmbeddingQuantities, samples=["embedding", "embedding_mc"]
         ),
