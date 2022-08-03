@@ -711,7 +711,6 @@ def build_config(
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
             electrons.ExtraElectronsVeto,
-            muons.VetoMuons,
             muons.ExtraMuonsVeto,
             pairselection.ETPairSelection,
             pairselection.GoodETPairFilter,
