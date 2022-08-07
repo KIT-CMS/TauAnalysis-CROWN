@@ -86,24 +86,24 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         {
             "singlelectron_trigger_sf": [
                 {
-                    "flagname": "trg_wgt_single_ele27",
-                    "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
-                    "electron_trg_extrapolation": 1.0,
-                },
-                {
                     "flagname": "trg_wgt_single_ele32",
                     "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                    "electron_trg_extrapolation": 1.0,
+                    "electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_ele35",
                     "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                    "electron_trg_extrapolation": 1.0,
+                    "electron_trg_extrapolation": 1.0,  # for nominal case
+                },
+                {
+                    "flagname": "trg_wgt_single_ele32orele35",
+                    "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                    "electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
                     "flagname": "trg_wgt_single_ele27orele32orele35",
                     "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
-                    "electron_trg_extrapolation": 1.0,
+                    "electron_trg_extrapolation": 1.0,  # for nominal case
                 },
             ]
         },
@@ -202,8 +202,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 ("et"): {
                     "singlelectron_trigger_sf": [
                         {
-                            "flagname": "trg_wgt_single_ele27",
-                            "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
                             "electron_trg_extrapolation": 1.02,
                         },
                         {
@@ -235,8 +235,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 ("et"): {
                     "singlelectron_trigger_sf": [
                         {
-                            "flagname": "trg_wgt_single_ele27",
-                            "embedding_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
                             "electron_trg_extrapolation": 0.98,
                         },
                         {

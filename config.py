@@ -587,11 +587,6 @@ def build_config(
         {
             "singlelectron_trigger_sf_mc": [
                 {
-                    "flagname": "trg_wgt_single_ele27",
-                    "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
-                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
                     "flagname": "trg_wgt_single_ele32",
                     "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
                     "mc_electron_trg_extrapolation": 1.0,  # for nominal case
@@ -599,6 +594,11 @@ def build_config(
                 {
                     "flagname": "trg_wgt_single_ele35",
                     "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                },
+                {
+                    "flagname": "trg_wgt_single_ele32orele35",
+                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
                     "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                 },
                 {
@@ -904,7 +904,7 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         AppendProducer(
-            producers=jets.RenameJetsData, samples=["embedding", "embedding_mc"]
+            producers=jets.RenameJetsData, samples=["embedding", "embedding_mc"], update_output=False
         ),
     )
     configuration.add_modification_rule(
@@ -1578,8 +1578,8 @@ def build_config(
                 ("et"): {
                     "singlelectron_trigger_sf_mc": [
                         {
-                            "flagname": "trg_wgt_single_ele27",
-                            "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
                             "mc_electron_trg_extrapolation": 1.02,
                         },
                         {
@@ -1615,8 +1615,8 @@ def build_config(
                 ("et"): {
                     "singlelectron_trigger_sf_mc": [
                         {
-                            "flagname": "trg_wgt_single_ele27",
-                            "mc_trigger_sf": "Trg27_Iso_pt_eta_bins",
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
                             "mc_electron_trg_extrapolation": 0.98,
                         },
                         {
