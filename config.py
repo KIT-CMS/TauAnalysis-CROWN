@@ -510,7 +510,7 @@ def build_config(
                     "2018": "data/recoil_corrections/PuppiMETSys_2018.root",
                 }
             ),
-            "applyRecoilCorrections": SampleModifier({"wj": True}, default=False),
+            "applyRecoilCorrections": SampleModifier({"wjets": True}, default=False),
             "apply_recoil_resolution_systematic": False,
             "apply_recoil_response_systematic": False,
             "recoil_systematic_shift_up": False,
