@@ -6,6 +6,8 @@ from .producers import event as event
 from .producers import muons as muons
 from .producers import electrons as electrons
 from .producers import photons as photons
+from .producers import met as met
+from .producers import jets as jets
 from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import embedding as emb
@@ -15,14 +17,14 @@ from .quantities import output as q
 from .quantities import tagandprobe_output as tp_q
 from code_generation.configuration import Configuration
 from code_generation.rules import AppendProducer
-from code_generation.modifiers import EraModifier
+from code_generation.modifiers import EraModifier, SampleModifier
 
 
 def build_config(
     era: str,
     sample: str,
     channels: List[str],
-    shifts: List[str],
+    scopes: List[str],
     available_sample_types: List[str],
     available_eras: List[str],
     available_channels: List[str],
@@ -37,7 +39,7 @@ def build_config(
         era,
         sample,
         channels,
-        shifts,
+        scopes,
         available_sample_types,
         available_eras,
         available_channels,
@@ -201,6 +203,34 @@ def build_config(
         },
     )
 
+    configuration.add_config_parameters(
+        ["mm"],
+        {
+            "propagateLeptons": False,
+            "propagateJets": False,
+            "recoil_corrections_file": EraModifier(
+                {
+                    "2016": "data/recoil_corrections/Type1_PuppiMET_2016.root",
+                    "2017": "data/recoil_corrections/Type1_PuppiMET_2017.root",
+                    "2018": "data/recoil_corrections/Type1_PuppiMET_2018.root",
+                }
+            ),
+            "recoil_systematics_file": EraModifier(
+                {
+                    "2016": "data/recoil_corrections/PuppiMETSys_2016.root",
+                    "2017": "data/recoil_corrections/PuppiMETSys_2017.root",
+                    "2018": "data/recoil_corrections/PuppiMETSys_2018.root",
+                }
+            ),
+            "applyRecoilCorrections": False,
+            "apply_recoil_resolution_systematic": False,
+            "apply_recoil_response_systematic": False,
+            "recoil_systematic_shift_up": False,
+            "recoil_systematic_shift_down": False,
+            "min_jetpt_met_propagation": 15,
+        },
+    )
+
     configuration.add_producers(
         "global",
         [
@@ -209,6 +239,8 @@ def build_config(
             tagandprobe.BaseMuons,
             tagandprobe.BaseElectrons,
             tagandprobe.BasePhotons,
+            met.MetBasics,
+            jets.RenameJetsData,
         ],
     )
     configuration.add_producers(
@@ -219,6 +251,8 @@ def build_config(
             muons.VetoSecondMuon,
             muons.ExtraMuonsVeto,
             muons.NumberOfGoodMuons,
+            met.MetCorrections,
+            met.PFMetCorrections,
             electrons.ExtraElectronsVeto,
             pairselection.ZMuMuPairSelection,
             pairselection.GoodMuMuPairFilter,
@@ -231,6 +265,12 @@ def build_config(
             tagandprobe.MuMuSingleMuonTriggerFlags_1,
             tagandprobe.MuMuSingleMuonTriggerFlags_2,
             tagandprobe.FSR_Veto,
+            pairquantities.muon_nstations_1,
+            pairquantities.muon_nstations_2,
+            pairquantities.muon_ntrackerlayers_1,
+            pairquantities.muon_ntrackerlayers_2,
+            pairquantities.muon_pterr_1,
+            pairquantities.muon_pterr_2,
         ],
     )
 
@@ -288,6 +328,25 @@ def build_config(
             tagandprobe.MuMuSingleMuonTriggerFlags_2.output_group,
             tp_q.fsr_photon_veto_1,
             tp_q.fsr_photon_veto_2,
+            q.met,
+            q.metphi,
+            q.pfmet,
+            q.pfmetphi,
+            q.met_uncorrected,
+            q.metphi_uncorrected,
+            q.pfmet_uncorrected,
+            q.pfmetphi_uncorrected,
+            q.metSumEt,
+            q.metcov00,
+            q.metcov01,
+            q.metcov10,
+            q.metcov11,
+            q.muon_nstations_1,
+            q.muon_nstations_2,
+            q.muon_ntrackerlayers_1,
+            q.muon_ntrackerlayers_2,
+            q.muon_pterr_1,
+            q.muon_pterr_2,
         ],
     )
 

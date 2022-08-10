@@ -75,6 +75,12 @@ taujet_pt_1 = Quantity("taujet_pt_1")
 taujet_pt_2 = Quantity("taujet_pt_2")
 gen_taujet_pt_1 = Quantity("gen_taujet_pt_1")
 gen_taujet_pt_2 = Quantity("gen_taujet_pt_2")
+muon_nstations_1 = Quantity("muon_nstations_1")
+muon_nstations_2 = Quantity("muon_nstations_2")
+muon_ntrackerlayers_1 = Quantity("muon_ntrackerlayers_1")
+muon_ntrackerlayers_2 = Quantity("muon_ntrackerlayers_2")
+muon_pterr_1 = Quantity("muon_pterr_1")
+muon_pterr_2 = Quantity("muon_pterr_2")
 
 # Combined event quantities
 m_vis = Quantity("m_vis")

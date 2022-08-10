@@ -115,6 +115,48 @@ muon_is_global_2 = Producer(
     output=[q.is_global_2],
     scopes=["em", "mm"],
 )
+muon_nstations_1 = Producer(
+    name="muon_nstations_1",
+    call="basefunctions::getvar<Int_t>({df}, {output}, 0, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_nStations],
+    output=[q.muon_nstations_1],
+    scopes=["mt", "mm"],
+)
+muon_nstations_2 = Producer(
+    name="muon_nstations_2",
+    call="basefunctions::getvar<Int_t>({df}, {output}, 1, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_nStations],
+    output=[q.muon_nstations_2],
+    scopes=["em", "mm"],
+)
+muon_ntrackerlayers_1 = Producer(
+    name="muon_ntrackerlayers_1",
+    call="basefunctions::getvar<Int_t>({df}, {output}, 0, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_nTrackerLayers],
+    output=[q.muon_ntrackerlayers_1],
+    scopes=["mt", "mm"],
+)
+muon_ntrackerlayers_2 = Producer(
+    name="muon_ntrackerlayers_2",
+    call="basefunctions::getvar<Int_t>({df}, {output}, 1, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_nTrackerLayers],
+    output=[q.muon_ntrackerlayers_2],
+    scopes=["em", "mm"],
+)
+muon_pterr_1 = Producer(
+    name="muon_pterr_1",
+    call="basefunctions::getvar<Float_t>({df}, {output}, 0, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_ptErr],
+    output=[q.muon_pterr_1],
+    scopes=["mt", "mm"],
+)
+muon_pterr_2 = Producer(
+    name="muon_pterr_2",
+    call="basefunctions::getvar<Float_t>({df}, {output}, 1, {input})",
+    input=[q.dileptonpair, nanoAOD.Muon_ptErr],
+    output=[q.muon_pterr_2],
+    scopes=["em", "mm"],
+)
 electron_dxy_1 = Producer(
     name="electron_dxy_1",
     call="quantities::dxy({df}, {output}, 0, {input})",
