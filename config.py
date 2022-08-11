@@ -882,12 +882,12 @@ def build_config(
         scopes,
         AppendProducer(
             producers=[event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties],
-            samples="ggh_htautau",
+            samples=["ggh_htautau", "rem_htautau"],
         ),
     )
     configuration.add_modification_rule(
         scopes,
-        AppendProducer(producers=event.QQH_WG1_Uncertainties, samples="vbf_htautau"),
+        AppendProducer(producers=event.QQH_WG1_Uncertainties, samples=["vbf_htautau", "rem_htautau"]),
     )
     configuration.add_modification_rule(
         scopes,
