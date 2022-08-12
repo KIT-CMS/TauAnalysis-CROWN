@@ -364,5 +364,123 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 ),
                 samples=["embedding"],
             )
+    else:
+        configuration.add_config_parameters(
+            "mt",
+            {
+                "tau_ES_shift_DM0": 1.0,
+                "tau_ES_shift_DM1": 1.0,
+                "tau_ES_shift_DM10": 1.0,
+                "tau_ES_shift_DM11": 1.0,
+            },
+        )
+        configuration.add_modification_rule(
+            "mt",
+            ReplaceProducer(
+                producers=[
+                    taus.TauEnergyCorrection,
+                    taus.TauEnergyCorrection_Embedding,
+                ],
+                samples=["embedding"],
+            ),
+        )
+        # default values until we have the correct measured values
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs1prong0pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM0": 1.012
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs1prong0pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM0": 0.988
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs1prong1pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM1": 1.012
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs1prong1pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM1": 0.988
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs3prong0pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM10": 1.012
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs3prong0pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM10": 0.988
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs3prong1pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM11": 1.012
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"tauEs3prong1pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM11": 0.988
+                    }
+                },
+                producers={("mt"): taus.TauPtCorrection_byValue},
+            ),
+            samples=["embedding"],
+        )
+
 
     return configuration
