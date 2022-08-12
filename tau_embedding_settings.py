@@ -8,8 +8,10 @@ from .producers import pairquantities as pairquantities
 from .producers import genparticles as genparticles
 from .producers import taus as taus
 from .producers import jets as jets
+from .producers import triggers as triggers
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
+from code_generation.modifiers import EraModifier
 
 measure_tauES = False
 
@@ -190,6 +192,190 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         RemoveProducer(
             producers=jets.JetEnergyCorrection, samples=["embedding", "embdding_mc"]
         ),
+    )
+
+    # For the tau related triggers, in embedding, we cannot use a trigger path directly, since the are not
+    # correctly represented in embedded samples. Instead, it is possible to match to an earier filter
+    # within the trigger sequence. In order to do this, we have to use another producer
+    # and not the regular trigger producer. Also we have to match to special filter bits:
+    # tt -> bit 20
+    # mt -> bit 21
+    configuration.add_config_parameters(
+        ["tt"],
+        {
+            # here we do not match to the hlt path, only the filter
+            "doubletau_trigger_embedding": EraModifier(
+                {
+                    "2018": [
+                        {
+                            "flagname": "trg_double_tau35_mediumiso_hps",
+                            "p1_ptcut": 35,
+                            "p2_ptcut": 35,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 20,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 20,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        # the non HPS version exists for data only, but add it anyway to have the flag in the ntuple
+                        {
+                            "flagname": "trg_double_tau40_tightiso",
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 20,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 20,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_double_tau40_tightiso",
+                            "hlt_path": "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 6,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 6,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_double_tau40_mediumiso_tightid",
+                            "hlt_path": "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 6,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 6,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_double_tau35_tightiso_tightid",
+                            "hlt_path": "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 6,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 6,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                    ],
+                    "2016": [
+                        {
+                            "flagname": "trg_double_tau35_mediumiso",
+                            "hlt_path": "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 6,
+                            "p1_trigger_particle_id": 15,
+                            "p2_filterbit": 6,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                    ],
+                }
+            ),
+        },
+    )
+
+    configuration.add_config_parameters(
+        ["mt"],
+        {
+            "mutau_cross_trigger_embedding": EraModifier(
+                {
+                    "2018": [
+                        {
+                            "flagname": "trg_cross_mu20tau27_hps",
+                            "p1_ptcut": 21,
+                            "p1_etacut": 2.5,
+                            "p1_filterbit": 3,
+                            "p1_trigger_particle_id": 13,
+                            "p2_ptcut": 32,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 20,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        }
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_cross_mu20tau27",
+                            "hlt_path": "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
+                            "p1_ptcut": 21,
+                            "p1_etacut": 2.5,
+                            "p1_filterbit": 3,
+                            "p1_trigger_particle_id": 13,
+                            "p2_ptcut": 32,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 4,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        }
+                    ],
+                    "2016": [
+                        {
+                            "flagname": "trg_cross_mu19tau20",
+                            "hlt_path": "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
+                            "p1_ptcut": 20,
+                            "p1_etacut": 2.5,
+                            "p1_filterbit": 3,
+                            "p1_trigger_particle_id": 13,
+                            "p2_ptcut": 22,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 4,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        }
+                    ],
+                }
+            ),
+        },
+    )
+
+    # use other trigger flags for embedding samples
+    configuration.add_modification_rule(
+        "tt",
+        ReplaceProducer(
+            producers=[
+                triggers.TTGenerateDoubleTriggerFlags,
+                triggers.TTGenerateDoubleTriggerFlagsEmbedding,
+            ],
+            samples="embedding",
+        ),
+    )
+    configuration.add_outputs(
+        "tt", triggers.TTGenerateDoubleTriggerFlagsEmbedding.output_group
+    )
+
+    # use other trigger flags for embedding samples
+    configuration.add_modification_rule(
+        "mt",
+        ReplaceProducer(
+            producers=[
+                triggers.MTGenerateCrossTriggerFlags,
+                triggers.MTGenerateCrossTriggerFlagsEmbedding,
+            ],
+            samples="embedding",
+        ),
+    )
+    configuration.add_outputs(
+        "mt", triggers.MTGenerateCrossTriggerFlagsEmbedding.output_group
     )
 
     #########################

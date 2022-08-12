@@ -1722,7 +1722,8 @@ def build_config(
     #########################
     # Add additional producers and SFs related to embedded samples
     #########################
-    setup_embedding(configuration, scopes)
+    if sample == "embedding" or sample == "embedding_mc":
+        setup_embedding(configuration, scopes)
 
     #########################
     # Jet energy resolution and jet energy scale
