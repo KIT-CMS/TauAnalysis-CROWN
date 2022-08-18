@@ -6,10 +6,28 @@ from code_generation.producer import Producer, ProducerGroup
 # Set of producers used for loosest selection of electrons
 ####################
 
+ElectronPtCorrectionEmbedding = Producer(
+    name="TauPtCorrection",
+    call="physicsobject::electron::PtCorrection_byValue({df}, {output}, {input}, {ele_energyscale_barrel}, {ele_energyscale_endcap})",
+    input=[
+        nanoAOD.Electron_pt,
+    ],
+    output=[q.Electron_pt_corrected],
+    scopes=["global"],
+)
+
+RenameElectronPt = Producer(
+    name="RenameElectronPt",
+    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    input=[nanoAOD.Electron_pt],
+    output=[q.Electron_pt_corrected],
+    scopes=["global"],
+)
+
 ElectronPtCut = Producer(
     name="ElectronPtCut",
     call="physicsobject::CutPt({df}, {input}, {output}, {min_ele_pt})",
-    input=[nanoAOD.Electron_pt],
+    input=[q.Electron_pt_corrected],
     output=[],
     scopes=["global"],
 )
@@ -55,6 +73,24 @@ BaseElectrons = ProducerGroup(
     output=[q.base_electrons_mask],
     scopes=["global"],
     subproducers=[
+        RenameElectronPt,
+        ElectronPtCut,
+        ElectronEtaCut,
+        ElectronDxyCut,
+        ElectronDzCut,
+        ElectronIDCut,
+        ElectronIsoCut,
+    ],
+)
+
+BaseElectronsEmbedding = ProducerGroup(
+    name="BaseElectronsEmbedding",
+    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    input=[],
+    output=[q.base_electrons_mask],
+    scopes=["global"],
+    subproducers=[
+        ElectronPtCorrectionEmbedding,
         ElectronPtCut,
         ElectronEtaCut,
         ElectronDxyCut,
@@ -71,7 +107,7 @@ BaseElectrons = ProducerGroup(
 GoodElectronPtCut = Producer(
     name="GoodElectronPtCut",
     call="physicsobject::CutPt({df}, {input}, {output}, {min_electron_pt})",
-    input=[nanoAOD.Electron_pt],
+    input=[q.Electron_pt_corrected],
     output=[],
     scopes=["em", "et", "ee"],
 )
@@ -145,7 +181,7 @@ NumberOfGoodElectrons = Producer(
 DiElectronVetoPtCut = Producer(
     name="DiElectronVetoPtCut",
     call="physicsobject::CutPt({df}, {input}, {output}, {min_dielectronveto_pt})",
-    input=[nanoAOD.Electron_pt],
+    input=[q.Electron_pt_corrected],
     output=[],
     scopes=["global"],
 )
@@ -174,7 +210,7 @@ DiElectronVeto = ProducerGroup(
     name="DiElectronVeto",
     call="physicsobject::CheckForDiLeptonPairs({df}, {output}, {input}, {dileptonveto_dR})",
     input=[
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -184,3 +220,4 @@ DiElectronVeto = ProducerGroup(
     scopes=["global"],
     subproducers=[DiElectronVetoElectrons],
 )
+

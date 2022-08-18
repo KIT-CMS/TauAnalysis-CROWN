@@ -33,6 +33,7 @@ gen_dileptonpair = Quantity("gen_dileptonpair")
 truegenpair = Quantity("truegenpair")
 good_jet_collection = Quantity("good_jet_collection")
 good_bjet_collection = Quantity("good_bjet_collection")
+Electron_pt_corrected = Quantity("Electron_pt_corrected")
 
 nelectrons = Quantity("nelectrons")
 nmuons = Quantity("nmuons")

@@ -9,11 +9,13 @@ from .producers import genparticles as genparticles
 from .producers import taus as taus
 from .producers import jets as jets
 from .producers import triggers as triggers
+from .producers import electrons as electrons
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
 
 measure_tauES = False
+measure_elefakeES = False
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -730,7 +732,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        tauESvariations = [-1.2 + 0.05 * i for i in range(0, 47)]
+        tauESvariations = [-2.5 + 0.1 * i for i in range(0, 51)]
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
@@ -837,5 +839,45 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             ),
             samples=["embedding"],
         )
+
+    if measure_elefakeES:
+        ###################
+        # Ele fake ES variations for measurement
+        # first set the initial variation to nominal
+        configuration.add_config_parameters(
+            "et",
+            {
+                "ele_energyscale_barrel": 1.0,
+                "ele_energyscale_endcap": 1.0,
+            },
+        )
+        configuration.add_modification_rule(
+            "et",
+            ReplaceProducer(
+                producers=[
+                    electrons.RenameElectronPt,
+                    electrons.ElectronPtCorrectionEmbedding,
+                ],
+                samples=["embedding"],
+            ),
+        )
+        elefakeESvariations = [-2.5 + 0.1 * i for i in range(0, 51)]
+        for elefakeESvariation in elefakeESvariations:
+            name = str(round(elefakeESvariation, 2)).replace("-", "minus").replace(".", "p")
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"EMBelefakeESshift_{name}",
+                    shift_config={
+                        ("global"): {
+                            "ele_energyscale_barrel": 1.0
+                            + (round(elefakeESvariation / 100.0, 5)),
+                            "ele_energyscale_barrel": 1.0
+                            + (round(elefakeESvariation / 100.0, 5)),
+                        }
+                    },
+                    producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+                ),
+                samples=["embedding"],
+            )
 
     return configuration
