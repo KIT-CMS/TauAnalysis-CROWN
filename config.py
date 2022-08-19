@@ -985,6 +985,13 @@ def build_config(
             samples=["data"],
         ),
     )
+    configuration.add_modification_rule(
+        "ee",
+        RemoveProducer(
+            producers=[genparticles.ElElGenPairQuantities],
+            samples=["data"],
+        ),
+    )
     # lepton scalefactors from our measurement
     configuration.add_modification_rule(
         ["mt"],
