@@ -7,10 +7,11 @@ from code_generation.producer import Producer, ProducerGroup
 ####################
 
 ElectronPtCorrectionEmbedding = Producer(
-    name="TauPtCorrection",
+    name="ElectronPtCorrectionEmbedding",
     call="physicsobject::electron::PtCorrection_byValue({df}, {output}, {input}, {ele_energyscale_barrel}, {ele_energyscale_endcap})",
     input=[
         nanoAOD.Electron_pt,
+        nanoAOD.Electron_eta,
     ],
     output=[q.Electron_pt_corrected],
     scopes=["global"],
@@ -73,24 +74,6 @@ BaseElectrons = ProducerGroup(
     output=[q.base_electrons_mask],
     scopes=["global"],
     subproducers=[
-        RenameElectronPt,
-        ElectronPtCut,
-        ElectronEtaCut,
-        ElectronDxyCut,
-        ElectronDzCut,
-        ElectronIDCut,
-        ElectronIsoCut,
-    ],
-)
-
-BaseElectronsEmbedding = ProducerGroup(
-    name="BaseElectronsEmbedding",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
-    input=[],
-    output=[q.base_electrons_mask],
-    scopes=["global"],
-    subproducers=[
-        ElectronPtCorrectionEmbedding,
         ElectronPtCut,
         ElectronEtaCut,
         ElectronDxyCut,
@@ -220,4 +203,3 @@ DiElectronVeto = ProducerGroup(
     scopes=["global"],
     subproducers=[DiElectronVetoElectrons],
 )
-

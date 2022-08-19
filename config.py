@@ -452,6 +452,17 @@ def build_config(
             "electron_iso_cut": 0.3,
         },
     )
+    # EE scope electron selection
+    configuration.add_config_parameters(
+        ["ee"],
+        {
+            "electron_index_in_pair": 0,
+            "second_electron_index_in_pair": 0,
+            "min_electron_pt": 25.0,
+            "max_electron_eta": 2.1,
+            "electron_iso_cut": 0.3,
+        },
+    )
     # EM scope selection
     configuration.add_config_parameters(
         ["em"],
@@ -620,6 +631,7 @@ def build_config(
             event.MetFilter,
             event.PUweights,
             muons.BaseMuons,
+            electrons.RenameElectronPt,
             electrons.BaseElectrons,
             jets.JetEnergyCorrection,
             jets.GoodJets,
@@ -669,6 +681,26 @@ def build_config(
             genparticles.MuMuGenPairQuantities,
             # scalefactors.MuonIDIso_SF,
             triggers.MuMuGenerateSingleMuonTriggerFlags,
+        ],
+    )
+    configuration.add_producers(
+        "ee",
+        [
+            electrons.GoodElectrons,
+            electrons.VetoElectrons,
+            electrons.VetoSecondElectron,
+            electrons.ExtraElectronsVeto,
+            electrons.NumberOfGoodElectrons,
+            pairselection.ZElElPairSelection,
+            pairselection.GoodElElPairFilter,
+            pairselection.LVEl1,
+            pairselection.LVEl2,
+            pairselection.LVEl1Uncorrected,
+            pairselection.LVEl2Uncorrected,
+            pairquantities.ElElPairQuantities,
+            genparticles.ElElGenPairQuantities,
+            triggers.ElElGenerateSingleElectronTriggerFlags,
+            triggers.ElElGenerateDoubleMuonTriggerFlags,
         ],
     )
     configuration.add_producers(
@@ -887,7 +919,10 @@ def build_config(
     )
     configuration.add_modification_rule(
         scopes,
-        AppendProducer(producers=event.QQH_WG1_Uncertainties, samples=["vbf_htautau", "rem_htautau"]),
+        AppendProducer(
+            producers=event.QQH_WG1_Uncertainties,
+            samples=["vbf_htautau", "rem_htautau"],
+        ),
     )
     configuration.add_modification_rule(
         scopes,
@@ -904,7 +939,9 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         AppendProducer(
-            producers=jets.RenameJetsData, samples=["embedding", "embedding_mc"], update_output=False
+            producers=jets.RenameJetsData,
+            samples=["embedding", "embedding_mc"],
+            update_output=False,
         ),
     )
     configuration.add_modification_rule(
@@ -1001,6 +1038,22 @@ def build_config(
                 scalefactors.TauEmbeddingMuonIsoSF_1_MC,
                 scalefactors.TauEmbeddingMuonIDSF_2_MC,
                 scalefactors.TauEmbeddingMuonIsoSF_2_MC,
+            ],
+            samples=[
+                sample
+                for sample in available_sample_types
+                if sample not in ["data", "embedding", "embedding_mc"]
+            ],
+        ),
+    )
+    configuration.add_modification_rule(
+        ["ee"],
+        AppendProducer(
+            producers=[
+                scalefactors.TauEmbeddingElectronIDSF_1_MC,
+                scalefactors.TauEmbeddingElectronIsoSF_1_MC,
+                scalefactors.TauEmbeddingElectronIDSF_2_MC,
+                scalefactors.TauEmbeddingElectronIsoSF_2_MC,
             ],
             samples=[
                 sample
@@ -1232,10 +1285,6 @@ def build_config(
             q.muon_veto_flag,
             q.dimuon_veto,
             q.electron_veto_flag,
-            # q.id_wgt_ele_wp90nonIso_1,
-            # q.id_wgt_ele_wp80nonIso_1,
-            # q.id_wgt_mu_2,
-            # q.iso_wgt_mu_2,
         ],
     )
 
@@ -1244,10 +1293,15 @@ def build_config(
         [
             q.nmuons,
             triggers.MuMuGenerateSingleMuonTriggerFlags.output_group,
-            # q.id_wgt_mu_1,
-            # q.iso_wgt_mu_1,
-            # q.id_wgt_mu_2,
-            # q.iso_wgt_mu_2,
+        ],
+    )
+
+    configuration.add_outputs(
+        "ee",
+        [
+            q.nelectrons,
+            triggers.ElElGenerateSingleElectronTriggerFlags.output_group,
+            triggers.ElElGenerateDoubleMuonTriggerFlags.output_group,
         ],
     )
     if "data" not in sample and "embedding" not in sample:

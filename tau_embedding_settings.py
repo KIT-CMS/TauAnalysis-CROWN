@@ -15,7 +15,7 @@ from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
 
 measure_tauES = False
-measure_elefakeES = False
+measure_elefakeES = True
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -157,6 +157,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         ),
     )
     configuration.add_modification_rule(
+        ["ee"],
+        AppendProducer(
+            producers=[
+                embedding.TauEmbeddingElectronIDSF_1,
+                embedding.TauEmbeddingElectronIsoSF_1,
+                embedding.TauEmbeddingElectronIDSF_2,
+                embedding.TauEmbeddingElectronIsoSF_2,
+            ],
+            samples=["embedding"],
+        ),
+    )
+    configuration.add_modification_rule(
         ["mt"],
         AppendProducer(
             producers=[
@@ -233,7 +245,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
-                                                {
+                        {
                             "flagname": "trg_double_tau40_mediumiso_tightid",
                             "p1_ptcut": 40,
                             "p2_ptcut": 40,
@@ -406,8 +418,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     ######################
     ## Tau ID SFs
     ######################
-
-
 
     configuration.add_modification_rule(
         ["et", "mt"],
@@ -845,14 +855,14 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         # Ele fake ES variations for measurement
         # first set the initial variation to nominal
         configuration.add_config_parameters(
-            "et",
+            "global",
             {
                 "ele_energyscale_barrel": 1.0,
                 "ele_energyscale_endcap": 1.0,
             },
         )
         configuration.add_modification_rule(
-            "et",
+            "global",
             ReplaceProducer(
                 producers=[
                     electrons.RenameElectronPt,
@@ -863,7 +873,11 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         )
         elefakeESvariations = [-2.5 + 0.1 * i for i in range(0, 51)]
         for elefakeESvariation in elefakeESvariations:
-            name = str(round(elefakeESvariation, 2)).replace("-", "minus").replace(".", "p")
+            name = (
+                str(round(elefakeESvariation, 2))
+                .replace("-", "minus")
+                .replace(".", "p")
+            )
             configuration.add_shift(
                 SystematicShift(
                     name=f"EMBelefakeESshift_{name}",

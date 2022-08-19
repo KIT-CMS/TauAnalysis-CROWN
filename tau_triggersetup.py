@@ -563,4 +563,30 @@ def add_diTauTriggerSetup(configuration: Configuration):
         },
     )
 
+    ### doubleelectron trigger
+    configuration.add_config_parameters(
+        ["ee"],
+        {
+            "doubleelectron_trigger": EraModifier(
+                {
+                    "2018": [
+                        {
+                            "flagname": "trg_double_ele24",
+                            "hlt_path": "HLT_DoubleEle24_eta2p1_WPTight_Gsf",
+                            "p1_ptcut": 24,
+                            "p1_etacut": 2.1,
+                            "p1_filterbit": 4,
+                            "p1_trigger_particle_id": 11,
+                            "p2_ptcut": 24,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 4,
+                            "p2_trigger_particle_id": 11,
+                            "max_deltaR_triggermatch": 0.4,
+                        }
+                    ],
+                }
+            )
+        },
+    )
+
     return configuration
