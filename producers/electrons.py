@@ -19,7 +19,7 @@ ElectronPtCorrectionEmbedding = Producer(
 
 RenameElectronPt = Producer(
     name="RenameElectronPt",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="basefunctions::rename<ROOT::RVec<float>>({df}, {input}, {output})",
     input=[nanoAOD.Electron_pt],
     output=[q.Electron_pt_corrected],
     scopes=["global"],
