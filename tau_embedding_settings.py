@@ -164,6 +164,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 embedding.TauEmbeddingElectronIsoSF_1,
                 embedding.TauEmbeddingElectronIDSF_2,
                 embedding.TauEmbeddingElectronIsoSF_2,
+                embedding.ETGenerateSingleElectronTriggerSF,
             ],
             samples=["embedding"],
         ),

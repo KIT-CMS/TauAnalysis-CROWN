@@ -266,7 +266,7 @@ ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(
     call='scalefactor::embedding::electron_sf({df}, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_trigger_sf}" , {mc_electron_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
-    scope=["et"],
+    scope=["et", "ee"],
     vec_config="singlelectron_trigger_sf_mc",
 )
 

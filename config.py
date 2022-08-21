@@ -1061,6 +1061,7 @@ def build_config(
                 scalefactors.TauEmbeddingElectronIsoSF_1_MC,
                 scalefactors.TauEmbeddingElectronIDSF_2_MC,
                 scalefactors.TauEmbeddingElectronIsoSF_2_MC,
+                scalefactors.ETGenerateSingleElectronTriggerSF_MC,
             ],
             samples=[
                 sample
