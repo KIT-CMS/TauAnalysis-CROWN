@@ -86,7 +86,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     )
     # electron trigger SF settings from embedding measurements
     configuration.add_config_parameters(
-        ["et"],
+        ["et", "ee"],
         {
             "singlelectron_trigger_sf": [
                 {
@@ -872,7 +872,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        elefakeESvariations = [-2.5 + 0.1 * i for i in range(0, 51)]
+        elefakeESvariations = [-1.5 + 0.05 * i for i in range(0, 51)]
         for elefakeESvariation in elefakeESvariations:
             name = (
                 str(round(elefakeESvariation, 2))
@@ -886,7 +886,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                         ("global"): {
                             "ele_energyscale_barrel": 1.0
                             + (round(elefakeESvariation / 100.0, 5)),
-                            "ele_energyscale_barrel": 1.0
+                            "ele_energyscale_endcap": 1.0
                             + (round(elefakeESvariation / 100.0, 5)),
                         }
                     },
@@ -896,3 +896,4 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             )
 
     return configuration
+                                                                                                                                                        

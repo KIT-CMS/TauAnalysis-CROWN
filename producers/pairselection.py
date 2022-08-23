@@ -89,7 +89,7 @@ ElElPairSelection = Producer(
     name="ElElPairSelection",
     call="ditau_pairselection::elel::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
     input=[
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -102,7 +102,7 @@ ZElElPairSelection = Producer(
     name="ZElElPairSelection",
     call="ditau_pairselection::elel::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
     input=[
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -137,7 +137,7 @@ ETPairSelection = Producer(
         nanoAOD.Tau_phi,
         nanoAOD.Tau_mass,
         nanoAOD.Tau_IDraw,
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -206,7 +206,7 @@ EMPairSelection = Producer(
     name="EMPairSelection",
     call="ditau_pairselection::elmu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
     input=[
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -271,7 +271,7 @@ LVEl1 = Producer(
     call="lorentzvectors::build({df}, {input_vec}, 0, {output})",
     input=[
         q.dileptonpair,
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -284,7 +284,7 @@ LVEl2 = Producer(
     call="lorentzvectors::build({df}, {input_vec}, 1, {output})",
     input=[
         q.dileptonpair,
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -350,7 +350,7 @@ LVEl1Uncorrected = Producer(
     call="lorentzvectors::build({df}, {input_vec}, 0, {output})",
     input=[
         q.dileptonpair,
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
@@ -363,7 +363,7 @@ LVEl2Uncorrected = Producer(
     call="lorentzvectors::build({df}, {input_vec}, 1, {output})",
     input=[
         q.dileptonpair,
-        nanoAOD.Electron_pt,
+        q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,

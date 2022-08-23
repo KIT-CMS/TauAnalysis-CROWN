@@ -594,7 +594,7 @@ def build_config(
     )
     # electron trigger SF settings from embedding measurements
     configuration.add_config_parameters(
-        ["et"],
+        ["et", "ee"],
         {
             "singlelectron_trigger_sf_mc": [
                 {
@@ -691,7 +691,7 @@ def build_config(
             electrons.VetoSecondElectron,
             electrons.ExtraElectronsVeto,
             electrons.NumberOfGoodElectrons,
-            pairselection.ZElElPairSelection,
+            pairselection.ElElPairSelection,
             pairselection.GoodElElPairFilter,
             pairselection.LVEl1,
             pairselection.LVEl2,
@@ -1310,6 +1310,9 @@ def build_config(
             q.nelectrons,
             triggers.ElElGenerateSingleElectronTriggerFlags.output_group,
             triggers.ElElGenerateDoubleMuonTriggerFlags.output_group,
+            q.dimuon_veto,
+            q.dielectron_veto,
+            q.electron_veto_flag,
         ],
     )
     if "data" not in sample and "embedding" not in sample:
