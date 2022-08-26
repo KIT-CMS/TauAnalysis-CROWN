@@ -15,7 +15,7 @@ from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
 
 measure_tauES = False
-measure_elefakeES = True
+measure_elefakeES = False
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -766,13 +766,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             )
     else:
+        tauES_2018 = {
+            "up": 0.9865 - 0.0039,
+            "nominal": 0.9865,
+            "down": 0.9865 + 0.0039,
+        }
         configuration.add_config_parameters(
             "mt",
             {
-                "tau_ES_shift_DM0": 1.0,
-                "tau_ES_shift_DM1": 1.0,
-                "tau_ES_shift_DM10": 1.0,
-                "tau_ES_shift_DM11": 1.0,
+                "tau_ES_shift_DM0": EraModifier({"2018": tauES_2018["nominal"]}),
+                "tau_ES_shift_DM1": EraModifier({"2018": tauES_2018["nominal"]}),
+                "tau_ES_shift_DM10": EraModifier({"2018": tauES_2018["nominal"]}),
+                "tau_ES_shift_DM11": EraModifier({"2018": tauES_2018["nominal"]}),
             },
         )
         configuration.add_modification_rule(
@@ -788,64 +793,96 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         # default values until we have the correct measured values
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs1prong0pizeroUp",
-                shift_config={("mt"): {"tau_ES_shift_DM0": 1.012}},
+                name="tauEs1prong0pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM0": EraModifier({"2018": tauES_2018["up"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs1prong0pizeroDown",
-                shift_config={("mt"): {"tau_ES_shift_DM0": 0.988}},
+                name="tauEs1prong0pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM0": EraModifier({"2018": tauES_2018["down"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs1prong1pizeroUp",
-                shift_config={("mt"): {"tau_ES_shift_DM1": 1.012}},
+                name="tauEs1prong1pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM1": EraModifier({"2018": tauES_2018["up"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs1prong1pizeroDown",
-                shift_config={("mt"): {"tau_ES_shift_DM1": 0.988}},
+                name="tauEs1prong1pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM1": EraModifier({"2018": tauES_2018["down"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs3prong0pizeroUp",
-                shift_config={("mt"): {"tau_ES_shift_DM10": 1.012}},
+                name="tauEs3prong0pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM10": EraModifier({"2018": tauES_2018["up"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs3prong0pizeroDown",
-                shift_config={("mt"): {"tau_ES_shift_DM10": 0.988}},
+                name="tauEs3prong0pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM10": EraModifier({"2018": tauES_2018["down"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs3prong1pizeroUp",
-                shift_config={("mt"): {"tau_ES_shift_DM11": 1.012}},
+                name="tauEs3prong1pizeroUp",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM11": EraModifier({"2018": tauES_2018["up"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"tauEs3prong1pizeroDown",
-                shift_config={("mt"): {"tau_ES_shift_DM11": 0.988}},
+                name="tauEs3prong1pizeroDown",
+                shift_config={
+                    ("mt"): {
+                        "tau_ES_shift_DM11": EraModifier({"2018": tauES_2018["down"]})
+                    }
+                },
                 producers={("mt"): taus.TauPtCorrection_byValue},
             ),
             samples=["embedding"],
@@ -894,5 +931,95 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 ),
                 samples=["embedding"],
             )
+    else:
+        ele_energyscale_2018 = {
+            "barrel": {
+                "up": 0.9958 + 0.005,
+                "nominal": 0.9958,
+                "down": 0.9958 - 0.005,
+            },
+            "endcap": {
+                "up": 0.9921 + 0.0125,
+                "nominal": 0.9921,
+                "down": 0.9921 - 0.0125,
+            },
+        }
+        configuration.add_config_parameters(
+            "global",
+            {
+                "ele_energyscale_barrel": EraModifier(
+                    {"2018": ele_energyscale_2018["barrel"]["nominal"]}
+                ),
+                "ele_energyscale_endcap": EraModifier(
+                    {"2018": ele_energyscale_2018["endcap"]["nominal"]}
+                ),
+            },
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[
+                    electrons.RenameElectronPt,
+                    electrons.ElectronPtCorrectionEmbedding,
+                ],
+                samples=["embedding"],
+            ),
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsBarrelUp",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_barrel": EraModifier(
+                            {"2018": ele_energyscale_2018["barrel"]["up"]}
+                        )
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsBarrelDown",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_barrel": EraModifier(
+                            {"2018": ele_energyscale_2018["barrel"]["down"]}
+                        )
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsEndcapUp",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_endcap": EraModifier(
+                            {"2018": ele_energyscale_2018["endcap"]["up"]}
+                        )
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsEndcapDown",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_endcap": EraModifier(
+                            {"2018": ele_energyscale_2018["endcap"]["down"]}
+                        )
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
 
     return configuration
