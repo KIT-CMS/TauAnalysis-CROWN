@@ -63,7 +63,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     )
     # muon trigger SF settings from embedding measurements
     configuration.add_config_parameters(
-        ["mt"],
+        ["mt", "mm"],
         {
             "singlemuon_trigger_sf": [
                 {
@@ -118,6 +118,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             producers=[
                 embedding.TauEmbeddingMuonIDSF_1,
                 embedding.TauEmbeddingMuonIsoSF_1,
+                embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],
         ),
@@ -128,6 +129,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             producers=[
                 embedding.TauEmbeddingElectronIDSF_1,
                 embedding.TauEmbeddingElectronIsoSF_1,
+                embedding.ETGenerateSingleElectronTriggerSF,
             ],
             samples=["embedding"],
         ),
@@ -152,6 +154,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 embedding.TauEmbeddingMuonIsoSF_1,
                 embedding.TauEmbeddingMuonIDSF_2,
                 embedding.TauEmbeddingMuonIsoSF_2,
+                embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],
         ),
@@ -164,24 +167,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 embedding.TauEmbeddingElectronIsoSF_1,
                 embedding.TauEmbeddingElectronIDSF_2,
                 embedding.TauEmbeddingElectronIsoSF_2,
-                embedding.ETGenerateSingleElectronTriggerSF,
-            ],
-            samples=["embedding"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mt"],
-        AppendProducer(
-            producers=[
-                embedding.MTGenerateSingleMuonTriggerSF,
-            ],
-            samples=["embedding"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["et"],
-        AppendProducer(
-            producers=[
                 embedding.ETGenerateSingleElectronTriggerSF,
             ],
             samples=["embedding"],
@@ -667,7 +652,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         SystematicShift(
             name="singleMuonTriggerSFUp",
             shift_config={
-                ("mt"): {
+                ("mt", "mm"): {
                     "singlemuon_trigger_sf": [
                         {
                             "flagname": "trg_wgt_single_mu24",
@@ -687,7 +672,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                     ],
                 }
             },
-            producers={("mt"): embedding.MTGenerateSingleMuonTriggerSF},
+            producers={
+                ("mt"): embedding.MTGenerateSingleMuonTriggerSF,
+                ("mm"): embedding.MTGenerateSingleMuonTriggerSF,
+            },
         ),
         samples=["embedding", "embedding_mc"],
     )
@@ -695,7 +683,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         SystematicShift(
             name="singleMuonTriggerSFDown",
             shift_config={
-                ("mt"): {
+                ("mt", "mm"): {
                     "singlemuon_trigger_sf": [
                         {
                             "flagname": "trg_wgt_single_mu24",
@@ -715,7 +703,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                     ],
                 }
             },
-            producers={("mt"): embedding.MTGenerateSingleMuonTriggerSF},
+            producers={
+                ("mt"): embedding.MTGenerateSingleMuonTriggerSF,
+                ("mm"): embedding.MTGenerateSingleMuonTriggerSF,
+            },
         ),
         samples=["embedding", "embedding_mc"],
     )
