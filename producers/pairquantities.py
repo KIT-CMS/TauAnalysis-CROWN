@@ -676,6 +676,21 @@ mt_tot_pf = Producer(
     output=[q.mt_tot_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
+pt_dijet = Producer(
+    name="pt_dijet",
+    call="quantities::pt_dijet({df}, {output}, {input})",
+    input=[q.jet_p4_1, q.jet_p4_2],
+    output=[q.pt_dijet],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+jet_hemisphere = Producer(
+    name="jet_hemisphere",
+    call="quantities::jet_hemisphere({df}, {output}, {input})",
+    input=[q.jet_p4_1, q.jet_p4_2],
+    output=[q.jet_hemisphere],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
+
 DiTauPairMETQuantities = ProducerGroup(
     name="DiTauPairMETQuantities",
     call=None,
@@ -697,5 +712,7 @@ DiTauPairMETQuantities = ProducerGroup(
         pt_tt_pf,
         pt_ttjj_pf,
         mt_tot_pf,
+        pt_dijet,
+        jet_hemisphere,
     ],
 )

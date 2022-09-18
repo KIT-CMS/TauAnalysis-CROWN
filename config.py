@@ -51,6 +51,9 @@ def build_config(
     configuration.add_config_parameters(
         "global",
         {
+            # for LHE weights
+            "muR": 1.0,
+            "muF": 1.0,
             "PU_reweighting_file": EraModifier(
                 {
                     "2016": "",
@@ -630,6 +633,7 @@ def build_config(
             event.npartons,
             event.MetFilter,
             event.PUweights,
+            event.LHE_Scale_weight,
             muons.BaseMuons,
             electrons.RenameElectronPt,
             electrons.BaseElectrons,
@@ -879,7 +883,7 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
-            producers=[event.PUweights],
+            producers=[event.PUweights, event.LHE_Scale_weight],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1113,6 +1117,7 @@ def build_config(
             q.npartons,
             nanoAOD.event,
             q.puweight,
+            q.lhe_scale_weight,
             q.pt_1,
             q.pt_2,
             q.eta_1,
@@ -1193,6 +1198,8 @@ def build_config(
             q.pt_tt_pf,
             q.pt_ttjj_pf,
             q.mt_tot_pf,
+            q.pt_dijet,
+            q.jet_hemisphere,
         ],
     )
     # add genWeight for everything but data
@@ -1327,6 +1334,35 @@ def build_config(
                 nanoAOD.HTXS_stage1_2_fine_cat_pTjet30GeV,
             ],
         )
+    #########################
+    # LHE Scale Weight variations
+    # up is muR=2.0, muF=2.0
+    # down is muR=0.5, muF=0.5
+    #########################
+    configuration.add_shift(
+        SystematicShift(
+            "LHEScaleWeightUp",
+            shift_config={
+                "global": {
+                    "muR": 2.0,
+                    "muF": 2.0,
+                }
+            },
+            producers={"global": [event.LHE_Scale_weight]},
+        )
+    )
+    configuration.add_shift(
+        SystematicShift(
+            "LHEScaleWeightDown",
+            shift_config={
+                "global": {
+                    "muR": 0.5,
+                    "muF": 0.5,
+                }
+            },
+            producers={"global": [event.LHE_Scale_weight]},
+        )
+    )
 
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #

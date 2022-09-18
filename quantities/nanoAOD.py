@@ -102,6 +102,7 @@ HTXS_stage_1_pTjet30 = NanoAODQuantity("HTXS_stage_1_pTjet30")
 HTXS_stage1_1_fine_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_1_fine_cat_pTjet30GeV")
 HTXS_stage1_2_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_2_cat_pTjet30GeV")
 HTXS_stage1_2_fine_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_2_fine_cat_pTjet30GeV")
+LHEScaleWeight = NanoAODQuantity("LHEScaleWeight")
 
 ## MET quantities
 ## TODO Swich to Puppi versions for METCOV and Signifiance as soon as they are in the nanoAOD

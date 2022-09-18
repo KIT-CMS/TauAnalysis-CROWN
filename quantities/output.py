@@ -3,6 +3,8 @@ from code_generation.quantity import Quantity
 lumi = Quantity("lumi")
 puweight = Quantity("puweight")
 prefireweight = Quantity("prefiring_wgt")
+lhe_scale_weight = Quantity("lhe_scale_weight")
+
 
 base_taus_mask = Quantity("base_taus_mask")
 good_taus_mask = Quantity("good_taus_mask")
@@ -101,6 +103,8 @@ mt_2_pf = Quantity("mt_2_pf")
 pt_tt_pf = Quantity("pt_tt_pf")
 pt_ttjj_pf = Quantity("pt_ttjj_pf")
 mt_tot_pf = Quantity("mt_tot_pf")
+pt_dijet = Quantity("pt_dijet")
+jet_hemisphere = Quantity("jet_hemisphere")
 
 njets = Quantity("njets")
 nbtag = Quantity("nbtag")
