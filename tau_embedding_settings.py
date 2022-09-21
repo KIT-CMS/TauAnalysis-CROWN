@@ -763,7 +763,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "down": 0.9865 + 0.0039,
         }
         configuration.add_config_parameters(
-            "mt",
+            ["mt", "et"],
             {
                 "tau_ES_shift_DM0": EraModifier({"2018": tauES_2018["nominal"]}),
                 "tau_ES_shift_DM1": EraModifier({"2018": tauES_2018["nominal"]}),
@@ -772,7 +772,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             },
         )
         configuration.add_modification_rule(
-            "mt",
+            ["mt", "et"],
             ReplaceProducer(
                 producers=[
                     taus.TauEnergyCorrection,
