@@ -883,8 +883,16 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
-            producers=[event.PUweights, event.LHE_Scale_weight],
+            producers=[event.PUweights],
             samples=["data", "embedding", "embedding_mc"],
+        ),
+    )
+    # for whatever reason, the diboson samples do not have these weights in the ntuple....
+    configuration.add_modification_rule(
+        "global",
+        RemoveProducer(
+            producers=[event.LHE_Scale_weight],
+            samples=["data", "embedding", "embedding_mc", "diboson"],
         ),
     )
     configuration.add_modification_rule(
