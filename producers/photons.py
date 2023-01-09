@@ -3,7 +3,7 @@ from ..quantities import nanoAOD as nanoAOD
 from code_generation.producer import Producer, ProducerGroup
 
 ####################
-# Set of producers used for loosest selection of electrons
+# Set of producers used for loosest selection of photons
 ####################
 
 

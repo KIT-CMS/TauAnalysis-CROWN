@@ -77,7 +77,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                     "muon_trg_extrapolation": 1.0,
                 },
                 {
-                    "flagname": "trg_wgtsingle_mu24Ormu27",
+                    "flagname": "trg_wgt_single_mu24Ormu27",
                     "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
                     "muon_trg_extrapolation": 1.0,
                 },
@@ -194,8 +194,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         ),
     )
 
-    # For the tau related triggers, in embedding, we cannot use a trigger path directly, since the are not
-    # correctly represented in embedded samples. Instead, it is possible to match to an earier filter
+    # For the tau related triggers, in embedding, we cannot use a trigger path directly, since they are not
+    # correctly represented in embedded samples. Instead, it is possible to match to an earlier filter
     # within the trigger sequence. In order to do this, we have to use another producer
     # and not the regular trigger producer. Also we have to match to special filter bits:
     # tt -> bit 20
