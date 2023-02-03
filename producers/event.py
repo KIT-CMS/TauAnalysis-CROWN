@@ -299,7 +299,7 @@ QQH_WG1_Uncertainties = Producer(
 )
 LHE_Scale_weight = Producer(
     name="LHE_Scale_weight",
-    call='reweighting::lhe_scale_weights({df}, {output}, {input}, {muR}, {muF})',
+    call="reweighting::lhe_scale_weights({df}, {output}, {input}, {muR}, {muF})",
     input=[nanoAOD.LHEScaleWeight],
     output=[q.lhe_scale_weight],
     scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],

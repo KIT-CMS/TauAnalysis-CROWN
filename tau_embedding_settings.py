@@ -19,7 +19,6 @@ measure_elefakeES = False
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
-
     configuration.add_modification_rule(
         scopes,
         AppendProducer(

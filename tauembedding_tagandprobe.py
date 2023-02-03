@@ -29,7 +29,6 @@ def build_config(
     available_eras: List[str],
     available_channels: List[str],
 ):
-
     if sample != "data" and sample != "embedding" and sample != "dyjets":
         print(
             "WARNING: TagandProbe measurement uses only data, dyjets and embedding samples"

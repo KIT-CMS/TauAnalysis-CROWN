@@ -25,7 +25,6 @@ def build_config(
     available_eras: List[str],
     available_scopes: List[str],
 ):
-
     if sample == "data":
         print("WARNING: no genparticles available in data, what are you doing ??")
     configuration = Configuration(
