@@ -232,6 +232,15 @@ is_wjets = Quantity("is_wjets")
 is_ggh_htautau = Quantity("is_ggh_htautau")
 is_vbf_htautau = Quantity("is_vbf_htautau")
 is_diboson = Quantity("is_diboson")
+is_vbf_hbb = Quantity("is_vbf_hbb")
+is_ggh_hbb = Quantity("is_ggh_hbb")
+is_rem_hbb = Quantity("is_rem_hbb")
+is_embedding_mc = Quantity("is_embedding_mc")
+is_ggh_hbb = Quantity("is_ggh_hbb")
+is_singletop = Quantity("is_singletop")
+is_rem_htautau = Quantity("is_rem_htautau")
+is_electroweak_boson = Quantity("is_electroweak_boson")
+
 
 # Electron Weights
 id_wgt_ele_wp90nonIso_1 = Quantity("id_wgt_ele_wp90nonIso_1")

@@ -93,6 +93,62 @@ is_diboson = Producer(
     output=[q.is_diboson],
     scopes=["global"],
 )
+is_ggh_hbb = Producer(
+    name="is_ggh_hbb",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_ggh_hbb})",
+    input=[],
+    output=[q.is_ggh_hbb],
+    scopes=["global"],
+)
+is_vbf_hbb = Producer(
+    name="is_vbf_hbb",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_vbf_hbb})",
+    input=[],
+    output=[q.is_vbf_hbb],
+    scopes=["global"],
+)
+is_rem_hbb = Producer(
+    name="is_rem_hbb",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_rem_hbb})",
+    input=[],
+    output=[q.is_rem_hbb],
+    scopes=["global"],
+)
+is_embedding_mc = Producer(
+    name="is_embedding_mc",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_embedding_mc})",
+    input=[],
+    output=[q.is_embedding_mc],
+    scopes=["global"],
+)
+is_embedding_mc = Producer(
+    name="is_embedding_mc",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_embedding_mc})",
+    input=[],
+    output=[q.is_embedding_mc],
+    scopes=["global"],
+)
+is_singletop = Producer(
+    name="is_singletop",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_singletop})",
+    input=[],
+    output=[q.is_singletop],
+    scopes=["global"],
+)
+is_rem_htautau = Producer(
+    name="is_singletop",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_rem_htautau})",
+    input=[],
+    output=[q.is_rem_htautau],
+    scopes=["global"],
+)
+is_electroweak_boson = Producer(
+    name="is_singletop",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_electroweak_boson})",
+    input=[],
+    output=[q.is_electroweak_boson],
+    scopes=["global"],
+)
 
 SampleFlags = ProducerGroup(
     name="SampleFlags",
@@ -109,6 +165,13 @@ SampleFlags = ProducerGroup(
         is_ggh_htautau,
         is_vbf_htautau,
         is_diboson,
+        is_ggh_hbb,
+        is_vbf_hbb,
+        is_rem_hbb,
+        is_embedding_mc,
+        is_singletop,
+        is_rem_htautau,
+        is_electroweak_boson,
     ],
 )
 
