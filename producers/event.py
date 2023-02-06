@@ -121,13 +121,6 @@ is_embedding_mc = Producer(
     output=[q.is_embedding_mc],
     scopes=["global"],
 )
-is_embedding_mc = Producer(
-    name="is_embedding_mc",
-    call="basefunctions::DefineQuantity({df}, {output}, {is_embedding_mc})",
-    input=[],
-    output=[q.is_embedding_mc],
-    scopes=["global"],
-)
 is_singletop = Producer(
     name="is_singletop",
     call="basefunctions::DefineQuantity({df}, {output}, {is_singletop})",
