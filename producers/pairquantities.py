@@ -571,6 +571,7 @@ EMDiTauPairQuantities = ProducerGroup(
     scopes=["em"],
     subproducers=[UnrollElLV1, UnrollMuLV2, m_vis, pt_vis, deltaR_ditaupair],
 )
+
 ## advanced event quantities (can be caluculated when ditau pair and met and all jets are determined)
 ## leptons: q.p4_1, q.p4_2
 ## met: met_p4_recoilcorrected
@@ -715,4 +716,136 @@ DiTauPairMETQuantities = ProducerGroup(
         pt_dijet,
         jet_hemisphere,
     ],
+)
+
+p4_fastmtt_mt = Producer(
+    name="p4_fastmtt_mt",
+    call='quantities::p4_fastmtt({df}, {output}, {input}, "mt")',
+    input=[
+        q.pt_1,
+        q.pt_2,
+        q.eta_1,
+        q.eta_2,
+        q.phi_1,
+        q.phi_2,
+        q.mass_1,
+        q.mass_2,
+        q.met,
+        q.metphi,
+        q.metcov00,
+        q.metcov01,
+        q.metcov11,
+        q.decaymode_2,
+        q.decaymode_2,
+    ],
+    output=[q.p4_fastmtt],
+    scopes=["mt"],
+)
+p4_fastmtt_et = Producer(
+    name="p4_fastmtt_et",
+    call='quantities::p4_fastmtt({df}, {output}, {input}, "et")',
+    input=[
+        q.pt_1,
+        q.pt_2,
+        q.eta_1,
+        q.eta_2,
+        q.phi_1,
+        q.phi_2,
+        q.mass_1,
+        q.mass_2,
+        q.met,
+        q.metphi,
+        q.metcov00,
+        q.metcov01,
+        q.metcov11,
+        q.decaymode_2,
+        q.decaymode_2,
+    ],
+    output=[q.p4_fastmtt],
+    scopes=["et"],
+)
+p4_fastmtt_tt = Producer(
+    name="p4_fastmtt_tt",
+    call='quantities::p4_fastmtt({df}, {output}, {input}, "tt")',
+    input=[
+        q.pt_1,
+        q.pt_2,
+        q.eta_1,
+        q.eta_2,
+        q.phi_1,
+        q.phi_2,
+        q.mass_1,
+        q.mass_2,
+        q.met,
+        q.metphi,
+        q.metcov00,
+        q.metcov01,
+        q.metcov11,
+        q.decaymode_2,
+        q.decaymode_2,
+    ],
+    output=[q.p4_fastmtt],
+    scopes=["tt"],
+)
+p4_fastmtt_em = Producer(
+    name="p4_fastmtt_em",
+    call='quantities::p4_fastmtt({df}, {output}, {input}, "em")',
+    input=[
+        q.pt_1,
+        q.pt_2,
+        q.eta_1,
+        q.eta_2,
+        q.phi_1,
+        q.phi_2,
+        q.mass_1,
+        q.mass_2,
+        q.met,
+        q.metphi,
+        q.metcov00,
+        q.metcov01,
+        q.metcov11,
+    ],
+    output=[q.p4_fastmtt],
+    scopes=["em"],
+)
+pt_fastmtt = Producer(
+    name="pt_fastmtt",
+    call="quantities::pt({df}, {output}, {input})",
+    input=[q.p4_fastmtt],
+    output=[q.pt_fastmtt],
+    scopes=["mt", "et", "tt", "em"],
+)
+eta_fastmtt = Producer(
+    name="eta_fastmtt",
+    call="quantities::eta({df}, {output}, {input})",
+    input=[q.p4_fastmtt],
+    output=[q.eta_fastmtt],
+    scopes=["mt", "et", "tt", "em"],
+)
+phi_fastmtt = Producer(
+    name="phi_fastmtt",
+    call="quantities::phi({df}, {output}, {input})",
+    input=[q.p4_fastmtt],
+    output=[q.phi_fastmtt],
+    scopes=["mt", "et", "tt", "em"],
+)
+m_fastmtt = Producer(
+    name="m_fastmtt",
+    call="quantities::mass({df}, {output}, {input})",
+    input=[q.p4_fastmtt],
+    output=[q.m_fastmtt],
+    scopes=["mt", "et", "tt", "em"],
+)
+FastMTTQuantities = ProducerGroup(
+    name="FastMTTQuantities",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["mt", "et", "tt", "em"],
+    subproducers={
+        "mt": [p4_fastmtt_mt, pt_fastmtt, eta_fastmtt, phi_fastmtt, m_fastmtt],
+        "et": [p4_fastmtt_et, pt_fastmtt, eta_fastmtt, phi_fastmtt, m_fastmtt],
+        "tt": [p4_fastmtt_tt, pt_fastmtt, eta_fastmtt, phi_fastmtt, m_fastmtt],
+        "em": [p4_fastmtt_em, pt_fastmtt, eta_fastmtt, phi_fastmtt, m_fastmtt],
+    },
 )

@@ -87,6 +87,11 @@ muon_pterr_2 = Quantity("muon_pterr_2")
 
 # Combined event quantities
 m_vis = Quantity("m_vis")
+p4_fastmtt = Quantity("p4_fastmtt")
+m_fastmtt = Quantity("m_fastmtt")
+pt_fastmtt = Quantity("pt_fastmtt")
+eta_fastmtt = Quantity("eta_fastmtt")
+phi_fastmtt = Quantity("phi_fastmtt")
 pt_vis = Quantity("pt_vis")
 pzetamissvis = Quantity("pzetamissvis")
 mTdileptonMET = Quantity("mTdileptonMET")
