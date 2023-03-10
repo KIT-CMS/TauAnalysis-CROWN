@@ -83,7 +83,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "truegen_mother_pdgid": 23,
             "truegen_daughter_1_pdgid": 15,
             "truegen_daugher_2_pdgid": 15,
-        }
+        },
     )
     configuration.add_config_parameters(
         ["mm"],
@@ -91,7 +91,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "truegen_mother_pdgid": 23,
             "truegen_daughter_1_pdgid": 13,
             "truegen_daugher_2_pdgid": 13,
-        }
+        },
     )
     configuration.add_config_parameters(
         ["ee"],
@@ -99,7 +99,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "truegen_mother_pdgid": 23,
             "truegen_daughter_1_pdgid": 11,
             "truegen_daugher_2_pdgid": 11,
-        }
+        },
     )
 
     # add embedding selection scalefactors
