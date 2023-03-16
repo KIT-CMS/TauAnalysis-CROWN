@@ -323,7 +323,7 @@ tau_decaymode_1_notau = Producer(
     call="basefunctions::DefineQuantity({df}, {output}, -1)",
     input=[],
     output=[q.tau_decaymode_1],
-    scopes=["et", "mt", "em"],
+    scopes=["et", "mt", "em", "ee", "mm"],
 )
 tau_gen_match_1 = Producer(
     name="gen_match_1",
@@ -376,7 +376,7 @@ tau_decaymode_2_notau = Producer(
     call="basefunctions::DefineQuantity({df}, {output}, -1)",
     input=[],
     output=[q.tau_decaymode_2],
-    scopes=["em"],
+    scopes=["em", "ee", "mm"],
 )
 tau_gen_match_2 = Producer(
     name="taugen_match_2",
