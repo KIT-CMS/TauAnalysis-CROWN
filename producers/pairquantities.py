@@ -315,8 +315,15 @@ tau_decaymode_1 = Producer(
     name="decaymode_1",
     call="quantities::tau::decaymode({df}, {output}, 0, {input})",
     input=[q.dileptonpair, nanoAOD.Tau_decayMode],
-    output=[q.decaymode_1],
+    output=[q.tau_decaymode_1],
     scopes=["tt"],
+)
+tau_decaymode_1_notau = Producer(
+    name="tau_decaymode_1_notau",
+    call="basefunctions::DefineQuantity({df}, {output}, -1)",
+    input=[],
+    output=[q.tau_decaymode_1],
+    scopes=["et", "mt", "em"],
 )
 tau_gen_match_1 = Producer(
     name="gen_match_1",
@@ -361,8 +368,15 @@ tau_decaymode_2 = Producer(
     name="taudecaymode_2",
     call="quantities::tau::decaymode({df}, {output}, 1, {input})",
     input=[q.dileptonpair, nanoAOD.Tau_decayMode],
-    output=[q.decaymode_2],
+    output=[q.tau_decaymode_2],
     scopes=["mt", "et", "tt"],
+)
+tau_decaymode_2_notau = Producer(
+    name="tau_decaymode_2_notau",
+    call="basefunctions::DefineQuantity({df}, {output}, -1)",
+    input=[],
+    output=[q.tau_decaymode_2],
+    scopes=["em"],
 )
 tau_gen_match_2 = Producer(
     name="taugen_match_2",
@@ -529,7 +543,7 @@ MTDiTauPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["mt"],
-    subproducers=[UnrollMuLV1, UnrollTauLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[UnrollMuLV1, UnrollTauLV2, tau_decaymode_1_notau, m_vis, pt_vis, deltaR_ditaupair],
 )
 MuMuPairQuantities = ProducerGroup(
     name="MuMuPairQuantities",
@@ -537,7 +551,7 @@ MuMuPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["mm"],
-    subproducers=[UnrollMuLV1, UnrollMuLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[UnrollMuLV1, UnrollMuLV2, tau_decaymode_1_notau, tau_decaymode_2_notau, m_vis, pt_vis, deltaR_ditaupair],
 )
 ElElPairQuantities = ProducerGroup(
     name="ElElPairQuantities",
@@ -545,7 +559,7 @@ ElElPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["ee"],
-    subproducers=[UnrollElLV1, UnrollElLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[UnrollElLV1, UnrollElLV2, tau_decaymode_1_notau, tau_decaymode_2_notau, m_vis, pt_vis, deltaR_ditaupair],
 )
 ETDiTauPairQuantities = ProducerGroup(
     name="ETDiTauPairQuantities",
@@ -553,7 +567,7 @@ ETDiTauPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["et"],
-    subproducers=[UnrollElLV1, UnrollTauLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[UnrollElLV1, UnrollTauLV2, tau_decaymode_1_notau, m_vis, pt_vis, deltaR_ditaupair],
 )
 TTDiTauPairQuantities = ProducerGroup(
     name="TTDiTauPairQuantities",
@@ -569,7 +583,7 @@ EMDiTauPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["em"],
-    subproducers=[UnrollElLV1, UnrollMuLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[UnrollElLV1, UnrollMuLV2, tau_decaymode_1_notau, tau_decaymode_2_notau, m_vis, pt_vis, deltaR_ditaupair],
 )
 
 ## advanced event quantities (can be caluculated when ditau pair and met and all jets are determined)
@@ -735,8 +749,8 @@ p4_fastmtt_mt = Producer(
         q.metcov00,
         q.metcov01,
         q.metcov11,
-        q.decaymode_2,
-        q.decaymode_2,
+        q.tau_decaymode_1,
+        q.tau_decaymode_2,
     ],
     output=[q.p4_fastmtt],
     scopes=["mt"],
@@ -758,8 +772,8 @@ p4_fastmtt_et = Producer(
         q.metcov00,
         q.metcov01,
         q.metcov11,
-        q.decaymode_2,
-        q.decaymode_2,
+        q.tau_decaymode_1,
+        q.tau_decaymode_2,
     ],
     output=[q.p4_fastmtt],
     scopes=["et"],
@@ -781,8 +795,8 @@ p4_fastmtt_tt = Producer(
         q.metcov00,
         q.metcov01,
         q.metcov11,
-        q.decaymode_2,
-        q.decaymode_2,
+        q.tau_decaymode_1,
+        q.tau_decaymode_2,
     ],
     output=[q.p4_fastmtt],
     scopes=["tt"],
@@ -804,6 +818,8 @@ p4_fastmtt_em = Producer(
         q.metcov00,
         q.metcov01,
         q.metcov11,
+        q.tau_decaymode_1,
+        q.tau_decaymode_2,
     ],
     output=[q.p4_fastmtt],
     scopes=["em"],
