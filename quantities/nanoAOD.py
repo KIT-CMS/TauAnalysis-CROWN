@@ -134,3 +134,5 @@ TauEmbedding_InitialPairCandidates = NanoAODQuantity(
 )
 TauEmbedding_SelectionOldMass = NanoAODQuantity("TauEmbedding_SelectionOldMass")
 TauEmbedding_SelectionNewMass = NanoAODQuantity("TauEmbedding_SelectionNewMass")
+
+HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ")

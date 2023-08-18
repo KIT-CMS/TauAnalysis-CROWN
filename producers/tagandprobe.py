@@ -163,6 +163,38 @@ MuMuDoubleMuonTriggerFlags_2 = ExtendedVectorProducer(
     vec_config="doublemuon_trigger",
 )
 
+MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
+    name="MuMuSingleMuonTriggerBitFlags_1",
+    call='trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+    input=[
+        q.p4_1,
+        nanoAOD.TriggerObject_bit,
+        nanoAOD.TriggerObject_id,
+        nanoAOD.TriggerObject_pt,
+        nanoAOD.TriggerObject_eta,
+        nanoAOD.TriggerObject_phi,
+    ],
+    output="flagname_1",
+    scope=["mm"],
+    vec_config="singlemuon_trigger_bit",  # works
+)
+
+MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
+    name="MuMuSingleMuonTriggerBitFlags_2",
+    call='trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+    input=[
+        q.p4_2,
+        nanoAOD.TriggerObject_bit,
+        nanoAOD.TriggerObject_id,
+        nanoAOD.TriggerObject_pt,
+        nanoAOD.TriggerObject_eta,
+        nanoAOD.TriggerObject_phi,
+    ],
+    output="flagname_2",
+    scope=["mm"],
+    vec_config="singlemuon_trigger_bit",  # works
+)
+
 ## Producers to writeout the id variables for the tag and probe pairs
 MuonID_Loose_1 = Producer(
     name="MuonID_Loose_1",
