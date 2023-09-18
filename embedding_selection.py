@@ -210,7 +210,7 @@ def build_config(
                         },
                         {
                             "flagname": "trg_double_mu17_mu8_mass8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
+                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
                             "p1_ptcut": 17,
                             "p2_ptcut": 8,
                             "p1_etacut": 2.5,
