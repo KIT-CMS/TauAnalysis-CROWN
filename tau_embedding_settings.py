@@ -208,23 +208,58 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     configuration.add_config_parameters(
         ["mt", "mm"],
         {
-            "singlemuon_trigger_sf": [
+             "singlemuon_trigger_sf": EraModifier(
                 {
-                    "flagname": "trg_wgt_single_mu24",
-                    "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                    "muon_trg_extrapolation": 1.0,
-                },
-                {
-                    "flagname": "trg_wgt_single_mu27",
-                    "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                    "muon_trg_extrapolation": 1.0,
-                },
-                {
-                    "flagname": "trg_wgt_single_mu24ormu27",
-                    "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                    "muon_trg_extrapolation": 1.0,
-                },
-            ]
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                }
+            )
         },
     )
     # electron trigger SF settings from embedding measurements
@@ -255,6 +290,24 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             ]
         },
     )
+    # ditau trigger SF settings for embedding
+    configuration.add_config_parameters(
+        ["tt"],
+        {
+            "emb_ditau_trigger_wp": "Medium",
+            "emb_ditau_trigger_type": "ditau",
+            "emb_ditau_trigger_corrtype": "sf",
+            "emb_ditau_trigger_syst": "nom",
+            "emb_ditau_trigger_file": EraModifier(
+                {
+                    "2016preVFP": "",
+                    "2016postVFP": "",
+                    "2017": "",
+                    "2018": "data/embedding/tau_trigger2018_UL.json.gz",
+                }
+            ),
+        },
+    )
     configuration.add_modification_rule(
         ["mt"],
         AppendProducer(
@@ -273,6 +326,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 embedding.TauEmbeddingElectronIDSF_1,
                 embedding.TauEmbeddingElectronIsoSF_1,
                 embedding.ETGenerateSingleElectronTriggerSF,
+            ],
+            samples=["embedding"],
+        ),
+    )
+    configuration.add_modification_rule(
+        ["tt"],
+        AppendProducer(
+            producers=[
+                embedding.TTGenerateDoubleTauTriggerSF_1,
+                embedding.TTGenerateDoubleTauTriggerSF_2,
             ],
             samples=["embedding"],
         ),
@@ -866,23 +929,58 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             name="singleMuonTriggerSFUp",
             shift_config={
                 ("mt", "mm"): {
-                    "singlemuon_trigger_sf": [
+        "singlemuon_trigger_sf": EraModifier(
+                {
+                    "2018": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.02,
+                            "muon_trg_extrapolation": 1.02, 
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.02,
+                            "muon_trg_extrapolation": 1.02, 
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.02,
+                            "muon_trg_extrapolation": 1.02,  
                         },
                     ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,  
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02, 
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02, 
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,  
+                        },
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 1.02,  # for nominal case
+                        },
+                    ],
+                }
+            )
                 }
             },
             producers={
@@ -897,23 +995,59 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             name="singleMuonTriggerSFDown",
             shift_config={
                 ("mt", "mm"): {
-                    "singlemuon_trigger_sf": [
+
+              "singlemuon_trigger_sf": EraModifier(
+                {
+                    "2018": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 0.98,
+                            "muon_trg_extrapolation": 0.98, 
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 0.98,
+                            "muon_trg_extrapolation": 0.98,  
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 0.98,
+                            "muon_trg_extrapolation": 0.98,  
                         },
                     ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,  
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98, 
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,  
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,  
+                        },
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "embedding_trigger_sf": "Trg_pt_eta_bins",
+                            "muon_trg_extrapolation": 0.98,  
+                        },
+                    ],
+                }
+            )                  
                 }
             },
             producers={

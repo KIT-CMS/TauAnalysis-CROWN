@@ -37,14 +37,14 @@ def build_config(
                 {
                     "2016": "",
                     "2017": "",
-                    "2018": "data/fake_factors/nmssm/2018/fake_factors_et.json.gz",
+                    "2018": "data/fake_factors/sm/2018/fake_factors_et.json.gz",
                 }
             ),
             "ff_corr_file": EraModifier(
                 {
                     "2016": "",
                     "2017": "",
-                    "2018": "data/fake_factors/nmssm/2018/FF_corrections_et.json.gz",
+                    "2018": "data/fake_factors/sm/2018/FF_corrections_et.json.gz",
                 }
             ),
         },
@@ -57,34 +57,14 @@ def build_config(
                 {
                     "2016": "",
                     "2017": "",
-                    "2018": "data/fake_factors/nmssm/2018/fake_factors_mt.json.gz",
+                    "2018": "data/fake_factors/sm/2018/fake_factors_mt.json.gz",
                 }
             ),
             "ff_corr_file": EraModifier(
                 {
                     "2016": "",
                     "2017": "",
-                    "2018": "data/fake_factors/2018/nmssm/FF_corrections_mt.json.gz",
-                }
-            ),
-        },
-    )
-    configuration.add_config_parameters(
-        ["tt"],
-        {
-            "ff_variation": "nominal",
-            "ff_file": EraModifier(
-                {
-                    "2016": "",
-                    "2017": "",
-                    "2018": "data/fake_factors/nmssm/2018/fake_factors_tt.json.gz",
-                }
-            ),
-            "ff_corr_file": EraModifier(
-                {
-                    "2016": "",
-                    "2017": "",
-                    "2018": "data/fake_factors/nmssm/2018/FF_corrections_tt.json.gz",
+                    "2018": "data/fake_factors/sm/2018/FF_corrections_mt.json.gz",
                 }
             ),
         },
@@ -93,8 +73,9 @@ def build_config(
     configuration.add_producers(
         ["mt", "et"],
         [
-            fakefactors.RawFakeFactors_nmssm_lt,
-            fakefactors.FakeFactors_nmssm_lt,
+            fakefactors.RawFakeFactors_sm_lt,
+            fakefactors.FakeFactors_sm_lt,
+	    # fakefactors.FakeFactors_sm_lt_nodR,
         ],
     )
 
@@ -102,27 +83,13 @@ def build_config(
         ["mt", "et"],
         [
             q.raw_fake_factor,
+            q.raw_qcd_fake_factor,
+            q.raw_wjets_fake_factor,
+            q.raw_ttbar_fake_factor,
             q.fake_factor,
-        ],
-    )
-
-    configuration.add_producers(
-        ["tt"],
-        [
-            fakefactors.RawFakeFactors_nmssm_tt_1,
-            fakefactors.RawFakeFactors_nmssm_tt_2,
-            fakefactors.FakeFactors_nmssm_tt_1,
-            fakefactors.FakeFactors_nmssm_tt_2,
-        ],
-    )
-
-    configuration.add_outputs(
-        ["tt"],
-        [
-            q.raw_fake_factor_1,
-            q.raw_fake_factor_2,
-            q.fake_factor_1,
-            q.fake_factor_2,
+            q.ttbar_fake_factor,
+            q.wjets_fake_factor,
+            q.qcd_fake_factor,
         ],
     )
 

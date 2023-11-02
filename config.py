@@ -238,8 +238,8 @@ def build_config(
             ),
             "btag_cut": EraModifier(  # medium
                 {
-                    "2016": 0.2598,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
-                    "2016": 0.2489,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
+                    "2016preVFP": 0.2598,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
+                    "2016postVFP": 0.2489,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
                     "2017": 0.3040,
                     "2018": 0.2783,
                 }
@@ -623,51 +623,126 @@ def build_config(
     configuration.add_config_parameters(
         ["mt", "mm"],
         {
-            "singlemuon_trigger_sf_mc": [
+            "singlemuon_trigger_sf_mc": EraModifier(
                 {
-                    "flagname": "trg_wgt_single_mu24",
-                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
-                    "flagname": "trg_wgt_single_mu27",
-                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
-                    "flagname": "trg_wgt_single_mu24ormu27",
-                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-                },
-            ]
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                }
+            )
         },
     )
     # electron trigger SF settings from embedding measurements
     configuration.add_config_parameters(
         ["et", "ee"],
         {
-            "singlelectron_trigger_sf_mc": [
+            "singlelectron_trigger_sf_mc": EraModifier(
                 {
-                    "flagname": "trg_wgt_single_ele32",
-                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
-                    "flagname": "trg_wgt_single_ele35",
-                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
-                    "flagname": "trg_wgt_single_ele32orele35",
-                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                },
-                {
-                    "flagname": "trg_wgt_single_ele27orele32orele35",
-                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                },
-            ]
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_ele25",
+                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        }
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_ele25",
+                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        }
+                    ],
+                }
+            )
         },
     )
 
@@ -1269,6 +1344,11 @@ def build_config(
             scopes,
             nanoAOD.genWeight,
         )
+        if era != "2018":
+            configuration.add_outputs(
+                scopes,
+                q.prefireweight,
+            )
     configuration.add_outputs(
         "mt",
         [
@@ -1748,28 +1828,68 @@ def build_config(
             name="singleElectronTriggerSFUp",
             shift_config={
                 ("et"): {
-                    "singlelectron_trigger_sf_mc": [
+                    "singlelectron_trigger_sf_mc": EraModifier(
                         {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.02,
-                        },
-                    ]
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                }
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                }
+                            ],
+                        }
+                    )
                 }
             },
             producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
@@ -1785,28 +1905,68 @@ def build_config(
             name="singleElectronTriggerSFDown",
             shift_config={
                 ("et"): {
-                    "singlelectron_trigger_sf_mc": [
+                    "singlelectron_trigger_sf_mc": EraModifier(
                         {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 0.98,
-                        },
-                    ]
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                }
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                }
+                            ],
+                        }
+                    )
                 }
             },
             producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
@@ -1823,23 +1983,58 @@ def build_config(
             name="singleMuonTriggerSFUp",
             shift_config={
                 ("mt"): {
-                    "singlemuon_trigger_sf_mc": [
+                    "singlemuon_trigger_sf_mc": EraModifier(
                         {
-                            "flagname": "trg_wgt_single_mu24",
-                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu24ormu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.02,
-                        },
-                    ],
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                        }
+                    )
                 }
             },
             producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
@@ -1855,23 +2050,58 @@ def build_config(
             name="singleMuonTriggerSFDown",
             shift_config={
                 ("mt"): {
-                    "singlemuon_trigger_sf_mc": [
+                    "singlemuon_trigger_sf_mc": EraModifier(
                         {
-                            "flagname": "trg_wgt_single_mu24",
-                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu24ormu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 0.98,
-                        },
-                    ],
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                        }
+                    )
                 }
             },
             producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
