@@ -18,6 +18,7 @@ from .quantities import tagandprobe_output as tp_q
 from code_generation.configuration import Configuration
 from code_generation.rules import AppendProducer
 from code_generation.modifiers import EraModifier, SampleModifier
+from code_generation.quantity import NanoAODQuantity
 
 
 def build_config(
@@ -468,7 +469,89 @@ def build_config(
             "singlemuon_trigger_bit": EraModifier(
                 {
                     "2018": [],
-                    "2017": [],
+                    "2017": [
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_12_Mu17_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_12_Mu17_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_12_Mu8_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_12_Mu8_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_12_Mu17_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_12_Mu17_with_trg_ptcut_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 17,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_12_Mu8_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_12_Mu8_with_trg_ptcut_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 8,
+                        },
+                        # ---
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 17,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 8,
+                        },
+                    ],
                     "2016preVFP": [
                         {
                             "flagname_1": "trg_Mu17TrkMu8_DZ_bit_12_Mu17_1",
@@ -506,6 +589,47 @@ def build_config(
                             "ptcut": 8,
                             "etacut": 2.5,
                             "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 8,
+                        },
+                        # ---
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 17,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
                             "trigger_particle_id": 13,
                             "max_deltaR_triggermatch": 0.1,
                             "triggerobject_ptcut": 8,
@@ -548,6 +672,47 @@ def build_config(
                             "ptcut": 8,
                             "etacut": 2.5,
                             "filterbit": 12,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 8,
+                        },
+                        # ---
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": -1,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu17_with_trg_ptcut_2",
+                            "ptcut": 17,
+                            "etacut": 2.5,
+                            "filterbit": 13,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.1,
+                            "triggerobject_ptcut": 17,
+                        },
+                        {
+                            "flagname_1": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_1",
+                            "flagname_2": "trg_Mu17TrkMu8_DZ_bit_13_Mu8_with_trg_ptcut_2",
+                            "ptcut": 8,
+                            "etacut": 2.5,
+                            "filterbit": 13,
                             "trigger_particle_id": 13,
                             "max_deltaR_triggermatch": 0.1,
                             "triggerobject_ptcut": 8,
@@ -857,6 +1022,14 @@ def build_config(
             nanoAOD.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ,
         ],
     )
+
+    if era == "2017":
+        configuration.add_outputs(
+            ["mm"],
+            [
+                NanoAODQuantity("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"),
+            ],
+        )
 
     configuration.add_outputs(
         ["ee"],
