@@ -56,6 +56,20 @@ MuMuPairSelection = Producer(
     output=[q.dileptonpair],
     scopes=["mm"],
 )
+MuMuPairSelectionOSPreferred = Producer(
+    name="MuMuPairSelectionOSPreferred",
+    call="ditau_pairselection::mumu::PairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})",
+    input=[
+        nanoAOD.Muon_pt,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi,
+        nanoAOD.Muon_mass,
+        nanoAOD.Muon_charge,
+        q.good_muons_mask,
+    ],
+    output=[q.dileptonpair],
+    scopes=["mm"],
+)
 ZMuMuPairSelection = Producer(
     name="ZMuMuPairSelection",
     call="ditau_pairselection::mumu::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
@@ -64,6 +78,20 @@ ZMuMuPairSelection = Producer(
         nanoAOD.Muon_eta,
         nanoAOD.Muon_phi,
         nanoAOD.Muon_mass,
+        q.good_muons_mask,
+    ],
+    output=[q.dileptonpair],
+    scopes=["mm"],
+)
+ZMuMuPairSelectionOSPreferred = Producer(
+    name="ZMuMuPairSelectionOSPrefered",
+    call="ditau_pairselection::mumu::ZBosonPairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})",
+    input=[
+        nanoAOD.Muon_pt,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi,
+        nanoAOD.Muon_mass,
+        nanoAOD.Muon_charge,
         q.good_muons_mask,
     ],
     output=[q.dileptonpair],
