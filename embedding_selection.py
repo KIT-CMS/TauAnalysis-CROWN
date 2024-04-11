@@ -100,8 +100,8 @@ def build_config(
                 {
                     "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
                     "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/muon_2017UL.json.gz",
-                    "2018": "data/embedding/muon_2018UL.json.gz",
+                    "2017": "data/embedding/embeddingselection__2017UL.json.gz",
+                    "2018": "data/embedding/embeddingselection__2018UL.json.gz",
                 }
             ),
             "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
