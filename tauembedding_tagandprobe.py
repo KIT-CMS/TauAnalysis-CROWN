@@ -466,6 +466,9 @@ def build_config(
                 }
             ),
             "singlemuon_trigger_bit": EraModifier(
+                # Extending Muon triggertable in PhysicsTools/NanoAOD/python/triggerObjects_cff.py by:
+                #   "4096*filter('hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4') + " \  # -> "bit 12"
+                #   "8192*filter('hltDiMuonGlb17Glb8RelTrkIsoFiltered0p4DzFiltered0p2')"  # -> "bit 13"
                 {
                     "2018": [],
                     "2017": [],
