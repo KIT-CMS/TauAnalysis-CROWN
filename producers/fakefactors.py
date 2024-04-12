@@ -86,7 +86,12 @@ RawFakeFactors_sm_lt = Producer(
         q.mt_1,
         q.deltaR_ditaupair,
     ],
-    output=[q.raw_fake_factor, q.raw_qcd_fake_factor, q.raw_wjets_fake_factor, q.raw_ttbar_fake_factor],
+    output=[
+        q.raw_fake_factor,
+        q.raw_qcd_fake_factor,
+        q.raw_wjets_fake_factor,
+        q.raw_ttbar_fake_factor,
+    ],
     scopes=["mt", "et"],
 )
 FakeFactors_sm_lt = Producer(

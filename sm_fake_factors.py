@@ -16,7 +16,6 @@ def build_config(
     available_scopes: List[str],
     quantities_map: Union[str, None] = None,
 ):
-
     configuration = FriendTreeConfiguration(
         era,
         sample,
@@ -75,7 +74,7 @@ def build_config(
         [
             fakefactors.RawFakeFactors_sm_lt,
             fakefactors.FakeFactors_sm_lt,
-	    # fakefactors.FakeFactors_sm_lt_nodR,
+            # fakefactors.FakeFactors_sm_lt_nodR,
         ],
     )
 
