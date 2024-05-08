@@ -1651,7 +1651,6 @@ def build_config(
     configuration.add_shift(
         SystematicShift(
             name="eleEsResoDown",
-            scopes=["mt"],
             shift_config={
                 ("global"): {"ele_es_variation": "resolutionDown"},
             },
@@ -1680,7 +1679,6 @@ def build_config(
     configuration.add_shift(
         SystematicShift(
             name="eleEsScaleDown",
-            scopes=["mt"],
             shift_config={
                 ("global"): {"ele_es_variation": "scaleDown"},
             },
