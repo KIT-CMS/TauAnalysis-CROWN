@@ -182,3 +182,7 @@ TauEmbedding_SelectionNewMass = NanoAODQuantity("TauEmbedding_SelectionNewMass")
 HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity(
     "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"
 )
+
+# HT calculated from soft-activity jets
+SoftActivityJetHT = NanoAODQuantity("SoftActivityJetHT")
+SoftActivityJetHT10 = NanoAODQuantity("SoftActivityJetHT10")

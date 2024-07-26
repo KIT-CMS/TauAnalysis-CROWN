@@ -7,6 +7,7 @@ from .producers import event as event
 from .producers import genparticles as genparticles
 from .producers import jets as jets
 from .producers import fatjets as fatjets
+from .producers import hadrecoil as hadrecoil
 from .producers import met as met
 from .producers import muons as muons
 from .producers import pairquantities as pairquantities
@@ -1018,6 +1019,9 @@ def build_config(
             pairquantities.DiTauPairMETQuantities,
             genparticles.GenMatching,
             genparticles.GenMatchingBoosted,
+            hadrecoil.HadRecoilQuantities,
+            hadrecoil.HadRecoilQuantities_boosted,
+
         ],
     )
     configuration.add_producers(
@@ -1702,6 +1706,14 @@ def build_config(
             q.mt_tot_pf,
             q.pt_dijet,
             q.jet_hemisphere,
+            q.ht,
+            q.mht_pt,
+            q.mht_phi,
+            q.soft_activity_jet_ht,
+            q.soft_activity_jet_ht_10,
+            q.ht_boosted,
+            q.mht_pt_boosted,
+            q.mht_phi_boosted,
         ],
     )
     # add genWeight for everything but data
