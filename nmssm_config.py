@@ -183,7 +183,7 @@ def build_config(
                 {
                     "2016preVFP": '"2016preVFP"',
                     "2016postVFP": '"2016postVFP"',
-                    "2017": '2017"',
+                    "2017": '"2017"',
                     "2018": '"2018"',
                 }
             ),
@@ -211,9 +211,9 @@ def build_config(
             "fatjet_jer_shift": '"nom"',  # or '"up"', '"down"'
             "fatjet_jec_file": EraModifier(
                 {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/fatJet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/fatJet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/fatJet_jerc.json.gz"',
+                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',  # using AK4 file for fatjets because it either was is just copied and the fatjet file has no merged uncertainty scheme
+                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',  # using AK4 file for fatjets because it either was is just copied and the fatjet file has no merged uncertainty scheme
+                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',  # using AK4 file for fatjets because it either was is just copied and the fatjet file has no merged uncertainty scheme
                     "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',  # using AK4 file for fatjets because it either was is just copied and the fatjet file has no merged uncertainty scheme
                 }
             ),
@@ -329,7 +329,7 @@ def build_config(
                 {
                     "2016preVFP": "",
                     "2016postVFP": "",
-                    "2017": "",
+                    "2017": "payloads/particleNet/pNet_Xbb_SF_2018.json.gz", # TODO change
                     "2018": "payloads/particleNet/pNet_Xbb_SF_2018.json.gz",
                 }
             ),
@@ -819,7 +819,7 @@ def build_config(
                 {
                     "2016preVFP": "",
                     "2016postVFP": "",
-                    "2017": "",
+                    "2017": "data/embedding/muon_2017UL.json.gz",
                     "2018": "data/embedding/muon_2018UL.json.gz",
                 }
             ),
@@ -837,7 +837,7 @@ def build_config(
                 {
                     "2016preVFP": "",
                     "2016postVFP": "",
-                    "2017": "",
+                    "2017": "data/embedding/electron_2017UL.json.gz",
                     "2018": "data/embedding/electron_2018UL.json.gz",
                 }
             ),
@@ -873,18 +873,34 @@ def build_config(
     configuration.add_config_parameters(
         ["mt"],
         {
-            "boosted_singlemuon_trigger_sf_mc": [
+            "boosted_singlemuon_trigger_sf_mc": EraModifier(
                 {
-                    "flagname": "trg_wgt_single_mu24_boosted",
-                    "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                    "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                },
-                {
-                    "flagname": "trg_wgt_single_mu50_boosted",
-                    "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
-                    "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                },
-            ]
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu27_boosted",
+                            "muon_trigger_sf_name": "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight",
+                            "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu50_boosted",
+                            "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
+                            "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+                        },
+                    ],
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_mu24_boosted",
+                            "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                            "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu50_boosted",
+                            "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
+                            "muon_trg_sf_variation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+                        },
+                    ],
+                }
+            )
         },
     )
     # electron trigger SF settings from embedding measurements
@@ -2771,8 +2787,8 @@ def build_config(
                 ("mt"): {
                     "boosted_singlemuon_trigger_sf_mc": [
                         {
-                            "flagname": "trg_wgt_single_mu24_boosted",
-                            "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                            "flagname": "trg_wgt_single_mu27_boosted",
+                            "muon_trigger_sf_name": "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight",
                             "muon_trg_sf_variation": "systup",  # "sf" is nominal, "systup"/"systdown" are up/down variations
                         },
                         {
@@ -2794,8 +2810,8 @@ def build_config(
                 ("mt"): {
                     "boosted_singlemuon_trigger_sf_mc": [
                         {
-                            "flagname": "trg_wgt_single_mu24_boosted",
-                            "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                            "flagname": "trg_wgt_single_mu27_boosted",
+                            "muon_trigger_sf_name": "NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight",
                             "muon_trg_sf_variation": "systdown",  # "sf" is nominal, "systup"/"systdown" are up/down variations
                         },
                         {

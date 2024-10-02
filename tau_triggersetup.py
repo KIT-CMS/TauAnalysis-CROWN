@@ -39,15 +39,15 @@ def add_diTauTriggerSetup(configuration: Configuration):
                         # },
                     ],
                     "2017": [
-                        {
-                            "flagname": "trg_single_mu24",
-                            "hlt_path": "HLT_IsoMu24",
-                            "ptcut": 25,
-                            "etacut": 2.5,
-                            "filterbit": 3,
-                            "trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                        #{
+                        #    "flagname": "trg_single_mu24",
+                        #    "hlt_path": "HLT_IsoMu24",
+                        #    "ptcut": 25,
+                        #    "etacut": 2.5,
+                        #    "filterbit": 3,
+                        #    "trigger_particle_id": 13,
+                        #    "max_deltaR_triggermatch": 0.4,
+                        #},
                         {
                             "flagname": "trg_single_mu27",
                             "hlt_path": "HLT_IsoMu27",
@@ -166,15 +166,62 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "trigger_particle_id": 13,
                             "max_deltaR_triggermatch": 0.4,
                         },
-                        # {
-                        #     "flagname": "trg_single_mu27_boosted",
-                        #     "hlt_path": "HLT_IsoMu27",
-                        #     "ptcut": 28,
-                        #     "etacut": 2.1,
-                        #     "filterbit": -1,
-                        #     "trigger_particle_id": 13,
-                        #     "max_deltaR_triggermatch": 0.4,
-                        # },
+                        {
+                            "flagname": "trg_single_mu27_boosted",
+                            "hlt_path": "HLT_IsoMu27",
+                            "ptcut": 28,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_single_mu50_boosted",
+                            "hlt_path": "HLT_Mu50",
+                            "ptcut": 50,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_single_oldMu100_boosted",
+                            "hlt_path": "HLT_OldMu100",
+                            "ptcut": 50,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_single_tkmu100_boosted",
+                            "hlt_path": "HLT_TkMu100",
+                            "ptcut": 50,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                    ],
+                    "2017": [
+                        #{
+                        #    "flagname": "trg_single_mu27_boosted",
+                        #    "hlt_path": "HLT_IsoMu27",
+                        #    "ptcut": 29,
+                        #    "etacut": 2.1,
+                        #    "filterbit": -1,
+                        #    "trigger_particle_id": 13,
+                        #    "max_deltaR_triggermatch": 0.4,
+                        #},
+                        {
+                            "flagname": "trg_single_mu27_boosted",
+                            "hlt_path": "HLT_IsoMu27",
+                            "ptcut": 29,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
                         {
                             "flagname": "trg_single_mu50_boosted",
                             "hlt_path": "HLT_Mu50",
@@ -427,7 +474,56 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "max_deltaR_triggermatch": 0.4,
                         },
                     ],
-                }
+                },
+                {
+                    "2017": [
+                        # {
+                        #     "flagname": "trg_single_ele27_boosted",
+                        #     "hlt_path": "HLT_Ele27_WPTight_Gsf",
+                        #     "ptcut": 28,
+                        #     "etacut": 2.1,
+                        #     "filterbit": -1,
+                        #     "trigger_particle_id": 11,
+                        #     "max_deltaR_triggermatch": 0.4,
+                        # },
+                        {
+                            "flagname": "trg_single_ele32_boosted",
+                            "hlt_path": "HLT_Ele32_WPTight_Gsf",
+                            "ptcut": 33,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 11,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        # {
+                        #     "flagname": "trg_single_ele35_boosted",
+                        #     "hlt_path": "HLT_Ele35_WPTight_Gsf",
+                        #     "ptcut": 36,
+                        #     "etacut": 2.1,
+                        #     "filterbit": -1,
+                        #     "trigger_particle_id": 11,
+                        #     "max_deltaR_triggermatch": 0.4,
+                        # },
+                        {
+                            "flagname": "trg_single_ele115_boosted",
+                            "hlt_path": "HLT_Ele115_CaloIdVT_GsfTrkIdT",
+                            "ptcut": 115,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 11,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_single_photon200_boosted",
+                            "hlt_path": "HLT_Photon200",
+                            "ptcut": 115,
+                            "etacut": 2.1,
+                            "filterbit": -1,
+                            "trigger_particle_id": 11,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                    ],
+                },
             ),
         },
     )
@@ -864,7 +960,143 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",
                         },
                     ]
-                }
+                },
+                {
+                    "2017": [
+                        # {
+                        #     "flagname": "trg_ak8pfht750_trimmass50",
+                        #     "hlt_path": "HLT_AK8PFHT750_TrimMass50",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfht800_trimmass50",
+                        #     "hlt_path": "HLT_AK8PFHT800_TrimMass50",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet60",
+                        #     "hlt_path": "HLT_AK8PFJet60",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet80",
+                        #     "hlt_path": "HLT_AK8PFJet80",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet140",
+                        #     "hlt_path": "HLT_AK8PFJet140",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet200",
+                        #     "hlt_path": "HLT_AK8PFJet200",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet260",
+                        #     "hlt_path": "HLT_AK8PFJet260",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet320",
+                        #     "hlt_path": "HLT_AK8PFJet320",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet400",
+                        #     "hlt_path": "HLT_AK8PFJet400",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet40",
+                        #     "hlt_path": "HLT_AK8PFJet40",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet450",
+                        #     "hlt_path": "HLT_AK8PFJet450",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet500",
+                        #     "hlt_path": "HLT_AK8PFJet500",
+                        # },
+                        # {
+                        #     "flagname": "trg_ak8pfjet360_trimmass30",
+                        #     "hlt_path": "HLT_AK8PFJet360_TrimMass30",
+                        # },
+                        {
+                            "flagname": "trg_ak8pfjet400_trimmass30",
+                            "hlt_path": "HLT_AK8PFJet400_TrimMass30",
+                        },
+                        # {
+                        #     "flagname": "trg_pfht250",
+                        #     "hlt_path": "HLT_PFHT250",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfht350",
+                        #     "hlt_path": "HLT_PFHT350",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet40",
+                        #     "hlt_path": "HLT_PFJet40",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet60",
+                        #     "hlt_path": "HLT_PFJet60",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet80",
+                        #     "hlt_path": "HLT_PFJet80",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet140",
+                        #     "hlt_path": "HLT_PFJet140",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet200",
+                        #     "hlt_path": "HLT_PFJet200",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet260",
+                        #     "hlt_path": "HLT_PFJet260",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet320",
+                        #     "hlt_path": "HLT_PFJet320",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet400",
+                        #     "hlt_path": "HLT_PFJet400",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet450",
+                        #     "hlt_path": "HLT_PFJet450",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet500",
+                        #     "hlt_path": "HLT_PFJet500",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfjet550",
+                        #     "hlt_path": "HLT_PFJet550",
+                        # },
+                        {
+                            "flagname": "trg_pfht500_pfmet100_pfmht100_idtight",
+                            "hlt_path": "HLT_PFHT500_PFMET100_PFMHT100_IDTight",
+                        },
+                        # {
+                        #     "flagname": "trg_pfht500_pfmet110_pfmht110_idtight",
+                        #     "hlt_path": "HLT_PFHT500_PFMET110_PFMHT110_IDTight",
+                        # },
+                        # {
+                        #     "flagname": "trg_pfmet110_pfmht110_idtight",
+                        #     "hlt_path": "HLT_PFMET110_PFMHT110_IDTight",
+                        # },
+                        {
+                            "flagname": "trg_pfmet120_pfmht120_idtight",
+                            "hlt_path": "HLT_PFMET120_PFMHT120_IDTight",
+                        },
+                        # {
+                        #     "flagname": "trg_pfmetnomu110_pfmhtnomu110_idtight",
+                        #     "hlt_path": "HLT_PFMETNoMu110_PFMHTNoMu110_IDTight",
+                        # },
+                        {
+                            "flagname": "trg_pfmetnomu120_pfmhtnomu120_idtight",
+                            "hlt_path": "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight",
+                        },
+                    ]
+                },
             ),
         },
     )
