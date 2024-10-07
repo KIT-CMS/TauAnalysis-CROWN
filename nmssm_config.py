@@ -1329,7 +1329,7 @@ def build_config(
         "global",
         RemoveProducer(
             producers=[event.LHE_Scale_weight],
-            samples=["data", "embedding", "embedding_mc", "diboson"],
+            samples=["data", "embedding", "embedding_mc", "diboson", "qcd"],
         ),
     )
     # for whatever reason, the nmssm samples have one less entry of the weights and therefore need special treatment
