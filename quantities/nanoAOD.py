@@ -116,6 +116,9 @@ FatJet_PNet_QCD = NanoAODQuantity("FatJet_particleNetMD_QCD")
 FatJet_tau1 = NanoAODQuantity("FatJet_tau1")
 FatJet_tau2 = NanoAODQuantity("FatJet_tau2")
 FatJet_tau3 = NanoAODQuantity("FatJet_tau3")
+FatJet_hadronFlavor = NanoAODQuantity("FatJet_hadronFlavour")
+FatJet_nBHadrons = NanoAODQuantity("FatJet_nBHadrons")
+FatJet_nCHadrons = NanoAODQuantity("FatJet_nCHadrons")
 
 
 Pileup_nTrueInt = NanoAODQuantity("Pileup_nTrueInt")
@@ -147,6 +150,7 @@ HTXS_stage1_1_fine_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_1_fine_cat_pTje
 HTXS_stage1_2_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_2_cat_pTjet30GeV")
 HTXS_stage1_2_fine_cat_pTjet30GeV = NanoAODQuantity("HTXS_stage1_2_fine_cat_pTjet30GeV")
 LHEScaleWeight = NanoAODQuantity("LHEScaleWeight")
+LHESdfWeight = NanoAODQuantity("LHEPdfWeight")
 
 ## MET quantities
 ## TODO Swich to Puppi versions for METCOV and Signifiance as soon as they are in the nanoAOD

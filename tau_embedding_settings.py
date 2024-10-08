@@ -800,7 +800,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             ],
         },
     )
-    # and add the variations for it
+    # and add the variations for lt
     for variation in ["Up", "Down"]:
         configuration.add_shift(
             SystematicShift(
@@ -867,130 +867,132 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     #########################
     # Electron id/iso sf shifts
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="electronIdSFUp",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"embedding_electron_id_extrapolation": 1.02},
-            },
-            producers={
-                ("et"): [
-                    embedding.TauEmbeddingElectronIDSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="electronIdSFDown",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"embedding_electron_id_extrapolation": 0.98},
-            },
-            producers={
-                ("et"): [
-                    embedding.TauEmbeddingElectronIDSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="electronIsoSFUp",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"embedding_electron_iso_extrapolation": 1.02},
-            },
-            producers={
-                ("et"): [
-                    embedding.TauEmbeddingElectronIsoSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="electronIsoSFDown",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"embedding_electron_iso_extrapolation": 0.98},
-            },
-            producers={
-                ("et"): [
-                    embedding.TauEmbeddingElectronIsoSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
+    
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="electronIdSFUp",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"embedding_electron_id_extrapolation": 1.02},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 embedding.TauEmbeddingElectronIDSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="electronIdSFDown",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"embedding_electron_id_extrapolation": 0.98},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 embedding.TauEmbeddingElectronIDSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="electronIsoSFUp",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"embedding_electron_iso_extrapolation": 1.02},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 embedding.TauEmbeddingElectronIsoSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="electronIsoSFDown",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"embedding_electron_iso_extrapolation": 0.98},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 embedding.TauEmbeddingElectronIsoSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
 
     #########################
     # Muon id/iso sf shifts
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFUp",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"embedding_muon_id_extrapolation": 1.02},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFDown",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"embedding_muon_id_extrapolation": 0.98},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFUp",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFDown",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
+    
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="muonIdSFUp",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"embedding_muon_id_extrapolation": 1.02},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 embedding.TauEmbeddingMuonIDSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="muonIdSFDown",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"embedding_muon_id_extrapolation": 0.98},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 embedding.TauEmbeddingMuonIDSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="muonIsoSFUp",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 embedding.TauEmbeddingMuonIsoSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="muonIsoSFDown",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 embedding.TauEmbeddingMuonIsoSF_1,
+    #             ],
+    #         },
+    #     ),
+    #     samples=["embedding", "embedding_mc"],
+    # )
 
     #########################
     # Trigger shifts

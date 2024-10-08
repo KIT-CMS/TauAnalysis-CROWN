@@ -455,6 +455,13 @@ TTGenerateDoubleTauTriggerSF_MC = ProducerGroup(
         TTGenerateDoubleTauTriggerSF_MC_2,
     ],
 )
+BoostedTTGenerateFatjetTriggerSF_MC = Producer(
+    name="BoostedTTGenerateFatjetTriggerSF_MC",
+    call='scalefactor::fatjet::trigger({df}, {input}, {output}, "{fatjet_trigger_sf_file}", "{fatjet_trigger_sf_name}", "{fatjet_trigger_sf_syst}")',
+    input=[q.fj_leading_pt, q.fj_leading_msoftdrop],
+    output=[q.trg_wgt_fatjet],
+    scopes=["tt"],
+)
 
 ####################################
 # Electron and Muon SFs coming from our measurements
@@ -597,6 +604,8 @@ Xbb_tagging_SF = Producer(
     call='scalefactor::fatjet::pNetXbbSF({df}, {input}, "{pNetXbb_sf_variation}", {output}, "{pNetXbb_sf_file}")',
     input=[
         q.fj_Xbb_pt,
+        q.fj_Xbb_nBhad,
+        q.fj_Xbb_nChad,
     ],
     output=[q.pNet_Xbb_weight],
     scopes=["tt", "mt", "et", "mm", "em", "ee"],
@@ -606,6 +615,8 @@ Xbb_tagging_SF_boosted = Producer(
     call='scalefactor::fatjet::pNetXbbSF({df}, {input}, "{pNetXbb_sf_variation}", {output}, "{pNetXbb_sf_file}")',
     input=[
         q.fj_Xbb_pt_boosted,
+        q.fj_Xbb_nBhad_boosted,
+        q.fj_Xbb_nChad_boosted,
     ],
     output=[q.pNet_Xbb_weight_boosted],
     scopes=["tt", "mt", "et", "mm", "em", "ee"],

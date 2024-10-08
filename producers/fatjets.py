@@ -172,6 +172,13 @@ FatJetCollection_boosted = ProducerGroup(
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
     subproducers=[GoodFatJetsWithVeto_boosted],
 )
+FatJetCollectionWithoutVeto = Producer(
+    name="FatJetCollectionWithoutVeto",
+    call="jet::OrderJetsByPt({df}, {output}, {input})",
+    input=[q.FatJet_pt_corrected, q.good_fatjets_mask],
+    output=[q.good_fatjet_collection_without_veto],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
 
 ##########################
 # Basic FatJet Quantities
@@ -545,6 +552,27 @@ fj_Xbb_nsubjettiness_3over2 = Producer(
     output=[q.fj_Xbb_nsubjettiness_3over2],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
 )
+fj_Xbb_hadflavor = Producer(
+    name="fj_Xbb_hadflavor",
+    call="quantities::fatjet::hadflavor({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_hadronFlavor, q.Xbb_fatjet],
+    output=[q.fj_Xbb_hadflavor],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_Xbb_nBhad = Producer(
+    name="fj_Xbb_nBhad",
+    call="quantities::fatjet::nHadrons({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_nBHadrons, q.Xbb_fatjet],
+    output=[q.fj_Xbb_nBhad],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_Xbb_nChad = Producer(
+    name="fj_Xbb_nChad",
+    call="quantities::fatjet::nHadrons({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_nCHadrons, q.Xbb_fatjet],
+    output=[q.fj_Xbb_nChad],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
 BasicXbbFatJetQuantities = ProducerGroup(
     name="BasicXbbFatJetQuantities",
     call=None,
@@ -561,6 +589,9 @@ BasicXbbFatJetQuantities = ProducerGroup(
         fj_Xbb_particleNet_XbbvsQCD,
         fj_Xbb_nsubjettiness_2over1,
         fj_Xbb_nsubjettiness_3over2,
+        fj_Xbb_hadflavor,
+        fj_Xbb_nBhad,
+        fj_Xbb_nChad,
     ],
 )
 
@@ -644,6 +675,27 @@ fj_Xbb_nsubjettiness_3over2_boosted = Producer(
     output=[q.fj_Xbb_nsubjettiness_3over2_boosted],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
 )
+fj_Xbb_hadflavor_boosted = Producer(
+    name="fj_Xbb_hadflavor_boosted",
+    call="quantities::fatjet::hadflavor({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_hadronFlavor, q.Xbb_fatjet_boosted],
+    output=[q.fj_Xbb_hadflavor_boosted],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_Xbb_nBhad_boosted = Producer(
+    name="fj_Xbb_nBhad_boosted",
+    call="quantities::fatjet::nHadrons({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_nBHadrons, q.Xbb_fatjet_boosted],
+    output=[q.fj_Xbb_nBhad_boosted],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_Xbb_nChad_boosted = Producer(
+    name="fj_Xbb_nChad_boosted",
+    call="quantities::fatjet::nHadrons({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_nCHadrons, q.Xbb_fatjet_boosted],
+    output=[q.fj_Xbb_nChad_boosted],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
 BasicXbbFatJetQuantities_boosted = ProducerGroup(
     name="BasicXbbFatJetQuantities_boosted",
     call=None,
@@ -660,5 +712,47 @@ BasicXbbFatJetQuantities_boosted = ProducerGroup(
         fj_Xbb_particleNet_XbbvsQCD_boosted,
         fj_Xbb_nsubjettiness_2over1_boosted,
         fj_Xbb_nsubjettiness_3over2_boosted,
+        fj_Xbb_hadflavor_boosted,
+        fj_Xbb_nBhad_boosted,
+        fj_Xbb_nChad_boosted,
+    ],
+)
+LVLeadingFatJet = Producer(
+    name="LVLeadingFatJet",
+    call="lorentzvectors::build({df}, {input_vec}, 0, {output})",
+    input=[
+        q.good_fatjet_collection_without_veto,
+        q.FatJet_pt_corrected,
+        nanoAOD.FatJet_eta,
+        nanoAOD.FatJet_phi,
+        q.FatJet_mass_corrected,
+    ],
+    output=[q.leading_fatjet_p4],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_leading_pt = Producer(
+    name="fj_leading_pt",
+    call="quantities::pt({df}, {output}, {input})",
+    input=[q.leading_fatjet_p4],
+    output=[q.fj_leading_pt],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+fj_leading_msoftdrop = Producer(
+    name="fj_leading_msoftdrop",
+    call="quantities::fatjet::msoftdrop({df}, {output}, {input}, 0)",
+    input=[nanoAOD.FatJet_msoftdrop, q.good_fatjet_collection_without_veto],
+    output=[q.fj_leading_msoftdrop],
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+)
+LeadingFatJetQuantities = ProducerGroup(
+    name="LeadingFatJetQuantities",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["mt", "et", "tt", "em", "mm", "ee"],
+    subproducers=[
+        LVLeadingFatJet,
+        fj_leading_pt,
+        fj_leading_msoftdrop,
     ],
 )

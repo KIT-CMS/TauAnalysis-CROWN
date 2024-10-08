@@ -11,7 +11,7 @@ def add_tauVariations(configuration: Configuration, sample: str):
     if sample == "embedding" or sample == "embedding_mc" or sample == "data":
         return configuration
     #########################
-    # TauvsMuID scale factor shifts
+    # TauvsJetID scale factor shifts
     #########################
     # vsJet shifts et/mt, tau pt dependent
     configuration.add_shift(

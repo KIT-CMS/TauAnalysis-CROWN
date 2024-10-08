@@ -185,7 +185,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "max_deltaR_triggermatch": 0.4,
                         },
                         {
-                            "flagname": "trg_single_oldMu100_boosted",
+                            "flagname": "trg_single_oldmu100_boosted",
                             "hlt_path": "HLT_OldMu100",
                             "ptcut": 50,
                             "etacut": 2.1,
