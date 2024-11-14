@@ -116,8 +116,8 @@ def build_config(
             "qcd_subleading_ff_corr_leppt_variation": "nominal",
             "qcd_subleading_ff_corr_drsr_variation": "nominal",
             # --- extra -------------------------------
-            "qcd_ff_corr_taumass_variation": "nominal",
-            "qcd_subleading_ff_corr_taumass_variation": "nominal",
+            "qcd_ff_corr_m_vis_variation": "nominal",
+            "qcd_subleading_ff_corr_m_vis_variation": "nominal",
             # -----------------------------------------
             "ff_file": EraModifier(
                 {
@@ -215,14 +215,19 @@ def build_config(
         ("qcd_ff_corr_drsr_variation", "QCDDRtoSRCorr"),
         ("wjets_ff_corr_drsr_variation", "WjetsDRtoSRCorr"),
         # --------------------------------------
-        ("qcd_ff_corr_leppt_variation", "QCDClosureLeadingLepPtCorr"),
-        ("wjets_ff_corr_leppt_variation", "WjetsClosureLeadingLepPtCorr"),
-        ("ttbar_ff_corr_leppt_variation", "ttbarClosureLeadingLepPtCorr"),
+        ("qcd_ff_corr_leppt_variation", "QCDnonClosureLeadingLepPtCorr"),
+        ("wjets_ff_corr_leppt_variation", "WjetsnonClosureLeadingLepPtCorr"),
+        ("ttbar_ff_corr_leppt_variation", "ttbarnonClosureLeadingLepPtCorr"),
         # --------------------------------------
-        ("qcd_ff_corr_lep_iso_variation", "QCDClosureLepIsoCorr"),
-        ("wjets_ff_corr_lep_iso_variation", "WjetsClosureLepIsoCorr"),
+        ("qcd_ff_corr_lep_iso_variation", "QCDnonClosureLepIsoCorr"),
+        ("wjets_ff_corr_lep_iso_variation", "WjetsnonClosureLepIsoCorr"),
     ):
         for _shift in ["Up", "Down"]:
+
+            variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
+            if "_corr_" in _key:
+                variables = (fakefactors.FakeFactors_sm_lt,)
+
             configuration.add_shift(
                 SystematicShift(
                     name=f"{_name}{_shift}",
@@ -232,10 +237,7 @@ def build_config(
                         }
                     },
                     producers={
-                        _scope[0] if _scope else ("et", "mt"): (
-                            fakefactors.RawFakeFactors_sm_lt,
-                            fakefactors.FakeFactors_sm_lt,
-                        )
+                        _scope[0] if _scope else ("et", "mt"): variables,
                     },
                 ),
             )
@@ -245,18 +247,23 @@ def build_config(
     # _tt_1
 
     for _key, _name in (
-        ("qcd_ff_variation", "QCDFFslopeUnc"),
-        ("qcd_ff_variation", "QCDFFnormUnc"),
-        ("qcd_ff_variation", "QCDFFmcSubUnc"),
+        ("qcd_ff_variation", "QCDFFslopeUnc"),  # ok
+        ("qcd_ff_variation", "QCDFFnormUnc"),  # ok
+        ("qcd_ff_variation", "QCDFFmcSubUnc"),  # ok
         # --------------------------------------
-        ("fraction_variation", "process_fractionsfracQCDUnc"),
+        ("fraction_variation", "process_fractionsfracQCDUnc"),  # ok but less prominent
         # --------------------------------------
-        ("qcd_ff_corr_leppt_variation", "QCDClosureSubleadingLepPtCorr"),
-        ("qcd_ff_corr_taumass_variation", "QCDClosureLeadingLepMassCorr"),
+        ("qcd_ff_corr_leppt_variation", "QCDnonClosureSubleadingLepPtCorr"),
+        ("qcd_ff_corr_m_vis_variation", "QCDnonClosureMvisCorr"),
         # --------------------------------------
         ("qcd_ff_corr_drsr_variation", "QCDDRtoSRCorr"),
     ):
         for _shift in ["Up", "Down"]:
+
+            variables = (fakefactors.RawFakeFactors_sm_tt_1, fakefactors.FakeFactors_sm_tt_1)
+            if "_corr_" in _key:
+                variables = (fakefactors.FakeFactors_sm_tt_1,)
+
             configuration.add_shift(
                 SystematicShift(
                     name=f"{_name}{_shift}",
@@ -266,10 +273,7 @@ def build_config(
                         }
                     },
                     producers={
-                        ("tt",): (
-                            fakefactors.RawFakeFactors_sm_tt_1,
-                            fakefactors.FakeFactors_sm_tt_1,
-                        )
+                        ("tt",): variables,
                     },
                 ),
             )
@@ -277,18 +281,23 @@ def build_config(
     # _tt_2
 
     for _key, _name in (
-        ("qcd_subleading_ff_variation", "QCD_subleadingFFslopeUnc"),
-        ("qcd_subleading_ff_variation", "QCD_subleadingFFnormUnc"),
-        ("qcd_subleading_ff_variation", "QCD_subleadingFFmcSubUnc"),
+        ("qcd_subleading_ff_variation", "QCD_subleadingFFslopeUnc"),  # ok
+        ("qcd_subleading_ff_variation", "QCD_subleadingFFnormUnc"),  # ok
+        ("qcd_subleading_ff_variation", "QCD_subleadingFFmcSubUnc"),  # ok
         # --------------------------------------
-        ("fraction_subleading_variation", "process_fractions_subleadingfracQCDUnc"),
+        ("fraction_subleading_variation", "process_fractions_subleadingfracQCDUnc"),    # ok but less prominent
         # --------------------------------------
-        ("qcd_subleading_ff_corr_leppt_variation", "QCD_subleadingClosureLeadingLepPtCorr"),
-        ("qcd_subleading_ff_corr_taumass_variation", "QCD_subleadingClosureSubleadingLepMassCorr"),
+        ("qcd_subleading_ff_corr_leppt_variation", "QCD_subleadingnonClosureLeadingLepPtCorr"),
+        ("qcd_subleading_ff_corr_m_vis_variation", "QCD_subleadingnonClosureMvisCorr"),
         # --------------------------------------
         ("qcd_subleading_ff_corr_drsr_variation", "QCD_subleadingDRtoSRCorr"),
     ):
         for _shift in ["Up", "Down"]:
+
+            variables = (fakefactors.RawFakeFactors_sm_tt_2, fakefactors.FakeFactors_sm_tt_2)
+            if "_corr_" in _key:
+                variables = (fakefactors.FakeFactors_sm_tt_2,)
+
             configuration.add_shift(
                 SystematicShift(
                     name=f"{_name}{_shift}",
@@ -298,10 +307,7 @@ def build_config(
                         }
                     },
                     producers={
-                        ("tt",): (
-                            fakefactors.RawFakeFactors_sm_tt_2,
-                            fakefactors.FakeFactors_sm_tt_2,
-                        )
+                        ("tt",): variables,
                     },
                 ),
             )

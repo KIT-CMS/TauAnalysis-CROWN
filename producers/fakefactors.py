@@ -141,7 +141,7 @@ FakeFactors_sm_lt = Producer(
 )
 FakeFactors_sm_tt_1 = Producer(
     name="FakeFactors_sm_tt_1",
-    call='fakefactors::fakefactor_sm_tt({df}, {output}, 0, {input}, "{fraction_variation}", "{qcd_ff_variation}", "{qcd_ff_corr_leppt_variation}", "{qcd_ff_corr_drsr_variation}", "{qcd_ff_corr_taumass_variation}", "{ff_file}", "{ff_corr_file}")',
+    call='fakefactors::fakefactor_sm_tt({df}, {output}, 0, {input}, "{fraction_variation}", "{qcd_ff_variation}", "{qcd_ff_corr_leppt_variation}", "{qcd_ff_corr_drsr_variation}", "{qcd_ff_corr_m_vis_variation}", "{ff_file}", "{ff_corr_file}")',
     input=[
         q.pt_1,
         q.pt_2,
@@ -153,7 +153,7 @@ FakeFactors_sm_tt_1 = Producer(
 )
 FakeFactors_sm_tt_2 = Producer(
     name="FakeFactors_sm_tt_2",
-    call='fakefactors::fakefactor_sm_tt({df}, {output}, 1, {input}, "{fraction_subleading_variation}", "{qcd_subleading_ff_variation}", "{qcd_subleading_ff_corr_leppt_variation}", "{qcd_subleading_ff_corr_drsr_variation}", "{qcd_subleading_ff_corr_taumass_variation}", "{ff_file}", "{ff_corr_file}")',
+    call='fakefactors::fakefactor_sm_tt({df}, {output}, 1, {input}, "{fraction_subleading_variation}", "{qcd_subleading_ff_variation}", "{qcd_subleading_ff_corr_leppt_variation}", "{qcd_subleading_ff_corr_drsr_variation}", "{qcd_subleading_ff_corr_m_vis_variation}", "{ff_file}", "{ff_corr_file}")',
     input=[
         q.pt_1,
         q.pt_2,

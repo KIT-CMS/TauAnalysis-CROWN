@@ -293,6 +293,60 @@ def build_config(
     )
     ###### scope Specifics ######
     # MT/TT/ET scope tau ID flags and SFs
+
+    # ID flags without where scalefactors does not exist or are requiered withouth them
+    configuration.add_config_parameters(
+        ["mt", "tt", "et"],
+        {
+            "vsjet_tau_id_wp_bit": [
+                {
+                    # "vsjet_tau_id_WP": "{wp}".format(wp=wp),
+                    "vsjet_tau_id_WPbit": bit,
+                    "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
+                    "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                }
+                for wp, bit in dict(
+                    VVLoose=2,
+                    VLoose=3,
+                    # VVTight=8,
+                ).items()
+            ],
+            # "vsjet_tau_id_wp_bit": [
+            #     {
+            #         # "vsjet_tau_id_WP": "{wp}".format(wp=wp),
+            #         "vsjet_tau_id_WPbit": bit,
+            #         "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
+            #         "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+            #     }
+            #     for wp, bit in dict(
+            #         VVLoose=2,
+            #         VLoose=3,
+            #         # VVTight=8,
+            #     ).items()
+            # ],
+            # "vsele_tau_id_wp_bit": [
+            #     {
+            #         "vsele_tau_id_WP": "{wp}".format(wp=wp),
+            #         "vsele_tau_id_WPbit": bit,
+            #         "tau_1_vsele_id_WPbit_outputname": "id_tau_vsEle_{wp}_1".format(wp=wp),
+            #         "tau_2_vsele_id_WPbit_outputname": "id_tau_vsEle_{wp}_2".format(wp=wp),
+            #     }
+            #     for wp, bit in dict(
+            #     ).items()
+            # ],
+            # "vsmu_tau_id_wp_bit": [
+            #     {
+            #         "vsmu_tau_id_WP": "{wp}".format(wp=wp),
+            #         "vsmu_tau_id_WPbit": bit,
+            #         "tau_1_vsmu_id_WPbit_outputname": "id_tau_vsMu_{wp}_1".format(wp=wp),
+            #         "tau_2_vsmu_id_WPbit_outputname": "id_tau_vsMu_{wp}_2".format(wp=wp),
+            #     }
+            #     for wp, bit in dict(
+            #     ).items()
+            # ],
+        }
+    )
+
     configuration.add_config_parameters(
         ["mt", "tt", "et"],
         {
@@ -311,6 +365,8 @@ def build_config(
                     "vsjet_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
+                    # "VVLoose": 2,
+                    # "VLoose": 3,
                     "Loose": 4,
                     "Medium": 5,
                     "Tight": 6,
@@ -884,6 +940,10 @@ def build_config(
             triggers.MTGenerateSingleMuonTriggerFlags,
             triggers.MTGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
+            # ---
+            pairquantities.VsJetTauIDFlagOnly_2,
+            # pairquantities.VsEleTauIDFlagOnly_2,
+            # pairquantities.VsMuTauIDFlagOnly_2,
         ],
     )
     configuration.add_producers(
@@ -913,6 +973,10 @@ def build_config(
             triggers.ETGenerateSingleElectronTriggerFlags,
             triggers.ETGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
+            # ---
+            pairquantities.VsJetTauIDFlagOnly_2,
+            # pairquantities.VsEleTauIDFlagOnly_2,
+            # pairquantities.VsMuTauIDFlagOnly_2,
         ],
     )
     configuration.add_producers(
@@ -941,6 +1005,13 @@ def build_config(
             triggers.TTGenerateDoubleTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
             triggers.GenerateSingleLeadingTauTriggerFlags,
+            # ---
+            pairquantities.VsJetTauIDFlagOnly_1,
+            # pairquantities.VsEleTauIDFlagOnly_1,
+            # pairquantities.VsMuTauIDFlagOnly_1,
+            pairquantities.VsJetTauIDFlagOnly_2,
+            # pairquantities.VsEleTauIDFlagOnly_2,
+            # pairquantities.VsMuTauIDFlagOnly_2,
         ],
     )
     configuration.add_producers(
@@ -1365,6 +1436,9 @@ def build_config(
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             triggers.MTGenerateCrossTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
@@ -1391,6 +1465,9 @@ def build_config(
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
             triggers.ETGenerateCrossTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
@@ -1419,9 +1496,15 @@ def build_config(
             pairquantities.VsJetTauIDFlag_1.output_group,
             pairquantities.VsEleTauIDFlag_1.output_group,
             pairquantities.VsMuTauIDFlag_1.output_group,
+            pairquantities.VsJetTauIDFlagOnly_1.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_1.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_1.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
             triggers.TTGenerateDoubleTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
