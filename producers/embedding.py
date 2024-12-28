@@ -256,7 +256,7 @@ TTGenerateDoubleTauTriggerSF_2 = Producer(
 
 Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
     name="Tau_2_VsJetTauID_lt_SF",
-    call='scalefactor::tau::id_vsJet_lt_embedding({df}, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tau20to25}", "{tau_emb_sf_vsjet_tau25to30}", "{tau_emb_sf_vsjet_tau30to35}", "{tau_emb_sf_vsjet_tau35to40}", "{tau_emb_sf_vsjet_tau40toInf}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
+    call='scalefactor::tau::id_vsJet_lt_embedding({df}, correctionManager, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tau20to25}", "{tau_emb_sf_vsjet_tau25to30}", "{tau_emb_sf_vsjet_tau30to35}", "{tau_emb_sf_vsjet_tau35to40}", "{tau_emb_sf_vsjet_tau40toInf}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
     input=[q.pt_2],
     output="tau_2_vsjet_sf_outputname",
     scope=["et", "mt"],

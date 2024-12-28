@@ -2,7 +2,7 @@ from code_generation.systematics import SystematicShift
 from .producers import scalefactors as scalefactors
 
 
-def add_btagVariations(configuration, available_sample_types):
+def add_btagVariations(configuration):
     #########################
     # btagging shape uncertainties
     #########################
@@ -14,11 +14,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -28,11 +24,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -43,11 +35,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -57,11 +45,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -72,11 +56,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -86,11 +66,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -101,11 +77,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -115,11 +87,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -130,11 +98,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -144,11 +108,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -159,11 +119,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -173,11 +129,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -188,11 +140,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -202,11 +150,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     configuration.add_shift(
@@ -217,11 +161,7 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShift(
@@ -231,9 +171,5 @@ def add_btagVariations(configuration, available_sample_types):
             },
             producers={("mt", "et", "tt"): scalefactors.btagging_SF},
         ),
-        samples=[
-            sample
-            for sample in available_sample_types
-            if sample not in ["data", "embedding", "embedding_mc"]
-        ],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )

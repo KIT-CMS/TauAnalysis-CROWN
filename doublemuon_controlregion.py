@@ -29,7 +29,6 @@ from .producers import jets as jets
 from .tau_embedding_settings import setup_embedding
 
 
-
 def build_config(
     era: str,
     sample: str,
@@ -170,7 +169,7 @@ def build_config(
             "min_jetpt_met_propagation": 15,
         },
     )
-        # jet base selection:
+    # jet base selection:
     configuration.add_config_parameters(
         "global",
         {
@@ -269,8 +268,8 @@ def build_config(
                 {
                     "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
                     "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/muon_2017UL.json.gz",
-                    "2018": "data/embedding/muon_2018UL.json.gz",
+                    "2017": "data/embedding/embeddingselection_2017UL.json.gz",
+                    "2018": "data/embedding/embeddingselection_2018UL.json.gz",
                 }
             ),
             "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
@@ -336,7 +335,7 @@ def build_config(
             )
         },
     )
-        # muon trigger SF settings from embedding measurements
+    # muon trigger SF settings from embedding measurements
     configuration.add_config_parameters(
         ["mm"],
         {
@@ -395,11 +394,9 @@ def build_config(
         },
     )
 
-    
-
     # add muon scalefactors from embedding measurements
     configuration.add_config_parameters(
-        [ "mm"],
+        ["mm"],
         {
             "mc_muon_sf_file": EraModifier(
                 {
@@ -547,7 +544,7 @@ def build_config(
         scopes,
         {
             "deltaR_jet_veto": 0.5,
-            "pairselection_min_dR": 0.5,  
+            "pairselection_min_dR": 0.5,
         },
     )
 
@@ -567,19 +564,13 @@ def build_config(
             event.Lumi,
             event.npartons,
             event.MetFilter,
-
             muons.BaseMuons,
             met.MetBasics,
-
             jets.GoodJets,
-            jets.JetEnergyCorrection, 
-        
-
+            jets.JetEnergyCorrection,
             event.PrefireWeight,
-
             electrons.ElectronPtCorrectionEmbedding,
             electrons.BaseElectrons,
-    
         ],
     )
     configuration.add_producers(
@@ -596,37 +587,22 @@ def build_config(
             tagandprobe.MuonID_Medium_2,
             genparticles.GenMatching,
             genparticles.MuMuGenPairQuantities,
-            triggers.MuMuGenerateSingleMuonTriggerFlags,   
-           
-
+            triggers.MuMuGenerateSingleMuonTriggerFlags,
             jets.JetCollection,
             jets.BasicJetQuantities,
-
-
             pairselection.LVMu1Uncorrected,
             pairselection.LVMu2Uncorrected,
-
-
             met.ApplyRecoilCorrectionsPFMet,
             met.PropagateJetsToPFMet,
             met.PropagateLeptonsToPFMet,
-
-            
             met.ApplyRecoilCorrections,
-            met.PropagateJetsToMet, 
+            met.PropagateJetsToMet,
             met.PropagateLeptonsToMet,
-
             pairquantities.DiTauPairMETQuantities,
-
-
             muons.VetoMuons,
             muons.VetoSecondMuon,
-            muons.ExtraMuonsVeto, 
-
+            muons.ExtraMuonsVeto,
             electrons.ExtraElectronsVeto,
-
-
-            
         ],
     )
 
@@ -669,36 +645,24 @@ def build_config(
             q.gen_mass_2,
             q.gen_pdgid_2,
             q.gen_m_vis,
-            
             q.is_global_1,
             q.is_global_2,
             q.gen_match_1,
             q.gen_match_2,
             qt.id_medium_1,
             qt.id_medium_2,
-
             q.nmuons,
-
-            
             q.npartons,
             q.genbosonmass,
-
             triggers.MuMuGenerateSingleMuonTriggerFlags.output_group,
-
-
             q.mt_1,
             q.mt_2,
             q.pzetamissvis,
-  
-
             q.deltaR_ditaupair,
             q.pt_vis,
-
             q.muon_veto_flag,
             q.prefireweight,
-           
             q.electron_veto_flag,
-
         ],
     )
 
@@ -728,11 +692,7 @@ def build_config(
         "global",
         RemoveProducer(
             producers=[event.npartons],
-            samples=[
-                sample
-                for sample in available_sample_types
-                if sample not in ["dyjets", "wjets", "electroweak_boson"]
-            ],
+            exclude_samples=["dyjets", "wjets", "electroweak_boson"],
         ),
     )
     configuration.add_modification_rule(
@@ -782,10 +742,8 @@ def build_config(
                 embedding.EmbeddingGenWeight,
             ],
             samples=["embedding"],
-        )
+        ),
     )
-
-
 
     configuration.add_modification_rule(
         ["mm"],
@@ -797,11 +755,7 @@ def build_config(
                 scalefactors.TauEmbeddingMuonIsoSF_2_MC,
                 scalefactors.MTGenerateSingleMuonTriggerSF_MC,
             ],
-            samples=[
-                sample
-                for sample in available_sample_types
-                if sample not in ["data", "embedding", "embedding_mc"]
-            ],
+            exclude_samples=["data", "embedding", "embedding_mc"],
         ),
     )
 
@@ -819,7 +773,6 @@ def build_config(
         ),
     )
 
-
     configuration.add_modification_rule(
         scopes,
         AppendProducer(producers=event.TopPtReweighting, samples="ttbar"),
@@ -832,10 +785,7 @@ def build_config(
         ),
     )
 
-    
-
-    add_diTauTriggerSetup(configuration)  
-
+    add_diTauTriggerSetup(configuration)
 
     #########################
     # Finalize and validate the configuration

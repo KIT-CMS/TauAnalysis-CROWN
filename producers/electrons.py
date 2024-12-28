@@ -8,10 +8,23 @@ from code_generation.producer import Producer, ProducerGroup
 
 ElectronPtCorrectionEmbedding = Producer(
     name="ElectronPtCorrectionEmbedding",
-    call="physicsobject::electron::PtCorrection_byValue({df}, {output}, {input}, {ele_energyscale_barrel}, {ele_energyscale_endcap})",
+    call='physicsobject::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{ele_energyscale_barrel}", "{ele_energyscale_endcap}","{embedding_electron_es_sf_file}", "{ele_ES_json_name}")',
     input=[
         nanoAOD.Electron_pt,
         nanoAOD.Electron_eta,
+    ],
+    output=[q.Electron_pt_corrected],
+    scopes=["global"],
+)
+ElectronPtCorrectionMC = Producer(
+    name="ElectronPtCorrectionMC",
+    call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, {ele_es_era}, "{ele_es_variation}", {ele_es_file})',
+    input=[
+        nanoAOD.Electron_pt,
+        nanoAOD.Electron_eta,
+        nanoAOD.Electron_seedGain,
+        nanoAOD.Electron_dEsigmaUp,
+        nanoAOD.Electron_dEsigmaDown,
     ],
     output=[q.Electron_pt_corrected],
     scopes=["global"],

@@ -51,6 +51,9 @@ Electron_charge = NanoAODQuantity("Electron_charge")
 Electron_indexToGen = NanoAODQuantity("Electron_genPartIdx")
 Electron_IDWP90 = NanoAODQuantity("Electron_mvaFall17V2noIso_WP90")
 Electron_IDWP80 = NanoAODQuantity("Electron_mvaFall17V2noIso_WP80")
+Electron_seedGain = NanoAODQuantity("Electron_seedGain")
+Electron_dEsigmaUp = NanoAODQuantity("Electron_dEsigmaUp")
+Electron_dEsigmaDown = NanoAODQuantity("Electron_dEsigmaDown")
 
 Photon_pt = NanoAODQuantity("Photon_pt")
 Photon_eta = NanoAODQuantity("Photon_eta")
@@ -135,4 +138,6 @@ TauEmbedding_InitialPairCandidates = NanoAODQuantity(
 TauEmbedding_SelectionOldMass = NanoAODQuantity("TauEmbedding_SelectionOldMass")
 TauEmbedding_SelectionNewMass = NanoAODQuantity("TauEmbedding_SelectionNewMass")
 
-HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ")
+HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity(
+    "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"
+)

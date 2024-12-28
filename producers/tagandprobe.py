@@ -4,6 +4,8 @@ from ..quantities import nanoAOD as nanoAOD
 from ..producers.muons import (
     MuonPtCut,
     MuonEtaCut,
+    GoodMuonDzCut,
+    GoodMuonDxyCut,
     GoodMuonPtCut,
     GoodMuonEtaCut,
 )
@@ -45,6 +47,20 @@ GoodMuons = ProducerGroup(
     subproducers=[
         GoodMuonPtCut,
         GoodMuonEtaCut,
+    ],
+)
+
+GoodMuonsWithDzDxyCut = ProducerGroup(
+    name="BaseMuons",
+    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    input=[],
+    output=[q.good_muons_mask],
+    scopes=["mm"],
+    subproducers=[
+        GoodMuonPtCut,
+        GoodMuonEtaCut,
+        GoodMuonDzCut,
+        GoodMuonDxyCut,
     ],
 )
 
@@ -165,7 +181,7 @@ MuMuDoubleMuonTriggerFlags_2 = ExtendedVectorProducer(
 
 MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
     name="MuMuSingleMuonTriggerBitFlags_1",
-    call='trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+    call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
     input=[
         q.p4_1,
         nanoAOD.TriggerObject_bit,
@@ -181,7 +197,7 @@ MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
 
 MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
     name="MuMuSingleMuonTriggerBitFlags_2",
-    call='trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+    call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
     input=[
         q.p4_2,
         nanoAOD.TriggerObject_bit,
