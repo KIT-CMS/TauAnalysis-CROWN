@@ -15,7 +15,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_IsoMu24",
                             "ptcut": 25,
                             "etacut": 2.5,
-                            "filterbit": 3,
+                            "filterbit": -1,  # 3,  # TODO check if the filter bit is correct
                             "trigger_particle_id": 13,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -24,7 +24,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_IsoMu27",
                             "ptcut": 28,
                             "etacut": 2.5,
-                            "filterbit": 3,
+                            "filterbit": -1,  # 3,  # TODO check if the filter bit is correct
                             "trigger_particle_id": 13,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -242,7 +242,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_Ele27_WPTight_Gsf",
                             "ptcut": 28,
                             "etacut": 2.1,
-                            "filterbit": 1,
+                            "filterbit": -1,  # 1,  # TODO check if the filter bit is correct
                             "trigger_particle_id": 11,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -251,7 +251,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_Ele32_WPTight_Gsf",
                             "ptcut": 33,
                             "etacut": 2.1,
-                            "filterbit": 1,
+                            "filterbit": -1,  # 1,  # TODO check if the filter bit is correct
                             "trigger_particle_id": 11,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -260,7 +260,7 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "hlt_path": "HLT_Ele35_WPTight_Gsf",
                             "ptcut": 36,
                             "etacut": 2.1,
-                            "filterbit": 1,
+                            "filterbit": -1,  # 1,  # TODO check if the filter bit is correct
                             "trigger_particle_id": 11,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -539,9 +539,9 @@ def add_diTauTriggerSetup(configuration: Configuration):
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
+                            "p1_filterbit": -1,  # 6,  # TODO check if the filter bit is correct
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
+                            "p2_filterbit": -1,  # 6,  # TODO check if the filter bit is correct
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },

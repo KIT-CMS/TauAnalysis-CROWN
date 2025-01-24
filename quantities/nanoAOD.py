@@ -64,6 +64,8 @@ Photon_electronVeto = NanoAODQuantity("Photon_electronVeto")
 GenJet_pt = NanoAODQuantity("GenJet_pt")
 GenJet_eta = NanoAODQuantity("GenJet_eta")
 GenJet_phi = NanoAODQuantity("GenJet_phi")
+GenJet_mass = NanoAODQuantity("GenJet_mass")
+GenJet_hadFlavour = NanoAODQuantity("GenJet_hadronFlavour")
 
 Jet_eta = NanoAODQuantity("Jet_eta")
 Jet_phi = NanoAODQuantity("Jet_phi")

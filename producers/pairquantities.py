@@ -410,7 +410,7 @@ tau_decaymode_2_notau = Producer(
     scopes=["em", "ee", "mm"],
 )
 tau_gen_match_2 = Producer(
-    name="taugen_match_2",
+    name="tau_gen_match_2",
     call="quantities::tau::genmatch({df}, {output}, 1, {input})",
     input=[q.dileptonpair, nanoAOD.Tau_genMatch],
     output=[q.tau_gen_match_2],
@@ -716,6 +716,15 @@ mt_2 = Producer(
     output=[q.mt_2],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
+
+# nmssm_devs
+# p4_tautau = Producer(
+#     name="p4_tautau",
+#     call="lorentzvectors::CombineP4s({df}, {output}, {input})",
+#     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+#     output=[q.p4_tautau],
+#     scopes=["mt", "et", "tt", "em", "ee", "mm"],
+# )
 pt_tt = Producer(
     name="pt_tt",
     call="quantities::pt_tt({df}, {output}, {input})",
@@ -723,6 +732,14 @@ pt_tt = Producer(
     output=[q.pt_tt],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
+# nmssm_devs
+# pt_tautau = Producer(
+#     name="pt_tautau",
+#     call="quantities::pt({df}, {output}, {input})",
+#     input=[q.p4_tautau],
+#     output=[q.pt_tautau],
+#     scopes=["mt", "et", "tt", "em", "ee", "mm"],
+# )
 pt_ttjj = Producer(
     name="pt_ttjj",
     call="quantities::pt_ttjj({df}, {output}, {input})",

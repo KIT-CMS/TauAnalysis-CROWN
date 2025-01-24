@@ -68,7 +68,7 @@ def build_config(
                 {"emb_mc": 23, "tt": 6, "vv": 24}, default=None
             ),
             "truegen_daughter_1_pdgid": 13,
-            "truegen_daugher_2_pdgid": 13,
+            "truegen_daughter_2_pdgid": 13,
         },
     )
 

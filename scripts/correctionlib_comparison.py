@@ -26,7 +26,7 @@ parser.add_argument(
     nargs="+",
     help="path(s) to a json.gz correctionlib file(s) that are compared to the reference (separation by white space)",
     default="",
-
+)
 parser.add_argument(
     "--tag-b",
     metavar="str",

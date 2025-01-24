@@ -13,7 +13,8 @@ MTPairSelection = Producer(
         q.Tau_pt_corrected,
         nanoAOD.Tau_eta,
         nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
+        # nanoAOD.Tau_mass,
+        q.Tau_mass_corrected,  # TODO: Check if this is a) correct and b) necessary
         nanoAOD.Tau_IDraw,
         nanoAOD.Muon_pt,
         nanoAOD.Muon_eta,
@@ -163,7 +164,8 @@ ETPairSelection = Producer(
         q.Tau_pt_corrected,
         nanoAOD.Tau_eta,
         nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
+        # nanoAOD.Tau_mass,
+        q.Tau_mass_corrected,  # TODO: Check if this is a) correct and b) necessary
         nanoAOD.Tau_IDraw,
         q.Electron_pt_corrected,
         nanoAOD.Electron_eta,
@@ -203,7 +205,8 @@ TTPairSelection = Producer(
         q.Tau_pt_corrected,
         nanoAOD.Tau_eta,
         nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
+        # nanoAOD.Tau_mass,
+        q.Tau_mass_corrected,  # TODO: Check if this is a) correct and b) necessary
         nanoAOD.Tau_IDraw,
         q.good_taus_mask,
     ],
