@@ -9,7 +9,7 @@ from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProd
 
 boostedTauPtCorrection = Producer(
     name="boostedTauPtCorrection",
-    call='physicsobject::tau::PtCorrection_genTau({df}, {output}, {input}, "{boostedtau_sf_file}", "{boostedtau_ES_json_name}", "{boostedtau_id_algorithm}", "{boostedtau_ES_shift_DM0}", "{boostedtau_ES_shift_DM1}", "{boostedtau_ES_shift_DM10}", "{boostedtau_ES_shift_DM11}")',
+    call='physicsobject::tau::PtCorrection_genTau({df}, correctionManager, {output}, {input}, "{boostedtau_sf_file}", "{boostedtau_ES_json_name}", "{boostedtau_id_algorithm}", "{boostedtau_ES_shift_DM0}", "{boostedtau_ES_shift_DM1}", "{boostedtau_ES_shift_DM10}", "{boostedtau_ES_shift_DM11}")',
     input=[
         nanoAOD.boostedTau_pt,
         nanoAOD.boostedTau_eta,

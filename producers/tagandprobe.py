@@ -4,6 +4,8 @@ from ..quantities import nanoAOD as nanoAOD
 from ..producers.muons import (
     MuonPtCut,
     MuonEtaCut,
+    GoodMuonDzCut,
+    GoodMuonDxyCut,
     GoodMuonPtCut,
     GoodMuonEtaCut,
 )
@@ -45,6 +47,20 @@ GoodMuons = ProducerGroup(
     subproducers=[
         GoodMuonPtCut,
         GoodMuonEtaCut,
+    ],
+)
+
+GoodMuonsWithDzDxyCut = ProducerGroup(
+    name="BaseMuons",
+    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    input=[],
+    output=[q.good_muons_mask],
+    scopes=["mm"],
+    subproducers=[
+        GoodMuonPtCut,
+        GoodMuonEtaCut,
+        GoodMuonDzCut,
+        GoodMuonDxyCut,
     ],
 )
 
