@@ -5,7 +5,7 @@ from code_generation.code_generation import CodeGenerator
 
 def run(args):
     analysis_name = "tau"
-
+    # Verify existenz of our bbtautau samples ! ???
     available_samples = [
         "ggh_htautau",
         "ggh_hbb",

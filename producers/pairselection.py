@@ -65,7 +65,7 @@ GoodMTPairFilter = Filter(
     call='basefunctions::FilterFlagsAny({df}, "GoodMuTauPairs", {input})',
     input=[],
     scopes=["mt"],
-    subproducers=[GoodMTPairFlag, GoodBoostedMTPairFlag],
+    subproducers=[GoodMTPairFlag],#, GoodBoostedMTPairFlag],
 )
 
 MuMuPairSelection = Producer(

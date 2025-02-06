@@ -12,7 +12,7 @@ from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
-from .producers import boostedtaus as boostedtaus
+# from .producers import boostedtaus as boostedtaus
 from .producers import triggers as triggers
 from .quantities import nanoAOD as nanoAOD
 from .quantities import output as q
@@ -878,9 +878,9 @@ def build_config(
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             electrons.ExtraElectronsVeto,
             pairselection.MTPairSelection,
             pairselection.GoodMTPairFilter,
@@ -908,9 +908,9 @@ def build_config(
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
             electrons.ExtraElectronsVeto,
@@ -941,9 +941,9 @@ def build_config(
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             pairselection.TTPairSelection,
             pairselection.GoodTTPairFilter,
             pairselection.LVTau1,
