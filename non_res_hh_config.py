@@ -1963,7 +1963,7 @@ def build_config(
             [
                 q.trg_wgt_double_tau_1,
                 q.trg_wgt_double_tau_2,
-                q.trg_wgt_fatjet,
+                # q.trg_wgt_fatjet,
             ],
         )
 
