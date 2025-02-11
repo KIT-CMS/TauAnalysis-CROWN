@@ -24,7 +24,7 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 # ("mt", "et", "tt"): {scalefactors.btagging_SF},
             },
@@ -44,7 +44,7 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 # ("mt", "et", "tt"): {scalefactors.btagging_SF},
             },
@@ -70,7 +70,7 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {scalefactors.btagging_SF},
             },
@@ -92,7 +92,7 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {scalefactors.btagging_SF},
             },
@@ -118,7 +118,7 @@ def add_jetVariations(configuration: Configuration, era: str):
                 producers={
                     "global": {
                         jets.JetEnergyCorrection,
-                        fatjets.FatJetEnergyCorrection,
+                        # fatjets.FatJetEnergyCorrection,
                     },
                 },
             ),
@@ -138,7 +138,7 @@ def add_jetVariations(configuration: Configuration, era: str):
                 producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
             },
             ),
@@ -164,11 +164,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -189,11 +189,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -218,11 +218,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -245,11 +245,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -272,11 +272,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -297,11 +297,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -324,11 +324,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -349,11 +349,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -376,11 +376,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -403,11 +403,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -430,11 +430,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -455,11 +455,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -482,11 +482,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -507,11 +507,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -534,11 +534,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -559,11 +559,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -586,11 +586,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -611,11 +611,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -638,11 +638,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -663,11 +663,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -692,11 +692,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),
@@ -719,11 +719,11 @@ def add_jetVariations(configuration: Configuration, era: str):
             producers={
                 "global": {
                     jets.JetEnergyCorrection,
-                    fatjets.FatJetEnergyCorrection,
+                    # fatjets.FatJetEnergyCorrection,
                 },
                 ("mt", "et", "tt"): {
                     scalefactors.btagging_SF,
-                    scalefactors.btagging_SF_boosted,
+                    # scalefactors.btagging_SF_boosted,
                 },
             },
         ),

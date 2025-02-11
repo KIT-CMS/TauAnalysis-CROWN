@@ -6,7 +6,7 @@ from .producers import electrons as electrons
 from .producers import event as event
 from .producers import genparticles as genparticles
 from .producers import jets as jets
-from .producers import fatjets as fatjets
+# from .producers import fatjets as fatjets
 from .producers import met as met
 from .producers import muons as muons
 from .producers import pairquantities as pairquantities
@@ -14,13 +14,13 @@ from .producers import pairquantities_bbpair as pairquantities_bbpair
 from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
-from .producers import boostedtaus as boostedtaus
+# from .producers import boostedtaus as boostedtaus
 from .producers import triggers as triggers
 from .quantities import nanoAOD as nanoAOD
 from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
-from .boostedtau_variations import add_boostedtauVariations
+# from .boostedtau_variations import add_boostedtauVariations
 from .jet_variations import add_jetVariations
 from .tau_embedding_settings import setup_embedding
 from .btag_variations import add_btagVariations
@@ -89,7 +89,7 @@ def build_config(
                         "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        # "Flag_BadPFMuonDzFilter", # only since nanoAODv9 available
+                        # "Flag_BadPFMuonDzFilter", # only since nanoAODv9 available. So implement ???
                         "Flag_eeBadScFilter",
                     ],
                     "2017": [
@@ -178,7 +178,7 @@ def build_config(
             "max_ele_dxy": 0.045,
             "max_ele_dz": 0.2,
             "max_ele_iso": 4.0,
-            "ele_id": "Electron_mvaFall17V2noIso_WP90",
+            "ele_id": "Electron_mvaNoIso_WP90",
             "ele_es_era": EraModifier(
                 {
                     "2016preVFP": '"2016preVFP"',
@@ -976,8 +976,8 @@ def build_config(
             electrons.ElectronPtCorrectionMC,
             # electrons.RenameElectronPt,
             electrons.BaseElectrons,
-            fatjets.FatJetEnergyCorrection,
-            fatjets.GoodFatJets,
+            # fatjets.FatJetEnergyCorrection,
+            # fatjets.GoodFatJets,
             jets.JetEnergyCorrection,
             jets.BJetEnergyCorrection,
             jets.GoodJets,
@@ -998,44 +998,44 @@ def build_config(
     configuration.add_producers(
         scopes,
         [
-            fatjets.FatJetCollection,
-            fatjets.FatJetCollection_boosted,
-            fatjets.FatJetCollectionWithoutVeto,
-            fatjets.BasicFatJetQuantities,
+            # fatjets.FatJetCollection,
+            # fatjets.FatJetCollection_boosted,
+            # fatjets.FatJetCollectionWithoutVeto,
+            # fatjets.BasicFatJetQuantities,
             jets.JetCollection,
             jets.BasicJetQuantities,
             jets.BJetCollection,
             jets.BasicBJetQuantities,
-            jets.JetCollection_boosted,
-            jets.BJetCollection_boosted,
+            # jets.JetCollection_boosted,
+            # jets.BJetCollection_boosted,
             pairselection.BBPairSelection,
-            pairselection.BBPairSelection_boosted,
+            # pairselection.BBPairSelection_boosted,
             # pairselection.GoodBBPairFilter,
             pairselection.LVbjet1,
             pairselection.LVbjet2,
-            pairselection.LVbjet1_boosted,
-            pairselection.LVbjet2_boosted,
+            # pairselection.LVbjet1_boosted,
+            # pairselection.LVbjet2_boosted,
             pairquantities_bbpair.DiBjetPairQuantities,
-            pairquantities_bbpair.DiBjetPairQuantities_boosted,
+            # pairquantities_bbpair.DiBjetPairQuantities_boosted,
             genparticles.GenDiBjetPairQuantities,
             # fatjets.FindFatjetMatchingBjet,
             # fatjets.BasicMatchedFatJetQuantities,
-            fatjets.FindXbbFatjet,
-            fatjets.BasicXbbFatJetQuantities,
-            fatjets.FindXbbFatjet_boosted,
-            fatjets.BasicXbbFatJetQuantities_boosted,
-            fatjets.LeadingFatJetQuantities,
+            # fatjets.FindXbbFatjet,
+            # fatjets.BasicXbbFatJetQuantities,
+            # fatjets.FindXbbFatjet_boosted,
+            # fatjets.BasicXbbFatJetQuantities_boosted,
+            # fatjets.LeadingFatJetQuantities,
             scalefactors.btagging_SF,
-            scalefactors.btagging_SF_boosted,
-            scalefactors.Xbb_tagging_SF,
-            scalefactors.Xbb_tagging_SF_boosted,
+            # scalefactors.btagging_SF_boosted,
+            # scalefactors.Xbb_tagging_SF,
+            # scalefactors.Xbb_tagging_SF_boosted,
             met.MetCorrections,
             met.PFMetCorrections,
-            met.MetCorrections_boosted,
-            met.PFMetCorrections_boosted,
+            # met.MetCorrections_boosted,
+            # met.PFMetCorrections_boosted,
             pairquantities.DiTauPairMETQuantities,
             genparticles.GenMatching,
-            genparticles.GenMatchingBoosted,
+            # genparticles.GenMatchingBoosted,
         ],
     )
     configuration.add_producers(
@@ -1065,40 +1065,40 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            muons.VetoMuons_boosted,
-            muons.BoostedExtraMuonsVeto,
+            # muons.VetoMuons_boosted,
+            # muons.BoostedExtraMuonsVeto,
             taus.TauEnergyCorrection,
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             electrons.ExtraElectronsVeto,
             pairselection.MTPairSelection,
-            pairselection.boostedMTPairSelection,
+            # pairselection.boostedMTPairSelection,
             pairselection.GoodMTPairFilter,
             pairselection.LVMu1,
             pairselection.LVTau2,
-            pairselection.additionalBoostedTau,
-            pairselection.LVaddBoostedTau,
-            boostedtaus.boostedLVMu1,
-            boostedtaus.boostedLVTau2,
-            boostedtaus.boostedLVMu1_uncorrected,
-            boostedtaus.boostedLVTau2_uncorrected,
+            # pairselection.additionalBoostedTau,
+            # pairselection.LVaddBoostedTau,
+            # boostedtaus.boostedLVMu1,
+            # boostedtaus.boostedLVTau2,
+            # boostedtaus.boostedLVMu1_uncorrected,
+            # boostedtaus.boostedLVTau2_uncorrected,
             pairselection.LVMu1Uncorrected,
             pairselection.LVTau2Uncorrected,
             pairquantities.MTDiTauPairQuantities,
-            boostedtaus.boostedMTDiTauPairQuantities,
+            # boostedtaus.boostedMTDiTauPairQuantities,
             genparticles.MTGenDiTauPairQuantities,
             scalefactors.Tau_2_VsJetTauID_lt_SF,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
-            scalefactors.Tau_2_oldIsoTauID_lt_SF,
-            scalefactors.Tau_2_antiEleTauID_SF,
-            scalefactors.Tau_2_antiMuTauID_SF,
+            # scalefactors.Tau_2_oldIsoTauID_lt_SF,
+            # scalefactors.Tau_2_antiEleTauID_SF,
+            # scalefactors.Tau_2_antiMuTauID_SF,
             triggers.MTGenerateSingleMuonTriggerFlags,
-            triggers.BoostedMTGenerateSingleMuonTriggerFlags,
+            # triggers.BoostedMTGenerateSingleMuonTriggerFlags,
             # triggers.MTGenerateCrossTriggerFlags,
             # triggers.GenerateSingleTrailingTauTriggerFlags,
         ],
@@ -1111,39 +1111,39 @@ def build_config(
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
-            electrons.VetoElectrons_boosted,
+            # electrons.VetoElectrons_boosted,
             electrons.ExtraElectronsVeto,
-            electrons.BoostedExtraElectronsVeto,
+            # electrons.BoostedExtraElectronsVeto,
             muons.ExtraMuonsVeto,
             pairselection.ETPairSelection,
-            pairselection.boostedETPairSelection,
+            # pairselection.boostedETPairSelection,
             pairselection.GoodETPairFilter,
             pairselection.LVEl1,
             pairselection.LVTau2,
-            pairselection.additionalBoostedTau,
-            pairselection.LVaddBoostedTau,
-            boostedtaus.boostedLVEl1,
-            boostedtaus.boostedLVTau2,
-            boostedtaus.boostedLVEl1_uncorrected,
-            boostedtaus.boostedLVTau2_uncorrected,
+            # pairselection.additionalBoostedTau,
+            # pairselection.LVaddBoostedTau,
+            # boostedtaus.boostedLVEl1,
+            # boostedtaus.boostedLVTau2,
+            # boostedtaus.boostedLVEl1_uncorrected,
+            # boostedtaus.boostedLVTau2_uncorrected,
             pairselection.LVEl1Uncorrected,
             pairselection.LVTau2Uncorrected,
             pairquantities.ETDiTauPairQuantities,
-            boostedtaus.boostedETDiTauPairQuantities,
+            # boostedtaus.boostedETDiTauPairQuantities,
             genparticles.ETGenDiTauPairQuantities,
             scalefactors.Tau_2_VsJetTauID_lt_SF,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
-            scalefactors.Tau_2_oldIsoTauID_lt_SF,
-            scalefactors.Tau_2_antiEleTauID_SF,
-            scalefactors.Tau_2_antiMuTauID_SF,
+            # scalefactors.Tau_2_oldIsoTauID_lt_SF,
+            # scalefactors.Tau_2_antiEleTauID_SF,
+            # scalefactors.Tau_2_antiMuTauID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
-            triggers.BoostedETGenerateSingleElectronTriggerFlags,
+            # triggers.BoostedETGenerateSingleElectronTriggerFlags,
             # triggers.ETGenerateCrossTriggerFlags,
             # triggers.GenerateSingleTrailingTauTriggerFlags,
         ],
@@ -1157,22 +1157,22 @@ def build_config(
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
-            boostedtaus.boostedTauEnergyCorrection,
-            boostedtaus.GoodBoostedTaus,
-            boostedtaus.NumberOfGoodBoostedTaus,
+            # boostedtaus.boostedTauEnergyCorrection,
+            # boostedtaus.GoodBoostedTaus,
+            # boostedtaus.NumberOfGoodBoostedTaus,
             pairselection.TTPairSelection,
-            pairselection.boostedTTPairSelection,
+            # pairselection.boostedTTPairSelection,
             pairselection.GoodTTPairFilter,
             pairselection.LVTau1,
             pairselection.LVTau2,
-            boostedtaus.boostedLVTau1,
-            boostedtaus.boostedLVTau2,
-            boostedtaus.boostedLVTau1_uncorrected,
-            boostedtaus.boostedLVTau2_uncorrected,
+            # boostedtaus.boostedLVTau1,
+            # boostedtaus.boostedLVTau2,
+            # boostedtaus.boostedLVTau1_uncorrected,
+            # boostedtaus.boostedLVTau2_uncorrected,
             pairselection.LVTau1Uncorrected,
             pairselection.LVTau2Uncorrected,
             pairquantities.TTDiTauPairQuantities,
-            boostedtaus.boostedTTDiTauPairQuantities,
+            # boostedtaus.boostedTTDiTauPairQuantities,
             genparticles.TTGenDiTauPairQuantities,
             scalefactors.Tau_1_VsJetTauID_SF,
             scalefactors.Tau_1_VsEleTauID_SF,
@@ -1180,19 +1180,19 @@ def build_config(
             scalefactors.Tau_2_VsJetTauID_tt_SF,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
-            scalefactors.Tau_1_oldIsoTauID_tt_SF,
-            scalefactors.Tau_1_antiEleTauID_SF,
-            scalefactors.Tau_1_antiMuTauID_SF,
-            scalefactors.Tau_2_oldIsoTauID_tt_SF,
-            scalefactors.Tau_2_antiEleTauID_SF,
-            scalefactors.Tau_2_antiMuTauID_SF,
+            # scalefactors.Tau_1_oldIsoTauID_tt_SF,
+            # scalefactors.Tau_1_antiEleTauID_SF,
+            # scalefactors.Tau_1_antiMuTauID_SF,
+            # scalefactors.Tau_2_oldIsoTauID_tt_SF,
+            # scalefactors.Tau_2_antiEleTauID_SF,
+            # scalefactors.Tau_2_antiMuTauID_SF,
             triggers.TTGenerateDoubleTriggerFlags,
             # triggers.BoostedTTGenerateDoubleTriggerFlags,
             # triggers.GenerateSingleTrailingTauTriggerFlags,
             # triggers.GenerateSingleLeadingTauTriggerFlags,
-            triggers.BoostedTTTriggerFlags,
+            # triggers.BoostedTTTriggerFlags,
             scalefactors.TTGenerateDoubleTauTriggerSF_MC,
-            scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
+            # scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
         ],
     )
     configuration.add_modification_rule(
@@ -1206,17 +1206,17 @@ def build_config(
             samples="data",
         ),
     )
-    configuration.add_modification_rule(
-        ["et", "mt"],
-        RemoveProducer(
-            producers=[
-                scalefactors.Tau_2_antiMuTauID_SF,
-                scalefactors.Tau_2_oldIsoTauID_lt_SF,
-                scalefactors.Tau_2_antiEleTauID_SF,
-            ],
-            samples=["data", "embedding"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     ["et", "mt"],
+    #     RemoveProducer(
+    #         producers=[
+    #             scalefactors.Tau_2_antiMuTauID_SF,
+    #             scalefactors.Tau_2_oldIsoTauID_lt_SF,
+    #             scalefactors.Tau_2_antiEleTauID_SF,
+    #         ],
+    #         samples=["data", "embedding"],
+    #     ),
+    # )
     configuration.add_modification_rule(
         ["et", "mt", "tt"],
         AppendProducer(
@@ -1224,9 +1224,9 @@ def build_config(
                 genparticles.GenBPairQuantities,
                 genparticles.GenMatchingBPairFlag,
                 genparticles.GenTauPairQuantities,
-                genparticles.GenMatchingBoostedTauPairFlag,
+                # genparticles.GenMatchingBoostedTauPairFlag,
             ],
-            samples=["nmssm_Ybb", "nmssm_Ytautau"],
+            samples=["nmssm_Ybb", "nmssm_Ytautau"], 
         ),
     )
 
@@ -1244,44 +1244,44 @@ def build_config(
             samples="data",
         ),
     )
-    configuration.add_modification_rule(
-        ["tt"],
-        RemoveProducer(
-            producers=[
-                scalefactors.Tau_1_oldIsoTauID_tt_SF,
-                scalefactors.Tau_1_antiEleTauID_SF,
-                scalefactors.Tau_1_antiMuTauID_SF,
-                scalefactors.Tau_2_oldIsoTauID_tt_SF,
-                scalefactors.Tau_2_antiEleTauID_SF,
-                scalefactors.Tau_2_antiMuTauID_SF,
-            ],
-            samples=["data", "embedding"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     ["tt"],
+    #     RemoveProducer(
+    #         producers=[
+    #             scalefactors.Tau_1_oldIsoTauID_tt_SF,
+    #             scalefactors.Tau_1_antiEleTauID_SF,
+    #             scalefactors.Tau_1_antiMuTauID_SF,
+    #             scalefactors.Tau_2_oldIsoTauID_tt_SF,
+    #             scalefactors.Tau_2_antiEleTauID_SF,
+    #             scalefactors.Tau_2_antiMuTauID_SF,
+    #         ],
+    #         samples=["data", "embedding"],
+    #     ),
+    # )
     configuration.add_modification_rule(
         scopes,
         RemoveProducer(
             producers=[
                 scalefactors.btagging_SF,
-                scalefactors.btagging_SF_boosted,
+                # scalefactors.btagging_SF_boosted,
             ],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
-    configuration.add_modification_rule(
-        scopes,
-        RemoveProducer(
-            producers=[
-                fatjets.fj_Xbb_hadflavor,
-                fatjets.fj_Xbb_nBhad,
-                fatjets.fj_Xbb_nChad,
-                fatjets.fj_Xbb_hadflavor_boosted,
-                fatjets.fj_Xbb_nBhad_boosted,
-                fatjets.fj_Xbb_nChad_boosted,
-            ],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     scopes,
+    #     RemoveProducer(
+    #         producers=[
+    #             fatjets.fj_Xbb_hadflavor,
+    #             fatjets.fj_Xbb_nBhad,
+    #             fatjets.fj_Xbb_nChad,
+    #             fatjets.fj_Xbb_hadflavor_boosted,
+    #             fatjets.fj_Xbb_nBhad_boosted,
+    #             fatjets.fj_Xbb_nChad_boosted,
+    #         ],
+    #         samples=["data", "embedding", "embedding_mc"],
+    #     ),
+    # )
     configuration.add_modification_rule(
         ["et", "mt", "tt"],
         ReplaceProducer(
@@ -1289,16 +1289,16 @@ def build_config(
             samples="data",
         ),
     )
-    configuration.add_modification_rule(
-        ["et", "mt", "tt"],
-        ReplaceProducer(
-            producers=[
-                boostedtaus.boostedTauEnergyCorrection,
-                boostedtaus.boostedTauEnergyCorrection_data,
-            ],
-            samples="data",
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     ["et", "mt", "tt"],
+    #     ReplaceProducer(
+    #         producers=[
+    #             boostedtaus.boostedTauEnergyCorrection,
+    #             boostedtaus.boostedTauEnergyCorrection_data,
+    #         ],
+    #         samples="data",
+    #     ),
+    # )
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
@@ -1306,16 +1306,16 @@ def build_config(
             samples="data",
         ),
     )
-    configuration.add_modification_rule(
-        "global",
-        ReplaceProducer(
-            producers=[
-                fatjets.FatJetEnergyCorrection,
-                fatjets.FatJetEnergyCorrection_data,
-            ],
-            samples=["data"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     "global",
+    #     ReplaceProducer(
+    #         producers=[
+    #             fatjets.FatJetEnergyCorrection,
+    #             fatjets.FatJetEnergyCorrection_data,
+    #         ],
+    #         samples=["data"],
+    #     ),
+    # )
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
@@ -1350,13 +1350,13 @@ def build_config(
         ),
     )
     # for whatever reason, the nmssm samples have one less entry of the weights and therefore need special treatment
-    configuration.add_modification_rule(
-        "global",
-        ReplaceProducer(
-            producers=[event.LHE_Scale_weight, event.NMSSM_LHE_Scale_weight],
-            samples=["nmssm_Ybb", "nmssm_Ytautau"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     "global",
+    #     ReplaceProducer(
+    #         producers=[event.LHE_Scale_weight, event.NMSSM_LHE_Scale_weight],
+    #         samples=["nmssm_Ybb", "nmssm_Ytautau"],
+    #     ),
+    # )
     # configuration.add_modification_rule(
     #     ["et", "mt"],
     #     RemoveProducer(
@@ -1382,7 +1382,7 @@ def build_config(
         RemoveProducer(
             producers=[
                 genparticles.GenMatching,
-                genparticles.GenMatchingBoosted,
+                # genparticles.GenMatchingBoosted,
             ],
             samples="data",
         ),
@@ -1429,13 +1429,13 @@ def build_config(
             samples=["embedding", "embedding_mc"],
         ),
     )
-    configuration.add_modification_rule(
-        "global",
-        ReplaceProducer(
-            producers=[fatjets.FatJetEnergyCorrection, fatjets.RenameFatJetsData],
-            samples=["embedding", "embedding_mc"],
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     "global",
+    #     ReplaceProducer(
+    #         producers=[fatjets.FatJetEnergyCorrection, fatjets.RenameFatJetsData],
+    #         samples=["embedding", "embedding_mc"],
+    #     ),
+    # )
 
     configuration.add_modification_rule(
         "global",
@@ -1476,7 +1476,7 @@ def build_config(
         RemoveProducer(
             producers=[
                 scalefactors.TTGenerateDoubleTauTriggerSF_MC,
-                scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
+                # scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
             ],
             samples=["data"],
         ),
@@ -1488,9 +1488,9 @@ def build_config(
             producers=[
                 scalefactors.TauEmbeddingMuonIDSF_1_MC,
                 scalefactors.TauEmbeddingMuonIsoSF_1_MC,
-                scalefactors.TauEmbeddingBoostedMuonIDSF_1_MC,
-                scalefactors.TauEmbeddingBoostedMuonIsoSF_1_MC,
-                scalefactors.Muon_SF_boosted,
+                # scalefactors.TauEmbeddingBoostedMuonIDSF_1_MC,
+                # scalefactors.TauEmbeddingBoostedMuonIsoSF_1_MC,
+                # scalefactors.Muon_SF_boosted,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ),
@@ -1501,9 +1501,9 @@ def build_config(
             producers=[
                 scalefactors.TauEmbeddingElectronIDSF_1_MC,
                 scalefactors.TauEmbeddingElectronIsoSF_1_MC,
-                scalefactors.TauEmbeddingBoostedElectronIDSF_1_MC,
-                scalefactors.TauEmbeddingBoostedElectronIsoSF_1_MC,
-                scalefactors.EleID_SF_boosted,
+                # scalefactors.TauEmbeddingBoostedElectronIDSF_1_MC,
+                # scalefactors.TauEmbeddingBoostedElectronIsoSF_1_MC,
+                # scalefactors.EleID_SF_boosted,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ),
@@ -1526,7 +1526,7 @@ def build_config(
         AppendProducer(
             producers=[
                 scalefactors.MTGenerateSingleMuonTriggerSF_MC,
-                scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC,
+                # scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ),
@@ -1536,7 +1536,7 @@ def build_config(
         AppendProducer(
             producers=[
                 scalefactors.ETGenerateSingleElectronTriggerSF_MC,
-                scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC,
+                # scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ),
@@ -1565,7 +1565,7 @@ def build_config(
             q.eta_2,
             q.phi_1,
             q.phi_2,
-            q.nfatjets,
+            # q.nfatjets,
             # q.fj_pt_1,
             # q.fj_eta_1,
             # q.fj_phi_1,
@@ -1590,29 +1590,29 @@ def build_config(
             # q.fj_matched_particleNet_XbbvsQCD,
             # q.fj_matched_nsubjettiness_2over1,
             # q.fj_matched_nsubjettiness_3over2,
-            q.fj_Xbb_pt,
-            q.fj_Xbb_eta,
-            q.fj_Xbb_phi,
-            q.fj_Xbb_mass,
-            q.fj_Xbb_msoftdrop,
-            q.fj_Xbb_particleNet_XbbvsQCD,
-            q.fj_Xbb_nsubjettiness_2over1,
-            q.fj_Xbb_nsubjettiness_3over2,
-            q.fj_Xbb_hadflavor,
-            q.fj_Xbb_nBhad,
-            q.fj_Xbb_nChad,
-            q.nfatjets_boosted,
-            q.fj_Xbb_pt_boosted,
-            q.fj_Xbb_eta_boosted,
-            q.fj_Xbb_phi_boosted,
-            q.fj_Xbb_mass_boosted,
-            q.fj_Xbb_msoftdrop_boosted,
-            q.fj_Xbb_particleNet_XbbvsQCD_boosted,
-            q.fj_Xbb_nsubjettiness_2over1_boosted,
-            q.fj_Xbb_nsubjettiness_3over2_boosted,
-            q.fj_Xbb_hadflavor_boosted,
-            q.fj_Xbb_nBhad_boosted,
-            q.fj_Xbb_nChad_boosted,
+            # q.fj_Xbb_pt,
+            # q.fj_Xbb_eta,
+            # q.fj_Xbb_phi,
+            # q.fj_Xbb_mass,
+            # q.fj_Xbb_msoftdrop,
+            # q.fj_Xbb_particleNet_XbbvsQCD,
+            # q.fj_Xbb_nsubjettiness_2over1,
+            # q.fj_Xbb_nsubjettiness_3over2,
+            # q.fj_Xbb_hadflavor,
+            # q.fj_Xbb_nBhad,
+            # q.fj_Xbb_nChad,
+            # q.nfatjets_boosted,
+            # q.fj_Xbb_pt_boosted,
+            # q.fj_Xbb_eta_boosted,
+            # q.fj_Xbb_phi_boosted,
+            # q.fj_Xbb_mass_boosted,
+            # q.fj_Xbb_msoftdrop_boosted,
+            # q.fj_Xbb_particleNet_XbbvsQCD_boosted,
+            # q.fj_Xbb_nsubjettiness_2over1_boosted,
+            # q.fj_Xbb_nsubjettiness_3over2_boosted,
+            # q.fj_Xbb_hadflavor_boosted,
+            # q.fj_Xbb_nBhad_boosted,
+            # q.fj_Xbb_nChad_boosted,
             q.bpair_pt_1,
             q.bpair_pt_2,
             q.bpair_eta_1,
@@ -1628,21 +1628,21 @@ def build_config(
             q.bpair_m_inv,
             q.bpair_deltaR,
             q.bpair_pt_dijet,
-            q.bpair_pt_1_boosted,
-            q.bpair_pt_2_boosted,
-            q.bpair_eta_1_boosted,
-            q.bpair_eta_2_boosted,
-            q.bpair_phi_1_boosted,
-            q.bpair_phi_2_boosted,
-            q.bpair_mass_1_boosted,
-            q.bpair_mass_2_boosted,
-            q.bpair_btag_value_1_boosted,
-            q.bpair_btag_value_2_boosted,
-            q.bpair_reg_res_1_boosted,
-            q.bpair_reg_res_2_boosted,
-            q.bpair_m_inv_boosted,
-            q.bpair_deltaR_boosted,
-            q.bpair_pt_dijet_boosted,
+            # q.bpair_pt_1_boosted,
+            # q.bpair_pt_2_boosted,
+            # q.bpair_eta_1_boosted,
+            # q.bpair_eta_2_boosted,
+            # q.bpair_phi_1_boosted,
+            # q.bpair_phi_2_boosted,
+            # q.bpair_mass_1_boosted,
+            # q.bpair_mass_2_boosted,
+            # q.bpair_btag_value_1_boosted,
+            # q.bpair_btag_value_2_boosted,
+            # q.bpair_reg_res_1_boosted,
+            # q.bpair_reg_res_2_boosted,
+            # q.bpair_m_inv_boosted,
+            # q.bpair_deltaR_boosted,
+            # q.bpair_pt_dijet_boosted,
             q.genjet_pt_1,
             q.genjet_eta_1,
             q.genjet_phi_1,
@@ -1655,7 +1655,7 @@ def build_config(
             q.genjet_hadFlavour_2,
             q.genjet_m_inv,
             q.njets,
-            q.njets_boosted,
+            # q.njets_boosted,
             q.jpt_1,
             q.jpt_2,
             q.jeta_1,
@@ -1669,7 +1669,7 @@ def build_config(
             q.deltaR_ditaupair,
             q.pt_vis,
             q.nbtag,
-            q.nbtag_boosted,
+            # q.nbtag_boosted,
             # q.bpt_1,
             # q.bpt_2,
             # q.beta_1,
@@ -1679,9 +1679,9 @@ def build_config(
             # q.btag_value_1,
             # q.btag_value_2,
             q.btag_weight,
-            q.btag_weight_boosted,
-            q.pNet_Xbb_weight,
-            q.pNet_Xbb_weight_boosted,
+            # q.btag_weight_boosted,
+            # q.pNet_Xbb_weight,
+            # q.pNet_Xbb_weight_boosted,
             q.mass_1,
             q.mass_2,
             q.dxy_1,
@@ -1707,10 +1707,10 @@ def build_config(
             q.metphi,
             q.pfmet,
             q.pfmetphi,
-            q.met_boosted,
-            q.metphi_boosted,
-            q.pfmet_boosted,
-            q.pfmetphi_boosted,
+            # q.met_boosted,
+            # q.metphi_boosted,
+            # q.pfmet_boosted,
+            # q.pfmetphi_boosted,
             q.met_uncorrected,
             q.metphi_uncorrected,
             q.pfmet_uncorrected,
@@ -1732,8 +1732,8 @@ def build_config(
             q.genbosonmass,
             q.gen_match_1,
             q.gen_match_2,
-            q.boosted_gen_match_1,
-            q.boosted_gen_match_2,
+            # q.boosted_gen_match_1,
+            # q.boosted_gen_match_2,
             q.pzetamissvis_pf,
             q.mTdileptonMET_pf,
             q.mt_1_pf,
@@ -1757,21 +1757,21 @@ def build_config(
         [
             q.nmuons,
             q.ntaus,
-            q.nboostedtaus,
+            # q.nboostedtaus,
             scalefactors.Tau_2_VsJetTauID_lt_SF.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            scalefactors.Tau_2_oldIsoTauID_lt_SF.output_group,
-            scalefactors.Tau_2_antiEleTauID_SF.output_group,
-            scalefactors.Tau_2_antiMuTauID_SF.output_group,
+            # scalefactors.Tau_2_oldIsoTauID_lt_SF.output_group,
+            # scalefactors.Tau_2_antiEleTauID_SF.output_group,
+            # scalefactors.Tau_2_antiMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
-            boostedtaus.isoTauIDFlag_2.output_group,
-            boostedtaus.antiEleTauIDFlag_2.output_group,
-            boostedtaus.antiMuTauIDFlag_2.output_group,
+            # boostedtaus.isoTauIDFlag_2.output_group,
+            # boostedtaus.antiEleTauIDFlag_2.output_group,
+            # boostedtaus.antiMuTauIDFlag_2.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
-            triggers.BoostedMTGenerateSingleMuonTriggerFlags.output_group,
+            # triggers.BoostedMTGenerateSingleMuonTriggerFlags.output_group,
             # triggers.MTGenerateCrossTriggerFlags.output_group,
             # triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             # q.taujet_pt_2,
@@ -1780,36 +1780,36 @@ def build_config(
             q.tau_decaymode_2,
             # q.tau_gen_match_2,
             q.muon_veto_flag,
-            q.boosted_muon_veto_flag,
+            # q.boosted_muon_veto_flag,
             q.electron_veto_flag,
             q.dimuon_veto,
             q.dilepton_veto,
             # q.id_wgt_mu_1,
             # q.iso_wgt_mu_1,
-            q.boosted_dxy_1,
-            q.boosted_dz_1,
-            q.boosted_tau_decaymode_1,
-            q.boosted_tau_decaymode_2,
+            # q.boosted_dxy_1,
+            # q.boosted_dz_1,
+            # q.boosted_tau_decaymode_1,
+            # q.boosted_tau_decaymode_2,
             # q.boosted_tau_gen_match_2,
-            q.boosted_pt_1,
-            q.boosted_pt_2,
-            q.boosted_eta_1,
-            q.boosted_eta_2,
-            q.boosted_phi_1,
-            q.boosted_phi_2,
-            q.boosted_mass_1,
-            q.boosted_mass_2,
-            q.boosted_q_1,
-            q.boosted_q_2,
-            q.boosted_iso_1,
-            q.boosted_iso_2,
-            q.boosted_m_vis,
-            q.boosted_deltaR_ditaupair,
-            q.boosted_pt_vis,
-            q.boosted_mt_1,
-            q.boosted_mt_2,
-            q.boosted_pt_tautaubb,
-            q.boosted_mass_tautaubb,
+            # q.boosted_pt_1,
+            # q.boosted_pt_2,
+            # q.boosted_eta_1,
+            # q.boosted_eta_2,
+            # q.boosted_phi_1,
+            # q.boosted_phi_2,
+            # q.boosted_mass_1,
+            # q.boosted_mass_2,
+            # q.boosted_q_1,
+            # q.boosted_q_2,
+            # q.boosted_iso_1,
+            # q.boosted_iso_2,
+            # q.boosted_m_vis,
+            # q.boosted_deltaR_ditaupair,
+            # q.boosted_pt_vis,
+            # q.boosted_mt_1,
+            # q.boosted_mt_2,
+            # q.boosted_pt_tautaubb,
+            # q.boosted_mass_tautaubb,
             # q.boosted_pt_add,
             # q.boosted_eta_add,
             # q.boosted_phi_add,
@@ -1821,21 +1821,21 @@ def build_config(
         [
             q.nelectrons,
             q.ntaus,
-            q.nboostedtaus,
+            # q.nboostedtaus,
             scalefactors.Tau_2_VsJetTauID_lt_SF.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            scalefactors.Tau_2_oldIsoTauID_lt_SF.output_group,
-            scalefactors.Tau_2_antiEleTauID_SF.output_group,
-            scalefactors.Tau_2_antiMuTauID_SF.output_group,
+            # scalefactors.Tau_2_oldIsoTauID_lt_SF.output_group,
+            # scalefactors.Tau_2_antiEleTauID_SF.output_group,
+            # scalefactors.Tau_2_antiMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
-            boostedtaus.isoTauIDFlag_2.output_group,
-            boostedtaus.antiEleTauIDFlag_2.output_group,
-            boostedtaus.antiMuTauIDFlag_2.output_group,
+            # boostedtaus.isoTauIDFlag_2.output_group,
+            # boostedtaus.antiEleTauIDFlag_2.output_group,
+            # boostedtaus.antiMuTauIDFlag_2.output_group,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
-            triggers.BoostedETGenerateSingleElectronTriggerFlags.output_group,
+            # triggers.BoostedETGenerateSingleElectronTriggerFlags.output_group,
             # triggers.ETGenerateCrossTriggerFlags.output_group,
             # triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             # q.taujet_pt_2,
@@ -1844,36 +1844,36 @@ def build_config(
             q.tau_decaymode_2,
             # q.tau_gen_match_2,
             q.muon_veto_flag,
-            q.boosted_electron_veto_flag,
+            # q.boosted_electron_veto_flag,
             q.electron_veto_flag,
             q.dielectron_veto,
             q.dilepton_veto,
             # q.id_wgt_ele_wp90nonIso_1,
             # q.id_wgt_ele_wp80nonIso_1,
-            q.boosted_dxy_1,
-            q.boosted_dz_1,
-            q.boosted_tau_decaymode_1,
-            q.boosted_tau_decaymode_2,
+            # q.boosted_dxy_1,
+            # q.boosted_dz_1,
+            # q.boosted_tau_decaymode_1,
+            # q.boosted_tau_decaymode_2,
             # q.boosted_tau_gen_match_2,
-            q.boosted_pt_1,
-            q.boosted_pt_2,
-            q.boosted_eta_1,
-            q.boosted_eta_2,
-            q.boosted_phi_1,
-            q.boosted_phi_2,
-            q.boosted_mass_1,
-            q.boosted_mass_2,
-            q.boosted_q_1,
-            q.boosted_q_2,
-            q.boosted_iso_1,
-            q.boosted_iso_2,
-            q.boosted_m_vis,
-            q.boosted_deltaR_ditaupair,
-            q.boosted_pt_vis,
-            q.boosted_mt_1,
-            q.boosted_mt_2,
-            q.boosted_pt_tautaubb,
-            q.boosted_mass_tautaubb,
+            # q.boosted_pt_1,
+            # q.boosted_pt_2,
+            # q.boosted_eta_1,
+            # q.boosted_eta_2,
+            # q.boosted_phi_1,
+            # q.boosted_phi_2,
+            # q.boosted_mass_1,
+            # q.boosted_mass_2,
+            # q.boosted_q_1,
+            # q.boosted_q_2,
+            # q.boosted_iso_1,
+            # q.boosted_iso_2,
+            # q.boosted_m_vis,
+            # q.boosted_deltaR_ditaupair,
+            # q.boosted_pt_vis,
+            # q.boosted_mt_1,
+            # q.boosted_mt_2,
+            # q.boosted_pt_tautaubb,
+            # q.boosted_mass_tautaubb,
             # q.boosted_pt_add,
             # q.boosted_eta_add,
             # q.boosted_phi_add,
@@ -1890,25 +1890,25 @@ def build_config(
             scalefactors.Tau_2_VsJetTauID_tt_SF.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            scalefactors.Tau_1_oldIsoTauID_tt_SF.output_group,
-            scalefactors.Tau_1_antiEleTauID_SF.output_group,
-            scalefactors.Tau_1_antiMuTauID_SF.output_group,
-            scalefactors.Tau_2_oldIsoTauID_tt_SF.output_group,
-            scalefactors.Tau_2_antiEleTauID_SF.output_group,
-            scalefactors.Tau_2_antiMuTauID_SF.output_group,
+            # scalefactors.Tau_1_oldIsoTauID_tt_SF.output_group,
+            # scalefactors.Tau_1_antiEleTauID_SF.output_group,
+            # scalefactors.Tau_1_antiMuTauID_SF.output_group,
+            # scalefactors.Tau_2_oldIsoTauID_tt_SF.output_group,
+            # scalefactors.Tau_2_antiEleTauID_SF.output_group,
+            # scalefactors.Tau_2_antiMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_1.output_group,
             pairquantities.VsEleTauIDFlag_1.output_group,
             pairquantities.VsMuTauIDFlag_1.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
             pairquantities.VsEleTauIDFlag_2.output_group,
             pairquantities.VsMuTauIDFlag_2.output_group,
-            boostedtaus.isoTauIDFlag_1.output_group,
-            boostedtaus.antiEleTauIDFlag_1.output_group,
-            boostedtaus.antiMuTauIDFlag_1.output_group,
-            boostedtaus.isoTauIDFlag_2.output_group,
-            boostedtaus.antiEleTauIDFlag_2.output_group,
-            boostedtaus.antiMuTauIDFlag_2.output_group,
-            triggers.BoostedTTTriggerFlags.output_group,
+            # boostedtaus.isoTauIDFlag_1.output_group,
+            # boostedtaus.antiEleTauIDFlag_1.output_group,
+            # boostedtaus.antiMuTauIDFlag_1.output_group,
+            # boostedtaus.isoTauIDFlag_2.output_group,
+            # boostedtaus.antiEleTauIDFlag_2.output_group,
+            # boostedtaus.antiMuTauIDFlag_2.output_group,
+            # triggers.BoostedTTTriggerFlags.output_group,
             triggers.TTGenerateDoubleTriggerFlags.output_group,
             # triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             # triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
@@ -1923,31 +1923,31 @@ def build_config(
             q.electron_veto_flag,
             q.dimuon_veto,
             q.dilepton_veto,
-            q.boosted_tau_decaymode_1,
-            q.boosted_tau_decaymode_2,
+            # q.boosted_tau_decaymode_1,
+            # q.boosted_tau_decaymode_2,
             # q.boosted_tau_gen_match_1,
             # q.boosted_tau_gen_match_2,
-            q.boosted_pt_1,
-            q.boosted_pt_2,
-            q.boosted_eta_1,
-            q.boosted_eta_2,
-            q.boosted_phi_1,
-            q.boosted_phi_2,
-            q.boosted_mass_1,
-            q.boosted_mass_2,
-            q.boosted_q_1,
-            q.boosted_q_2,
-            q.boosted_iso_1,
-            q.boosted_iso_2,
-            q.boosted_m_vis,
-            q.boosted_deltaR_ditaupair,
-            q.boosted_pt_vis,
-            q.boosted_mt_1,
-            q.boosted_mt_2,
-            q.boosted_pt_tautaubb,
-            q.boosted_mass_tautaubb,
-            q.fj_leading_pt, 
-            q.fj_leading_msoftdrop,
+            # q.boosted_pt_1,
+            # q.boosted_pt_2,
+            # q.boosted_eta_1,
+            # q.boosted_eta_2,
+            # q.boosted_phi_1,
+            # q.boosted_phi_2,
+            # q.boosted_mass_1,
+            # q.boosted_mass_2,
+            # q.boosted_q_1,
+            # q.boosted_q_2,
+            # q.boosted_iso_1,
+            # q.boosted_iso_2,
+            # q.boosted_m_vis,
+            # q.boosted_deltaR_ditaupair,
+            # q.boosted_pt_vis,
+            # q.boosted_mt_1,
+            # q.boosted_mt_2,
+            # q.boosted_pt_tautaubb,
+            # q.boosted_mass_tautaubb,
+            # q.fj_leading_pt, 
+            # q.fj_leading_msoftdrop,
         ],
     )
     configuration.add_outputs(
@@ -1992,7 +1992,7 @@ def build_config(
                 q.gen_tau_mass_2,
                 q.gen_tau_m_inv,
                 q.gen_tau_deltaR,
-                q.gen_boostedtaupair_match_flag,
+                # q.gen_boostedtaupair_match_flag,
             ],
         )
     #########################
@@ -2045,51 +2045,51 @@ def build_config(
                 producers={"global": [event.LHE_Scale_weight]},
             )
         )
-    if sample in ["nmssm_Ybb", "nmssm_Ytautau"]:
-        configuration.add_shift(
-            SystematicShift(
-                "muRWeightUp",
-                shift_config={
-                    "global": {
-                        "muR": 2.0,
-                    }
-                },
-                producers={"global": [event.NMSSM_LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muRWeightDown",
-                shift_config={
-                    "global": {
-                        "muR": 0.5,
-                    }
-                },
-                producers={"global": [event.NMSSM_LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muFWeightUp",
-                shift_config={
-                    "global": {
-                        "muF": 2.0,
-                    }
-                },
-                producers={"global": [event.NMSSM_LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muFWeightDown",
-                shift_config={
-                    "global": {
-                        "muF": 0.5,
-                    }
-                },
-                producers={"global": [event.NMSSM_LHE_Scale_weight]},
-            )
-        )
+    # if sample in ["nmssm_Ybb", "nmssm_Ytautau"]:
+    #     configuration.add_shift(
+    #         SystematicShift(
+    #             "muRWeightUp",
+    #             shift_config={
+    #                 "global": {
+    #                     "muR": 2.0,
+    #                 }
+    #             },
+    #             producers={"global": [event.NMSSM_LHE_Scale_weight]},
+    #         )
+    #     )
+    #     configuration.add_shift(
+    #         SystematicShift(
+    #             "muRWeightDown",
+    #             shift_config={
+    #                 "global": {
+    #                     "muR": 0.5,
+    #                 }
+    #             },
+    #             producers={"global": [event.NMSSM_LHE_Scale_weight]},
+    #         )
+    #     )
+    #     configuration.add_shift(
+    #         SystematicShift(
+    #             "muFWeightUp",
+    #             shift_config={
+    #                 "global": {
+    #                     "muF": 2.0,
+    #                 }
+    #             },
+    #             producers={"global": [event.NMSSM_LHE_Scale_weight]},
+    #         )
+    #     )
+    #     configuration.add_shift(
+    #         SystematicShift(
+    #             "muFWeightDown",
+    #             shift_config={
+    #                 "global": {
+    #                     "muF": 0.5,
+    #                 }
+    #             },
+    #             producers={"global": [event.NMSSM_LHE_Scale_weight]},
+    #         )
+    #     )
 
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #
@@ -2326,36 +2326,36 @@ def build_config(
     #########################
     # particleNet Xbb scale factor uncertainties
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="pNetXbbSFUp",
-            shift_config={
-                ("mt", "et", "tt"): {"pNetXbb_sf_variation": "up"},
-            },
-            producers={
-                ("mt", "et", "tt"): {
-                    scalefactors.Xbb_tagging_SF,
-                    scalefactors.Xbb_tagging_SF_boosted,
-                }
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="pNetXbbSFDown",
-            shift_config={
-                ("mt", "et", "tt"): {"pNetXbb_sf_variation": "down"},
-            },
-            producers={
-                ("mt", "et", "tt"): {
-                    scalefactors.Xbb_tagging_SF,
-                    scalefactors.Xbb_tagging_SF_boosted,
-                }
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="pNetXbbSFUp",
+    #         shift_config={
+    #             ("mt", "et", "tt"): {"pNetXbb_sf_variation": "up"},
+    #         },
+    #         producers={
+    #             ("mt", "et", "tt"): {
+    #                 scalefactors.Xbb_tagging_SF,
+    #                 scalefactors.Xbb_tagging_SF_boosted,
+    #             }
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="pNetXbbSFDown",
+    #         shift_config={
+    #             ("mt", "et", "tt"): {"pNetXbb_sf_variation": "down"},
+    #         },
+    #         producers={
+    #             ("mt", "et", "tt"): {
+    #                 scalefactors.Xbb_tagging_SF,
+    #                 scalefactors.Xbb_tagging_SF_boosted,
+    #             }
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
     #########################
     # MET Recoil Shifts
     #########################
@@ -2373,7 +2373,7 @@ def build_config(
             producers={
                 ("et", "mt", "tt", "mm"): [
                     met.ApplyRecoilCorrections,
-                    met.ApplyRecoilCorrections_boosted,
+                    # met.ApplyRecoilCorrections_boosted,
                 ],
             },
         ),
@@ -2393,7 +2393,7 @@ def build_config(
             producers={
                 ("et", "mt", "tt", "mm"): [
                     met.ApplyRecoilCorrections,
-                    met.ApplyRecoilCorrections_boosted,
+                    # met.ApplyRecoilCorrections_boosted,
                 ],
             },
         ),
@@ -2413,7 +2413,7 @@ def build_config(
             producers={
                 ("et", "mt", "tt", "mm"): [
                     met.ApplyRecoilCorrections,
-                    met.ApplyRecoilCorrections_boosted,
+                    # met.ApplyRecoilCorrections_boosted,
                 ],
             },
         ),
@@ -2433,7 +2433,7 @@ def build_config(
             producers={
                 ("et", "mt", "tt", "mm"): [
                     met.ApplyRecoilCorrections,
-                    met.ApplyRecoilCorrections_boosted,
+                    # met.ApplyRecoilCorrections_boosted,
                 ],
             },
         ),
@@ -2538,36 +2538,36 @@ def build_config(
     #     ),
     #     exclude_samples=["data", "embedding", "embedding_mc"],
     # )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedElectronIdSFUp",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"ele_sf_variation": "sfup"},
-            },
-            producers={
-                ("et"): [
-                    scalefactors.EleID_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedElectronIdSFDown",
-            scopes=["et"],
-            shift_config={
-                ("et"): {"ele_sf_variation": "sfdown"},
-            },
-            producers={
-                ("et"): [
-                    scalefactors.EleID_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedElectronIdSFUp",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"ele_sf_variation": "sfup"},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 scalefactors.EleID_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedElectronIdSFDown",
+    #         scopes=["et"],
+    #         shift_config={
+    #             ("et"): {"ele_sf_variation": "sfdown"},
+    #         },
+    #         producers={
+    #             ("et"): [
+    #                 scalefactors.EleID_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
 
     #########################
     # Muon id/iso sf shifts
@@ -2634,96 +2634,96 @@ def build_config(
     #     exclude_samples=["data", "embedding", "embedding_mc"],
     # )
 
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonRecoSFUp",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_reco_sf_variation": "systup"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_Reco_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonRecoSFDown",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_reco_sf_variation": "systdown"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_Reco_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonIdSFUp",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_id_sf_variation": "systup"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_ID_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonIdSFDown",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_id_sf_variation": "systdown"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_ID_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonIsoSFUp",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_iso_sf_variation": "systup"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_Iso_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedMuonIsoSFDown",
-            scopes=["mt"],
-            shift_config={
-                ("mt"): {"muon_iso_sf_variation": "systdown"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.Muon_1_Iso_SF_boosted,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonRecoSFUp",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_reco_sf_variation": "systup"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_Reco_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonRecoSFDown",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_reco_sf_variation": "systdown"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_Reco_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonIdSFUp",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_id_sf_variation": "systup"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_ID_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonIdSFDown",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_id_sf_variation": "systdown"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_ID_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonIsoSFUp",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_iso_sf_variation": "systup"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_Iso_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedMuonIsoSFDown",
+    #         scopes=["mt"],
+    #         shift_config={
+    #             ("mt"): {"muon_iso_sf_variation": "systdown"},
+    #         },
+    #         producers={
+    #             ("mt"): [
+    #                 scalefactors.Muon_1_Iso_SF_boosted,
+    #             ],
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
 
     #########################
     # Trigger shifts
@@ -2851,88 +2851,88 @@ def build_config(
         ),
         exclude_samples=["data", "embedding", "embedding_mc"],
     )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedSingleMuonTriggerSFUp",
-            shift_config={
-                ("mt"): {
-                    "boosted_singlemuon_trigger_sf_mc": [
-                        {
-                            "flagname": "trg_wgt_single_mu24_boosted",
-                            "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                            "muon_trg_sf_variation": "systup",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu50_boosted",
-                            "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
-                            "muon_trg_sf_variation": "systup",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                        },
-                    ],
-                }
-            },
-            producers={("mt"): scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedSingleMuonTriggerSFDown",
-            shift_config={
-                ("mt"): {
-                    "boosted_singlemuon_trigger_sf_mc": [
-                        {
-                            "flagname": "trg_wgt_single_mu24_boosted",
-                            "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                            "muon_trg_sf_variation": "systdown",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu50_boosted",
-                            "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
-                            "muon_trg_sf_variation": "systdown",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-                        },
-                    ],
-                }
-            },
-            producers={("mt"): scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedSingleElectronTriggerSFUp",
-            shift_config={
-                ("et"): {
-                    "boosted_singleelectron_trigger_sf_mc": [
-                        {
-                            "flagname": "trg_wgt_single_ele_boosted",
-                            "ele_trg_sf_name": "ElectronTriggerSF",
-                            "ele_trg_sf_variation": "up",  
-                        },
-                    ],
-                }
-            },
-            producers={("et"): scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="boostedSingleElectronTriggerSFDown",
-            shift_config={
-                ("et"): {
-                    "boosted_singleelectron_trigger_sf_mc": [
-                        {
-                            "flagname": "trg_wgt_single_ele_boosted",
-                            "ele_trg_sf_name": "ElectronTriggerSF",
-                            "ele_trg_sf_variation": "down",  
-                        },
-                    ],
-                }
-            },
-            producers={("et"): scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedSingleMuonTriggerSFUp",
+    #         shift_config={
+    #             ("mt"): {
+    #                 "boosted_singlemuon_trigger_sf_mc": [
+    #                     {
+    #                         "flagname": "trg_wgt_single_mu24_boosted",
+    #                         "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+    #                         "muon_trg_sf_variation": "systup",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+    #                     },
+    #                     {
+    #                         "flagname": "trg_wgt_single_mu50_boosted",
+    #                         "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
+    #                         "muon_trg_sf_variation": "systup",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+    #                     },
+    #                 ],
+    #             }
+    #         },
+    #         producers={("mt"): scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC},
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedSingleMuonTriggerSFDown",
+    #         shift_config={
+    #             ("mt"): {
+    #                 "boosted_singlemuon_trigger_sf_mc": [
+    #                     {
+    #                         "flagname": "trg_wgt_single_mu24_boosted",
+    #                         "muon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+    #                         "muon_trg_sf_variation": "systdown",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+    #                     },
+    #                     {
+    #                         "flagname": "trg_wgt_single_mu50_boosted",
+    #                         "muon_trigger_sf_name": "NUM_Mu50_or_OldMu100_or_TkMu100_DEN_CutBasedIdGlobalHighPt_and_TkIsoLoose",
+    #                         "muon_trg_sf_variation": "systdown",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+    #                     },
+    #                 ],
+    #             }
+    #         },
+    #         producers={("mt"): scalefactors.BoostedMTGenerateSingleMuonTriggerSF_MC},
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedSingleElectronTriggerSFUp",
+    #         shift_config={
+    #             ("et"): {
+    #                 "boosted_singleelectron_trigger_sf_mc": [
+    #                     {
+    #                         "flagname": "trg_wgt_single_ele_boosted",
+    #                         "ele_trg_sf_name": "ElectronTriggerSF",
+    #                         "ele_trg_sf_variation": "up",  
+    #                     },
+    #                 ],
+    #             }
+    #         },
+    #         producers={("et"): scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC},
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="boostedSingleElectronTriggerSFDown",
+    #         shift_config={
+    #             ("et"): {
+    #                 "boosted_singleelectron_trigger_sf_mc": [
+    #                     {
+    #                         "flagname": "trg_wgt_single_ele_boosted",
+    #                         "ele_trg_sf_name": "ElectronTriggerSF",
+    #                         "ele_trg_sf_variation": "down",  
+    #                     },
+    #                 ],
+    #             }
+    #         },
+    #         producers={("et"): scalefactors.BoostedETGenerateSingleElectronTriggerSF_MC},
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
 
     configuration.add_shift(
         SystematicShift(
@@ -2955,32 +2955,32 @@ def build_config(
         exclude_samples=["data", "embedding", "embedding_mc"],
     )
     
-    configuration.add_shift(
-        SystematicShift(
-            name="fatjetTriggerSFUp",
-            shift_config={("tt"): {"fatjet_trigger_sf_syst": "up"}},
-            producers={
-                ("tt"): scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="fatjetTriggerSFDown",
-            shift_config={("tt"): {"fatjet_trigger_sf_syst": "down"}},
-            producers={
-                ("tt"): scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="fatjetTriggerSFUp",
+    #         shift_config={("tt"): {"fatjet_trigger_sf_syst": "up"}},
+    #         producers={
+    #             ("tt"): scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
+    # configuration.add_shift(
+    #     SystematicShift(
+    #         name="fatjetTriggerSFDown",
+    #         shift_config={("tt"): {"fatjet_trigger_sf_syst": "down"}},
+    #         producers={
+    #             ("tt"): scalefactors.BoostedTTGenerateFatjetTriggerSF_MC,
+    #         },
+    #     ),
+    #     exclude_samples=["data", "embedding", "embedding_mc"],
+    # )
 
     #########################
     # TauID scale factor shifts, channel dependent # Tau energy scale shifts, dm dependent
     #########################
     add_tauVariations(configuration, sample)
-    add_boostedtauVariations(configuration, sample)
+    # add_boostedtauVariations(configuration, sample)
     #########################
     # Import triggersetup   #
     #########################

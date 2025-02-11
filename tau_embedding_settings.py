@@ -334,8 +334,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             producers=[
                 embedding.TauEmbeddingMuonIDSF_1,
                 embedding.TauEmbeddingMuonIsoSF_1,
-                embedding.TauEmbeddingBoostedMuonIDSF_1,
-                embedding.TauEmbeddingBoostedMuonIsoSF_1,
+                # embedding.TauEmbeddingBoostedMuonIDSF_1,
+                # embedding.TauEmbeddingBoostedMuonIsoSF_1,
                 embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],
@@ -347,8 +347,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             producers=[
                 embedding.TauEmbeddingElectronIDSF_1,
                 embedding.TauEmbeddingElectronIsoSF_1,
-                embedding.TauEmbeddingBoostedElectronIDSF_1,
-                embedding.TauEmbeddingBoostedElectronIsoSF_1,
+                # embedding.TauEmbeddingBoostedElectronIDSF_1,
+                # embedding.TauEmbeddingBoostedElectronIsoSF_1,
                 embedding.ETGenerateSingleElectronTriggerSF,
             ],
             samples=["embedding"],
@@ -1337,16 +1337,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        configuration.add_modification_rule(
-            ["mt", "et", "tt"],
-            ReplaceProducer(
-                producers=[
-                    boostedtaus.boostedTauEnergyCorrection,
-                    boostedtaus.boostedTauEnergyCorrection_data,
-                ],
-                samples=["embedding"],
-            ),
-        )
+        # configuration.add_modification_rule(
+        #     ["mt", "et", "tt"],
+        #     ReplaceProducer(
+        #         producers=[
+        #             boostedtaus.boostedTauEnergyCorrection,
+        #             boostedtaus.boostedTauEnergyCorrection_data,
+        #         ],
+        #         samples=["embedding"],
+        #     ),
+        # )
         # default values until we have the correct measured values
         configuration.add_shift(
             SystematicShift(

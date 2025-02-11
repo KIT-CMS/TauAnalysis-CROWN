@@ -65,7 +65,7 @@ GoodMTPairFilter = Filter(
     call='basefunctions::FilterFlagsAny({df}, "GoodMuTauPairs", {input})',
     input=[],
     scopes=["mt"],
-    subproducers=[GoodMTPairFlag, GoodBoostedMTPairFlag],
+    subproducers=[GoodMTPairFlag] # , GoodBoostedMTPairFlag],
 )
 
 MuMuPairSelection = Producer(
@@ -240,7 +240,7 @@ GoodETPairFilter = Filter(
     call='basefunctions::FilterFlagsAny({df}, "GoodElTauPairs", {input})',
     input=[],
     scopes=["et"],
-    subproducers=[GoodETPairFlag, GoodBoostedETPairFlag],
+    subproducers=[GoodETPairFlag]# , GoodBoostedETPairFlag],
 )
 
 ####################
@@ -294,7 +294,7 @@ GoodTTPairFilter = Filter(
     call='basefunctions::FilterFlagsAny({df}, "GoodTauTauPairs", {input})',
     input=[],
     scopes=["tt"],
-    subproducers=[GoodTTPairFlag, GoodBoostedTTPairFlag],
+    subproducers=[GoodTTPairFlag] # , GoodBoostedTTPairFlag],
 )
 ####################
 ## ElMu Pair Selection
@@ -390,7 +390,7 @@ GoodBBPairFilter = Filter(
     call='basefunctions::FilterFlagsAny({df}, "GoodBBPairs", {input})',
     input=[],
     scopes=["et", "mt", "tt", "mm"],
-    subproducers=[GoodBBPairFlag, GoodBBPairFlag_boosted],
+    subproducers=[GoodBBPairFlag] # , GoodBBPairFlag_boosted],
 )
 
 ####################
