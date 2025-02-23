@@ -8,26 +8,44 @@ import inspect
 def run(args):
     analysis_name = "tau"
 
+    # available_samples = [
+    #     "ggh_htautau",
+    #     "ggh_hbb",
+    #     "vbf_htautau",
+    #     "vbf_hbb",
+    #     "rem_htautau",
+    #     "rem_hbb",
+    #     "embedding",
+    #     "embedding_mc",
+    #     "singletop",
+    #     "ttbar",
+    #     "diboson",
+    #     "dyjets",
+    #     "wjets",
+    #     "data",
+    #     "electroweak_boson",
+    #     "nmssm_Ybb",
+    #     "nmssm_Ytautau",
+    # ]
+
     available_samples = [
-        "ggh_htautau",
-        "ggh_hbb",
-        "vbf_htautau",
-        "vbf_hbb",
-        "rem_htautau",
-        "rem_hbb",
-        "embedding",
-        "embedding_mc",
-        "singletop",
-        "ttbar",
-        "diboson",
+        "data",
+        "hh2b2tau",
         "dyjets",
         "wjets",
-        "data",
         "electroweak_boson",
-        "nmssm_Ybb",
-        "nmssm_Ytautau",
-        "hh2b2tau"
+        "singletop",
+        "ggh_htautau",
+        "vbf_htautau",
+        "ttbar",
+        "ttH",
+        "diboson",
+        "triboson",
+        "rem_htautau",
+        "rem_hbb",
+        "rem_ttbar",
     ]
+
     available_eras = ["2016preVFP", "2016postVFP", "2017", "2018"]
     available_scopes = ["et", "mt", "tt", "mm"]
 
