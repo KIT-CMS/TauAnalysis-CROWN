@@ -1217,18 +1217,18 @@ def build_config(
     #         samples=["data", "embedding"],
     #     ),
     # )
-    configuration.add_modification_rule(
-        ["et", "mt", "tt"],
-        AppendProducer(
-            producers=[
-                genparticles.GenBPairQuantities,
-                genparticles.GenMatchingBPairFlag,
-                genparticles.GenTauPairQuantities,
-                # genparticles.GenMatchingBoostedTauPairFlag,
-            ],
-            samples=["nmssm_Ybb", "nmssm_Ytautau"], 
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     ["et", "mt", "tt"],
+    #     AppendProducer(
+    #         producers=[
+    #             genparticles.GenBPairQuantities,
+    #             genparticles.GenMatchingBPairFlag,
+    #             genparticles.GenTauPairQuantities,
+    #             # genparticles.GenMatchingBoostedTauPairFlag,
+    #         ],
+    #         samples=["nmssm_Ybb", "nmssm_Ytautau"], 
+    #     ),
+    # )
 
     configuration.add_modification_rule(
         ["tt"],
@@ -1967,34 +1967,34 @@ def build_config(
             ],
         )
 
-    if sample in ["nmssm_Ybb", "nmssm_Ytautau"]:
-        configuration.add_outputs(
-            scopes,
-            [
-                q.gen_b_pt_1,
-                q.gen_b_eta_1,
-                q.gen_b_phi_1,
-                q.gen_b_mass_1,
-                q.gen_b_pt_2,
-                q.gen_b_eta_2,
-                q.gen_b_phi_2,
-                q.gen_b_mass_2,
-                q.gen_b_m_inv,
-                q.gen_b_deltaR,
-                q.gen_bpair_match_flag,
-                q.gen_tau_pt_1,
-                q.gen_tau_eta_1,
-                q.gen_tau_phi_1,
-                q.gen_tau_mass_1,
-                q.gen_tau_pt_2,
-                q.gen_tau_eta_2,
-                q.gen_tau_phi_2,
-                q.gen_tau_mass_2,
-                q.gen_tau_m_inv,
-                q.gen_tau_deltaR,
-                # q.gen_boostedtaupair_match_flag,
-            ],
-        )
+    # if sample in ["nmssm_Ybb", "nmssm_Ytautau"]:
+    #     configuration.add_outputs(
+    #         scopes,
+    #         [
+    #             q.gen_b_pt_1,
+    #             q.gen_b_eta_1,
+    #             q.gen_b_phi_1,
+    #             q.gen_b_mass_1,
+    #             q.gen_b_pt_2,
+    #             q.gen_b_eta_2,
+    #             q.gen_b_phi_2,
+    #             q.gen_b_mass_2,
+    #             q.gen_b_m_inv,
+    #             q.gen_b_deltaR,
+    #             q.gen_bpair_match_flag,
+    #             q.gen_tau_pt_1,
+    #             q.gen_tau_eta_1,
+    #             q.gen_tau_phi_1,
+    #             q.gen_tau_mass_1,
+    #             q.gen_tau_pt_2,
+    #             q.gen_tau_eta_2,
+    #             q.gen_tau_phi_2,
+    #             q.gen_tau_mass_2,
+    #             q.gen_tau_m_inv,
+    #             q.gen_tau_deltaR,
+    #             # q.gen_boostedtaupair_match_flag,
+    #         ],
+    #     )
     #########################
     # LHE Scale Weight variations
     # up is muR=2.0, muF=2.0

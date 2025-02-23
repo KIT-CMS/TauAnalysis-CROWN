@@ -42,6 +42,10 @@ def run(args):
         "rem_htautau",
         "rem_hbb",
         "rem_ttbar",
+        "embedding",
+        "embedding_mc",
+        "vbf_hbb",
+        "ggh_hbb"
     ]
 
     
