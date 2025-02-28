@@ -45,10 +45,12 @@ raw_fakefactor_sm_lt(
     ROOT::RDF::RNode df,
     correctionManager::CorrectionManager &correctionManager,
     const std::string &outputname,
+    // for ff
     const std::string &tau_pt,
     const std::string &njets,
-    const std::string &lep_mt,
     const std::string &delta_r,
+    // for fraction
+    const std::string &lep_mt,
     //
     const std::string &fraction_variation,
     const std::string &QCD_variation,
@@ -110,27 +112,30 @@ fakefactor_sm_lt(
     ROOT::RDF::RNode df, 
     correctionManager::CorrectionManager &correctionManager,
     const std::string &outputname,
+    // for ff
     const std::string &tau_pt,
     const std::string &njets,
-    const std::string &lep_mt,
     const std::string &delta_r,
+    // for fraction 
+    const std::string &lep_mt,
+    // for DR SR corrections
     const std::string &m_vis,
+    // for non closure corrections
     const std::string &lep_pt,
-    const std::string &lep_iso,
-    //
+    const std::string &tau_decaymode,
+    // for corrections
     const std::string &fraction_variation,
     const std::string &QCD_variation,
     const std::string &Wjets_variation,
     const std::string &ttbar_variation,
     //
     const std::string &QCD_DR_SR_correction_variation,
-    const std::string &QCD_non_closure_leading_lep_pt_correction_variation,
-    const std::string &QCD_non_closure_lep_iso_correction_variation,
+    const std::string &QCD_non_closure_correction_variation,
     //
     const std::string &Wjets_DR_SR_correction_variation,
-    const std::string &Wjets_non_closure_leading_lep_pt_correction_variation,
+    const std::string &Wjets_non_closure_correction_variation,
     //
-    const std::string &ttbar_non_closure_m_vis_correction_variation,
+    const std::string &ttbar_non_closure_correction_variation,
     //
     const std::string &ff_file,
     const std::string &ff_corr_file
@@ -139,49 +144,51 @@ fakefactor_sm_lt(
     Logger::get("SM FaceFactor (lt)")->debug("Setting up functions for fake factor evaluation with correctionlib");
 
     Logger::get("SM FaceFactor (lt)")->debug("Fraction variations: fraction={}, QCD={}, Wjets={}, ttbar={})", fraction_variation, QCD_variation, Wjets_variation, ttbar_variation);
-    Logger::get("SM FaceFactor (lt)")->debug("QCD variations: DR_SR={}, leading_lep_pt={}, lep_iso={}", QCD_DR_SR_correction_variation, QCD_non_closure_leading_lep_pt_correction_variation, QCD_non_closure_lep_iso_correction_variation);
-    Logger::get("SM FaceFactor (lt)")->debug("Wjets variations: DR_SR={}, leading_lep_pt={}", Wjets_DR_SR_correction_variation, Wjets_non_closure_leading_lep_pt_correction_variation);
-    Logger::get("SM FaceFactor (lt)")->debug("ttbar variations: m_vis={}", ttbar_non_closure_m_vis_correction_variation);
+    Logger::get("SM FaceFactor (lt)")->debug("Correction variations: QCD_DR_SR={}, QCD_non_closure={})", QCD_DR_SR_correction_variation, QCD_non_closure_correction_variation);
+    Logger::get("SM FaceFactor (lt)")->debug("Correction variations: Wjets_DR_SR={}, Wjets_non_closure={})", Wjets_DR_SR_correction_variation, Wjets_non_closure_correction_variation);
+    Logger::get("SM FaceFactor (lt)")->debug("Correction variations: ttbar_non_closure={})", ttbar_non_closure_correction_variation);
 
     auto qcd = correctionManager.loadCorrection(ff_file, "QCD_fake_factors");
     auto wjets = correctionManager.loadCorrection(ff_file, "Wjets_fake_factors");
     auto ttbar = correctionManager.loadCorrection(ff_file, "ttbar_fake_factors");
     auto fractions = correctionManager.loadCorrection(ff_file, "process_fractions");
 
-    auto qcd_lep_pt_closure = correctionManager.loadCorrection(ff_corr_file, "QCD_non_closure_leading_lep_pt_correction");
-    auto qcd_lep_iso_closure = correctionManager.loadCorrection(ff_corr_file, "QCD_non_closure_lep_iso_correction");
     auto qcd_DR_SR = correctionManager.loadCorrection(ff_corr_file, "QCD_DR_SR_correction");
-    
-    auto wjets_lep_pt_closure = correctionManager.loadCorrection(ff_corr_file, "Wjets_non_closure_leading_lep_pt_correction");
+    auto qcd_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "QCD_compound_correction");
+
     auto wjets_DR_SR = correctionManager.loadCorrection(ff_corr_file, "Wjets_DR_SR_correction");
-    
-    auto ttbar_m_vis_closure = correctionManager.loadCorrection(ff_corr_file, "ttbar_non_closure_m_vis_correction");
+    auto wjets_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "Wjets_compound_correction");
+
+    auto ttbar_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "ttbar_compound_correction");
 
     auto calc_fake_factor = [
         qcd, wjets, ttbar, fractions,
-        qcd_lep_pt_closure, wjets_lep_pt_closure, ttbar_m_vis_closure,
-        qcd_DR_SR, wjets_DR_SR,
-        qcd_lep_iso_closure,
-        QCD_variation, Wjets_variation, ttbar_variation, fraction_variation,        
-        QCD_non_closure_leading_lep_pt_correction_variation, Wjets_non_closure_leading_lep_pt_correction_variation, ttbar_non_closure_m_vis_correction_variation,
-        QCD_DR_SR_correction_variation, Wjets_DR_SR_correction_variation,
-        QCD_non_closure_lep_iso_correction_variation](
-        const float &pt_2, const int &njets,
-        const float &mt_1, const float &pt_1,
-        const float &iso_1, const float &m_vis,
-        const float &delta_r) {
+        QCD_variation, Wjets_variation, ttbar_variation, fraction_variation,
+        qcd_DR_SR, qcd_non_closure,
+        QCD_DR_SR_correction_variation, QCD_non_closure_correction_variation,
+        wjets_DR_SR, wjets_non_closure,
+        Wjets_DR_SR_correction_variation, Wjets_non_closure_correction_variation,
+        ttbar_non_closure,
+        ttbar_non_closure_correction_variation](
+        const float &pt_2,
+        const int &njets,
+        const float &delta_r,
+        const float &mt_1,
+        const float &pt_1,
+        const int &tau_decaymode,
+        const float &m_vis) {
 
         float ff = 0.0;
 
         float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;
         float qcd_frac = 0.0, wjets_frac = 0.0, ttbar_frac = 0.0;
-        float qcd_DR_SR_corr = 0., qcd_lep_pt_corr = 0., qcd_lep_iso_corr = 0.;
-        float wjets_DR_SR_corr = 0., wjets_lep_pt_corr = 0.;
-        float ttbar_m_vis_corr = 0.;
+        float qcd_DR_SR_corr = 0., qcd_non_closure_corr = 0.;
+        float wjets_DR_SR_corr = 0., wjets_non_closure_corr = 0.;
+        float ttbar_non_closure_corr = 0.;
+
+        float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
         if (pt_2 >= 0.) {
-            Logger::get("SM FaceFactor (lt)")->debug("pt_tau={}, njets={}, mt_lep={}, pt_lep={}, iso_lep={}, m_vis={}, delta_r={}", pt_2, njets, mt_1, pt_1, iso_1, m_vis, delta_r);
-
             qcd_ff = qcd->evaluate({pt_2, (float)njets, QCD_variation});
             wjets_ff = wjets->evaluate({pt_2, (float)njets, delta_r, Wjets_variation});
             ttbar_ff = ttbar->evaluate({pt_2, (float)njets, ttbar_variation});
@@ -195,31 +202,53 @@ fakefactor_sm_lt(
             Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
             qcd_DR_SR_corr = qcd_DR_SR->evaluate({m_vis, QCD_DR_SR_correction_variation});
-            qcd_lep_pt_corr = qcd_lep_pt_closure->evaluate({pt_1, QCD_non_closure_leading_lep_pt_correction_variation});
-            qcd_lep_iso_corr = qcd_lep_iso_closure->evaluate({iso_1, QCD_non_closure_lep_iso_correction_variation});
+            qcd_non_closure_corr = qcd_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    QCD_non_closure_correction_variation
+                }
+            );
 
-            Logger::get("SM FaceFactor (lt)")->debug("QCD: DR_SR={}, lep_pt={}, lep_iso={}", qcd_DR_SR_corr, qcd_lep_pt_corr, qcd_lep_iso_corr);
+            Logger::get("SM FaceFactor (lt)")->debug("QCD: DR_SR={}, non_closure={}", qcd_DR_SR_corr, qcd_non_closure_corr);
 
             wjets_DR_SR_corr = wjets_DR_SR->evaluate({m_vis, Wjets_DR_SR_correction_variation});
-            wjets_lep_pt_corr = wjets_lep_pt_closure->evaluate({pt_1, Wjets_non_closure_leading_lep_pt_correction_variation});
+            wjets_non_closure_corr = wjets_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    Wjets_non_closure_correction_variation
+                }
+            );
 
-            Logger::get("SM FaceFactor (lt)")->debug("Wjets: DR_SR={}, lep_pt={}", wjets_DR_SR_corr, wjets_lep_pt_corr);
+            Logger::get("SM FaceFactor (lt)")->debug("Wjets: DR_SR={}, non_closure={}", wjets_DR_SR_corr, wjets_non_closure_corr);
 
-            ttbar_m_vis_corr = ttbar_m_vis_closure->evaluate({pt_1, ttbar_non_closure_m_vis_correction_variation});
+            ttbar_non_closure_corr = ttbar_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    ttbar_non_closure_correction_variation
+                }
+            );
 
-            Logger::get("SM FaceFactor (lt)")->debug("ttbar: m_vis={}", ttbar_m_vis_corr);
+            Logger::get("SM FaceFactor (lt)")->debug("ttbar: non_closure={}", ttbar_non_closure_corr);
 
-            ff = std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * std::max(qcd_lep_pt_corr * qcd_lep_iso_corr * qcd_DR_SR_corr, (float)0.) +
-                 std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * std::max(wjets_lep_pt_corr * wjets_DR_SR_corr, (float)0.) +
-                 std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * std::max(ttbar_m_vis_corr, (float)0.);
+            qcd_correction = std::max(qcd_DR_SR_corr, (float)0.) * std::max(qcd_non_closure_corr, (float)0.);
+            wjets_correction = std::max(wjets_DR_SR_corr, (float)0.) * std::max(wjets_non_closure_corr, (float)0.);
+            ttbar_correction = std::max(ttbar_non_closure_corr, (float)0.);
+
+            ff = std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * qcd_correction +
+                 std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * wjets_correction +
+                 std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * ttbar_correction;
+
         }
 
         Logger::get("SM FaceFactor (lt)")->debug("Event Fake Factor {}", ff);
         
         return ff;
     };
-    
-    auto df1 = df.Define(outputname, calc_fake_factor, {tau_pt, njets, lep_mt, lep_pt, lep_iso, m_vis, delta_r});
+
+    auto df1 = df.Define(outputname, calc_fake_factor, {tau_pt, njets, delta_r, lep_mt, lep_pt, tau_decaymode, m_vis});
 
     return df1;
 }
@@ -229,27 +258,30 @@ fakefactor_sm_lt_split_info(
     ROOT::RDF::RNode df, 
     correctionManager::CorrectionManager &correctionManager,
     const std::vector<std::string> &outputname,
+        // for ff
     const std::string &tau_pt,
     const std::string &njets,
-    const std::string &lep_mt,
     const std::string &delta_r,
+    // for fraction 
+    const std::string &lep_mt,
+    // for DR SR corrections
     const std::string &m_vis,
+    // for non closure corrections
     const std::string &lep_pt,
-    const std::string &lep_iso,
-    //
+    const std::string &tau_decaymode,
+    // for corrections
     const std::string &fraction_variation,
     const std::string &QCD_variation,
     const std::string &Wjets_variation,
     const std::string &ttbar_variation,
     //
     const std::string &QCD_DR_SR_correction_variation,
-    const std::string &QCD_non_closure_leading_lep_pt_correction_variation,
-    const std::string &QCD_non_closure_lep_iso_correction_variation,
+    const std::string &QCD_non_closure_correction_variation,
     //
     const std::string &Wjets_DR_SR_correction_variation,
-    const std::string &Wjets_non_closure_leading_lep_pt_correction_variation,
+    const std::string &Wjets_non_closure_correction_variation,
     //
-    const std::string &ttbar_non_closure_m_vis_correction_variation,
+    const std::string &ttbar_non_closure_correction_variation,
     //
     const std::string &ff_file,
     const std::string &ff_corr_file
@@ -260,68 +292,114 @@ fakefactor_sm_lt_split_info(
     auto ttbar = correctionManager.loadCorrection(ff_file, "ttbar_fake_factors");
     auto fractions = correctionManager.loadCorrection(ff_file, "process_fractions");
 
-    auto qcd_lep_pt_closure = correctionManager.loadCorrection(ff_corr_file, "QCD_non_closure_leading_lep_pt_correction");
-    auto qcd_lep_iso_closure = correctionManager.loadCorrection(ff_corr_file, "QCD_non_closure_lep_iso_correction");
     auto qcd_DR_SR = correctionManager.loadCorrection(ff_corr_file, "QCD_DR_SR_correction");
-    
-    auto wjets_lep_pt_closure = correctionManager.loadCorrection(ff_corr_file, "Wjets_non_closure_leading_lep_pt_correction");
+    auto qcd_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "QCD_compound_correction");
+
     auto wjets_DR_SR = correctionManager.loadCorrection(ff_corr_file, "Wjets_DR_SR_correction");
-    
-    auto ttbar_m_vis_closure = correctionManager.loadCorrection(ff_corr_file, "ttbar_non_closure_m_vis_correction");
+    auto wjets_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "Wjets_compound_correction");
+
+    auto ttbar_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "ttbar_compound_correction");
 
     auto calc_fake_factor = [
         qcd, wjets, ttbar, fractions,
-        qcd_lep_pt_closure, wjets_lep_pt_closure, ttbar_m_vis_closure,
-        qcd_DR_SR, wjets_DR_SR,
-        qcd_lep_iso_closure,
-        QCD_variation, Wjets_variation, ttbar_variation, fraction_variation,        
-        QCD_non_closure_leading_lep_pt_correction_variation, Wjets_non_closure_leading_lep_pt_correction_variation, ttbar_non_closure_m_vis_correction_variation,
-        QCD_DR_SR_correction_variation, Wjets_DR_SR_correction_variation,
-        QCD_non_closure_lep_iso_correction_variation](
-        const float &pt_2, const int &njets,
-        const float &mt_1, const float &pt_1,
-        const float &iso_1, const float &m_vis,
-        const float &delta_r) {
+        QCD_variation, Wjets_variation, ttbar_variation, fraction_variation,
+        qcd_DR_SR, qcd_non_closure,
+        QCD_DR_SR_correction_variation, QCD_non_closure_correction_variation,
+        wjets_DR_SR, wjets_non_closure,
+        Wjets_DR_SR_correction_variation, Wjets_non_closure_correction_variation,
+        ttbar_non_closure,
+        ttbar_non_closure_correction_variation](
+        const float &pt_2,
+        const int &njets,
+        const float &delta_r,
+        const float &mt_1,
+        const float &pt_1,
+        const int &tau_decaymode,
+        const float &m_vis) {
 
         float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;
         float qcd_frac = 0.0, wjets_frac = 0.0, ttbar_frac = 0.0;
-        float qcd_DR_SR_corr = 0., qcd_lep_pt_corr = 0., qcd_lep_iso_corr = 0.;
-        float wjets_DR_SR_corr = 0., wjets_lep_pt_corr = 0.;
-        float ttbar_m_vis_corr = 0.;
+        float qcd_DR_SR_corr = 0., qcd_non_closure_corr = 0.;
+        float wjets_DR_SR_corr = 0., wjets_non_closure_corr = 0.;
+        float ttbar_DR_SR_corr = 0., ttbar_non_closure_corr = 0.;
+
+        float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
         if (pt_2 >= 0.) {
             qcd_ff = qcd->evaluate({pt_2, (float)njets, QCD_variation});
             wjets_ff = wjets->evaluate({pt_2, (float)njets, delta_r, Wjets_variation});
             ttbar_ff = ttbar->evaluate({pt_2, (float)njets, ttbar_variation});
 
+            Logger::get("SM FaceFactor (lt)")->debug("fake factors: QCD={}, Wjets={}, ttbar={}", qcd_ff, wjets_ff, ttbar_ff);
+
             qcd_frac = fractions->evaluate({"QCD", mt_1, (float)njets, fraction_variation});
             wjets_frac = fractions->evaluate({"Wjets", mt_1, (float)njets, fraction_variation});
             ttbar_frac = fractions->evaluate({"ttbar", mt_1, (float)njets, fraction_variation});
 
-            qcd_DR_SR_corr = qcd_DR_SR->evaluate({m_vis, QCD_DR_SR_correction_variation});
-            qcd_lep_pt_corr = qcd_lep_pt_closure->evaluate({pt_1, QCD_non_closure_leading_lep_pt_correction_variation});
-            qcd_lep_iso_corr = qcd_lep_iso_closure->evaluate({iso_1, QCD_non_closure_lep_iso_correction_variation});
-            
-            wjets_DR_SR_corr = wjets_DR_SR->evaluate({m_vis, Wjets_DR_SR_correction_variation});
-            wjets_lep_pt_corr = wjets_lep_pt_closure->evaluate({pt_1, Wjets_non_closure_leading_lep_pt_correction_variation});
+            Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
-            ttbar_m_vis_corr = ttbar_m_vis_closure->evaluate({pt_1, ttbar_non_closure_m_vis_correction_variation});
+            qcd_DR_SR_corr = qcd_DR_SR->evaluate({m_vis, QCD_DR_SR_correction_variation});
+            qcd_non_closure_corr = qcd_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    QCD_non_closure_correction_variation
+                }
+            );
+
+            Logger::get("SM FaceFactor (lt)")->debug("QCD: DR_SR={}, non_closure={}", qcd_DR_SR_corr, qcd_non_closure_corr);
+
+            wjets_DR_SR_corr = wjets_DR_SR->evaluate({m_vis, Wjets_DR_SR_correction_variation});
+            wjets_non_closure_corr = wjets_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    Wjets_non_closure_correction_variation
+                }
+            );
+
+            Logger::get("SM FaceFactor (lt)")->debug("Wjets: DR_SR={}, non_closure={}", wjets_DR_SR_corr, wjets_non_closure_corr);
+
+            ttbar_non_closure_corr = ttbar_non_closure->evaluate(
+                {
+                    pt_1,
+                    (float)tau_decaymode,
+                    ttbar_non_closure_correction_variation
+                }
+            );
+
+            Logger::get("SM FaceFactor (lt)")->debug("ttbar: non_closure={}", ttbar_non_closure_corr);
+
+            qcd_correction = std::max(qcd_DR_SR_corr, (float)0.) * std::max(qcd_non_closure_corr, (float)0.);
+            wjets_correction = std::max(wjets_DR_SR_corr, (float)0.) * std::max(wjets_non_closure_corr, (float)0.);
+            ttbar_correction = std::max(ttbar_non_closure_corr, (float)0.);
         }
 
-        // raw_ff_split, ff_split, frac_split, correction_split
+        // raw_ff, factions, DR_SR, correction_wo_DR_SR, combined_correction, ff
         std::vector<float> result = {
             std::max(qcd_ff, (float)0.),
             std::max(wjets_ff, (float)0.),
 	        std::max(ttbar_ff, (float)0.),
-            std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * std::max(qcd_lep_pt_corr * qcd_lep_iso_corr * qcd_DR_SR_corr, (float)0.),
-            std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * std::max(wjets_lep_pt_corr * wjets_DR_SR_corr, (float)0.),
-            std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * std::max(ttbar_m_vis_corr, (float)0.),
+            //
             std::max(qcd_frac, (float)0.),
             std::max(wjets_frac, (float)0.),
             std::max(ttbar_frac, (float)0.),
-            std::max(qcd_ff, (float)0.) * std::max(qcd_lep_pt_corr * qcd_lep_iso_corr * qcd_DR_SR_corr, (float)0.),
-            std::max(wjets_lep_pt_corr * wjets_DR_SR_corr, (float)0.),
-            std::max(ttbar_m_vis_corr, (float)0.)};
+            //
+            std::max(qcd_DR_SR_corr, (float)0.),
+            std::max(wjets_DR_SR_corr, (float)0.),
+            std::max(ttbar_DR_SR_corr, (float)0.),
+            //
+            std::max(qcd_non_closure_corr, (float)0.),
+            std::max(wjets_non_closure_corr, (float)0.),
+            std::max(ttbar_non_closure_corr, (float)0.),
+            //
+            std::max(qcd_correction, (float)0.),
+            std::max(wjets_correction, (float)0.),
+            std::max(ttbar_correction, (float)0.),
+            //
+            std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * std::max(qcd_correction, (float)0.),
+            std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * std::max(wjets_correction, (float)0.),
+            std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * std::max(ttbar_correction, (float)0.)};
   
         return result;
     };
@@ -333,17 +411,16 @@ fakefactor_sm_lt_split_info(
         Wjets_variation,
         ttbar_variation,
         QCD_DR_SR_correction_variation,
-        QCD_non_closure_leading_lep_pt_correction_variation,
-        QCD_non_closure_lep_iso_correction_variation,
+        QCD_non_closure_correction_variation,
         Wjets_DR_SR_correction_variation,
-        Wjets_non_closure_leading_lep_pt_correction_variation,
-        ttbar_non_closure_m_vis_correction_variation,
+        Wjets_non_closure_correction_variation,
+        ttbar_non_closure_correction_variation,
         ff_file,
         ff_corr_file};
   
     std::string shifted_collection_identifier =  fakefactors_sm::joinAndReplace(strings, "_");
 
-    auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt, njets, lep_mt, lep_pt, lep_iso, m_vis, delta_r});
+    auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt, njets, delta_r, lep_mt, lep_pt, tau_decaymode, m_vis});
     auto df2 = basefunctions::UnrollVectorQuantity<float>(df1, shifted_collection_identifier, outputname);
 
     return df2;
