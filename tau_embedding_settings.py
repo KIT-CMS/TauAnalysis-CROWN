@@ -722,7 +722,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "tau_emb_sf_vsjet_tau30to35": "nom",
             "tau_emb_sf_vsjet_tau35to40": "nom",
             "tau_emb_sf_vsjet_tau40toInf": "nom",
-            "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+            "tau_emb_id_sf_correctionset": "test_DeepTau2018v2p5VSjet_pt-dm",
             "tau_emb_vsjet_sf_dependence": "pt", 
             "vsjet_tau_id_sf_embedding": [
                 {
@@ -775,7 +775,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             "tau_emb_sf_vsjet_tauDM1": "nom",
             "tau_emb_sf_vsjet_tauDM10": "nom",
             "tau_emb_sf_vsjet_tauDM11": "nom",
-            "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+            "tau_emb_id_sf_correctionset": "test_DeepTau2018v2p5VSjet_pt-dm",
             "tau_emb_vsjet_sf_dependence": "dm", 
             "vsjet_tau_id_sf_embedding": [
                 {

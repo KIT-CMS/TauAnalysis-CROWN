@@ -373,7 +373,7 @@ boosted_electron_iso_1 = Producer(
 
 boosted_tau_q_1 = Producer(
     name="boosted_tau_q_1",
-    call="quantities::charge({df}, {output}, 0, {input})",
+    call="quantities::charge_short({df}, {output}, 0, {input})",
     input=[q.boosteddileptonpair, nanoAOD.boostedTau_charge],
     output=[q.boosted_q_1],
     scopes=["tt"],
@@ -425,7 +425,7 @@ antiMuTauIDFlag_1 = ExtendedVectorProducer(
 )
 boosted_tau_q_2 = Producer(
     name="boosted_tau_q_2",
-    call="quantities::charge({df}, {output}, 1, {input})",
+    call="quantities::charge_short({df}, {output}, 1, {input})",
     input=[q.boosteddileptonpair, nanoAOD.boostedTau_charge],
     output=[q.boosted_q_2],
     scopes=["mt", "et", "tt"],

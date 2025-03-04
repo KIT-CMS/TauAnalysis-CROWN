@@ -126,11 +126,11 @@ def build_config(
                 {
                     "2016": "data/jsonpog-integration/POG/TAU/2016postVFP_UL/tau.json.gz",
                     "2017": "data/jsonpog-integration/POG/TAU/2017_UL/tau.json.gz",
-                    "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau.json.gz",
+                    "2018": "data/jsonpog-custom/POG/TAU/2018_UL/tau_DeepTau2018v2p5_UL2018.json.gz",
                 }
             ),
             "tau_ES_json_name": "tau_energy_scale",
-            "tau_id_algorithm": "DeepTau2017v2p1",
+            "tau_id_algorithm": "DeepTau2018v2p5",
             "tau_ES_shift_DM0": "nom",
             "tau_ES_shift_DM1": "nom",
             "tau_ES_shift_DM10": "nom",
@@ -373,7 +373,7 @@ def build_config(
         {
             "vsjet_tau_id": [
                 {
-                    "tau_id_discriminator": "DeepTau2017v2p1VSjet",
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "vsjet_tau_id_WP": "{wp}".format(wp=wp),
                     "tau_1_vsjet_id_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
@@ -392,7 +392,7 @@ def build_config(
             ],
             "vsele_tau_id": [
                 {
-                    "tau_id_discriminator": "DeepTau2017v2p1VSe",
+                    "tau_id_discriminator": "DeepTau2018v2p5VSe",
                     "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(
                         wp=wp
                     ),
@@ -416,7 +416,7 @@ def build_config(
             ],
             "vsmu_tau_id": [
                 {
-                    "tau_id_discriminator": "DeepTau2017v2p1VSmu",
+                    "tau_id_discriminator": "DeepTau2018v2p5VSmu",
                     "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_1".format(wp=wp),
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_2".format(wp=wp),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
@@ -530,7 +530,7 @@ def build_config(
         {
             "vsjet_tau_id_sf": [
                 {
-                    "tau_id_discriminator": "DeepTau2017v2p1VSjet",
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
                         wp=wp
                     ),
@@ -558,7 +558,7 @@ def build_config(
         {
             "vsjet_tau_id_sf": [
                 {
-                    "tau_id_discriminator": "DeepTau2017v2p1VSjet",
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
                         wp=wp
                     ),
