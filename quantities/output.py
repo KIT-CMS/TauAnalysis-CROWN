@@ -169,7 +169,8 @@ gen_m_vis = Quantity("gen_m_vis")
 hadronic_gen_taus = Quantity("hadronic_gen_taus")
 
 topPtReweightWeight = Quantity("topPtReweightWeight")
-# ZPtMassReweightWeight = Quantity("ZPtMassReweightWeight")
+# zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
+ZPtMassReweightWeight = Quantity("ZPtMassReweightWeight")
 
 ## HTXS quantities
 ggh_NNLO_weight = Quantity("ggh_NNLO_weight")

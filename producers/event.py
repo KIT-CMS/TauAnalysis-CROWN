@@ -208,16 +208,16 @@ PUweightsFromHistogram = Producer(
     output=[q.puweight],
     scopes=["global"],
 )
-
-# ZPtMassReweighting = Producer(
-#     name="ZPtMassReweighting",
-#     call='reweighting::zPtMassReweighting({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
-#     input=[
-#         q.recoil_genboson_p4_vec,
-#     ],
-#     output=[q.ZPtMassReweightWeight],
-#     scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
-# )
+# zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
+ZPtMassReweighting = Producer(
+    name="ZPtMassReweighting",
+    call='reweighting::zPtMassReweighting({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+    input=[
+        q.recoil_genboson_p4_vec,
+    ],
+    output=[q.ZPtMassReweightWeight],
+    scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
+)
 
 TopPtReweighting = Producer(
     name="TopPtReweighting",
