@@ -597,16 +597,16 @@ def build_config(
         {
             "ggHNNLOweightsRootfile": "data/htxs/NNLOPS_reweight.root",
             "ggH_generator": "powheg",
-            "zptmass_file": EraModifier(
-                {
-                    "2016preVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
-                    "2016postVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
-                    "2017": "data/zpt/htt_scalefactors_legacy_2017.root",
-                    "2018": "data/zpt/htt_scalefactors_legacy_2018.root",
-                }
-            ),
-            "zptmass_functor": "zptmass_weight_nom",
-            "zptmass_arguments": "z_gen_mass,z_gen_pt",
+            # "zptmass_file": EraModifier(
+            #     {
+            #         "2016preVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
+            #         "2016postVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
+            #         "2017": "data/zpt/htt_scalefactors_legacy_2017.root",
+            #         "2018": "data/zpt/htt_scalefactors_legacy_2018.root",
+            #     }
+            # ),
+            # "zptmass_functor": "zptmass_weight_nom",
+            # "zptmass_arguments": "z_gen_mass,z_gen_pt",
         },
     )
 
@@ -1096,12 +1096,15 @@ def build_config(
         scopes,
         AppendProducer(producers=event.TopPtReweighting, samples="ttbar"),
     )
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(
-            producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
-        ),
-    )
+    # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
+    # Also the output quantity of it is not even used ???
+    # configuration.add_modification_rule(
+    #     scopes,
+    #     AppendProducer(
+    #         producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
+    #     ),
+    # )
+    
     # changes needed for data
     # global scope
     configuration.add_modification_rule(

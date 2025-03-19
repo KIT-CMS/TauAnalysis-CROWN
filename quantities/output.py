@@ -169,7 +169,7 @@ gen_m_vis = Quantity("gen_m_vis")
 hadronic_gen_taus = Quantity("hadronic_gen_taus")
 
 topPtReweightWeight = Quantity("topPtReweightWeight")
-ZPtMassReweightWeight = Quantity("ZPtMassReweightWeight")
+# ZPtMassReweightWeight = Quantity("ZPtMassReweightWeight")
 
 ## HTXS quantities
 ggh_NNLO_weight = Quantity("ggh_NNLO_weight")
