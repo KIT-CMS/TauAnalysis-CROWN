@@ -245,3 +245,10 @@ NumberOfGoodTaus = Producer(
     output=[q.ntaus],
     scopes=["mt", "et", "tt"],
 )
+MttCollApproximation = Producer(
+    name="MttCollApproximation",
+    call="quantities::mtt_coll_approx({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+    output=[q.mtt_coll_approx],
+    scopes=["et", "mt", "tt"],
+)

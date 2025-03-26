@@ -134,6 +134,7 @@ good_fatjet_collection_without_veto = Quantity("good_fatjet_collection_without_v
 good_jet_collection_boosted = Quantity("good_jet_collection_boosted")
 good_bjet_collection_boosted = Quantity("good_bjet_collection_boosted")
 Electron_pt_corrected = Quantity("Electron_pt_corrected")
+mtt_coll_approx = Quantity("mtt_coll_approx")
 
 # boosted Tau quantities
 good_boostedtaus_mask = Quantity("good_boostedtaus_mask")
