@@ -4,6 +4,7 @@ tmp/
 *.py[cod]
 *$py.class
 *.bak
+**/*[.]bak*/
 
 # C extensions
 *.so
