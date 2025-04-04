@@ -1573,30 +1573,17 @@ def build_config(
     # down is muR=0.5, muF=0.5
     #########################
     if "ggh" in sample or "qqh" in sample:
-        configuration.add_shift(
-            SystematicShift(
-                "LHEScaleWeightUp",
-                shift_config={
-                    "global": {
-                        "muR": 2.0,
-                        "muF": 2.0,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "LHEScaleWeightDown",
-                shift_config={
-                    "global": {
-                        "muR": 0.5,
-                        "muF": 0.5,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
-            )
-        )
+        for _direction, _shift_value in [("Up", 2.0), ("Down", 0.5)]:
+            for _name in ["muR", "muF"]:
+                _c = {"muR": 1.0, "muF": 1.0}
+                _c[_name] = _shift_value
+                configuration.add_shift(
+                    SystematicShift(
+                        f"LHEScale{_name.capitalize()}Weight{_direction}",
+                        shift_config={"global": _c},
+                        producers={"global": [event.LHE_Scale_weight]},
+                    )
+                )
 
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #
