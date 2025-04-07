@@ -17,7 +17,6 @@ raw_fake_factor_2 = Quantity("raw_fake_factor_2")
 fake_factor_1 = Quantity("fake_factor_1")
 fake_factor_2 = Quantity("fake_factor_2")
 
-good_tau_pair_flag = Quantity("good_tau_pair_flag")
 base_taus_mask = Quantity("base_taus_mask")
 good_taus_mask = Quantity("good_taus_mask")
 base_muons_mask = Quantity("base_muons_mask")

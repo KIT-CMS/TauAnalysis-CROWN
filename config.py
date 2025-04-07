@@ -1375,7 +1375,6 @@ def build_config(
             q.tau_gen_match_2,
             q.muon_veto_flag,
             q.dimuon_veto,
-            q.dilepton_veto,
             q.electron_veto_flag,
             # q.id_wgt_mu_1,
             # q.iso_wgt_mu_1,
