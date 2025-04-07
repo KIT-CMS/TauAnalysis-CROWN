@@ -781,8 +781,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                     # "VVLoose",
                     # "VLoose",
                     # "Loose",
-                    "Medium",
-                    # "Tight",
+                    # "Medium",
+                    "Tight",
                     # "VTight",
                     # "VVTight",
                 ]
