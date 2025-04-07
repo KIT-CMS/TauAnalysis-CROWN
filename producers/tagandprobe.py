@@ -98,7 +98,7 @@ BasePhotons = ProducerGroup(
 
 # GoodMuMuPairFilter = Filter(
 #     name="GoodMuMuPairFilter",
-#     call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any")',
+#     call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any_of")',
 #     input=[],
 #     scopes=["mm"],
 #     subproducers=[GoodMuMuPairFlag],
