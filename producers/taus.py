@@ -185,7 +185,7 @@ TauDMCut = Producer(
 # )
 # BaseTaus = ProducerGroup(
 #     name="BaseTaus",
-#     call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+#     call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
 #     input=[],
 #     output=[q.base_taus_mask],
 #     scopes=["global"],
@@ -224,7 +224,7 @@ GoodTauDMCut = Producer(
 )
 GoodTaus = ProducerGroup(
     name="GoodTaus",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.good_taus_mask],
     scopes=["et", "mt", "tt"],
@@ -240,7 +240,7 @@ GoodTaus = ProducerGroup(
 )
 NumberOfGoodTaus = Producer(
     name="NumberOfGoodTaus",
-    call="quantities::NumberOfGoodLeptons({df}, {output}, {input})",
+    call="physicsobject::Count({df}, {output}, {input})",
     input=[q.good_taus_mask],
     output=[q.ntaus],
     scopes=["mt", "et", "tt"],

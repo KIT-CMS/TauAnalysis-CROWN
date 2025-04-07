@@ -28,7 +28,7 @@ from code_generation.producer import (
 
 BaseMuons = ProducerGroup(
     name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.base_muons_mask],
     scopes=["global"],
@@ -40,7 +40,7 @@ BaseMuons = ProducerGroup(
 
 GoodMuons = ProducerGroup(
     name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.good_muons_mask],
     scopes=["mm"],
@@ -52,7 +52,7 @@ GoodMuons = ProducerGroup(
 
 GoodMuonsWithDzDxyCut = ProducerGroup(
     name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.good_muons_mask],
     scopes=["mm"],
@@ -66,7 +66,7 @@ GoodMuonsWithDzDxyCut = ProducerGroup(
 
 BasePhotons = ProducerGroup(
     name="BasePhotons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.base_photons_mask],
     scopes=["global"],
@@ -275,7 +275,7 @@ MuonIDs = ProducerGroup(
 
 BaseElectrons = ProducerGroup(
     name="BaseElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.base_electrons_mask],
     scopes=["global"],
@@ -287,7 +287,7 @@ BaseElectrons = ProducerGroup(
 
 GoodElectrons = ProducerGroup(
     name="BaseElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.good_electrons_mask],
     scopes=["ee"],

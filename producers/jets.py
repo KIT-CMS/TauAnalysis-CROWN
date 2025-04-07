@@ -137,7 +137,7 @@ BTagCut = Producer(
 )
 GoodJets = ProducerGroup(
     name="GoodJets",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.good_jets_mask],
     scopes=["global"],
@@ -145,7 +145,7 @@ GoodJets = ProducerGroup(
 )
 GoodBJets = ProducerGroup(
     name="GoodBJets",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[q.jet_id_mask, q.jet_puid_mask],
     output=[q.good_bjets_mask],
     scopes=["global"],
@@ -169,7 +169,7 @@ VetoOverlappingJets = Producer(
 
 GoodJetsWithVeto = ProducerGroup(
     name="GoodJetsWithVeto",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[q.good_jets_mask],
     output=[],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
@@ -178,7 +178,7 @@ GoodJetsWithVeto = ProducerGroup(
 
 GoodBJetsWithVeto = Producer(
     name="GoodBJetsWithVeto",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[q.good_bjets_mask, q.jet_overlap_veto_mask],
     output=[],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
@@ -235,7 +235,7 @@ LVJet2 = Producer(
 )
 NumberOfJets = Producer(
     name="NumberOfJets",
-    call="physicsobject::Number({df}, {output}, {input})",
+    call="physicsobject::Count({df}, {output}, {input})",
     input=[q.good_jet_collection],
     output=[q.njets],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
@@ -358,7 +358,7 @@ LVBJet2 = Producer(
 )
 NumberOfBJets = Producer(
     name="NumberOfBJets",
-    call="physicsobject::Number({df}, {output}, {input})",
+    call="physicsobject::Count({df}, {output}, {input})",
     input=[q.good_bjet_collection],
     output=[q.nbtag],
     scopes=["mt", "et", "tt", "em", "mm", "ee"],
