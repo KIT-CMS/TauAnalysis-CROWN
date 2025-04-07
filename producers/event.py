@@ -208,7 +208,7 @@ PUweightsFromHistogram = Producer(
     output=[q.puweight],
     scopes=["global"],
 )
-
+# zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 ZPtMassReweighting = Producer(
     name="ZPtMassReweighting",
     call='reweighting::zPtMassReweighting({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',

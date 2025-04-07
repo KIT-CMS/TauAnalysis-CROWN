@@ -597,6 +597,7 @@ def build_config(
         {
             "ggHNNLOweightsRootfile": "data/htxs/NNLOPS_reweight.root",
             "ggH_generator": "powheg",
+            # zptmass not used in 2016 atm due to broken file.
             "zptmass_file": EraModifier(
                 {
                     "2016preVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
@@ -1096,12 +1097,15 @@ def build_config(
         scopes,
         AppendProducer(producers=event.TopPtReweighting, samples="ttbar"),
     )
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(
-            producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
-        ),
-    )
+    # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
+    if "2016" not in era:
+        configuration.add_modification_rule(
+            scopes,
+            AppendProducer(
+                producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
+            ),
+        )
+    
     # changes needed for data
     # global scope
     configuration.add_modification_rule(

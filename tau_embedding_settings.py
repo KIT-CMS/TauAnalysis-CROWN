@@ -1119,7 +1119,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        tauESvariations = [-2.5 + 0.1 * i for i in range(0, 51)]
+        tauESvariations = [-8.0 + 0.1 * i for i in range(0, 121)]
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
