@@ -1496,10 +1496,31 @@ def build_config(
     if "ggh" in sample or "qqh" in sample:
         configuration.add_shift(
             SystematicShift(
-                "LHEScaleWeightUp",
+                "muRWeightUp",
                 shift_config={
                     "global": {
                         "muR": 2.0,
+                    }
+                },
+                producers={"global": [event.LHE_Scale_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "muRWeightDown",
+                shift_config={
+                    "global": {
+                        "muR": 0.5,
+                    }
+                },
+                producers={"global": [event.LHE_Scale_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "muFWeightUp",
+                shift_config={
+                    "global": {
                         "muF": 2.0,
                     }
                 },
@@ -1508,10 +1529,9 @@ def build_config(
         )
         configuration.add_shift(
             SystematicShift(
-                "LHEScaleWeightDown",
+                "muFWeightDown",
                 shift_config={
                     "global": {
-                        "muR": 0.5,
                         "muF": 0.5,
                     }
                 },

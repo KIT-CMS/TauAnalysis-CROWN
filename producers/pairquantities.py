@@ -117,43 +117,43 @@ muon_is_global_2 = Producer(
 )
 muon_nstations_1 = Producer(
     name="muon_nstations_1",
-    call="basefunctions::getvar<Int_t>({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_nStations],
+    call="event::quantity::Get<int>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_nStations, q.dileptonpair],
     output=[q.muon_nstations_1],
     scopes=["mt", "mm"],
 )
 muon_nstations_2 = Producer(
     name="muon_nstations_2",
-    call="basefunctions::getvar<Int_t>({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_nStations],
+    call="event::quantity::Get<int>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_nStations, q.dileptonpair],
     output=[q.muon_nstations_2],
     scopes=["em", "mm"],
 )
 muon_ntrackerlayers_1 = Producer(
     name="muon_ntrackerlayers_1",
-    call="basefunctions::getvar<Int_t>({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_nTrackerLayers],
+    call="event::quantity::Get<int>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_nTrackerLayers, q.dileptonpair],
     output=[q.muon_ntrackerlayers_1],
     scopes=["mt", "mm"],
 )
 muon_ntrackerlayers_2 = Producer(
     name="muon_ntrackerlayers_2",
-    call="basefunctions::getvar<Int_t>({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_nTrackerLayers],
+    call="event::quantity::Get<int>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_nTrackerLayers, q.dileptonpair],
     output=[q.muon_ntrackerlayers_2],
     scopes=["em", "mm"],
 )
 muon_pterr_1 = Producer(
     name="muon_pterr_1",
-    call="basefunctions::getvar<Float_t>({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_ptErr],
+    call="event::quantity::Get<float>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_ptErr, q.dileptonpair],
     output=[q.muon_pterr_1],
     scopes=["mt", "mm"],
 )
 muon_pterr_2 = Producer(
     name="muon_pterr_2",
-    call="basefunctions::getvar<Float_t>({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_ptErr],
+    call="event::quantity::Get<float>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_ptErr, q.dileptonpair],
     output=[q.muon_pterr_2],
     scopes=["em", "mm"],
 )
@@ -320,7 +320,7 @@ tau_decaymode_1 = Producer(
 )
 tau_decaymode_1_notau = Producer(
     name="tau_decaymode_1_notau",
-    call="basefunctions::DefineQuantity({df}, {output}, -1)",
+    call="event::quantity::Define({df}, {output}, -1)",
     input=[],
     output=[q.tau_decaymode_1],
     scopes=["et", "mt", "em", "ee", "mm"],
@@ -373,7 +373,7 @@ tau_decaymode_2 = Producer(
 )
 tau_decaymode_2_notau = Producer(
     name="tau_decaymode_2_notau",
-    call="basefunctions::DefineQuantity({df}, {output}, -1)",
+    call="event::quantity::Define({df}, {output}, -1)",
     input=[],
     output=[q.tau_decaymode_2],
     scopes=["em", "ee", "mm"],
