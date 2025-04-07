@@ -5,7 +5,7 @@ from ..quantities import nanoAOD as nanoAOD
 
 EmbeddingGenWeight = Producer(
     name="EmbeddingGenWeight",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.genWeight],
     output=[q.emb_genweight],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
@@ -13,77 +13,77 @@ EmbeddingGenWeight = Producer(
 
 TauEmbeddingInitialMETEt = Producer(
     name="TauEmbeddingInitialMETEt",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_initialMETEt],
     output=[q.emb_initialMETEt],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingInitialMETphi = Producer(
     name="TauEmbeddingInitialMETphi",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_initialMETphi],
     output=[q.emb_initialMETphi],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingInitialPuppiMETEt = Producer(
     name="TauEmbeddingInitialPuppiMETEt",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_initialPuppiMETEt],
     output=[q.emb_initialPuppiMETEt],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingInitialPuppiMETphi = Producer(
     name="TauEmbeddingInitialPuppiMETphi",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_initialPuppiMETphi],
     output=[q.emb_initialPuppiMETphi],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingIsMediumLeadingMuon = Producer(
     name="TauEmbeddingIsMediumLeadingMuon",
-    call="basefunctions::rename<Bool_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Bool_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_isMediumLeadingMuon],
     output=[q.emb_isMediumLeadingMuon],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingIsMediumTrailingMuon = Producer(
     name="TauEmbeddingIsMediumTrailingMuon",
-    call="basefunctions::rename<Bool_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Bool_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_isMediumTrailingMuon],
     output=[q.emb_isMediumTrailingMuon],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingIsTightLeadingMuon = Producer(
     name="TauEmbeddingIsTightLeadingMuon",
-    call="basefunctions::rename<Bool_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Bool_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_isTightLeadingMuon],
     output=[q.emb_isTightLeadingMuon],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingIsTightTrailingMuon = Producer(
     name="TauEmbeddingIsTightTrailingMuon",
-    call="basefunctions::rename<Bool_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Bool_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_isTightTrailingMuon],
     output=[q.emb_isTightTrailingMuon],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingnInitialPairCandidates = Producer(
     name="TauEmbeddingInitialPairCandidates",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_InitialPairCandidates],
     output=[q.emb_InitialPairCandidates],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingSelectionOldMass = Producer(
     name="TauEmbeddingSelectionOldMass",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_SelectionOldMass],
     output=[q.emb_SelectionOldMass],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],
 )
 TauEmbeddingSelectionNewMass = Producer(
     name="TauEmbeddingSelectionNewMass",
-    call="basefunctions::rename<Float_t>({df}, {input}, {output})",
+    call="event::quantity::Rename<Float_t>({df}, {output}, {input})",
     input=[nanoAOD.TauEmbedding_SelectionNewMass],
     output=[q.emb_SelectionNewMass],
     scopes=["et", "mt", "tt", "em", "mm", "ee"],

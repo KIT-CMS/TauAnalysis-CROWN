@@ -9,21 +9,21 @@ from code_generation.producer import Producer, ProducerGroup
 
 PhotonPtCut = Producer(
     name="PhotonPtCut",
-    call="physicsobject::CutPt({df}, {input}, {output}, {min_photon_pt})",
+    call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_photon_pt})",
     input=[nanoAOD.Photon_pt],
     output=[],
     scopes=["global"],
 )
 PhotonEtaCut = Producer(
     name="PhotonEtaCut",
-    call="physicsobject::CutEta({df}, {input}, {output}, {max_photon_eta})",
+    call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_photon_eta})",
     input=[nanoAOD.Photon_eta],
     output=[],
     scopes=["global"],
 )
 PhotonElectronVeto = Producer(
     name="PhotonElectronVeto",
-    call="physicsobject::muon::CutID({df}, {output}, {input})",
+    call="physicsobject::CutEqual<bool>({df}, {output}, {input}, true)",
     input=[nanoAOD.Photon_electronVeto],
     output=[],
     scopes=["global"],
@@ -31,7 +31,7 @@ PhotonElectronVeto = Producer(
 
 BasePhotons = ProducerGroup(
     name="BasePhotons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.base_photons_mask],
     scopes=["global"],

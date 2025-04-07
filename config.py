@@ -1375,6 +1375,7 @@ def build_config(
             q.tau_gen_match_2,
             q.muon_veto_flag,
             q.dimuon_veto,
+            q.dilepton_veto,
             q.electron_veto_flag,
             # q.id_wgt_mu_1,
             # q.iso_wgt_mu_1,
@@ -1492,10 +1493,31 @@ def build_config(
     if "ggh" in sample or "qqh" in sample:
         configuration.add_shift(
             SystematicShift(
-                "LHEScaleWeightUp",
+                "muRWeightUp",
                 shift_config={
                     "global": {
                         "muR": 2.0,
+                    }
+                },
+                producers={"global": [event.LHE_Scale_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "muRWeightDown",
+                shift_config={
+                    "global": {
+                        "muR": 0.5,
+                    }
+                },
+                producers={"global": [event.LHE_Scale_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "muFWeightUp",
+                shift_config={
+                    "global": {
                         "muF": 2.0,
                     }
                 },
@@ -1504,10 +1526,9 @@ def build_config(
         )
         configuration.add_shift(
             SystematicShift(
-                "LHEScaleWeightDown",
+                "muFWeightDown",
                 shift_config={
                     "global": {
-                        "muR": 0.5,
                         "muF": 0.5,
                     }
                 },
