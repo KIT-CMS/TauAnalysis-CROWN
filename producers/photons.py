@@ -31,7 +31,7 @@ PhotonElectronVeto = Producer(
 
 BasePhotons = ProducerGroup(
     name="BasePhotons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.base_photons_mask],
     scopes=["global"],

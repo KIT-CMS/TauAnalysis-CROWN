@@ -82,7 +82,7 @@ ElectronIsoCut = Producer(
 )
 BaseElectrons = ProducerGroup(
     name="BaseElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[],
     output=[q.base_electrons_mask],
     scopes=["global"],
@@ -123,7 +123,7 @@ GoodElectronIsoCut = Producer(
 )
 GoodElectrons = ProducerGroup(
     name="GoodElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=[q.base_electrons_mask],
     output=[q.good_electrons_mask],
     scopes=["em", "et", "ee"],
@@ -164,7 +164,7 @@ ExtraElectronsVeto = Producer(
 )
 NumberOfGoodElectrons = Producer(
     name="NumberOfGoodElectrons",
-    call="quantities::NumberOfGoodLeptons({df}, {output}, {input})",
+    call="physicsobject::Count({df}, {output}, {input})",
     input=[q.good_electrons_mask],
     output=[q.nelectrons],
     scopes=["et", "em", "ee"],
@@ -190,7 +190,7 @@ DiElectronVetoIDCut = Producer(
 )
 DiElectronVetoElectrons = ProducerGroup(
     name="DiElectronVetoElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
     input=ElectronEtaCut.output
     + ElectronDxyCut.output
     + ElectronDzCut.output
