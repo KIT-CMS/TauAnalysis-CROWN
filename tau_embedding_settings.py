@@ -14,7 +14,7 @@ from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
 
-measure_tauES = True
+measure_tauES = False
 measure_eleES = False
 
 
@@ -754,8 +754,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         {
             "tau_emb_sf_file": EraModifier(
                 {
-                    "2016preVFP": "data/embedding/tau_2016preVFP.json.gz",
-                    "2016postVFP": "data/embedding/tau_2016postVFP.json.gz",
+                    "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
+                    "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                     "2017": "data/embedding/tau_2017UL.json.gz",
                     "2018": "data/embedding/tau_2018UL.json.gz",
                 }
