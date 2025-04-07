@@ -1,6 +1,6 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
-from code_generation.producer import Producer, Filter
+from code_generation.producer import Producer, ProducerGroup, Filter, BaseFilter
 
 ####################
 # Set of producers used for contruction of MT good pairs and the coressponding lorentz vectors
@@ -37,7 +37,7 @@ GoodMTPairFlag = Producer(
 
 GoodMTPairFilter = Filter(
     name="GoodMTPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodMuTauPairs", {input})',
+    call='event::filter::Flags({df}, "GoodMuTauPairs", {input}, "any")',
     input=[],
     scopes=["mt"],
     subproducers=[GoodMTPairFlag],
@@ -107,7 +107,7 @@ GoodMuMuPairFlag = Producer(
 
 GoodMuMuPairFilter = Filter(
     name="GoodMuMuPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodMuMuPairs", {input})',
+    call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any")',
     input=[],
     scopes=["mm"],
     subproducers=[GoodMuMuPairFlag],
@@ -150,7 +150,7 @@ GoodElElPairFlag = Producer(
 
 GoodElElPairFilter = Filter(
     name="GoodElElPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodElElPairs", {input})',
+    call='event::filter::Flags({df}, "GoodElElPairs", {input}, "any")',
     input=[],
     scopes=["ee"],
     subproducers=[GoodElElPairFlag],
@@ -187,7 +187,7 @@ GoodETPairFlag = Producer(
 
 GoodETPairFilter = Filter(
     name="GoodETPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodElTauPairs", {input})',
+    call='event::filter::Flags({df}, "GoodElTauPairs", {input}, "any")',
     input=[],
     scopes=["et"],
     subproducers=[GoodETPairFlag],
@@ -221,7 +221,7 @@ GoodTTPairFlag = Producer(
 
 GoodTTPairFilter = Filter(
     name="GoodTTPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodTauTauPairs", {input})',
+    call='event::filter::Flags({df}, "GoodTauTauPairs", {input}, "any")',
     input=[],
     scopes=["tt"],
     subproducers=[GoodTTPairFlag],
@@ -261,7 +261,7 @@ GoodEMPairFlag = Producer(
 
 GoodEMPairFilter = Filter(
     name="GoodEMPairFilter",
-    call='basefunctions::FilterFlagsAny({df}, "GoodElMuPairs", {input})',
+    call='event::filter::Flags({df}, "GoodElMuPairs", {input}, "any")',
     input=[],
     scopes=["em"],
     subproducers=[GoodEMPairFlag],

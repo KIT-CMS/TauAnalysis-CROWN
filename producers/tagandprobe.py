@@ -28,7 +28,7 @@ from code_generation.producer import (
 
 BaseMuons = ProducerGroup(
     name="BaseMuons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.base_muons_mask],
     scopes=["global"],
@@ -40,7 +40,7 @@ BaseMuons = ProducerGroup(
 
 GoodMuons = ProducerGroup(
     name="BaseMuons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.good_muons_mask],
     scopes=["mm"],
@@ -52,7 +52,7 @@ GoodMuons = ProducerGroup(
 
 GoodMuonsWithDzDxyCut = ProducerGroup(
     name="BaseMuons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.good_muons_mask],
     scopes=["mm"],
@@ -66,7 +66,7 @@ GoodMuonsWithDzDxyCut = ProducerGroup(
 
 BasePhotons = ProducerGroup(
     name="BasePhotons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.base_photons_mask],
     scopes=["global"],
@@ -98,7 +98,7 @@ BasePhotons = ProducerGroup(
 
 # GoodMuMuPairFilter = Filter(
 #     name="GoodMuMuPairFilter",
-#     call='basefunctions::FilterFlagsAny({df}, "GoodMuMuPairs", {input})',
+#     call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any")',
 #     input=[],
 #     scopes=["mm"],
 #     subproducers=[GoodMuMuPairFlag],
@@ -275,7 +275,7 @@ MuonIDs = ProducerGroup(
 
 BaseElectrons = ProducerGroup(
     name="BaseElectrons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.base_electrons_mask],
     scopes=["global"],
@@ -287,7 +287,7 @@ BaseElectrons = ProducerGroup(
 
 GoodElectrons = ProducerGroup(
     name="BaseElectrons",
-    call="physicsobject::CombineMasks({df}, {output}, {input})",
+    call='physicsobject::CombineMasks({df}, {output}, {input}, "all")',
     input=[],
     output=[q.good_electrons_mask],
     scopes=["ee"],
@@ -379,14 +379,14 @@ ElectronIDs = ProducerGroup(
 
 FSR_Photon_Veto_1 = Producer(
     name="FSR_Photon_Veto_1",
-    call="physicsobject::DeltaRParticleVeto({df}, {output}, {input}, {fsr_delta_r})",
+    call="physicsobject::OverlapVeto({df}, {output}, {input}, {fsr_delta_r})",
     input=[
         q.p4_1,
-        q.base_photons_mask,
         nanoAOD.Photon_pt,
         nanoAOD.Photon_eta,
         nanoAOD.Photon_phi,
         nanoAOD.Photon_mass,
+        q.base_photons_mask,
     ],
     output=[tp_q.fsr_photon_veto_1],
     scopes=["ee", "mm"],
@@ -394,14 +394,14 @@ FSR_Photon_Veto_1 = Producer(
 
 FSR_Photon_Veto_2 = Producer(
     name="FSR_Photon_Veto_1",
-    call="physicsobject::DeltaRParticleVeto({df}, {output}, {input}, {fsr_delta_r})",
+    call="physicsobject::OverlapVeto({df}, {output}, {input}, {fsr_delta_r})",
     input=[
         q.p4_2,
-        q.base_photons_mask,
         nanoAOD.Photon_pt,
         nanoAOD.Photon_eta,
         nanoAOD.Photon_phi,
         nanoAOD.Photon_mass,
+        q.base_photons_mask,
     ],
     output=[tp_q.fsr_photon_veto_2],
     scopes=["ee", "mm"],
