@@ -45,7 +45,8 @@ def run(args):
         "embedding",
         "embedding_mc",
         "vbf_hbb",
-        "ggh_hbb"
+        "ggh_hbb",
+        "qcd",
     ]
 
     

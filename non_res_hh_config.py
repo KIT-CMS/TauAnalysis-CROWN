@@ -1344,12 +1344,12 @@ def build_config(
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
-    # for whatever reason, the diboson samples do not have these weights in the ntuple....
+    # for whatever reason, the diboson and qcd samples do not have these weights in the ntuple....
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
             producers=[event.LHE_Scale_weight],
-            samples=["data", "embedding", "embedding_mc", "diboson"],
+            samples=["data", "embedding", "embedding_mc", "diboson", "qcd"],
         ),
     )
     # for whatever reason, the nmssm samples have one less entry of the weights and therefore need special treatment
@@ -1484,6 +1484,7 @@ def build_config(
             samples=["data"],
         ),
     )
+
     # lepton scalefactors from our measurement
     configuration.add_modification_rule(
         ["mt"],
@@ -1561,7 +1562,6 @@ def build_config(
             q.npartons,
             nanoAOD.event,
             q.puweight,
-            q.lhe_scale_weight,
             q.pt_1,
             q.pt_2,
             q.eta_1,

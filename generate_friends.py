@@ -47,7 +47,8 @@ def run(args):
         "embedding",
         "embedding_mc",
         "vbf_hbb",
-        "ggh_hbb"
+        "ggh_hbb",
+        "qcd",
     ]
 
     available_eras = ["2016preVFP", "2016postVFP", "2017", "2018"]
