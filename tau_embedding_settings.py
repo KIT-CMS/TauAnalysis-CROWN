@@ -708,7 +708,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     ######################
 
     if not measure_tauID:
-
         configuration.add_modification_rule(
             ["et", "mt"],
             ReplaceProducer(
@@ -758,7 +757,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 "tau_emb_sf_file": EraModifier(
                     {
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                        "2016postVFP": "data/embedding/tauid_embedding_2016postVFP.json.gz",
+                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
                         "2018": "data/embedding/tau_2018UL.json.gz",
                     }
