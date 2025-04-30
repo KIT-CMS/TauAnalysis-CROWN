@@ -16,6 +16,7 @@ from code_generation.modifiers import EraModifier
 
 measure_tauES = False
 measure_eleES = False
+measure_tauID = False
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str]):
@@ -706,192 +707,193 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     ## Tau ID SFs
     ######################
 
-    configuration.add_modification_rule(
-        ["et", "mt"],
-        ReplaceProducer(
-            producers=[
-                scalefactors.Tau_2_VsJetTauID_lt_SF,
-                embedding.Tau_2_VsJetTauID_lt_SF,
+    if not measure_tauID:
+        configuration.add_modification_rule(
+            ["et", "mt"],
+            ReplaceProducer(
+                producers=[
+                    scalefactors.Tau_2_VsJetTauID_lt_SF,
+                    embedding.Tau_2_VsJetTauID_lt_SF,
+                ],
+                samples="embedding",
+            ),
+        )
+        configuration.add_modification_rule(
+            "tt",
+            ReplaceProducer(
+                producers=[
+                    scalefactors.Tau_1_VsJetTauID_SF,
+                    embedding.Tau_1_VsJetTauID_tt_SF,
+                ],
+                samples="embedding",
+            ),
+        )
+        configuration.add_modification_rule(
+            "tt",
+            ReplaceProducer(
+                producers=[
+                    scalefactors.Tau_2_VsJetTauID_tt_SF,
+                    embedding.Tau_2_VsJetTauID_tt_SF,
+                ],
+                samples="embedding",
+            ),
+        )
+        configuration.add_outputs(
+            ["et", "mt"],
+            embedding.Tau_2_VsJetTauID_lt_SF.output_group,
+        )
+        configuration.add_outputs(
+            "tt",
+            [
+                embedding.Tau_1_VsJetTauID_tt_SF.output_group,
+                embedding.Tau_2_VsJetTauID_tt_SF.output_group,
             ],
-            samples="embedding",
-        ),
-    )
-    configuration.add_modification_rule(
-        "tt",
-        ReplaceProducer(
-            producers=[
-                scalefactors.Tau_1_VsJetTauID_SF,
-                embedding.Tau_1_VsJetTauID_tt_SF,
-            ],
-            samples="embedding",
-        ),
-    )
-    configuration.add_modification_rule(
-        "tt",
-        ReplaceProducer(
-            producers=[
-                scalefactors.Tau_2_VsJetTauID_tt_SF,
-                embedding.Tau_2_VsJetTauID_tt_SF,
-            ],
-            samples="embedding",
-        ),
-    )
-    configuration.add_outputs(
-        ["et", "mt"],
-        embedding.Tau_2_VsJetTauID_lt_SF.output_group,
-    )
-    configuration.add_outputs(
-        "tt",
-        [
-            embedding.Tau_1_VsJetTauID_tt_SF.output_group,
-            embedding.Tau_2_VsJetTauID_tt_SF.output_group,
-        ],
-    )
+        )
 
-    # replace TauID producers for embedding samples
-    configuration.add_config_parameters(
-        ["mt", "et"],
-        {
-            "tau_emb_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                    "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/tau_2017UL.json.gz",
-                    "2018": "data/embedding/tau_2018UL.json.gz",
-                }
-            ),
-            "tau_emb_sf_vsjet_tau20to25": "nom",
-            "tau_emb_sf_vsjet_tau25to30": "nom",
-            "tau_emb_sf_vsjet_tau30to35": "nom",
-            "tau_emb_sf_vsjet_tau35to40": "nom",
-            "tau_emb_sf_vsjet_tau40toInf": "nom",
-            "tau_emb_id_sf_correctionset": "TauID_sf_embedding_ptbinned",
-            "vsjet_tau_id_sf_embedding": [
-                {
-                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
-                        wp=wp
-                    ),
-                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
-                        wp=wp
-                    ),
-                    "vsjet_tau_id_WP": "{wp}".format(wp=wp),
-                }
-                for wp in [
-                    # "VVVLoose",
-                    # "VVLoose",
-                    # "VLoose",
-                    # "Loose",
-                    # "Medium",
-                    "Tight",
-                    # "VTight",
-                    # "VVTight",
-                ]
-            ],
-        },
-    )
-    # replace TauID producers for embedding samples
-    configuration.add_config_parameters(
-        ["tt"],
-        {
-            "tau_emb_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                    "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/tau_2017UL.json.gz",
-                    "2018": "data/embedding/tau_2018UL.json.gz",
-                }
-            ),
-            "tau_emb_sf_vsjet_tauDM0": "nom",
-            "tau_emb_sf_vsjet_tauDM1": "nom",
-            "tau_emb_sf_vsjet_tauDM10": "nom",
-            "tau_emb_sf_vsjet_tauDM11": "nom",
-            "tau_emb_id_sf_correctionset": "TauID_sf_embedding_dmbinned",
-            "vsjet_tau_id_sf_embedding": [
-                {
-                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
-                        wp=wp
-                    ),
-                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
-                        wp=wp
-                    ),
-                    "vsjet_tau_id_WP": "{wp}".format(wp=wp),
-                }
-                for wp in [
-                    # "VVVLoose",
-                    # "VVLoose",
-                    # "VLoose",
-                    # "Loose",
-                    # "Medium",
-                    "Tight",
-                    # "VTight",
-                    # "VVTight",
-                ]
-            ],
-        },
-    )
-    # and add the variations for it
-    for variation in ["Up", "Down"]:
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau20to25{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau20to25": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
+        # replace TauID producers for embedding samples
+        configuration.add_config_parameters(
+            ["mt", "et"],
+            {
+                "tau_emb_sf_file": EraModifier(
+                    {
+                        "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
+                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
+                        "2017": "data/embedding/tau_2017UL.json.gz",
+                        "2018": "data/embedding/tau_2018UL.json.gz",
+                    }
+                ),
+                "tau_emb_sf_vsjet_tau20to25": "nom",
+                "tau_emb_sf_vsjet_tau25to30": "nom",
+                "tau_emb_sf_vsjet_tau30to35": "nom",
+                "tau_emb_sf_vsjet_tau35to40": "nom",
+                "tau_emb_sf_vsjet_tau40toInf": "nom",
+                "tau_emb_id_sf_correctionset": "TauID_sf_embedding_ptbinned",
+                "vsjet_tau_id_sf_embedding": [
+                    {
+                        "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
+                            wp=wp
+                        ),
+                        "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
+                            wp=wp
+                        ),
+                        "vsjet_tau_id_WP": "{wp}".format(wp=wp),
+                    }
+                    for wp in [
+                        # "VVVLoose",
+                        # "VVLoose",
+                        # "VLoose",
+                        # "Loose",
+                        # "Medium",
+                        "Tight",
+                        # "VTight",
+                        # "VVTight",
+                    ]
+                ],
+            },
         )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau25to30{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau25to30": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
+        # replace TauID producers for embedding samples
+        configuration.add_config_parameters(
+            ["tt"],
+            {
+                "tau_emb_sf_file": EraModifier(
+                    {
+                        "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
+                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
+                        "2017": "data/embedding/tau_2017UL.json.gz",
+                        "2018": "data/embedding/tau_2018UL.json.gz",
+                    }
+                ),
+                "tau_emb_sf_vsjet_tauDM0": "nom",
+                "tau_emb_sf_vsjet_tauDM1": "nom",
+                "tau_emb_sf_vsjet_tauDM10": "nom",
+                "tau_emb_sf_vsjet_tauDM11": "nom",
+                "tau_emb_id_sf_correctionset": "TauID_sf_embedding_dmbinned",
+                "vsjet_tau_id_sf_embedding": [
+                    {
+                        "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
+                            wp=wp
+                        ),
+                        "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
+                            wp=wp
+                        ),
+                        "vsjet_tau_id_WP": "{wp}".format(wp=wp),
+                    }
+                    for wp in [
+                        # "VVVLoose",
+                        # "VVLoose",
+                        # "VLoose",
+                        # "Loose",
+                        # "Medium",
+                        "Tight",
+                        # "VTight",
+                        # "VVTight",
+                    ]
+                ],
+            },
         )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau30to35{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau30to35": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau35to40{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau35to40": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau40toInf{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau40toInf": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        # dm binned variations
-        for dm in [0, 1, 10, 11]:
+        # and add the variations for it
+        for variation in ["Up", "Down"]:
             configuration.add_shift(
                 SystematicShift(
-                    name=f"vsJetTauDM{dm}{variation}",
+                    name=f"vsJetTau20to25{variation}",
                     shift_config={
-                        ("tt"): {f"tau_emb_sf_vsjet_tauDM{dm}": variation.lower()}
+                        ("et", "mt"): {"tau_emb_sf_vsjet_tau20to25": variation.lower()}
                     },
-                    producers={
-                        ("tt"): [
-                            embedding.Tau_1_VsJetTauID_tt_SF,
-                            embedding.Tau_2_VsJetTauID_tt_SF,
-                        ]
-                    },
+                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
                 )
             )
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"vsJetTau25to30{variation}",
+                    shift_config={
+                        ("et", "mt"): {"tau_emb_sf_vsjet_tau25to30": variation.lower()}
+                    },
+                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+                )
+            )
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"vsJetTau30to35{variation}",
+                    shift_config={
+                        ("et", "mt"): {"tau_emb_sf_vsjet_tau30to35": variation.lower()}
+                    },
+                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+                )
+            )
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"vsJetTau35to40{variation}",
+                    shift_config={
+                        ("et", "mt"): {"tau_emb_sf_vsjet_tau35to40": variation.lower()}
+                    },
+                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+                )
+            )
+            configuration.add_shift(
+                SystematicShift(
+                    name=f"vsJetTau40toInf{variation}",
+                    shift_config={
+                        ("et", "mt"): {"tau_emb_sf_vsjet_tau40toInf": variation.lower()}
+                    },
+                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+                )
+            )
+            # dm binned variations
+            for dm in [0, 1, 10, 11]:
+                configuration.add_shift(
+                    SystematicShift(
+                        name=f"vsJetTauDM{dm}{variation}",
+                        shift_config={
+                            ("tt"): {f"tau_emb_sf_vsjet_tauDM{dm}": variation.lower()}
+                        },
+                        producers={
+                            ("tt"): [
+                                embedding.Tau_1_VsJetTauID_tt_SF,
+                                embedding.Tau_2_VsJetTauID_tt_SF,
+                            ]
+                        },
+                    )
+                )
 
     #########################
     # Trigger shifts
