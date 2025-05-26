@@ -759,7 +759,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/embedding/tau_2018UL.json.gz",
+                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_embed.json.gz",
                     }
                 ),
                 "tau_emb_sf_vsjet_tau20to25": "nom",
@@ -767,7 +767,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 "tau_emb_sf_vsjet_tau30to35": "nom",
                 "tau_emb_sf_vsjet_tau35to40": "nom",
                 "tau_emb_sf_vsjet_tau40toInf": "nom",
-                "tau_emb_id_sf_correctionset": "TauID_sf_embedding_ptbinned",
+                "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+                "tau_emb_vsjet_sf_dependence": "pt",
                 "vsjet_tau_id_sf_embedding": [
                     {
                         "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
@@ -800,14 +801,15 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/embedding/tau_2018UL.json.gz",
+                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_embed.json.gz",
                     }
                 ),
                 "tau_emb_sf_vsjet_tauDM0": "nom",
                 "tau_emb_sf_vsjet_tauDM1": "nom",
                 "tau_emb_sf_vsjet_tauDM10": "nom",
                 "tau_emb_sf_vsjet_tauDM11": "nom",
-                "tau_emb_id_sf_correctionset": "TauID_sf_embedding_dmbinned",
+                "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+                "tau_emb_vsjet_sf_dependence": "dm",
                 "vsjet_tau_id_sf_embedding": [
                     {
                         "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
