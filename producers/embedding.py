@@ -265,7 +265,7 @@ Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
 
 Tau_1_VsJetTauID_tt_SF = ExtendedVectorProducer(
     name="Tau_1_VsJetTauID_tt_SF",
-    call='scalefactor::tau::id_vsJet_tt_embedding({df}, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tauDM0}", "{tau_emb_sf_vsjet_tauDM1}", "{tau_emb_sf_vsjet_tauDM10}", "{tau_emb_sf_vsjet_tauDM11}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
+    call='scalefactor::tau::id_vsJet_tt_embedding({df}, correctionManager, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tauDM0}", "{tau_emb_sf_vsjet_tauDM1}", "{tau_emb_sf_vsjet_tauDM10}", "{tau_emb_sf_vsjet_tauDM11}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
     input=[q.tau_decaymode_1],
     output="tau_1_vsjet_sf_outputname",
     scope=["tt"],
@@ -274,7 +274,7 @@ Tau_1_VsJetTauID_tt_SF = ExtendedVectorProducer(
 
 Tau_2_VsJetTauID_tt_SF = ExtendedVectorProducer(
     name="Tau_2_VsJetTauID_tt_SF",
-    call='scalefactor::tau::id_vsJet_tt_embedding({df}, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tauDM0}", "{tau_emb_sf_vsjet_tauDM1}", "{tau_emb_sf_vsjet_tauDM10}", "{tau_emb_sf_vsjet_tauDM11}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
+    call='scalefactor::tau::id_vsJet_tt_embedding({df}, correctionManager, {input}, "{vsjet_tau_id_WP}", "{tau_emb_sf_vsjet_tauDM0}", "{tau_emb_sf_vsjet_tauDM1}", "{tau_emb_sf_vsjet_tauDM10}", "{tau_emb_sf_vsjet_tauDM11}", {output}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}")',
     input=[q.tau_decaymode_2],
     output="tau_2_vsjet_sf_outputname",
     scope=["tt"],
