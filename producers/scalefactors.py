@@ -207,28 +207,28 @@ TauID_SF = ProducerGroup(
 #########################
 Ele_1_IDWP90_SF = Producer(
     name="Ele_IDWP90_SF",
-    call='scalefactor::electron::id({df}, correctionManager, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+    call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
     input=[q.pt_1, q.eta_1],
     output=[q.id_wgt_ele_wp90nonIso_1],
     scopes=["em", "ee", "et"],
 )
 Ele_2_IDWP90_SF = Producer(
     name="Ele_IDWP90_SF",
-    call='scalefactor::electron::id({df}, correctionManager, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+    call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
     input=[q.pt_2, q.eta_2],
     output=[q.id_wgt_ele_wp90nonIso_2],
     scopes=["ee"],
 )
 Ele_1_IDWP80_SF = Producer(
     name="Ele_IDWP80_SF",
-    call='scalefactor::electron::id({df}, correctionManager, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+    call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
     input=[q.pt_1, q.eta_1],
     output=[q.id_wgt_ele_wp80nonIso_1],
     scopes=["em", "ee", "et"],
 )
 Ele_2_IDWP80_SF = Producer(
     name="Ele_IDWP80_SF",
-    call='scalefactor::electron::id({df}, correctionManager, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+    call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
     input=[q.pt_2, q.eta_2],
     output=[q.id_wgt_ele_wp80nonIso_2],
     scopes=["ee"],
