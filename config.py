@@ -461,7 +461,7 @@ def build_config(
                     "2018": "2018_UL",
                 }
             ),
-            "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+            "muon_sf_varation": "nominal",  # "systup"/"systdown" are up/down variations
         },
     )
     # electron scale factors configuration
