@@ -27,8 +27,6 @@ from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProduce
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 
 
-
-
 def build_config(
     era: str,
     sample: str,
@@ -388,12 +386,7 @@ def build_config(
             "tau_vsjet_vseleWP": "Tight",
         },
     )
-    configuration.add_config_parameters(
-        ["mt"],
-        {
-            "tau_vsjet_vseleWP": "VVLoose",
-        },
-    )
+    
     # TT tau id sf variations
     configuration.add_config_parameters(
         ["tt"],
