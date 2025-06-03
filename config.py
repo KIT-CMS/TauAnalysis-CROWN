@@ -377,7 +377,6 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
-            "tau_vsjet_vseleWP": "VVLoose",
         },
     )
     configuration.add_config_parameters(
@@ -386,7 +385,12 @@ def build_config(
             "tau_vsjet_vseleWP": "Tight",
         },
     )
-    
+    configuration.add_config_parameters(
+        ["mt"],
+        {
+            "tau_vsjet_vseleWP": "VVLoose",
+        },
+    )
     # TT tau id sf variations
     configuration.add_config_parameters(
         ["tt"],
