@@ -8,7 +8,7 @@ from code_generation.producer import Producer, ProducerGroup
 
 ElectronPtCorrectionEmbedding = Producer(
     name="ElectronPtCorrectionEmbedding",
-    call='embedding::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{ele_energyscale_barrel}", "{ele_energyscale_endcap}","{embedding_electron_es_sf_file}", "{ele_ES_json_name}")',
+    call='embedding::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{embedding_electron_es_sf_file}", "{ele_ES_json_name}", "{ele_energyscale_barrel}", "{ele_energyscale_endcap}")',
     input=[
         nanoAOD.Electron_pt,
         nanoAOD.Electron_eta,

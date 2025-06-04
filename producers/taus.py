@@ -35,7 +35,7 @@ VsMuonTauIDCut = Producer(
 
 TauPtCorrection_byValue = Producer(
     name="TauPtCorrection",
-    call="physicsobject::tau::PtCorrection_byValue({df}, {output}, {input}, {tau_ES_shift_DM0}, {tau_ES_shift_DM1}, {tau_ES_shift_DM10}, {tau_ES_shift_DM11})",
+    call="embedding::tau::PtCorrection_byValue({df}, {output}, {input}, {tau_ES_shift_DM0}, {tau_ES_shift_DM1}, {tau_ES_shift_DM10}, {tau_ES_shift_DM11})",
     input=[
         nanoAOD.Tau_pt,
         nanoAOD.Tau_decayMode,

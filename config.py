@@ -377,7 +377,6 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
-            "tau_vsjet_vseleWP": "VVLoose",
         },
     )
     configuration.add_config_parameters(
