@@ -256,7 +256,7 @@ EleID_SF = ProducerGroup(
 ###################################
 MTGenerateSingleMuonTriggerSF_MC = ExtendedVectorProducer(
     name="MTGenerateSingleMuonTriggerSF_MC",
-    call='scalefactor::embedding::muon_sf({df}, correctionManager, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_trigger_sf}", {mc_muon_trg_extrapolation})',
+    call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_trigger_sf}", "mc", {mc_muon_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["mt", "mm"],
@@ -265,7 +265,7 @@ MTGenerateSingleMuonTriggerSF_MC = ExtendedVectorProducer(
 
 ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(
     name="ETGenerateSingleElectronTriggerSF_MC",
-    call='scalefactor::embedding::electron_sf({df}, correctionManager, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_trigger_sf}" , {mc_electron_trg_extrapolation})',
+    call='embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_trigger_sf}", "mc", {mc_electron_trg_extrapolation})',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["et", "ee"],
@@ -277,7 +277,7 @@ ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(
 ####################################
 TauEmbeddingMuonIDSF_1_MC = Producer(
     name="TauEmbeddingMuonIDSF_1_MC",
-    call='scalefactor::embedding::muon_sf({df}, correctionManager, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_muon_id_sf}")',
+    call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_muon_id_sf}", "mc")',
     input=[q.pt_1, q.eta_1],
     output=[q.id_wgt_mu_1],
     scopes=["mt", "mm"],
@@ -285,7 +285,7 @@ TauEmbeddingMuonIDSF_1_MC = Producer(
 
 TauEmbeddingMuonIDSF_2_MC = Producer(
     name="TauEmbeddingMuonIDSF_2_MC",
-    call='scalefactor::embedding::muon_sf({df}, correctionManager, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_muon_id_sf}")',
+    call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_muon_id_sf}", "mc")',
     input=[q.pt_2, q.eta_2],
     output=[q.id_wgt_mu_2],
     scopes=["mm", "em"],
@@ -293,7 +293,7 @@ TauEmbeddingMuonIDSF_2_MC = Producer(
 
 TauEmbeddingMuonIsoSF_1_MC = Producer(
     name="TauEmbeddingMuonIsoSF_1_MC",
-    call='scalefactor::embedding::muon_sf({df}, correctionManager, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_muon_iso_sf}")',
+    call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_muon_iso_sf}", "mc")',
     input=[q.pt_1, q.eta_1],
     output=[q.iso_wgt_mu_1],
     scopes=["mt", "mm"],
@@ -301,7 +301,7 @@ TauEmbeddingMuonIsoSF_1_MC = Producer(
 
 TauEmbeddingMuonIsoSF_2_MC = Producer(
     name="TauEmbeddingMuonIsoSF_2_MC",
-    call='scalefactor::embedding::muon_sf({df}, correctionManager, {input}, {output}, "{mc_muon_sf_file}", "mc", "{mc_muon_iso_sf}")',
+    call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_muon_iso_sf}", "mc")',
     input=[q.pt_2, q.eta_2],
     output=[q.iso_wgt_mu_2],
     scopes=["mm", "em"],
@@ -311,7 +311,7 @@ TauEmbeddingMuonIsoSF_2_MC = Producer(
 
 TauEmbeddingElectronIDSF_1_MC = Producer(
     name="TauEmbeddingElectronIDSF_1_MC",
-    call='scalefactor::embedding::electron_sf({df}, correctionManager, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_id_sf}")',
+    call='embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_electron_id_sf}", "mc")',
     input=[q.pt_1, q.eta_1],
     output=[q.id_wgt_ele_1],
     scopes=["et", "ee", "em"],
@@ -319,7 +319,7 @@ TauEmbeddingElectronIDSF_1_MC = Producer(
 
 TauEmbeddingElectronIDSF_2_MC = Producer(
     name="TauEmbeddingElectronIDSF_2_MC",
-    call='scalefactor::embedding::electron_sf({df}, correctionManager, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_id_sf}")',
+    call='embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_electron_id_sf}", "mc")',
     input=[q.pt_2, q.eta_2],
     output=[q.id_wgt_ele_2],
     scopes=["ee"],
@@ -327,7 +327,7 @@ TauEmbeddingElectronIDSF_2_MC = Producer(
 
 TauEmbeddingElectronIsoSF_1_MC = Producer(
     name="TauEmbeddingElectronIsoSF_1_MC",
-    call='scalefactor::embedding::electron_sf({df}, correctionManager, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_iso_sf}")',
+    call='embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_electron_iso_sf}", "mc")',
     input=[q.pt_1, q.eta_1],
     output=[q.iso_wgt_ele_1],
     scopes=["et", "ee", "em"],
@@ -335,7 +335,7 @@ TauEmbeddingElectronIsoSF_1_MC = Producer(
 
 TauEmbeddingElectronIsoSF_2_MC = Producer(
     name="TauEmbeddingElectronIsoSF_2_MC",
-    call='scalefactor::embedding::electron_sf({df}, correctionManager, {input}, {output}, "{mc_electron_sf_file}", "mc", "{mc_electron_iso_sf}")',
+    call='embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_electron_iso_sf}", "mc")',
     input=[q.pt_2, q.eta_2],
     output=[q.iso_wgt_ele_2],
     scopes=["ee"],
