@@ -146,7 +146,7 @@ Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
     input=[q.pt_2, q.tau_decaymode_2, q.tau_gen_match_2],
     output="tau_2_vsjet_sf_outputname",
     scope=["et", "mt"],
-    vec_config="vsjet_tau_id",
+    vec_config="vsjet_tau_id_sf",
 )
 Tau_2_VsJetTauID_tt_SF = ExtendedVectorProducer(
     name="Tau_2_VsJetTauID_tt_SF",

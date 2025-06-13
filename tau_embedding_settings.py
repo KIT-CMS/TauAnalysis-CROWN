@@ -13,8 +13,9 @@ from .producers import electrons as electrons
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
+import numpy as np
 
-measure_tauES = False
+measure_tauES = True
 measure_eleES = False
 
 
@@ -620,7 +621,20 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                             "p2_filterbit": 20,
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
-                        }
+                        },
+                        {
+                            "flagname": "trg_cross_mu20tau27_hps_no_filterbit",
+                            "p1_ptcut": 21,
+                            "p1_etacut": 2.5,
+                            "p1_filterbit": -1,
+                            "p1_trigger_particle_id": 13,
+                            "p2_ptcut": 32,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 20,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        
                     ],
                     "2017": [
                         {
@@ -629,6 +643,19 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                             "p1_ptcut": 21,
                             "p1_etacut": 2.1,
                             "p1_filterbit": 3,
+                            "p1_trigger_particle_id": 13,
+                            "p2_ptcut": 32,
+                            "p2_etacut": 2.1,
+                            "p2_filterbit": 4,
+                            "p2_trigger_particle_id": 15,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                        {
+                            "flagname": "trg_cross_mu20tau27_no_filterbit",
+                            "hlt_path": "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
+                            "p1_ptcut": 21,
+                            "p1_etacut": 2.1,
+                            "p1_filterbit": -1,
                             "p1_trigger_particle_id": 13,
                             "p2_ptcut": 32,
                             "p2_etacut": 2.1,
@@ -706,16 +733,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     ## Tau ID SFs
     ######################
 
-    configuration.add_modification_rule(
-        ["et", "mt"],
-        ReplaceProducer(
-            producers=[
-                scalefactors.Tau_2_VsJetTauID_lt_SF,
-                embedding.Tau_2_VsJetTauID_lt_SF,
-            ],
-            samples="embedding",
-        ),
-    )
+    # configuration.add_modification_rule(
+    #     ["et", "mt"],
+    #     ReplaceProducer(
+    #         producers=[
+    #             scalefactors.Tau_2_VsJetTauID_lt_SF,
+    #             embedding.Tau_2_VsJetTauID_lt_SF,
+    #         ],
+    #         samples="embedding",
+    #     ),
+    # )
     configuration.add_modification_rule(
         "tt",
         ReplaceProducer(
@@ -736,10 +763,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             samples="embedding",
         ),
     )
-    configuration.add_outputs(
-        ["et", "mt"],
-        embedding.Tau_2_VsJetTauID_lt_SF.output_group,
-    )
+    # configuration.add_outputs(
+    #     ["et", "mt"],
+    #     embedding.Tau_2_VsJetTauID_lt_SF.output_group,
+    # )
     configuration.add_outputs(
         "tt",
         [
@@ -756,8 +783,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 {
                     "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                     "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/tau_2017UL.json.gz",
-                    "2018": "data/embedding/tau_2018UL.json.gz",
+                    "2017": "data/embedding/tau_2017UL.json.gz", # Does not exist yet !!!
+                    "2018": "data/embedding/tau_2018UL.json.gz", # Wrong file ???
                 }
             ),
             "tau_emb_sf_vsjet_tau20to25": "nom",
@@ -781,7 +808,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                     # "VVLoose",
                     # "VLoose",
                     # "Loose",
-                    # "Medium",
+                    "Medium",
                     "Tight",
                     # "VTight",
                     # "VVTight",
@@ -831,51 +858,51 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
     )
     # and add the variations for it
     for variation in ["Up", "Down"]:
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau20to25{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau20to25": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau25to30{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau25to30": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau30to35{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau30to35": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau35to40{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau35to40": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"vsJetTau40toInf{variation}",
-                shift_config={
-                    ("et", "mt"): {"tau_emb_sf_vsjet_tau40toInf": variation.lower()}
-                },
-                producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-            )
-        )
+        # configuration.add_shift(
+        #     SystematicShift(
+        #         name=f"vsJetTau20to25{variation}",
+        #         shift_config={
+        #             ("et", "mt"): {"tau_emb_sf_vsjet_tau20to25": variation.lower()}
+        #         },
+        #         producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+        #     )
+        # )
+        # configuration.add_shift(
+        #     SystematicShift(
+        #         name=f"vsJetTau25to30{variation}",
+        #         shift_config={
+        #             ("et", "mt"): {"tau_emb_sf_vsjet_tau25to30": variation.lower()}
+        #         },
+        #         producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+        #     )
+        # )
+        # configuration.add_shift(
+        #     SystematicShift(
+        #         name=f"vsJetTau30to35{variation}",
+        #         shift_config={
+        #             ("et", "mt"): {"tau_emb_sf_vsjet_tau30to35": variation.lower()}
+        #         },
+        #         producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+        #     )
+        # )
+        # configuration.add_shift(
+        #     SystematicShift(
+        #         name=f"vsJetTau35to40{variation}",
+        #         shift_config={
+        #             ("et", "mt"): {"tau_emb_sf_vsjet_tau35to40": variation.lower()}
+        #         },
+        #         producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+        #     )
+        # )
+        # configuration.add_shift(
+        #     SystematicShift(
+        #         name=f"vsJetTau40toInf{variation}",
+        #         shift_config={
+        #             ("et", "mt"): {"tau_emb_sf_vsjet_tau40toInf": variation.lower()}
+        #         },
+        #         producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
+        #     )
+        # )
         # dm binned variations
         for dm in [0, 1, 10, 11]:
             configuration.add_shift(
@@ -1119,7 +1146,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        tauESvariations = [-8.0 + 0.1 * i for i in range(0, 121)]
+        aranged = np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist()
+        tauESvariations = [0.0 if x == 0.0 else x for x in aranged]
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(

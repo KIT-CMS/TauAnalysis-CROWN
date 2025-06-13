@@ -299,18 +299,13 @@ def build_config(
             "vsjet_tau_id": [
                 {
                     "tau_id_discriminator": "DeepTau2017v2p1VSjet",
-                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
-                        wp=wp
-                    ),
-                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
-                        wp=wp
-                    ),
                     "vsjet_tau_id_WP": "{wp}".format(wp=wp),
                     "tau_1_vsjet_id_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
                     "vsjet_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
+                    "VLoose" : 3,
                     "Loose": 4,
                     "Medium": 5,
                     "Tight": 6,
@@ -367,6 +362,36 @@ def build_config(
             "tau_sf_vsmu_wheel5": "nom",
         },
     )
+    # VSJet tau SFs seperate, because anti_iso_lt needs VLoose wp, but there are nno SFs for that.
+    configuration.add_config_parameters(
+        ["mt", "tt", "et"],
+        {
+            "vsjet_tau_id_sf": [
+                {
+                    "tau_id_discriminator": "DeepTau2017v2p1VSjet",
+                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
+                        wp=wp
+                    ),
+                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
+                        wp=wp
+                    ),
+                    "vsjet_tau_id_WP": "{wp}".format(wp=wp),
+                }
+                for wp, bit in {
+                    # "VVVLoose": 1,
+                    # "VVLoose": 2,
+                    # "VLoose": 3,
+                    "Loose": 4,
+                    "Medium": 5,
+                    "Tight": 6,
+                    "VTight": 7,
+                    # "VVTight": 8,
+                }.items()
+            ],
+        },
+    )
+    
+    
     # MT / ET tau id sf variations
     configuration.add_config_parameters(
         ["mt", "et"],
