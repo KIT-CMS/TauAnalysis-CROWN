@@ -53,6 +53,10 @@ def build_config(
             # for LHE weights
             "muR": 1.0,
             "muF": 1.0,
+            "isr": 1.0,
+            "fsr": 1.0,
+            "pdf_variation": "nominal",
+            "pdf_alphaS_variation": "nominal",
             "PU_reweighting_file": EraModifier(
                 {
                     "2016preVFP": "data/jsonpog-integration/POG/LUM/2016preVFP_UL/puWeights.json.gz",
@@ -775,6 +779,9 @@ def build_config(
             event.MetFilter,
             event.PUweights,
             event.LHE_Scale_weight,
+            event.LHE_PDF_weight,
+            event.LHE_alphaS_weight,
+            event.PS_weight,
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC,
             electrons.BaseElectrons,
@@ -1031,7 +1038,12 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
-            producers=[event.PUweights],
+            producers=[
+                event.PUweights,
+                event.LHE_PDF_weight,
+                event.LHE_alphaS_weight,
+                event.PS_weight,
+                ],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1250,6 +1262,9 @@ def build_config(
             nanoAOD.event,
             q.puweight,
             q.lhe_scale_weight,
+            q.ps_weight,
+            q.lhe_pdf_weight,
+            q.lhe_alphaS_weight,
             q.pt_1,
             q.pt_2,
             q.eta_1,
@@ -1481,8 +1496,6 @@ def build_config(
         )
     #########################
     # LHE Scale Weight variations
-    # up is muR=2.0, muF=2.0
-    # down is muR=0.5, muF=0.5
     #########################
     if "ggh" in sample or "qqh" in sample:
         configuration.add_shift(
@@ -1527,6 +1540,104 @@ def build_config(
                     }
                 },
                 producers={"global": [event.LHE_Scale_weight]},
+            )
+        )
+    
+    #########################
+    # Parton Shower Weight variations
+    #########################
+    if "ggh" in sample or "qqh" in sample:
+        configuration.add_shift(
+            SystematicShift(
+                "IsrWeightUp",
+                shift_config={
+                    "global": {
+                        "isr": 2.0,
+                    }
+                },
+                producers={"global": [event.PS_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "IsrWeightDown",
+                shift_config={
+                    "global": {
+                        "isr": 0.5,
+                    }
+                },
+                producers={"global": [event.PS_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "FsrWeightUp",
+                shift_config={
+                    "global": {
+                        "fsr": 2.0,
+                    }
+                },
+                producers={"global": [event.PS_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "FsrWeightDown",
+                shift_config={
+                    "global": {
+                        "fsr": 0.5,
+                    }
+                },
+                producers={"global": [event.PS_weight]},
+            )
+        )
+    
+    #########################
+    # LHE PDF+alphaS Weight variations
+    #########################
+    if "ggh" in sample or "qqh" in sample:
+        configuration.add_shift(
+            SystematicShift(
+                "PdfWeightUp",
+                shift_config={
+                    "global": {
+                        "pdf_variation": "up",
+                    }
+                },
+                producers={"global": [event.LHE_PDF_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "PdfWeightDown",
+                shift_config={
+                    "global": {
+                        "pdf_variation": "down",
+                    }
+                },
+                producers={"global": [event.LHE_PDF_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "AlphaSWeightUp",
+                shift_config={
+                    "global": {
+                        "pdf_alphaS_variation": "up",
+                    }
+                },
+                producers={"global": [event.LHE_alphaS_weight]},
+            )
+        )
+        configuration.add_shift(
+            SystematicShift(
+                "AlphaSWeightDown",
+                shift_config={
+                    "global": {
+                        "pdf_alphaS_variation": "down",
+                    }
+                },
+                producers={"global": [event.LHE_alphaS_weight]},
             )
         )
 
@@ -2171,3 +2282,4 @@ def build_config(
     configuration.validate()
     configuration.report()
     return configuration.expanded_configuration()
+                                                                  

@@ -195,23 +195,16 @@ npartons = Producer(
 
 PUweights = Producer(
     name="PUweights",
-    call='reweighting::puweights({df}, correctionManager, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_era}", "{PU_reweighting_variation}")',
+    call='event::reweighting::Pileup({df}, correctionManager, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_era}", "{PU_reweighting_variation}")',
     input=[nanoAOD.Pileup_nTrueInt],
     output=[q.puweight],
     scopes=["global"],
 )
 
-PUweightsFromHistogram = Producer(
-    name="PUweightsFromHistogram",
-    call='reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_hist}")',
-    input=[nanoAOD.Pileup_nTrueInt],
-    output=[q.puweight],
-    scopes=["global"],
-)
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 ZPtMassReweighting = Producer(
     name="ZPtMassReweighting",
-    call='reweighting::zPtMassReweighting({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+    call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
     input=[
         q.recoil_genboson_p4_vec,
     ],
@@ -221,7 +214,7 @@ ZPtMassReweighting = Producer(
 
 TopPtReweighting = Producer(
     name="TopPtReweighting",
-    call="reweighting::topptreweighting({df}, {output}, {input})",
+    call="event::reweighting::TopPt({df}, {output}, {input})",
     input=[
         nanoAOD.GenParticle_pdgId,
         nanoAOD.GenParticle_statusFlags,
@@ -290,10 +283,31 @@ QQH_WG1_Uncertainties = Producer(
     ],
     scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
 )
+PS_weight = Producer(
+    name="PS_weight",
+    call="event::reweighting::PartonShower({df}, {output}, {input}, {isr}, {fsr})",
+    input=[nanoAOD.PSWeight],
+    output=[q.ps_weight],
+    scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
+)
 LHE_Scale_weight = Producer(
     name="LHE_Scale_weight",
-    call="reweighting::lhe_scale_weights({df}, {output}, {input}, {muR}, {muF})",
+    call="event::reweighting::LHEscale({df}, {output}, {input}, {muR}, {muF})",
     input=[nanoAOD.LHEScaleWeight],
     output=[q.lhe_scale_weight],
+    scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
+)
+LHE_PDF_weight = Producer(
+    name="LHE_PDF_weight",
+    call='event::reweighting::LHEpdf({df}, {output}, {input}, "{pdf_variation}")',
+    input=[nanoAOD.LHEPdfWeight],
+    output=[q.lhe_pdf_weight],
+    scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
+)
+LHE_alphaS_weight = Producer(
+    name="LHE_alphaS_weight",
+    call='event::reweighting::LHEalphaS({df}, {output}, {input}, "{pdf_alphaS_variation}")',
+    input=[nanoAOD.LHEPdfWeight],
+    output=[q.lhe_alphaS_weight],
     scopes=["global", "em", "et", "mt", "tt", "mm", "ee"],
 )
