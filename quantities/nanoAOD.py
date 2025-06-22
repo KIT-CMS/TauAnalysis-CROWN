@@ -133,12 +133,8 @@ TauEmbedding_isMediumLeadingMuon = NanoAODQuantity("TauEmbedding_isMediumLeading
 TauEmbedding_isMediumTrailingMuon = NanoAODQuantity("TauEmbedding_isMediumTrailingMuon")
 TauEmbedding_isTightLeadingMuon = NanoAODQuantity("TauEmbedding_isTightLeadingMuon")
 TauEmbedding_isTightTrailingMuon = NanoAODQuantity("TauEmbedding_isTightTrailingMuon")
-TauEmbedding_InitialPairCandidates = NanoAODQuantity(
-    "TauEmbedding_nInitialPairCandidates"
-)
+TauEmbedding_InitialPairCandidates = NanoAODQuantity("TauEmbedding_nInitialPairCandidates")
 TauEmbedding_SelectionOldMass = NanoAODQuantity("TauEmbedding_SelectionOldMass")
 TauEmbedding_SelectionNewMass = NanoAODQuantity("TauEmbedding_SelectionNewMass")
 
-HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity(
-    "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"
-)
+HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ = NanoAODQuantity("HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ")
