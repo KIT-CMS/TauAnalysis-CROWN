@@ -293,6 +293,25 @@ def build_config(
     )
     ###### scope Specifics ######
     # MT/TT/ET scope tau ID flags and SFs
+
+    # ID flags without where scalefactors does not exist or are requiered withouth them
+    configuration.add_config_parameters(
+        ["mt", "tt", "et"],
+        {
+            "vsjet_tau_id_wp_bit": [
+                {
+                    "vsjet_tau_id_WPbit": bit,
+                    "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
+                    "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                }
+                for wp, bit in dict(
+                    VVLoose=2,
+                    VLoose=3,
+                ).items()
+            ],
+        }
+    )
+
     configuration.add_config_parameters(
         ["mt", "tt", "et"],
         {
@@ -377,6 +396,7 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
+            "tau_vsjet_vseleWP": "VVLoose",
         },
     )
     configuration.add_config_parameters(
@@ -1116,7 +1136,7 @@ def build_config(
                 producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
             ),
         )
-    
+
     # changes needed for data
     # global scope
     configuration.add_modification_rule(
@@ -1516,54 +1536,21 @@ def build_config(
         )
     #########################
     # LHE Scale Weight variations
-    # up is muR=2.0, muF=2.0
-    # down is muR=0.5, muF=0.5
     #########################
     if "ggh" in sample or "qqh" in sample:
-        configuration.add_shift(
-            SystematicShift(
-                "muRWeightUp",
-                shift_config={
-                    "global": {
-                        "muR": 2.0,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
+        for name, shift_config in [
+            ("muRWeightUp", {"global": {"muR": 2.0}}),
+            ("muFWeightUp", {"global": {"muF": 2.0}}),
+            ("muRWeightDown", {"global": {"muR": 0.5}}),
+            ("muFWeightDown", {"global": {"muF": 0.5}}),
+        ]:
+            configuration.add_shift(
+                SystematicShift(
+                    name,
+                    shift_config=shift_config,
+                    producers={"global": [event.LHE_Scale_weight]},
+                )
             )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muRWeightDown",
-                shift_config={
-                    "global": {
-                        "muR": 0.5,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muFWeightUp",
-                shift_config={
-                    "global": {
-                        "muF": 2.0,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "muFWeightDown",
-                shift_config={
-                    "global": {
-                        "muF": 0.5,
-                    }
-                },
-                producers={"global": [event.LHE_Scale_weight]},
-            )
-        )
 
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #
@@ -1680,7 +1667,7 @@ def build_config(
             ),
             exclude_samples=["data", "embedding", "embedding_mc"],
         )
-        
+
     #########################
     # Electron energy correction shifts
     #########################
