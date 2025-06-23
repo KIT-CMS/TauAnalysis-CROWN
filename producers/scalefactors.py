@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
 
-from ..helper.ProducerWarapper import (
+from ..scripts.ProducerWrapper import (
     AutoProducer as Producer,
     AutoProducerGroup as ProducerGroup,
     AutoExtendedVectorProducer as ExtendedVectorProducer,

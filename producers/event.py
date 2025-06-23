@@ -3,7 +3,7 @@ from ..quantities import nanoAOD as nanoAOD
 from .electrons import DiElectronVeto
 from .muons import DiMuonVeto
 
-from ..helper.ProducerWarapper import (
+from ..scripts.ProducerWrapper import (
     AutoBaseFilter as BaseFilter,
     AutoProducer as Producer,
     AutoProducerGroup as ProducerGroup,

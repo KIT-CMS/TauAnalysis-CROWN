@@ -1,8 +1,8 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
 
-from ..helper.ProducerWarapper import (
-    AutoFiler as Filter,
+from ..scripts.ProducerWrapper import (
+    AutoFilter as Filter,
     AutoProducer as Producer,
     scopes,
 )

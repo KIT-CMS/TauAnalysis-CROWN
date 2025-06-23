@@ -1,7 +1,7 @@
 #ifndef GUARDFAKEFACTORS_H
 #define GUARDFAKEFACTORS_H
 /// The namespace that contains the fake factor function.
-#include "../../../../include/basefunctions.hxx"
+#include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
 #include "ROOT/RDataFrame.hxx"
@@ -932,7 +932,7 @@ namespace fakefactors {
             std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
 
             auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt, njets, delta_r, lep_mt, lep_pt, tau_decaymode, m_vis, lep_iso, tau_mass});
-            auto df2 = basefunctions::UnrollVectorQuantity<float>(df1, shifted_collection_identifier, outputname);
+            auto df2 = event::quantity::Unroll<float>(df1, outputname, shifted_collection_identifier);
 
             return df2;
         }

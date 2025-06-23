@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
 
-from ..helper.ProducerWarapper import (
+from ..scripts.ProducerWrapper import (
     AutoProducer as Producer,
     AutoProducerGroup as ProducerGroup,
     AutoExtendedVectorProducer as ExtendedVectorProducer,
@@ -762,7 +762,7 @@ p4_fastmtt_em = Producer(
     scopes=["em"],
 )
 
-with scopes(["mt", "et", "tt", "em", "ee", "mm"]):
+with scopes(["mt", "et", "tt", "em"]):
     pt_fastmtt = Producer(
         call="quantities::pt({df}, {output}, {input})",
         input=[q.p4_fastmtt],

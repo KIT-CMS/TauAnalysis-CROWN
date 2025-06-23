@@ -5,7 +5,7 @@ import .producers.muons as muons
 import .producers.electrons as electrons
 import .producers.photons as photons
 
-from ..helper.ProducerWarapper import (
+from ..scripts.ProducerWrapper import (
     AutoProducer as Producer,
     AutoProducerGroup as ProducerGroup,
     AutoExtendedVectorProducer as ExtendedVectorProducer,
