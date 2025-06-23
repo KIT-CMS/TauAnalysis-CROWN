@@ -1376,6 +1376,9 @@ def build_config(
             q.mt_tot_pf,
             q.pt_dijet,
             q.jet_hemisphere,
+            q.dimuon_veto,
+            q.dilepton_veto,
+            q.dielectron_veto,
         ],
     )
     # add genWeight for everything but data
