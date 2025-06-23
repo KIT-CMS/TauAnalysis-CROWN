@@ -214,43 +214,43 @@ MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
 ## Producers to writeout the id variables for the tag and probe pairs
 MuonID_Loose_1 = Producer(
     name="MuonID_Loose_1",
-    call="quantities::muon::id({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_loose],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_id_loose, q.dileptonpair],
     output=[tp_q.id_loose_1],
     scopes=["mm"],
 )
 MuonID_Loose_2 = Producer(
     name="MuonID_Loose_2",
-    call="quantities::muon::id({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_loose],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_id_loose, q.dileptonpair],
     output=[tp_q.id_loose_2],
     scopes=["mm"],
 )
 MuonID_Medium_1 = Producer(
     name="MuonID_Medium_1",
-    call="quantities::muon::id({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_medium],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_id_medium, q.dileptonpair],
     output=[tp_q.id_medium_1],
     scopes=["mm"],
 )
 MuonID_Medium_2 = Producer(
     name="MuonID_Medium_2",
-    call="quantities::muon::id({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_medium],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_id_medium, q.dileptonpair],
     output=[tp_q.id_medium_2],
     scopes=["mm"],
 )
 MuonID_Tight_1 = Producer(
     name="MuonID_Tight_1",
-    call="quantities::muon::id({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_tight],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Muon_id_tight, q.dileptonpair],
     output=[tp_q.id_tight_1],
     scopes=["mm"],
 )
 MuonID_Tight_2 = Producer(
     name="MuonID_Tight_2",
-    call="quantities::muon::id({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Muon_id_tight],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Muon_id_tight, q.dileptonpair],
     output=[tp_q.id_tight_2],
     scopes=["mm"],
 )
@@ -333,29 +333,29 @@ ElElSingleElectronTriggerFlags_2 = ExtendedVectorProducer(
 ## Producers to writeout the id variables for the tag and probe pairs
 ElectronID_WP90_1 = Producer(
     name="ElectronID_WP90_1",
-    call="quantities::muon::id({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Electron_IDWP90],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Electron_IDWP90, q.dileptonpair],
     output=[tp_q.id_wp90_1],
     scopes=["ee"],
 )
 ElectronID_WP90_2 = Producer(
     name="ElectronID_WP90_2",
-    call="quantities::muon::id({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Electron_IDWP90],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Electron_IDWP90, q.dileptonpair],
     output=[tp_q.id_wp90_2],
     scopes=["ee"],
 )
 ElectronID_WP80_1 = Producer(
     name="ElectronID_WP80_1",
-    call="quantities::muon::id({df}, {output}, 0, {input})",
-    input=[q.dileptonpair, nanoAOD.Electron_IDWP80],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
+    input=[nanoAOD.Electron_IDWP80, q.dileptonpair],
     output=[tp_q.id_wp80_1],
     scopes=["ee"],
 )
 ElectronID_WP80_2 = Producer(
     name="ElectronID_WP80_2",
-    call="quantities::muon::id({df}, {output}, 1, {input})",
-    input=[q.dileptonpair, nanoAOD.Electron_IDWP80],
+    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
+    input=[nanoAOD.Electron_IDWP80, q.dileptonpair],
     output=[tp_q.id_wp80_2],
     scopes=["ee"],
 )
