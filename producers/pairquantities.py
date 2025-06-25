@@ -65,21 +65,21 @@ mass_2 = Producer(
 )
 m_vis = Producer(
     name="m_vis",
-    call="quantities::m_vis({df}, {output}, {input_vec})",
+    call="lorentzvector::GetMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2],
     output=[q.m_vis],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 deltaR_ditaupair = Producer(
     name="deltaR_ditaupair",
-    call="quantities::deltaR({df}, {output}, {input})",
+    call="quantities::DeltaR({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2],
     output=[q.deltaR_ditaupair],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_vis = Producer(
     name="pt_vis",
-    call="quantities::pt_vis({df}, {output}, {input_vec})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2],
     output=[q.pt_vis],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
@@ -653,7 +653,13 @@ TTDiTauPairQuantities = ProducerGroup(
     input=None,
     output=None,
     scopes=["tt"],
-    subproducers=[UnrollTauLV1, UnrollTauLV2, m_vis, pt_vis, deltaR_ditaupair],
+    subproducers=[
+        UnrollTauLV1, 
+        UnrollTauLV2, 
+        m_vis, 
+        pt_vis, 
+        deltaR_ditaupair,
+    ],
 )
 EMDiTauPairQuantities = ProducerGroup(
     name="EMDiTauPairQuantities",
@@ -680,49 +686,49 @@ EMDiTauPairQuantities = ProducerGroup(
 
 Pzetamissvis = Producer(
     name="Pzetamissvis",
-    call="quantities::pzetamissvis({df}, {output}, {input})",
+    call="quantities::PzetaMissVis({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
     output=[q.pzetamissvis],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mTdileptonMET = Producer(
     name="mTdileptonMET",
-    call="quantities::mTdileptonMET({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
     output=[q.mTdileptonMET],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_1 = Producer(
     name="mt_1",
-    call="quantities::mT({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.met_p4_recoilcorrected],
     output=[q.mt_1],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_2 = Producer(
     name="mt_2",
-    call="quantities::mT({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_2, q.met_p4_recoilcorrected],
     output=[q.mt_2],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_tt = Producer(
     name="pt_tt",
-    call="quantities::pt_tt({df}, {output}, {input})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
     output=[q.pt_tt],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_ttjj = Producer(
     name="pt_ttjj",
-    call="quantities::pt_ttjj({df}, {output}, {input})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.met_p4_recoilcorrected],
     output=[q.pt_ttjj],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_tot = Producer(
     name="mt_tot",
-    call="quantities::mt_tot({df}, {output}, {input})",
+    call="quantities::TotalTransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
     output=[q.mt_tot],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
@@ -730,63 +736,63 @@ mt_tot = Producer(
 
 Pzetamissvis_pf = Producer(
     name="Pzetamissvis_pf",
-    call="quantities::pzetamissvis({df}, {output}, {input})",
+    call="quantities::PzetaMissVis({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.pzetamissvis_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mTdileptonMET_pf = Producer(
     name="mTdileptonMET_pf",
-    call="quantities::mTdileptonMET({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.mTdileptonMET_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_1_pf = Producer(
     name="mt_1_pf",
-    call="quantities::mT({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.pfmet_p4_recoilcorrected],
     output=[q.mt_1_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_2_pf = Producer(
     name="mt_2_pf",
-    call="quantities::mT({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.mt_2_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_tt_pf = Producer(
     name="pt_tt_pf",
-    call="quantities::pt_tt({df}, {output}, {input})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.pt_tt_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_ttjj_pf = Producer(
     name="pt_ttjj_pf",
-    call="quantities::pt_ttjj({df}, {output}, {input})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.pt_ttjj_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 mt_tot_pf = Producer(
     name="mt_tot_pf",
-    call="quantities::mt_tot({df}, {output}, {input})",
+    call="quantities::TotalTransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.mt_tot_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 pt_dijet = Producer(
     name="pt_dijet",
-    call="quantities::pt_dijet({df}, {output}, {input})",
+    call="lorentzvector::GetPt({df}, {output}, {input})",
     input=[q.jet_p4_1, q.jet_p4_2],
     output=[q.pt_dijet],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
 jet_hemisphere = Producer(
     name="jet_hemisphere",
-    call="quantities::jet_hemisphere({df}, {output}, {input})",
+    call="quantities::PairHemisphere({df}, {output}, {input})",
     input=[q.jet_p4_1, q.jet_p4_2],
     output=[q.jet_hemisphere],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
@@ -820,7 +826,7 @@ DiTauPairMETQuantities = ProducerGroup(
 
 p4_fastmtt_mt = Producer(
     name="p4_fastmtt_mt",
-    call='quantities::p4_fastmtt({df}, {output}, {input}, "mt")',
+    call='quantities::FastMtt({df}, {output}, {input}, "mt")',
     input=[
         q.pt_1,
         q.pt_2,
@@ -843,7 +849,7 @@ p4_fastmtt_mt = Producer(
 )
 p4_fastmtt_et = Producer(
     name="p4_fastmtt_et",
-    call='quantities::p4_fastmtt({df}, {output}, {input}, "et")',
+    call='quantities::FastMtt({df}, {output}, {input}, "et")',
     input=[
         q.pt_1,
         q.pt_2,
@@ -866,7 +872,7 @@ p4_fastmtt_et = Producer(
 )
 p4_fastmtt_tt = Producer(
     name="p4_fastmtt_tt",
-    call='quantities::p4_fastmtt({df}, {output}, {input}, "tt")',
+    call='quantities::FastMtt({df}, {output}, {input}, "tt")',
     input=[
         q.pt_1,
         q.pt_2,
@@ -889,7 +895,7 @@ p4_fastmtt_tt = Producer(
 )
 p4_fastmtt_em = Producer(
     name="p4_fastmtt_em",
-    call='quantities::p4_fastmtt({df}, {output}, {input}, "em")',
+    call='quantities::FastMtt({df}, {output}, {input}, "em")',
     input=[
         q.pt_1,
         q.pt_2,
