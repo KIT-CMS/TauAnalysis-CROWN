@@ -1,7 +1,7 @@
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from .producers import jets as jets
-from .scripts.CROWNWrapper import defaults, get_addjusted_add_shift_SystematicShift
+from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 
 def add_jetCorrectionData(configuration: Configuration, era: str):
