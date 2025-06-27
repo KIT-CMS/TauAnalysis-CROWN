@@ -9,7 +9,7 @@ def add_jetCorrectionData(configuration: Configuration, era: str):
     # Jet energy corrections for data
     #########################
 
-    add_shift = get_addjusted_add_shift_SystematicShift(configuration)
+    add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
     with defaults(
         scopes="global",
