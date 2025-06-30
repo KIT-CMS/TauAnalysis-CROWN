@@ -208,7 +208,7 @@ gen_m_vis = Producer(
 )
 gen_taujet_pt_1 = Producer(
     name="gen_taujet_pt_1",
-    call="quantities::MatchingGenJet({df}, {output}, {input}, 0)",
+    call="quantities::GenJetMatching({df}, {output}, {input}, 0)",
     input=[
         nanoAOD.GenJet_pt,
         nanoAOD.Jet_associatedGenJet,
@@ -220,7 +220,7 @@ gen_taujet_pt_1 = Producer(
 )
 gen_taujet_pt_2 = Producer(
     name="gen_taujet_pt_2",
-    call="quantities::MatchingGenJet({df}, {output}, {input}, 1)",
+    call="quantities::GenJetMatching({df}, {output}, {input}, 1)",
     input=[
         nanoAOD.GenJet_pt,
         nanoAOD.Jet_associatedGenJet,
@@ -406,7 +406,7 @@ MuMuTrueGenDiTauPairQuantities = ProducerGroup(
 
 GenPairForGenMatching = Producer(
     name="GenPairForGenMatching",
-    call="genparticles::tau::hadronicGenTaus({df}, {output}, {input})",
+    call="genparticles::tau::HadronicGenTaus({df}, {output}, {input})",
     input=[
         nanoAOD.GenParticle_pdgId,
         nanoAOD.GenParticle_statusFlags,
@@ -418,17 +418,16 @@ GenPairForGenMatching = Producer(
 
 GenMatchP1 = Producer(
     name="GenMatchP1",
-    call="genparticles::tau::genmatching({df}, {output}, {input})",
+    call="genparticles::tau::GenMatching({df}, {output}, {input})",
     input=[
         q.hadronic_gen_taus,
         nanoAOD.GenParticle_pdgId,
+        nanoAOD.GenParticle_motherid,
         nanoAOD.GenParticle_statusFlags,
         nanoAOD.GenParticle_pt,
         nanoAOD.GenParticle_eta,
         nanoAOD.GenParticle_phi,
-        nanoAOD.GenParticle_mass,
-        nanoAOD.GenParticle_motherid,
-        nanoAOD.GenParticle_status,
+        nanoAOD.GenParticle_mass,        
         q.p4_1,
     ],
     output=[q.gen_match_1],
@@ -437,17 +436,16 @@ GenMatchP1 = Producer(
 
 GenMatchP2 = Producer(
     name="GenMatchP2",
-    call="genparticles::tau::genmatching({df}, {output}, {input})",
+    call="genparticles::tau::GenMatching({df}, {output}, {input})",
     input=[
         q.hadronic_gen_taus,
         nanoAOD.GenParticle_pdgId,
+        nanoAOD.GenParticle_motherid,
         nanoAOD.GenParticle_statusFlags,
         nanoAOD.GenParticle_pt,
         nanoAOD.GenParticle_eta,
         nanoAOD.GenParticle_phi,
         nanoAOD.GenParticle_mass,
-        nanoAOD.GenParticle_motherid,
-        nanoAOD.GenParticle_status,
         q.p4_2,
     ],
     output=[q.gen_match_2],
