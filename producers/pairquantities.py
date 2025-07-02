@@ -668,6 +668,13 @@ EMDiTauPairQuantities = ProducerGroup(
 ## jets: good_jet_collection (if only the leading two are needed: q.jet_p4_1, q.jet_p4_2
 ## bjets: gen_bjet_collection
 
+LV_dilepton_pair = Producer(
+    name="LV_dilepton_pair",
+    call="lorentzvector::Sum({df}, {output}, {input})",
+    input=[q.p4_1, q.p4_2],
+    output=[q.p4_dilepton],
+    scopes=["mt", "et", "tt", "em", "ee", "mm"],
+)
 Pzetamissvis = Producer(
     name="Pzetamissvis",
     call="quantities::PzetaMissVis({df}, {output}, {input})",
@@ -678,7 +685,7 @@ Pzetamissvis = Producer(
 mTdileptonMET = Producer(
     name="mTdileptonMET",
     call="quantities::TransverseMass({df}, {output}, {input})",
-    input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+    input=[q.p4_dilepton, q.met_p4_recoilcorrected],
     output=[q.mTdileptonMET],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
@@ -712,7 +719,7 @@ pt_ttjj = Producer(
 )
 mt_tot = Producer(
     name="mt_tot",
-    call="quantities::TotalTransverseMass({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
     output=[q.mt_tot],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
@@ -728,7 +735,7 @@ Pzetamissvis_pf = Producer(
 mTdileptonMET_pf = Producer(
     name="mTdileptonMET_pf",
     call="quantities::TransverseMass({df}, {output}, {input})",
-    input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    input=[q.p4_dilepton, q.pfmet_p4_recoilcorrected],
     output=[q.mTdileptonMET_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
 )
@@ -762,7 +769,7 @@ pt_ttjj_pf = Producer(
 )
 mt_tot_pf = Producer(
     name="mt_tot_pf",
-    call="quantities::TotalTransverseMass({df}, {output}, {input})",
+    call="quantities::TransverseMass({df}, {output}, {input})",
     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
     output=[q.mt_tot_pf],
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
@@ -789,6 +796,7 @@ DiTauPairMETQuantities = ProducerGroup(
     output=None,
     scopes=["mt", "et", "tt", "em", "ee", "mm"],
     subproducers=[
+        LV_dilepton_pair,
         Pzetamissvis,
         mTdileptonMET,
         mt_1,
