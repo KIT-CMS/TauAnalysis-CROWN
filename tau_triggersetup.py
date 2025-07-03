@@ -2,7 +2,7 @@ from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 
 
-def add_diTauTriggerSetup(configuration: Configuration):
+def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     # MT, MM scope trigger setup
     singlemuon_trigger_defaults = {
         "etacut": 2.5,

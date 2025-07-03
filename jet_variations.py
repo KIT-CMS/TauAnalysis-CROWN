@@ -1,35 +1,23 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 
 from code_generation.configuration import Configuration
-from code_generation.systematics import SystematicShift
+
 from .producers import jets as jets
 from .producers import scalefactors as scalefactors
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from .scripts.CROWNWrapper import (defaults,
+                                   get_adjusted_add_shift_SystematicShift)
+
+# taken from here: https://cms-jerc.web.cern.ch/Recommendations/#run-2
 
 
-def add_jetVariations(configuration: Configuration, era: str):
+def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
-    USE_JES_INDIVIDUAL = False
+    class JES_CONFIG:
+        INDIVIDUAL = False
+        REGROUPED: True  # preferred configuration
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
-        add_shift(
-            name="jesUncTotal",
-            shift_config={
-                "Up": {
-                    "global": {"jet_jes_shift": 1, "jet_jes_sources": '{"Total"}'},
-                    ("mt", "et", "tt"): {"btag_sf_variation": "up_jes"},
-                },
-                "Down": {
-                    "global": {"jet_jes_shift": -1, "jet_jes_sources": '{"Total"}'},
-                    ("mt", "et", "tt"): {"btag_sf_variation": "down_jes"},
-                },
-            },
-            producers={
-                "global": {jets.JetEnergyCorrection},
-                ("mt", "et", "tt"): {scalefactors.btagging_SF},
-            },
-        )
         with defaults(scopes="global", producers=[jets.JetEnergyCorrection]):
             add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
             if era == "2018":  # --- HEM 15/16 issue ---
@@ -39,59 +27,109 @@ def add_jetVariations(configuration: Configuration, era: str):
                     shift_map={"Up": [1, '{"HEMIssue"}'], "Down": [-1, '{"HEMIssue"}']},
                 )
 
-            if USE_JES_INDIVIDUAL:  # individual JES sources, not recommended
-                with defaults(shift_key=["jet_jes_shift", "jet_jes_sources", "btag_sf_variation"]):
-                    for JEC_source in [
-                        "AbsoluteStat",
-                        "AbsoluteScale",
-                        "AbsoluteMPFBias",
-                        "Fragmentation",
-                        "SinglePionECAL",
-                        "SinglePionHCAL",
-                        "FlavorQCD",
-                        "TimePtEta",
-                        "RelativeJEREC1",
-                        "RelativeJEREC2",
-                        "RelativeJERHF",
-                        "RelativePtBB",
-                        "RelativePtEC1",
-                        "RelativePtEC2",
-                        "RelativePtHF",
-                        "RelativeBal",
-                        "RelativeSample",
-                        "RelativeFSR",
-                        "RelativeStatFSR",
-                        "RelativeStatEC",
-                        "RelativeStatHF",
-                        "PileUpDataMC",
-                        "PileUpPtRef",
-                        "PileUpPtBB",
-                        "PileUpPtEC1",
-                        "PileUpPtEC2",
-                        "PileUpPtHF",
-                    ]:
-                        add_shift(
-                            name=f"jesUnc{JEC_source}",
-                            shift_map={
-                                "Up": [1, f'{{"{JEC_source}"}}', f"up_jes{JEC_source}"],
-                                "Down": [-1, f'{{"{JEC_source}"}}', f"down_jes{JEC_source}"],
-                            },
-                        )
-            else:  # jes reduced set of sources, recommended
-                with defaults(shift_key=["jet_jes_shift", "jet_jes_sources"]):
-                    for name, JES_source in [
-                        ("jesUncAbsolute", '{"SinglePionECAL", "SinglePionHCAL", "AbsoluteMPFBias", "AbsoluteScale", "Fragmentation", "PileUpDataMC", "RelativeFSR", "PileUpPtRef"}'),
-                        ("jesUncAbsoluteYear", '{"AbsoluteStat", "TimePtEta", "RelativeStatFSR"}'),
-                        ("jesUncFlavorQCD", '{"FlavorQCD"}'),
-                        ("jesUncBBEC1", '{"PileUpPtEC1", "PileUpPtBB", "RelativePtBB"}'),
-                        ("jesUncBBEC1Year", '{"RelativeJEREC1", "RelativePtEC1", "RelativeStatEC"}'),
-                        ("jesUncHF", '{"RelativePtHF", "PileUpPtHF", "RelativeJERHF"}'),
-                        ("jesUncHFYear", '{"RelativeStatHF"}'),
-                        ("jesUncEC2", '{"PileUpPtEC2"}'),
-                        ("jesUncEC2Year", '{"RelativeJEREC2", "RelativePtEC2"}'),
-                        ("jesUncRelativeBal", '{"RelativeBal"}'),
-                        ("jesUncRelativeSampleYear", '{"RelativeSample"}')
-                    ]:
-                        add_shift(name=name, shift_map={"Up": [1, JES_source], "Down": [-1, JES_source]})
+        with defaults(name="jesUncTotal"):  # two components of jesUncTotal
+            add_shift(
+                shift_key=["jet_jes_shift", "jet_jes_sources"],
+                shift_map={"Up": [1, '{"Total"}'], "Down": [-1, '{"Total"}']},
+                scope="global",
+                producers=[jets.JetEnergyCorrection]
+            )
+            add_shift(
+                shift_key=["btag_sf_variation"],
+                shift_map={"Up": "up_jes", "Down": "down_jes"},
+                scopes=("mt", "et", "tt"),
+                producers=[scalefactors.btagging_SF]
+            )
+
+        if JES_CONFIG.INDIVIDUAL:
+            for name in [
+                # --- jesUncAbsolute ---
+                "SinglePionECAL",
+                "SinglePionHCAL",
+                "AbsoluteMPFBias",
+                "AbsoluteScale",
+                "Fragmentation",
+                "PileUpDataMC",
+                "RelativeFSR",
+                "PileUpPtRef",
+                # --- jesUncAbsolute{era} ---
+                "AbsoluteStat",
+                "TimePtEta",
+                "RelativeStatFSR",
+                # --- jesUncFlavorQCD ---
+                "FlavorQCD",
+                # --- jesUncBBEC1 ---
+                "PileUpPtEC1",
+                "PileUpPtBB",
+                "RelativePtBB",
+                # --- jesUncBBEC1{era} ---
+                "RelativeJEREC1",
+                "RelativePtEC1",
+                "RelativeStatEC",
+                # --- jesUncHF ---
+                "RelativePtHF",
+                "PileUpPtHF",
+                "RelativeJERHF",
+                # --- jesUncHF{era} ---
+                "RelativeStatHF",
+                # --- jesUncEC2 ---
+                "PileUpPtEC2",
+                # --- jesUncEC2{era} ---
+                "RelativeJEREC2",
+                "RelativePtEC2",
+                # --- jesUncRelativeBal ---
+                "RelativeBal",
+                # --- jesUncRelativeSample{era} ---
+                "RelativeSample",
+            ]:
+                with defaults(name=f"jesUnc{name}"):  # two components of jesUnc{name}
+                    add_shift(
+                        shift_key=["jet_jes_shift", "jet_jes_sources", "btag_sf_variation"],
+                        shift_map={
+                            "Up": [1, f'{{"{name}"}}', f"up_jes{name}"],
+                            "Down": [-1, f'{{"{name}"}}', f"down_jes{name}"],
+                        },
+                        scope="global",
+                        producers=[jets.JetEnergyCorrection]
+                    )
+                    add_shift(
+                        shift_key="btag_sf_variation",
+                        shift_map={
+                            "Up": f"up_jes{name}",
+                            "Down": f"down_jes{name}"
+                        },
+                        scope=("mt", "et", "tt"),
+                        producers=[scalefactors.btagging_SF]
+                    )
+
+        elif JES_CONFIG.REGROUPED:  # preferred configuration
+            for name, JES_source, *is_yearly in [
+                ("Absolute", '{"Regrouped_Absolute"}'),
+                ("FlavorQCD", '{"Regrouped_FlavorQCD"}'),
+                ("BBEC1", '{"Regrouped_BBEC1"}'),
+                ("HF", '{"Regrouped_HF"}'),
+                ("EC2", '{"Regrouped_EC2"}'),
+                ("RelativeBal", '{"Regrouped_RelativeBal"}'),
+                # --- Yearly variations ---
+                ("Absolute", f'{{"Regrouped_Absolute_{era}"}}', era),
+                ("BBEC1", f'{{"Regrouped_BBEC1_{era}"}}', era),
+                ("HF", f'{{"Regrouped_HF_{era}"}}', era),
+                ("EC2", f'{{"Regrouped_EC2_{era}"}}', era),
+                ("RelativeSample", f'{{"Regrouped_RelativeSample_{era}"}}', era),
+            ]:
+                with defaults(name=f"jesUnc{name}{era}" if is_yearly else f"jesUnc{name}"):
+                    add_shift(
+                        shift_key=["jet_jes_shift", "jet_jes_sources"],
+                        shift_map={"Up": [1, JES_source], "Down": [-1, JES_source]},
+                        scope="global",
+                        producers=[jets.JetEnergyCorrection],
+                    )
+                    btag_variation_source = f"{name}_{era}" if is_yearly else name
+                    add_shift(
+                        shift_key="btag_sf_variation",
+                        shift_map={"Up": f"up_jes{btag_variation_source}", "Down": f"down_jes{btag_variation_source}"},
+                        scope=("mt", "et", "tt"),
+                        producers=[scalefactors.btagging_SF]
+                    )
 
     return configuration

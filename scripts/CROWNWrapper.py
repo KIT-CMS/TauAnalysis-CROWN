@@ -4,7 +4,6 @@ import contextvars
 import inspect
 import re
 from contextlib import contextmanager
-from contextvars import ContextVar
 from typing import Any, Callable, Dict, Generator, List, Tuple, Union
 
 from code_generation.configuration import Configuration, TConfiguration
@@ -25,6 +24,7 @@ from code_generation.systematics import SystematicShift
 CONTEXT_REGISTRY: Dict[str, contextvars.ContextVar] = {
     k: contextvars.ContextVar(k, default=None)
     for k in [
+        "name",
         "scopes",
         "shift_key",
         "shift_map",
@@ -58,8 +58,8 @@ def defaults(**kwargs: Any) -> Generator[None, None, None]:
 
 def get_adjusted_add_shift_SystematicShift(configuration: Configuration) -> Callable:
     def add_shift(
-        name: str,
         # those can be set via the context manager defaults
+        name: Union[str, None] = None,
         scopes: Union[str, Tuple[str, ...]] = None,
         shift_key: str = None,
         shift_map: Dict[str, Any] = None,
@@ -67,21 +67,22 @@ def get_adjusted_add_shift_SystematicShift(configuration: Configuration) -> Call
         ignore_producers: Union[None, Dict[str, Any]] = None,
         samples: Union[str, List[str], None] = None,
         exclude_samples: Union[str, List[str], None] = None,
-        # this can be set explicetly to capture more complex shift configurations (toghter with producers)
+        # this can be set explicetly to capture more complex shift configurations (together with producers)
         shift_config: Union[Dict[str, Any], None] = None,
     ):
         # if shift_config is set it overrides shift_key and shift_map
         # if producers is procided as a dict it ignores scopes
 
+        name = name or CONTEXT_REGISTRY["name"].get()
         scopes = scopes or CONTEXT_REGISTRY["scopes"].get()
         shift_key = shift_key or CONTEXT_REGISTRY["shift_key"].get()
         shift_map = shift_map or CONTEXT_REGISTRY["shift_map"].get()
         producers = producers or CONTEXT_REGISTRY["producers"].get()
 
         to_be_checked = (
-            [shift_config, producers]
+            [name, shift_config, producers]
             if shift_config is not None and isinstance(producers, dict)
-            else [scopes, shift_key, shift_map, producers]
+            else [name, scopes, shift_key, shift_map, producers]
         )
 
         if any(it is None for it in to_be_checked):
@@ -243,3 +244,63 @@ class AutoExtendedVectorProducer(ExtendedVectorProducer):
                 raise MissingValue(key)
 
         super().__init__(*args, **kwargs)
+
+
+class AutoConfiguration(Configuration):
+    """
+    A wrapper around the base Configuration class that allows setting scopes
+    via a context manager. This allows to either call the methods with
+    the scopes as the first argument, or to use the `scopes` context manager
+    and omit the scopes argument.
+
+    Example:
+    >>> from .scripts.ConfigurationWrapper import Configuration, scopes
+    >>> config = Configuration(...)
+    >>> with scopes("global"):
+    ...     config.add_producers([...]) # scopes is automatically "global"
+    >>> config.add_producers("mt", [...]) # scopes is explicitly "mt"
+    """
+
+    def add_config_parameters(self, *args: Union[TConfiguration, str, List[str]]):
+        if len(args) == 1:
+            scopes_val = _default_scopes.get()
+            if scopes_val is None:
+                raise ValueError(
+                    "scopes must be provided either as an argument or through a 'with scopes(...):' context."
+                )
+            super().add_config_parameters(scopes_val, args[0])
+        else:
+            super().add_config_parameters(*args)
+
+    def add_producers(self, *args: Union[TProducerInput, str, List[str]]):
+        if len(args) == 1:
+            scopes_val = _default_scopes.get()
+            if scopes_val is None:
+                raise ValueError(
+                    "scopes must be provided either as an argument or through a 'with scopes(...):' context."
+                )
+            super().add_producers(scopes_val, args[0])
+        else:
+            super().add_producers(*args)
+
+    def add_outputs(self, *args: Union[QuantitiesInput, str, List[str]]):
+        if len(args) == 1:
+            scopes_val = _default_scopes.get()
+            if scopes_val is None:
+                raise ValueError(
+                    "scopes must be provided either as an argument or through a 'with scopes(...):' context."
+                )
+            super().add_outputs(scopes_val, args[0])
+        else:
+            super().add_outputs(*args)
+
+    def add_modification_rule(self, *args: Union[ProducerRule, str, List[str]]):
+        if len(args) == 1:
+            scopes_val = _default_scopes.get()
+            if scopes_val is None:
+                raise ValueError(
+                    "scopes must be provided either as an argument or through a 'with scopes(...):' context."
+                )
+            super().add_modification_rule(scopes_val, args[0])
+        else:
+            super().add_modification_rule(*args)

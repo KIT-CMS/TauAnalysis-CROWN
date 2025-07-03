@@ -20,7 +20,7 @@ measure_eleES = False
 measure_tauID = False
 
 
-def setup_embedding(configuration: Configuration, scopes: List[str]):
+def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configuration:
     configuration.add_config_parameters(
         "global",
         {
@@ -847,7 +847,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 # dm binned variations
             with defaults(scopes="tt", producers=[embedding.Tau_1_VsJetTauID_tt_SF, embedding.Tau_2_VsJetTauID_tt_SF]):
                 for dm in [0, 1, 10, 11]:
-                    add_shift(name=f"vsJetTauDM{dm}Up", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}")
+                    add_shift(name=f"vsJetTauDM{dm}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}")
 
     #########################
     # Trigger shifts

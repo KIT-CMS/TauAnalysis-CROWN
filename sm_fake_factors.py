@@ -19,7 +19,7 @@ def build_config(
     available_eras: List[str],
     available_scopes: List[str],
     quantities_map: Union[str, None] = None,
-):
+) -> FriendTreeConfiguration:
     configuration = FriendTreeConfiguration(
         era,
         sample,

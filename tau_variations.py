@@ -8,7 +8,7 @@ from .producers import taus as taus
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 
-def add_tauVariations(configuration: Configuration, sample: str):
+def add_tauVariations(configuration: Configuration, sample: str) -> Configuration:
     if sample == "embedding" or sample == "embedding_mc" or sample == "data":
         return configuration
 

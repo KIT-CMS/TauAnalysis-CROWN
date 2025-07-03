@@ -36,7 +36,7 @@ def build_config(
     available_sample_types: List[str],
     available_eras: List[str],
     available_scopes: List[str],
-):
+) -> Configuration:
     configuration = Configuration(
         era,
         sample,
@@ -1547,7 +1547,7 @@ def build_config(
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
                 add_shift(name="muFWeight", shift_key="muF", producers=[event.LHE_Scale_weight])
-                add_shift(name="FsrWeigh", shift_key="fsr", producers=[event.PS_weight])
+                add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
                 add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):
                 add_shift(name="PdfWeight", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
@@ -1616,7 +1616,7 @@ def build_config(
             SystematicShiftByQuantity(
                 name="prefiringDown",
                 quantity_change={
-                    nanoAOD.prefireWeight: "L1PreFiringWeight_Down",
+                    nanoAOD.prefireWeight: "L1PreFiringWeight_Dn",
                 },
                 scopes=["global"],
             )
@@ -1949,11 +1949,11 @@ def build_config(
     #########################
     # TauID scale factor shifts, channel dependent # Tau energy scale shifts, dm dependent
     #########################
-    add_tauVariations(configuration, sample)
+    configuration = add_tauVariations(configuration, sample)
     #########################
     # Import triggersetup   #
     #########################
-    add_diTauTriggerSetup(configuration)
+    configuration = add_diTauTriggerSetup(configuration)
     #########################
     # Add additional producers and SFs related to embedded samples
     #########################
@@ -1963,17 +1963,17 @@ def build_config(
     #########################
     # Jet energy resolution and jet energy scale
     #########################
-    add_jetVariations(configuration, era)
+    configuration = add_jetVariations(configuration, era)
 
     #########################
     # btagging scale factor shape variation
     #########################
-    add_btagVariations(configuration)
+    configuration = add_btagVariations(configuration)
 
     #########################
     # Jet energy correction for data
     #########################
-    add_jetCorrectionData(configuration, era)
+    configuration = add_jetCorrectionData(configuration, era)
 
     #########################
     # Finalize and validate the configuration
