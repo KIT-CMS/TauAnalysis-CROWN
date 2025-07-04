@@ -19,14 +19,12 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         with defaults(scopes="global", producers=[jets.JetEnergyCorrection]):
-            add_shift(name="jerUnc", shift_key="jet_jer_shift",
-                      shift_map={"Up": '"up"', "Down": '"down"'})
+            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
                     name="jesUncHEMIssue",
                     shift_key=["jet_jes_shift", "jet_jes_sources"],
-                    shift_map={"Up": [1, '{"HEMIssue"}'],
-                               "Down": [-1, '{"HEMIssue"}']},
+                    shift_map={"Up": [1, '{"HEMIssue"}'], "Down": [-1, '{"HEMIssue"}']},
                 )
 
         with defaults(name="jesUncTotal"):  # two components of jesUncTotal
@@ -87,21 +85,14 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 # two components of jesUnc{name}
                 with defaults(name=f"jesUnc{name}"):
                     add_shift(
-                        shift_key=["jet_jes_shift",
-                                   "jet_jes_sources", "btag_sf_variation"],
-                        shift_map={
-                            "Up": [1, f'{{"{name}"}}', f"up_jes{name}"],
-                            "Down": [-1, f'{{"{name}"}}', f"down_jes{name}"],
-                        },
+                        shift_key=["jet_jes_shift", "jet_jes_sources"],
+                        shift_map={"Up": [1, f'{{"{name}"}}'], "Down": [-1, f'{{"{name}"}}']},
                         scopes="global",
                         producers=[jets.JetEnergyCorrection]
                     )
                     add_shift(
                         shift_key="btag_sf_variation",
-                        shift_map={
-                            "Up": f"up_jes{name}",
-                            "Down": f"down_jes{name}"
-                        },
+                        shift_map={"Up": f"up_jes{name}", "Down": f"down_jes{name}"},
                         scopes=("mt", "et", "tt"),
                         producers=[scalefactors.btagging_SF]
                     )
@@ -125,16 +116,14 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 with defaults(name=f"jesUnc{name}{era}" if is_yearly else f"jesUnc{name}"):
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
-                        shift_map={"Up": [1, JES_source],
-                                   "Down": [-1, JES_source]},
+                        shift_map={"Up": [1, JES_source], "Down": [-1, JES_source]},
                         scopes="global",
                         producers=[jets.JetEnergyCorrection],
                     )
                     btag_variation_source = f"{name}_{era}" if is_yearly else name
                     add_shift(
                         shift_key="btag_sf_variation",
-                        shift_map={"Up": f"up_jes{btag_variation_source}",
-                                   "Down": f"down_jes{btag_variation_source}"},
+                        shift_map={"Up": f"up_jes{btag_variation_source}", "Down": f"down_jes{btag_variation_source}"},
                         scopes=("mt", "et", "tt"),
                         producers=[scalefactors.btagging_SF]
                     )
