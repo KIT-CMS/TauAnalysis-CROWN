@@ -13,13 +13,14 @@ from .producers import electrons as electrons
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
+from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 measure_tauES = False
 measure_eleES = False
 measure_tauID = False
 
 
-def setup_embedding(configuration: Configuration, scopes: List[str]):
+def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configuration:
     configuration.add_config_parameters(
         "global",
         {
@@ -834,68 +835,19 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
             },
         )
         # and add the variations for it
-        for variation in ["Up", "Down"]:
-            configuration.add_shift(
-                SystematicShift(
-                    name=f"vsJetTau20to25{variation}",
-                    shift_config={
-                        ("et", "mt"): {"tau_emb_sf_vsjet_tau20to25": variation.lower()}
-                    },
-                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-                )
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name=f"vsJetTau25to30{variation}",
-                    shift_config={
-                        ("et", "mt"): {"tau_emb_sf_vsjet_tau25to30": variation.lower()}
-                    },
-                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-                )
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name=f"vsJetTau30to35{variation}",
-                    shift_config={
-                        ("et", "mt"): {"tau_emb_sf_vsjet_tau30to35": variation.lower()}
-                    },
-                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-                )
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name=f"vsJetTau35to40{variation}",
-                    shift_config={
-                        ("et", "mt"): {"tau_emb_sf_vsjet_tau35to40": variation.lower()}
-                    },
-                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-                )
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name=f"vsJetTau40toInf{variation}",
-                    shift_config={
-                        ("et", "mt"): {"tau_emb_sf_vsjet_tau40toInf": variation.lower()}
-                    },
-                    producers={("et", "mt"): embedding.Tau_2_VsJetTauID_lt_SF},
-                )
-            )
-            # dm binned variations
-            for dm in [0, 1, 10, 11]:
-                configuration.add_shift(
-                    SystematicShift(
-                        name=f"vsJetTauDM{dm}{variation}",
-                        shift_config={
-                            ("tt"): {f"tau_emb_sf_vsjet_tauDM{dm}": variation.lower()}
-                        },
-                        producers={
-                            ("tt"): [
-                                embedding.Tau_1_VsJetTauID_tt_SF,
-                                embedding.Tau_2_VsJetTauID_tt_SF,
-                            ]
-                        },
-                    )
-                )
+        add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+        with defaults(shift_map={"Up": "up", "Down": "down"}):
+            with defaults(scopes=("et", "mt"), producers=[embedding.Tau_2_VsJetTauID_lt_SF]):
+                add_shift(name="vsJetTau20to25", shift_key="tau_emb_sf_vsjet_tau20to25")
+                add_shift(name="vsJetTau25to30", shift_key="tau_emb_sf_vsjet_tau25to30")
+                add_shift(name="vsJetTau30to35", shift_key="tau_emb_sf_vsjet_tau30to35")
+                add_shift(name="vsJetTau35to40", shift_key="tau_emb_sf_vsjet_tau35to40")
+                add_shift(name="vsJetTau40toInf", shift_key="tau_emb_sf_vsjet_tau40toInf")
+
+                # dm binned variations
+            with defaults(scopes="tt", producers=[embedding.Tau_1_VsJetTauID_tt_SF, embedding.Tau_2_VsJetTauID_tt_SF]):
+                for dm in [0, 1, 10, 11]:
+                    add_shift(name=f"vsJetTauDM{dm}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}")
 
     #########################
     # Trigger shifts

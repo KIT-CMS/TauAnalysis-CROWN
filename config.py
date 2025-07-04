@@ -25,6 +25,7 @@ from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
+from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 
 def build_config(
@@ -35,7 +36,7 @@ def build_config(
     available_sample_types: List[str],
     available_eras: List[str],
     available_scopes: List[str],
-):
+) -> Configuration:
     configuration = Configuration(
         era,
         sample,
@@ -1525,295 +1526,48 @@ def build_config(
     #########################
     # LHE Scale Weight variations
     #########################
+    add_shift = get_adjusted_add_shift_SystematicShift(configuration)
     if "ggh" in sample or "qqh" in sample:
-        for name, shift_config in [
-            ("muRWeightUp", {"global": {"muR": 2.0}}),
-            ("muFWeightUp", {"global": {"muF": 2.0}}),
-            ("muRWeightDown", {"global": {"muR": 0.5}}),
-            ("muFWeightDown", {"global": {"muF": 0.5}}),
-        ]:
-            configuration.add_shift(
-                SystematicShift(
-                    name,
-                    shift_config=shift_config,
-                    producers={"global": [event.LHE_Scale_weight]},
-                )
-            )
-    
-    #########################
-    # Parton Shower Weight variations
-    #########################
-    if "ggh" in sample or "qqh" in sample:
-        configuration.add_shift(
-            SystematicShift(
-                "IsrWeightUp",
-                shift_config={
-                    "global": {
-                        "isr": 2.0,
-                    }
-                },
-                producers={"global": [event.PS_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "IsrWeightDown",
-                shift_config={
-                    "global": {
-                        "isr": 0.5,
-                    }
-                },
-                producers={"global": [event.PS_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "FsrWeightUp",
-                shift_config={
-                    "global": {
-                        "fsr": 2.0,
-                    }
-                },
-                producers={"global": [event.PS_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "FsrWeightDown",
-                shift_config={
-                    "global": {
-                        "fsr": 0.5,
-                    }
-                },
-                producers={"global": [event.PS_weight]},
-            )
-        )
-    
-    #########################
-    # LHE PDF+alphaS Weight variations
-    #########################
-    if "ggh" in sample or "qqh" in sample:
-        configuration.add_shift(
-            SystematicShift(
-                "PdfWeightUp",
-                shift_config={
-                    "global": {
-                        "pdf_variation": "up",
-                    }
-                },
-                producers={"global": [event.LHE_PDF_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "PdfWeightDown",
-                shift_config={
-                    "global": {
-                        "pdf_variation": "down",
-                    }
-                },
-                producers={"global": [event.LHE_PDF_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "AlphaSWeightUp",
-                shift_config={
-                    "global": {
-                        "pdf_alphaS_variation": "up",
-                    }
-                },
-                producers={"global": [event.LHE_alphaS_weight]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                "AlphaSWeightDown",
-                shift_config={
-                    "global": {
-                        "pdf_alphaS_variation": "down",
-                    }
-                },
-                producers={"global": [event.LHE_alphaS_weight]},
-            )
-        )
+        with defaults(scopes="global"):
+            with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
+                add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
+                add_shift(name="muFWeight", shift_key="muF", producers=[event.LHE_Scale_weight])
+                add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
+                add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
+            with defaults(shift_map={"Up": "up", "Down": "down"}):
+                add_shift(name="PdfWeight", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
+                add_shift(name="AlphaSWeight", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
 
     #########################
     # Lepton to tau fakes energy scalefactor shifts  #
     #########################
     if "dyjets" in sample or "electroweak_boson" in sample:
-        configuration.add_shift(
-            SystematicShift(
-                name="tauMuFakeEsDown",
-                shift_config={
-                    "mt": {
-                        "tau_mufake_es": "down",
-                    }
-                },
-                producers={"mt": [taus.TauPtCorrection_muFake]},
+        with defaults(shift_map={"Down": "down", "Up": "up"}):
+            add_shift(
+                name="tauMuFakeEs",
+                shift_key="tau_mufake_es",
+                scopes="mt",
+                producers=[taus.TauPtCorrection_muFake],
             )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauMuFakeEsUp",
-                shift_config={
-                    "mt": {
-                        "tau_mufake_es": "up",
-                    }
-                },
-                producers={"mt": [taus.TauPtCorrection_muFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prongBarrelDown",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM0_barrel": "down",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prongBarrelUp",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM0_barrel": "up",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prongEndcapDown",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM0_endcap": "down",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prongEndcapUp",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM0_endcap": "up",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prong1pizeroBarrelDown",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM1_barrel": "down",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prong1pizeroBarrelUp",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM1_barrel": "up",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prong1pizeroEndcapDown",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM1_endcap": "down",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            )
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEleFakeEs1prong1pizeroEndcapUp",
-                shift_config={
-                    "et": {
-                        "tau_elefake_es_DM1_endcap": "up",
-                    }
-                },
-                producers={"et": [taus.TauPtCorrection_eleFake]},
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
-
+            with defaults(
+                scopes="et",
+                producers=[taus.TauPtCorrection_eleFake],
+            ):
+                add_shift(name="tauEleFakeEs1prongBarrel", shift_key="tau_elefake_es_DM0_barrel")
+                add_shift(name="tauEleFakeEs1prongEndcap", shift_key="tau_elefake_es_DM0_endcap")
+                add_shift(name="tauEleFakeEs1prong1pizeroBarrel", shift_key="tau_elefake_es_DM1_barrel")
+                add_shift(name="tauEleFakeEs1prong1pizeroEndcap", shift_key="tau_elefake_es_DM1_endcap")
     #########################
     # Electron energy correction shifts
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="eleEsResoUp",
-            shift_config={
-                ("global"): {"ele_es_variation": "resolutionUp"},
-            },
-            producers={
-                ("global"): [
-                    electrons.ElectronPtCorrectionMC,
-                ],
-            },
-        ),
+    with defaults(
+        scopes="global",
+        shift_key="ele_es_variation",
+        producers=[electrons.ElectronPtCorrectionMC],
         exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="eleEsResoDown",
-            shift_config={
-                ("global"): {"ele_es_variation": "resolutionDown"},
-            },
-            producers={
-                ("global"): [
-                    electrons.ElectronPtCorrectionMC,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="eleEsScaleUp",
-            shift_config={
-                ("global"): {"ele_es_variation": "scaleUp"},
-            },
-            producers={
-                ("global"): [
-                    electrons.ElectronPtCorrectionMC,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="eleEsScaleDown",
-            shift_config={
-                ("global"): {"ele_es_variation": "scaleDown"},
-            },
-            producers={
-                ("global"): [
-                    electrons.ElectronPtCorrectionMC,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-
+    ):
+        add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+        add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
     #########################
     # MET Shifts
     #########################
@@ -1864,106 +1618,40 @@ def build_config(
     #########################
     # MET Recoil Shifts
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="metRecoilResponseUp",
-            shift_config={
-                ("et", "mt", "tt", "em", "ee", "mm"): {
-                    "apply_recoil_resolution_systematic": False,
-                    "apply_recoil_response_systematic": True,
-                    "recoil_systematic_shift_up": True,
-                    "recoil_systematic_shift_down": False,
-                },
-            },
-            producers={
-                ("et", "mt", "tt", "em", "ee", "mm"): met.ApplyRecoilCorrections
-            },
-        ),
+    with defaults(
+        scopes=("et", "mt", "tt", "em", "ee", "mm"),
+        producers=[met.ApplyRecoilCorrections],
         exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="metRecoilResponseDown",
-            shift_config={
-                ("et", "mt", "tt", "em", "ee", "mm"): {
-                    "apply_recoil_resolution_systematic": False,
-                    "apply_recoil_response_systematic": True,
-                    "recoil_systematic_shift_up": False,
-                    "recoil_systematic_shift_down": True,
-                },
+        shift_key=[
+            "apply_recoil_resolution_systematic",  # set either to True or False
+            "apply_recoil_response_systematic",  # set either to True or False
+            "recoil_systematic_shift_up",  # set either to True or False upon variation
+            "recoil_systematic_shift_down",  # set either to True or False upon variation
+        ]
+    ):
+        add_shift(
+            name="metRecoilResponse",
+            shift_map={
+                "Up": [False, True, True, False],
+                "Down": [False, True, False, True],
+            }
+        )
+        add_shift(
+            name="metRecoilResolution",
+            shift_map={
+                "Up": [True, False, True, False],
+                "Down": [True, False, False, True],
             },
-            producers={
-                ("et", "mt", "tt", "em", "ee", "mm"): met.ApplyRecoilCorrections
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="metRecoilResolutionUp",
-            shift_config={
-                ("et", "mt", "tt", "em", "ee", "mm"): {
-                    "apply_recoil_resolution_systematic": True,
-                    "apply_recoil_response_systematic": False,
-                    "recoil_systematic_shift_up": True,
-                    "recoil_systematic_shift_down": False,
-                },
-            },
-            producers={
-                ("et", "mt", "tt", "em", "ee", "mm"): met.ApplyRecoilCorrections
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="metRecoilResolutionDown",
-            shift_config={
-                ("et", "mt", "tt", "em", "ee", "mm"): {
-                    "apply_recoil_resolution_systematic": True,
-                    "apply_recoil_response_systematic": False,
-                    "recoil_systematic_shift_up": False,
-                    "recoil_systematic_shift_down": True,
-                },
-            },
-            producers={
-                ("et", "mt", "tt", "em", "ee", "mm"): met.ApplyRecoilCorrections
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+        )
     #########################
     # Pileup Shifts
     #########################
-    configuration.add_shift(
-        SystematicShift(
-            name="PileUpUp",
-            scopes=["global"],
-            shift_config={
-                ("global"): {"PU_reweighting_variation": "up"},
-            },
-            producers={
-                "global": [
-                    event.PUweights,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-
-    configuration.add_shift(
-        SystematicShift(
-            name="PileUpDown",
-            scopes=["global"],
-            shift_config={
-                ("global"): {"PU_reweighting_variation": "down"},
-            },
-            producers={
-                "global": [
-                    event.PUweights,
-                ],
-            },
-        ),
+    add_shift(
+        name="PileUp",
+        shift_key="PU_reweighting_variation",
+        shift_map={"Up": "up", "Down": "down"},
+        scopes="global",
+        producers=[event.PUweights],
         exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
@@ -2246,11 +1934,11 @@ def build_config(
     #########################
     # TauID scale factor shifts, channel dependent # Tau energy scale shifts, dm dependent
     #########################
-    add_tauVariations(configuration, sample)
+    configuration = add_tauVariations(configuration, sample)
     #########################
     # Import triggersetup   #
     #########################
-    add_diTauTriggerSetup(configuration)
+    configuration = add_diTauTriggerSetup(configuration)
     #########################
     # Add additional producers and SFs related to embedded samples
     #########################
@@ -2260,17 +1948,17 @@ def build_config(
     #########################
     # Jet energy resolution and jet energy scale
     #########################
-    add_jetVariations(configuration, era)
+    configuration = add_jetVariations(configuration, era)
 
     #########################
     # btagging scale factor shape variation
     #########################
-    add_btagVariations(configuration)
+    configuration = add_btagVariations(configuration)
 
     #########################
     # Jet energy correction for data
     #########################
-    add_jetCorrectionData(configuration, era)
+    configuration = add_jetCorrectionData(configuration, era)
 
     #########################
     # Finalize and validate the configuration
