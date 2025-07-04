@@ -32,3 +32,5 @@ def add_jetCorrectionData(configuration: Configuration, era: str) -> Configurati
         if era == "2016preVFP":
             add_shift(name="jec2016BCDpreVFP", shift_map={"": '"Summer19UL16APV_RunBCD_V7_DATA"'})
             add_shift(name="jec2016EFpreVFP", shift_map={"": '"Summer19UL16APV_RunEF_V7_DATA"'})
+
+    return configuration
