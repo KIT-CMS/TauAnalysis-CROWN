@@ -54,6 +54,10 @@ def build_config(
             # for LHE weights
             "muR": 1.0,
             "muF": 1.0,
+            "isr": 1.0,
+            "fsr": 1.0,
+            "pdf_variation": "nominal",
+            "pdf_alphaS_variation": "nominal",
             "PU_reweighting_file": EraModifier(
                 {
                     "2016preVFP": "data/jsonpog-integration/POG/LUM/2016preVFP_UL/puWeights.json.gz",
@@ -474,15 +478,7 @@ def build_config(
             ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
             "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
-            "muon_sf_year_id": EraModifier(
-                {
-                    "2016preVFP": "2016preVFP_UL",
-                    "2016postVFP": "2016postVFP_UL",
-                    "2017": "2017_UL",
-                    "2018": "2018_UL",
-                }
-            ),
-            "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+            "muon_sf_varation": "nominal",  # "systup"/"systdown" are up/down variations
         },
     )
     # electron scale factors configuration
@@ -804,6 +800,9 @@ def build_config(
             event.MetFilter,
             event.PUweights,
             event.LHE_Scale_weight,
+            event.LHE_PDF_weight,
+            event.LHE_alphaS_weight,
+            event.PS_weight,
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC,
             electrons.BaseElectrons,
@@ -1072,7 +1071,12 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
-            producers=[event.PUweights],
+            producers=[
+                event.PUweights,
+                event.LHE_PDF_weight,
+                event.LHE_alphaS_weight,
+                event.PS_weight,
+                ],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1082,24 +1086,6 @@ def build_config(
         RemoveProducer(
             producers=[event.LHE_Scale_weight],
             samples=["data", "embedding", "embedding_mc", "diboson"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["et", "mt", "tt"],
-        RemoveProducer(
-            producers=[
-                pairquantities.tau_gen_match_2,
-            ],
-            samples="data",
-        ),
-    )
-    configuration.add_modification_rule(
-        ["tt"],
-        RemoveProducer(
-            producers=[
-                pairquantities.tau_gen_match_1,
-            ],
-            samples="data",
         ),
     )
     configuration.add_modification_rule(
@@ -1291,6 +1277,9 @@ def build_config(
             nanoAOD.event,
             q.puweight,
             q.lhe_scale_weight,
+            q.ps_weight,
+            q.lhe_pdf_weight,
+            q.lhe_alphaS_weight,
             q.pt_1,
             q.pt_2,
             q.eta_1,
@@ -1414,7 +1403,6 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.tau_gen_match_2,
             q.muon_veto_flag,
             q.dimuon_veto,
             q.electron_veto_flag,
@@ -1443,7 +1431,6 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.tau_gen_match_2,
             q.muon_veto_flag,
             q.dimuon_veto,
             q.electron_veto_flag,
@@ -1484,8 +1471,6 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.tau_gen_match_1,
-            q.tau_gen_match_2,
             q.muon_veto_flag,
             q.dimuon_veto,
             q.electron_veto_flag,

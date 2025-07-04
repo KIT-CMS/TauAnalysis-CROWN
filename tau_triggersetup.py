@@ -254,6 +254,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         "p2_trigger_particle_id": 15,
         "p2_filterbit": 4,  # TODO switch to "p2_filterbit": 4, if the bits are correct
         "p1_trigger_particle_id": 11,
+        "p1_filterbit": -1,  # TODO check if the filter bit is correct
     }
     configuration.add_config_parameters(
         ["et"],
