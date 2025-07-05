@@ -8,13 +8,13 @@ from typing import Any, Callable, Dict, Generator, List, Tuple, Union
 
 from code_generation.configuration import Configuration, TConfiguration
 from code_generation.producer import (
-    BaseFilter,
-    ExtendedVectorProducer,
-    Filter,
-    Producer,
-    ProducerGroup,
-    TProducerInput,
-    VectorProducer,
+    BaseFilter as _BaseFilter,
+    ExtendedVectorProducer as _ExtendedVectorProducer,
+    Filter as _Filter,
+    Producer as _Producer,
+    ProducerGroup as _ProducerGroup,
+    TProducerInput as _TProducerInput,
+    VectorProducer as _VectorProducer,
 )
 from code_generation.quantity import QuantitiesInput
 from code_generation.rules import ProducerRule
@@ -54,6 +54,19 @@ def defaults(**kwargs: Any) -> Generator[None, None, None]:
     finally:
         for token in reversed(tokens):
             token.var.reset(token)
+
+
+def _merge_list_default(key: str, kwargs: Any) -> Union[List[Any], Any]:
+    value, default = kwargs.get(key), CONTEXT_REGISTRY[key].get()
+    if value is not None and default is not None:
+        if isinstance(value, (list, tuple)) and isinstance(default, (list, tuple)):
+            return list(set(list(default) + list(value)))
+        else:
+            raise TypeError(
+                "Expected both {key} and default to be lists or tuples, "
+                f"got {type(value)} and {type(default)}, will not merge them!"
+            )
+    return value if value is not None else default
 
 
 def get_adjusted_add_shift_SystematicShift(configuration: Configuration) -> Callable:
@@ -144,25 +157,27 @@ class NameNotDetermined(Exception):
         )
 
 
-class AutoBaseFilter(BaseFilter):
+class BaseFilter(_BaseFilter):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("name", _get_variable_name())
+        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
         kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
 
         if kwargs["name"] is None:
             raise NameNotDetermined
 
-        for key in ["scopes", "input"]:
+        for key in ["call", "input", "scopes"]:
             if kwargs[key] is None:
                 raise MissingValue(key)
 
         super().__init__(*args, **kwargs)
 
 
-class AutoFilter(Filter):
+class Filter(_Filter):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("name", _get_variable_name())
+        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
         kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
         kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
@@ -170,76 +185,82 @@ class AutoFilter(Filter):
         if kwargs["name"] is None:
             raise NameNotDetermined
 
-        for key in ["scopes", "input", "subproducers"]:
+        for key in ["call", "input", "scopes", "subproducers"]:
             if kwargs[key] is None:
                 raise MissingValue(key)
 
         super().__init__(*args, **kwargs)
 
 
-class AutoProducer(Producer):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["input"].get())
-
-        if kwargs["name"] is None:
-            raise NameNotDetermined
-
-        for key in ["scopes", "input"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
-
-        super().__init__(*args, **kwargs)
-
-
-class AutoProducerGroup(ProducerGroup):
+class Producer(_Producer):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("name", _get_variable_name())
         kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["input"].get())
+        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
 
         if kwargs["name"] is None:
             raise NameNotDetermined
 
-        for key in ["scopes"]:
+        for key in ["scopes", "input", "call", "output"]:
             if kwargs[key] is None:
                 raise MissingValue(key)
 
         super().__init__(*args, **kwargs)
 
 
-class AutoVectorProducer(VectorProducer):
+class ProducerGroup(_ProducerGroup):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("name", _get_variable_name())
+        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
         kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("vec_configs", CONTEXT_REGISTRY["vec_configs"].get())
+        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+        kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
 
         if kwargs["name"] is None:
             raise NameNotDetermined
 
-        for key in ["scopes", "input", "vec_configs"]:
+        for key in ["scopes", "subproducers"]:
             if kwargs[key] is None:
                 raise MissingValue(key)
 
         super().__init__(*args, **kwargs)
 
 
-class AutoExtendedVectorProducer(ExtendedVectorProducer):
+class VectorProducer(_VectorProducer):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("name", _get_variable_name())
+        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
         kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["input"].get())
+        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
         kwargs.setdefault("vec_configs", CONTEXT_REGISTRY["vec_configs"].get())
 
         if kwargs["name"] is None:
             raise NameNotDetermined
 
-        for key in ["scopes", "input", "output", "vec_configs"]:
+        for key in ["scopes", "input", "vec_configs", "call"]:
+            if kwargs[key] is None:
+                raise MissingValue(key)
+
+        super().__init__(*args, **kwargs)
+
+
+class ExtendedVectorProducer(_ExtendedVectorProducer):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("name", _get_variable_name())
+        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
+        kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())
+        kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())
+
+        if kwargs["name"] is None:
+            raise NameNotDetermined
+
+        for key in ["scope", "input", "output", "vec_config", "call"]:
             if kwargs[key] is None:
                 raise MissingValue(key)
 

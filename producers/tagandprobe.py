@@ -1,420 +1,184 @@
 from ..quantities import output as q
 from ..quantities import tagandprobe_output as tp_q
 from ..quantities import nanoAOD as nanoAOD
-from ..producers.muons import (
-    MuonPtCut,
-    MuonEtaCut,
-    GoodMuonDzCut,
-    GoodMuonDxyCut,
-    GoodMuonPtCut,
-    GoodMuonEtaCut,
-)
-from ..producers.electrons import (
-    ElectronPtCut,
-    ElectronEtaCut,
-    GoodElectronPtCut,
-    GoodElectronEtaCut,
-)
-from ..producers.photons import (
-    PhotonPtCut,
-    PhotonEtaCut,
-    PhotonElectronVeto,
-)
-from code_generation.producer import (
-    Producer,
-    ProducerGroup,
-    ExtendedVectorProducer,
-)
+from ..producers import muons as muons
+from ..producers import electrons as electrons
+from ..producers import photons as photons
+from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 
-BaseMuons = ProducerGroup(
-    name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.base_muons_mask],
-    scopes=["global"],
-    subproducers=[
-        MuonPtCut,
-        MuonEtaCut,
-    ],
-)
+TriggerObject_collection = [
+    nanoAOD.TriggerObject_bit,
+    nanoAOD.TriggerObject_id,
+    nanoAOD.TriggerObject_pt,
+    nanoAOD.TriggerObject_eta,
+    nanoAOD.TriggerObject_phi,
+]
 
-GoodMuons = ProducerGroup(
-    name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.good_muons_mask],
-    scopes=["mm"],
-    subproducers=[
-        GoodMuonPtCut,
-        GoodMuonEtaCut,
-    ],
-)
+with defaults(scopes=["global"], input=[]):
+    BaseMuons = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        output=[q.base_muons_mask],
+        subproducers=[muons.MuonPtCut, muons.MuonEtaCut],
+    )
+    BasePhotons = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        output=[q.base_photons_mask],
+        subproducers=[photons.PhotonPtCut, photons.PhotonEtaCut, photons.PhotonElectronVeto],
+    )
+    BaseElectrons = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        output=[q.base_electrons_mask],
+        subproducers=[electrons.ElectronPtCut, electrons.ElectronEtaCut],
+    )
 
-GoodMuonsWithDzDxyCut = ProducerGroup(
-    name="BaseMuons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.good_muons_mask],
-    scopes=["mm"],
-    subproducers=[
-        GoodMuonPtCut,
-        GoodMuonEtaCut,
-        GoodMuonDzCut,
-        GoodMuonDxyCut,
-    ],
-)
+with defaults(scopes=["mm"]):
+    with defaults(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.good_muons_mask],
+    ):
+        GoodMuons = ProducerGroup(
+            subproducers=[
+                muons.GoodMuonPtCut,
+                muons.GoodMuonEtaCut,
+            ],
+        )
+        GoodMuonsWithDzDxyCut = ProducerGroup(
+            subproducers=[
+                muons.GoodMuonPtCut,
+                muons.GoodMuonEtaCut,
+                muons.GoodMuonDzCut,
+                muons.GoodMuonDxyCut,
+            ],
+        )
 
-BasePhotons = ProducerGroup(
-    name="BasePhotons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.base_photons_mask],
-    scopes=["global"],
-    subproducers=[
-        PhotonPtCut,
-        PhotonEtaCut,
-        PhotonElectronVeto,
-    ],
-)
+    with defaults(output="flagname_1"):
+        with defaults(input=[q.p4_1] + TriggerObject_collection):
+            MuMuSingleMuonTriggerFlags_1 = ExtendedVectorProducer(
+                call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+                vec_config="singlemuon_trigger",
+            )
+            MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
+                call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
+                vec_config="singlemuon_trigger_bit",  # works
+            )
 
-# MuMuTagAndProbePairSelection = Producer(
-#     name="MuMuPairSelection",
-#     call="pairselection::mumu::TagAndProbePairSelection({df}, {input_vec}, {output})",
-#     input=[
-#         nanoAOD.Muon_pt,
-#         q.good_muons_mask,
-#     ],
-#     output=[q.dileptonpair],
-#     scopes=["mm"],
-# )
+        with defaults(input=[q.p4_1, q.p4_2] + TriggerObject_collection):
+            MuMuDoubleMuonTriggerFlags_1 = ExtendedVectorProducer(
+                call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
+                vec_config="doublemuon_trigger",
+            )
 
-# GoodMuMuPairFlag = Producer(
-#     name="GoodMuMuPairFlag",
-#     call="pairselection::flagGoodPairs({df}, {output}, {input})",
-#     input=[q.dileptonpair],
-#     output=[],
-#     scopes=["mm"],
-# )
+    with defaults(output="flagname_2"):
+        with defaults(input=[q.p4_2] + TriggerObject_collection):
+            MuMuSingleMuonTriggerFlags_2 = ExtendedVectorProducer(
+                call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+                vec_config="singlemuon_trigger",
+            )
+            MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
+                call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
+                vec_config="singlemuon_trigger_bit",  # works
+            )
+        with defaults(input=[q.p4_2, q.p4_1] + TriggerObject_collection):
+            MuMuDoubleMuonTriggerFlags_2 = ExtendedVectorProducer(
+                call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
+                vec_config="doublemuon_trigger",
+            )
 
-# GoodMuMuPairFilter = Filter(
-#     name="GoodMuMuPairFilter",
-#     call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any_of")',
-#     input=[],
-#     scopes=["mm"],
-#     subproducers=[GoodMuMuPairFlag],
-# )
+    # Producers to writeout the id variables for the tag and probe pairs
 
-# MuMuTagAndProbePairs = ProducerGroup(
-#     name="UnrollMuLV1",
-#     call=None,
-#     input=None,
-#     output=None,
-#     scopes=["mm"],
-#     subproducers=[
-#         MuMuTagAndProbePairSelection,
-#         GoodMuMuPairFlag,
-#         GoodMuMuPairFilter,
-#     ],
-# )
-MuMuSingleMuonTriggerFlags_1 = ExtendedVectorProducer(
-    name="MuMuGenerateSingleMuonTriggerFlags_1",
-    call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
-    input=[
-        q.p4_1,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_1",
-    scope=["mm"],
-    vec_config="singlemuon_trigger",
-)
-MuMuSingleMuonTriggerFlags_2 = ExtendedVectorProducer(
-    name="MuMuGenerateSingleMuonTriggerFlags_2",
-    call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
-    input=[
-        q.p4_2,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_2",
-    scope=["mm"],
-    vec_config="singlemuon_trigger",
-)
-MuMuDoubleMuonTriggerFlags_1 = ExtendedVectorProducer(
-    name="MuMuDoubleMuonTriggerFlags_1",
-    call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
-    input=[
-        q.p4_1,
-        q.p4_2,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_1",
-    scope=["mm"],
-    vec_config="doublemuon_trigger",
-)
-MuMuDoubleMuonTriggerFlags_2 = ExtendedVectorProducer(
-    name="MuMuDoubleMuonTriggerFlags_2",
-    call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
-    input=[
-        q.p4_2,
-        q.p4_1,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_2",
-    scope=["mm"],
-    vec_config="doublemuon_trigger",
-)
+    with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 0)"):
+        MuonID_Loose_1 = Producer(input=[nanoAOD.Muon_id_loose, q.dileptonpair], output=[tp_q.id_loose_1])
+        MuonID_Medium_1 = Producer(input=[nanoAOD.Muon_id_medium, q.dileptonpair], output=[tp_q.id_medium_1])
+        MuonID_Tight_1 = Producer(input=[nanoAOD.Muon_id_tight, q.dileptonpair], output=[tp_q.id_tight_1])
 
-MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
-    name="MuMuSingleMuonTriggerBitFlags_1",
-    call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
-    input=[
-        q.p4_1,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_1",
-    scope=["mm"],
-    vec_config="singlemuon_trigger_bit",  # works
-)
+    with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 1)"):
+        MuonID_Loose_2 = Producer(input=[nanoAOD.Muon_id_loose, q.dileptonpair], output=[tp_q.id_loose_2])
+        MuonID_Medium_2 = Producer(input=[nanoAOD.Muon_id_medium, q.dileptonpair], output=[tp_q.id_medium_2])
+        MuonID_Tight_2 = Producer(input=[nanoAOD.Muon_id_tight, q.dileptonpair], output=[tp_q.id_tight_2])
 
-MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
-    name="MuMuSingleMuonTriggerBitFlags_2",
-    call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
-    input=[
-        q.p4_2,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_2",
-    scope=["mm"],
-    vec_config="singlemuon_trigger_bit",  # works
-)
+    MuonIDs = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[
+            MuonID_Loose_1,
+            MuonID_Loose_2,
+            MuonID_Medium_1,
+            MuonID_Medium_2,
+            MuonID_Tight_1,
+            MuonID_Tight_2,
+        ],
+    )
 
-## Producers to writeout the id variables for the tag and probe pairs
-MuonID_Loose_1 = Producer(
-    name="MuonID_Loose_1",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
-    input=[nanoAOD.Muon_id_loose, q.dileptonpair],
-    output=[tp_q.id_loose_1],
-    scopes=["mm"],
-)
-MuonID_Loose_2 = Producer(
-    name="MuonID_Loose_2",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
-    input=[nanoAOD.Muon_id_loose, q.dileptonpair],
-    output=[tp_q.id_loose_2],
-    scopes=["mm"],
-)
-MuonID_Medium_1 = Producer(
-    name="MuonID_Medium_1",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
-    input=[nanoAOD.Muon_id_medium, q.dileptonpair],
-    output=[tp_q.id_medium_1],
-    scopes=["mm"],
-)
-MuonID_Medium_2 = Producer(
-    name="MuonID_Medium_2",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
-    input=[nanoAOD.Muon_id_medium, q.dileptonpair],
-    output=[tp_q.id_medium_2],
-    scopes=["mm"],
-)
-MuonID_Tight_1 = Producer(
-    name="MuonID_Tight_1",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
-    input=[nanoAOD.Muon_id_tight, q.dileptonpair],
-    output=[tp_q.id_tight_1],
-    scopes=["mm"],
-)
-MuonID_Tight_2 = Producer(
-    name="MuonID_Tight_2",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
-    input=[nanoAOD.Muon_id_tight, q.dileptonpair],
-    output=[tp_q.id_tight_2],
-    scopes=["mm"],
-)
-MuonIDs = ProducerGroup(
-    name="MuonIDs",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["mm"],
-    subproducers=[
-        MuonID_Loose_1,
-        MuonID_Loose_2,
-        MuonID_Medium_1,
-        MuonID_Medium_2,
-        MuonID_Tight_1,
-        MuonID_Tight_2,
-    ],
-)
 ###########################
-## Electrons
+# Electrons
 ###########################
 
-BaseElectrons = ProducerGroup(
-    name="BaseElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.base_electrons_mask],
-    scopes=["global"],
-    subproducers=[
-        ElectronPtCut,
-        ElectronEtaCut,
-    ],
-)
+with defaults(scopes=["ee"]):
+    GoodElectrons = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.good_electrons_mask],
+        subproducers=[
+            electrons.GoodElectronPtCut,
+            electrons.GoodElectronEtaCut,
+        ],
+    )
 
-GoodElectrons = ProducerGroup(
-    name="BaseElectrons",
-    call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-    input=[],
-    output=[q.good_electrons_mask],
-    scopes=["ee"],
-    subproducers=[
-        GoodElectronPtCut,
-        GoodElectronEtaCut,
-    ],
-)
+    with defaults(vec_configs="singleelectron_trigger"):
+        ElElSingleElectronTriggerFlags_1 = ExtendedVectorProducer(
+            call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+            input=[q.p4_1] + TriggerObject_collection,
+            output="flagname_1",
+        )
+        ElElSingleElectronTriggerFlags_2 = ExtendedVectorProducer(
+            call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+            input=[q.p4_2] + TriggerObject_collection,
+            output="flagname_2",
+        )
 
+    # Producers to writeout the id variables for the tag and probe pairs
 
-ElElSingleElectronTriggerFlags_1 = ExtendedVectorProducer(
-    name="ElElGenerateSingleElectronTriggerFlags_1",
-    call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
-    input=[
-        q.p4_1,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_1",
-    scope=["ee"],
-    vec_config="singleelectron_trigger",
-)
-ElElSingleElectronTriggerFlags_2 = ExtendedVectorProducer(
-    name="ElElGenerateSingleElectronTriggerFlags_2",
-    call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
-    input=[
-        q.p4_2,
-        nanoAOD.TriggerObject_bit,
-        nanoAOD.TriggerObject_id,
-        nanoAOD.TriggerObject_pt,
-        nanoAOD.TriggerObject_eta,
-        nanoAOD.TriggerObject_phi,
-    ],
-    output="flagname_2",
-    scope=["ee"],
-    vec_config="singleelectron_trigger",
-)
+    with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 0)"):
+        ElectronID_WP90_1 = Producer(input=[nanoAOD.Electron_IDWP90, q.dileptonpair], output=[tp_q.id_wp90_1])
+        ElectronID_WP80_1 = Producer(input=[nanoAOD.Electron_IDWP80, q.dileptonpair], output=[tp_q.id_wp80_1])
+    with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 1)"):
+        ElectronID_WP90_2 = Producer(input=[nanoAOD.Electron_IDWP90, q.dileptonpair], output=[tp_q.id_wp90_2])
+        ElectronID_WP80_2 = Producer(input=[nanoAOD.Electron_IDWP80, q.dileptonpair], output=[tp_q.id_wp80_2])
 
-
-## Producers to writeout the id variables for the tag and probe pairs
-ElectronID_WP90_1 = Producer(
-    name="ElectronID_WP90_1",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
-    input=[nanoAOD.Electron_IDWP90, q.dileptonpair],
-    output=[tp_q.id_wp90_1],
-    scopes=["ee"],
-)
-ElectronID_WP90_2 = Producer(
-    name="ElectronID_WP90_2",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
-    input=[nanoAOD.Electron_IDWP90, q.dileptonpair],
-    output=[tp_q.id_wp90_2],
-    scopes=["ee"],
-)
-ElectronID_WP80_1 = Producer(
-    name="ElectronID_WP80_1",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 0)",
-    input=[nanoAOD.Electron_IDWP80, q.dileptonpair],
-    output=[tp_q.id_wp80_1],
-    scopes=["ee"],
-)
-ElectronID_WP80_2 = Producer(
-    name="ElectronID_WP80_2",
-    call="event::quantity::Get<bool>({df}, {output}, {input}, 1)",
-    input=[nanoAOD.Electron_IDWP80, q.dileptonpair],
-    output=[tp_q.id_wp80_2],
-    scopes=["ee"],
-)
-ElectronIDs = ProducerGroup(
-    name="ElectronIDs",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["ee"],
-    subproducers=[
-        ElectronID_WP90_1,
-        ElectronID_WP90_2,
-        ElectronID_WP80_1,
-        ElectronID_WP80_2,
-    ],
-)
+    ElectronIDs = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[
+            ElectronID_WP90_1,
+            ElectronID_WP90_2,
+            ElectronID_WP80_1,
+            ElectronID_WP80_2,
+        ],
+    )
 
 ########################################
-## FSR Photon Veto
+# FSR Photon Veto
 ########################################
 
-FSR_Photon_Veto_1 = Producer(
-    name="FSR_Photon_Veto_1",
-    call="physicsobject::OverlapVeto({df}, {output}, {input}, {fsr_delta_r})",
-    input=[
-        q.p4_1,
-        nanoAOD.Photon_pt,
-        nanoAOD.Photon_eta,
-        nanoAOD.Photon_phi,
-        nanoAOD.Photon_mass,
-        q.base_photons_mask,
-    ],
-    output=[tp_q.fsr_photon_veto_1],
-    scopes=["ee", "mm"],
-)
+Photon_quantities = [
+    nanoAOD.Photon_pt,
+    nanoAOD.Photon_eta,
+    nanoAOD.Photon_phi,
+    nanoAOD.Photon_mass,
+    q.base_photons_mask,
+]
 
-FSR_Photon_Veto_2 = Producer(
-    name="FSR_Photon_Veto_1",
-    call="physicsobject::OverlapVeto({df}, {output}, {input}, {fsr_delta_r})",
-    input=[
-        q.p4_2,
-        nanoAOD.Photon_pt,
-        nanoAOD.Photon_eta,
-        nanoAOD.Photon_phi,
-        nanoAOD.Photon_mass,
-        q.base_photons_mask,
-    ],
-    output=[tp_q.fsr_photon_veto_2],
-    scopes=["ee", "mm"],
-)
+with defaults(scopes=["ee", "mm"]):
+    with defaults(call="physicsobject::OverlapVeto({df}, {output}, {input}, {fsr_delta_r})"):
+        FSR_Photon_Veto_1 = Producer(input=[q.p4_1] + Photon_quantities, output=[tp_q.fsr_photon_veto_1])
+        FSR_Photon_Veto_2 = Producer(input=[q.p4_2] + Photon_quantities, output=[tp_q.fsr_photon_veto_2])
 
-FSR_Veto = ProducerGroup(
-    name="FSR_Veto",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["ee", "mm"],
-    subproducers=[
-        FSR_Photon_Veto_1,
-        FSR_Photon_Veto_2,
-    ],
-)
+    FSR_Veto = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[FSR_Photon_Veto_1, FSR_Photon_Veto_2],
+    )
