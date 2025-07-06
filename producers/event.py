@@ -1,41 +1,15 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
-from .electrons import DiElectronVeto
-from .muons import DiMuonVeto
+from ..producers import electrons as electrons
+from ..producers import muons as muons
 
 ####################
 # Set of general producers for event quantities
 ####################
 
 with defaults(scopes=["global"]):
-    JSONFilter = BaseFilter(
-        call='event::filter::GoldenJSON({df}, correctionManager, "GoldenJSONFilter",  {input}, "{golden_json_file}")',
-        input=[nanoAOD.run, nanoAOD.luminosityBlock],
-    )
-    PrefireWeight = Producer(
-        call="event::quantity::Rename<float>({df}, {output}, {input})",
-        input=[nanoAOD.prefireWeight],
-        output=[q.prefireweight],
-    )
-
     with defaults(input=[]):
-        is_data = Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data])
-        is_embedding = Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding])
-        is_ttbar = Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar])
-        is_dyjets = Producer(call="event::quantity::Define({df}, {output}, {is_dyjets})", output=[q.is_dyjets])
-        is_wjets = Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets])
-        is_ggh_htautau = Producer(call="event::quantity::Define({df}, {output}, {is_ggh_htautau})", output=[q.is_ggh_htautau])
-        is_vbf_htautau = Producer(call="event::quantity::Define({df}, {output}, {is_vbf_htautau})", output=[q.is_vbf_htautau])
-        is_diboson = Producer(call="event::quantity::Define({df}, {output}, {is_diboson})", output=[q.is_diboson])
-        is_ggh_hbb = Producer(call="event::quantity::Define({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb])
-        is_vbf_hbb = Producer(call="event::quantity::Define({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb])
-        is_rem_hbb = Producer(call="event::quantity::Define({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb])
-        is_embedding_mc = Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc])
-        is_singletop = Producer(call="event::quantity::Define({df}, {output}, {is_singletop})", output=[q.is_singletop])
-        is_rem_htautau = Producer(call="event::quantity::Define({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau])
-        is_electroweak_boson = Producer(call="event::quantity::Define({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson])
-        # ---
         RunLumiEventFilter = VectorProducer(
             call='event::filter::Quantity<{RunLumiEventFilter_Quantity_Types}>({df}, "RunLumiEventFilter", "{RunLumiEventFilter_Quantities}", {vec_open}{RunLumiEventFilter_Selections}{vec_close})',
             output=None,
@@ -48,30 +22,37 @@ with defaults(scopes=["global"]):
         DiLeptonVeto = ProducerGroup(
             call='event::CombineFlags({df}, {output}, {input}, "any_of")',
             output=[q.dilepton_veto],
-            subproducers=[DiElectronVeto, DiMuonVeto],
+            subproducers=[electrons.DiElectronVeto, muons.DiMuonVeto],
         )
+        # ---
+        SampleFlags_ProducerCollection = [
+            is_data := Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data]),
+            is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
+            is_ttbar := Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
+            is_dyjets := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets})", output=[q.is_dyjets]),
+            is_wjets := Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets]),
+            is_ggh_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_htautau})", output=[q.is_ggh_htautau]),
+            is_vbf_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_htautau})", output=[q.is_vbf_htautau]),
+            is_diboson := Producer(call="event::quantity::Define({df}, {output}, {is_diboson})", output=[q.is_diboson]),
+            is_ggh_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb]),
+            is_vbf_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb]),
+            is_rem_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb]),
+            is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
+            is_singletop := Producer(call="event::quantity::Define({df}, {output}, {is_singletop})", output=[q.is_singletop]),
+            is_rem_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau]),
+            is_electroweak_boson := Producer(call="event::quantity::Define({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson]),
+        ]
 
-    SampleFlags = ProducerGroup(
-        call=None,
-        input=None,
-        output=None,
-        subproducers=[
-            is_data,
-            is_embedding,
-            is_ttbar,
-            is_dyjets,
-            is_wjets,
-            is_ggh_htautau,
-            is_vbf_htautau,
-            is_diboson,
-            is_ggh_hbb,
-            is_vbf_hbb,
-            is_rem_hbb,
-            is_embedding_mc,
-            is_singletop,
-            is_rem_htautau,
-            is_electroweak_boson,
-        ],
+    SampleFlags = ProducerGroup(call=None, input=None, output=None, subproducers=SampleFlags_ProducerCollection)
+
+    JSONFilter = BaseFilter(
+        call='event::filter::GoldenJSON({df}, correctionManager, "GoldenJSONFilter",  {input}, "{golden_json_file}")',
+        input=[nanoAOD.run, nanoAOD.luminosityBlock],
+    )
+    PrefireWeight = Producer(
+        call="event::quantity::Rename<float>({df}, {output}, {input})",
+        input=[nanoAOD.prefireWeight],
+        output=[q.prefireweight],
     )
 
     MetFilter = VectorProducer(

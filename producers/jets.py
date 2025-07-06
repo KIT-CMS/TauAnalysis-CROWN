@@ -43,7 +43,7 @@ with defaults(scopes=["global"]):
             input=[nanoAOD.Jet_mass],
         )
 
-    with defaults(call=None, input=None, output=None):    
+    with defaults(call=None, input=None, output=None):
         RenameJetsData = ProducerGroup(subproducers=[RenameJetPt, RenameJetMass])
         JetEnergyCorrection = ProducerGroup(subproducers=[JetPtCorrection, JetMassCorrection])
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])

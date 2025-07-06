@@ -1,6 +1,6 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from ..scripts.CROWNWrapper import Producer, defaults
 
 with defaults(scopes=["mt", "et"]):
     RawFakeFactors_nmssm_lt = Producer(

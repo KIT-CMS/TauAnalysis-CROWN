@@ -134,7 +134,7 @@ def _get_variable_name():
     code_context = inspect.getframeinfo(frame).code_context
     if code_context:
         call_line = code_context[0].strip()
-        match = re.match(r"([\w\d_]+)\s*=", call_line)
+        match = re.match(r"([\w\d_]+)\s*(=|:=)", call_line)
         if match:
             return match.group(1)
     raise RuntimeError("Could not determine variable name from context")

@@ -90,11 +90,11 @@ VetoSecondMuon = Producer(
 ExtraMuonsVeto = Producer(
     call="physicsobject::Veto({df}, {output}, {input})",
     input={
-        "mm": [q.veto_muons_mask_2],
         "em": [q.veto_muons_mask],
         "et": [q.base_muons_mask],
         "mt": [q.veto_muons_mask],
         "tt": [q.base_muons_mask],
+        "mm": [q.veto_muons_mask_2],
     },
     output=[q.muon_veto_flag],
     scopes=["em", "et", "mt", "tt", "mm"],

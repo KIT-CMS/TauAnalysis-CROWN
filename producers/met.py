@@ -77,32 +77,22 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
 
     with defaults(call="met::propagateJetsToMet({df}, {input}, {output}, {propagateJets}, {min_jetpt_met_propagation})"):
+        PartialJetsToMetInput = [
+            q.Jet_pt_corrected,
+            nanoAOD.Jet_eta,
+            nanoAOD.Jet_phi,
+            q.Jet_mass_corrected,
+            nanoAOD.Jet_pt,
+            nanoAOD.Jet_eta,
+            nanoAOD.Jet_phi,
+            nanoAOD.Jet_mass,
+        ]
         PropagateJetsToMet = Producer(
-            input=[
-                q.met_p4_leptoncorrected,
-                q.Jet_pt_corrected,
-                nanoAOD.Jet_eta,
-                nanoAOD.Jet_phi,
-                q.Jet_mass_corrected,
-                nanoAOD.Jet_pt,
-                nanoAOD.Jet_eta,
-                nanoAOD.Jet_phi,
-                nanoAOD.Jet_mass,
-            ],
+            input=[q.met_p4_leptoncorrected] + PartialJetsToMetInput,
             output=[q.met_p4_jetcorrected],
         )
         PropagateJetsToPFMet = Producer(
-            input=[
-                q.pfmet_p4_leptoncorrected,
-                q.Jet_pt_corrected,
-                nanoAOD.Jet_eta,
-                nanoAOD.Jet_phi,
-                q.Jet_mass_corrected,
-                nanoAOD.Jet_pt,
-                nanoAOD.Jet_eta,
-                nanoAOD.Jet_phi,
-                nanoAOD.Jet_mass,
-            ],
+            input=[q.pfmet_p4_leptoncorrected] + PartialJetsToMetInput,
             output=[q.pfmet_p4_jetcorrected],
         )
 
