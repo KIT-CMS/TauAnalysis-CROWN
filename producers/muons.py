@@ -61,18 +61,14 @@ with defaults(scopes=["em", "mt", "mm"]):
         GoodMuonDzCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dz})", input=[nanoAOD.Muon_dz])
         GoodMuonDxyCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dxy})", input=[nanoAOD.Muon_dxy])
 
-    GoodMuons = ProducerGroup(
+    with defaults(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
         input=[q.base_muons_mask],
         output=[q.good_muons_mask],
-        subproducers=[GoodMuonPtCut, GoodMuonEtaCut, GoodMuonIsoCut],
-    )
-    GoodMuonsWithDzDxyCuts = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.base_muons_mask],
-        output=[q.good_muons_mask],
-        subproducers=[GoodMuonPtCut, GoodMuonEtaCut, GoodMuonIsoCut, GoodMuonDzCut, GoodMuonDxyCut],
-    )
+    ):
+        GoodMuons = ProducerGroup(subproducers=[GoodMuonPtCut, GoodMuonEtaCut, GoodMuonIsoCut])
+        GoodMuonsWithDzDxyCuts = ProducerGroup(subproducers=[GoodMuons, GoodMuonDzCut, GoodMuonDxyCut])
+
     NumberOfGoodMuons = Producer(
         call="physicsobject::Count({df}, {output}, {input})",
         input=[q.good_muons_mask],
