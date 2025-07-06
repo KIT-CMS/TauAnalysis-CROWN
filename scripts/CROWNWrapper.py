@@ -56,19 +56,6 @@ def defaults(**kwargs: Any) -> Generator[None, None, None]:
             token.var.reset(token)
 
 
-def _merge_list_default(key: str, kwargs: Any) -> Union[List[Any], Any]:
-    value, default = kwargs.get(key), CONTEXT_REGISTRY[key].get()
-    if value is not None and default is not None:
-        if isinstance(value, (list, tuple)) and isinstance(default, (list, tuple)):
-            return list(set(list(default) + list(value)))
-        else:
-            raise TypeError(
-                "Expected both {key} and default to be lists or tuples, "
-                f"got {type(value)} and {type(default)}, will not merge them!"
-            )
-    return value if value is not None else default
-
-
 def get_adjusted_add_shift_SystematicShift(configuration: Configuration) -> Callable:
     def add_shift(
         # those can be set via the context manager defaults
