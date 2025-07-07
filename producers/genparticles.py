@@ -137,14 +137,13 @@ with defaults(call=None, input=None, output=None):
 
 nanoAOD_GenParticle_id_vars = [
     nanoAOD.GenParticle_pdgId,
-    nanoAOD.GenParticle_motherid,
     nanoAOD.GenParticle_statusFlags,
 ]
 
 with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
     GenPairForGenMatching = Producer(
         call="genparticles::tau::HadronicGenTaus({df}, {output}, {input})",
-        input=nanoAOD_GenParticle_id_vars,
+        input=nanoAOD_GenParticle_id_vars + [nanoAOD.GenParticle_motherid],
         output=[q.hadronic_gen_taus],
     )
     GenMatchP1 = Producer(

@@ -213,7 +213,9 @@ class ProducerGroup(_ProducerGroup):
             if kwargs[key] is None:
                 raise MissingValue(key)
 
+        self.__class__.PG_count = _ProducerGroup.PG_count  # due to inconsistencies within CROWN code generation itself!
         super().__init__(*args, **kwargs)
+        _ProducerGroup.PG_count = self.__class__.PG_count  # due to inconsistencies within CROWN code generation itself!
 
 
 class VectorProducer(_VectorProducer):
@@ -241,8 +243,8 @@ class ExtendedVectorProducer(_ExtendedVectorProducer):
         kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
         kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
         kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())
-        kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())
+        kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())  # not a typo but inconsistencies within CROWN code generation itself!
+        kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())  # not a typo but inconsistencies within CROWN code generation itself!
 
         if kwargs["name"] is None:
             raise NameNotDetermined
