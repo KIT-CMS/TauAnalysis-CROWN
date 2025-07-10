@@ -1380,7 +1380,7 @@ def build_config(
         if era != "2018":
             configuration.add_outputs(
                 scopes,
-                q.prefireweight,
+                q.prefiring_wgt,
             )
     configuration.add_outputs(
         "mt",
@@ -1403,9 +1403,9 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.muon_veto_flag,
+            q.extramuon_veto,
             q.dimuon_veto,
-            q.electron_veto_flag,
+            q.extraelec_veto,
             # q.id_wgt_mu_1,
             # q.iso_wgt_mu_1,
         ],
@@ -1431,9 +1431,9 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.muon_veto_flag,
+            q.extramuon_veto,
             q.dimuon_veto,
-            q.electron_veto_flag,
+            q.extraelec_veto,
             # q.id_wgt_ele_wp90nonIso_1,
             # q.id_wgt_ele_wp80nonIso_1,
         ],
@@ -1471,9 +1471,9 @@ def build_config(
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
-            q.muon_veto_flag,
+            q.extramuon_veto,
             q.dimuon_veto,
-            q.electron_veto_flag,
+            q.extraelec_veto,
         ],
     )
     configuration.add_outputs(
@@ -1484,9 +1484,9 @@ def build_config(
             triggers.EMGenerateSingleElectronTriggerFlags.output_group,
             triggers.EMGenerateSingleMuonTriggerFlags.output_group,
             triggers.EMGenerateCrossTriggerFlags.output_group,
-            q.muon_veto_flag,
+            q.extramuon_veto,
             q.dimuon_veto,
-            q.electron_veto_flag,
+            q.extraelec_veto,
             q.tau_decaymode_1,
             q.tau_decaymode_2,
         ],
@@ -1508,7 +1508,7 @@ def build_config(
             triggers.ElElGenerateDoubleMuonTriggerFlags.output_group,
             q.dimuon_veto,
             q.dielectron_veto,
-            q.electron_veto_flag,
+            q.extraelec_veto,
         ],
     )
     if "data" not in sample and "embedding" not in sample:

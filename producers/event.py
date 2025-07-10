@@ -52,7 +52,7 @@ with defaults(scopes=["global"]):
     PrefireWeight = Producer(
         call="event::quantity::Rename<float>({df}, {output}, {input})",
         input=[nanoAOD.prefireWeight],
-        output=[q.prefireweight],
+        output=[q.prefiring_wgt],
     )
 
     MetFilter = VectorProducer(

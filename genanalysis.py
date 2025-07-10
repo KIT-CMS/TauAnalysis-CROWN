@@ -121,7 +121,7 @@ def build_config(
             q.phi_1,
             q.phi_2,
             q.m_vis,
-            q.muon_veto_flag,
+            q.extramuon_veto,
         ],
     )
 

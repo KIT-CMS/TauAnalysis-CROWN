@@ -120,6 +120,6 @@ ExtraMuonsVeto = Producer(
         "tt": [q.base_muons_mask],
         "mm": [q.veto_muons_mask_2],
     },
-    output=[q.muon_veto_flag],
+    output=[q.extramuon_veto],
     scopes=["em", "et", "mt", "tt", "mm"],
 )

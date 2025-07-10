@@ -6,7 +6,7 @@ import re
 from contextlib import contextmanager
 from typing import Any, Callable, Dict, Generator, List, Tuple, Union
 
-from code_generation.configuration import Configuration, TConfiguration
+from code_generation.configuration import Configuration
 from code_generation.producer import (
     BaseFilter as _BaseFilter,
     ExtendedVectorProducer as _ExtendedVectorProducer,
@@ -16,8 +16,10 @@ from code_generation.producer import (
     TProducerInput as _TProducerInput,
     VectorProducer as _VectorProducer,
 )
-from code_generation.quantity import QuantitiesInput
-from code_generation.rules import ProducerRule
+from code_generation.quantity import (
+    Quantity as _Quantity,
+    NanoAODQuantity as _NanoAODQuantity,
+)
 from code_generation.systematics import SystematicShift
 
 
@@ -127,6 +129,14 @@ def _get_variable_name():
     raise RuntimeError("Could not determine variable name from context")
 
 
+def Quantity(name: Union[str, None] = None) -> _Quantity:
+    return _Quantity(name=name or _get_variable_name())
+
+
+def NanoAODQuantity(name: Union[str, None] = None) -> _NanoAODQuantity:
+    return _NanoAODQuantity(name=name or _get_variable_name())
+
+
 class MissingValue(Exception):
     def __init__(self, variable_name: str):
         super().__init__(
@@ -144,113 +154,105 @@ class NameNotDetermined(Exception):
         )
 
 
-class BaseFilter(_BaseFilter):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+def BaseFilter(*args, **kwargs) -> _BaseFilter:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
 
-        if kwargs["name"] is None:
-            raise NameNotDetermined
+    if kwargs["name"] is None:
+        raise NameNotDetermined
 
-        for key in ["call", "input", "scopes"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
+    for key in ["call", "input", "scopes"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
 
-        super().__init__(*args, **kwargs)
-
-
-class Filter(_Filter):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
-        kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
-
-        if kwargs["name"] is None:
-            raise NameNotDetermined
-
-        for key in ["call", "input", "scopes", "subproducers"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
-
-        super().__init__(*args, **kwargs)
+    return _BaseFilter(*args, **kwargs)
 
 
-class Producer(_Producer):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
-        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
+def Filter(*args, **kwargs) -> _Filter:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+    kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
 
-        if kwargs["name"] is None:
-            raise NameNotDetermined
+    if kwargs["name"] is None:
+        raise NameNotDetermined
 
-        for key in ["scopes", "input", "call", "output"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
+    for key in ["call", "input", "scopes", "subproducers"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
 
-        super().__init__(*args, **kwargs)
-
-
-class ProducerGroup(_ProducerGroup):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
-        kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
-
-        if kwargs["name"] is None:
-            raise NameNotDetermined
-
-        for key in ["scopes", "subproducers"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
-
-        self.__class__.PG_count = _ProducerGroup.PG_count  # due to inconsistencies within CROWN code generation itself!
-        super().__init__(*args, **kwargs)
-        _ProducerGroup.PG_count = self.__class__.PG_count  # due to inconsistencies within CROWN code generation itself!
+    return _Filter(*args, **kwargs)
 
 
-class VectorProducer(_VectorProducer):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
-        kwargs.setdefault("vec_configs", CONTEXT_REGISTRY["vec_configs"].get())
+def Producer(*args, **kwargs) -> _Producer:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+    kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
 
-        if kwargs["name"] is None:
-            raise NameNotDetermined
+    if kwargs["name"] is None:
+        raise NameNotDetermined
 
-        for key in ["scopes", "input", "vec_configs", "call"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
+    for key in ["scopes", "input", "call", "output"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
 
-        super().__init__(*args, **kwargs)
+    return _Producer(*args, **kwargs)
 
 
-class ExtendedVectorProducer(_ExtendedVectorProducer):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("name", _get_variable_name())
-        kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
-        kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
-        kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-        kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())  # not a typo but inconsistencies within CROWN code generation itself!
-        kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())  # not a typo but inconsistencies within CROWN code generation itself!
+def ProducerGroup(*args, **kwargs) -> _ProducerGroup:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+    kwargs.setdefault("subproducers", CONTEXT_REGISTRY["subproducers"].get())
 
-        if kwargs["name"] is None:
-            raise NameNotDetermined
+    if kwargs["name"] is None:
+        raise NameNotDetermined
 
-        for key in ["scope", "input", "output", "vec_config", "call"]:
-            if kwargs[key] is None:
-                raise MissingValue(key)
+    for key in ["scopes", "subproducers"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
 
-        super().__init__(*args, **kwargs)
+    return _ProducerGroup(*args, **kwargs)
+
+
+def VectorProducer(*args, **kwargs) -> _VectorProducer:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
+    kwargs.setdefault("vec_configs", CONTEXT_REGISTRY["vec_configs"].get())
+
+    if kwargs["name"] is None:
+        raise NameNotDetermined
+
+    for key in ["scopes", "input", "vec_configs", "call"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
+
+    return _VectorProducer(*args, **kwargs)
+
+
+def ExtendedVectorProducer(*args, **kwargs) -> _ExtendedVectorProducer:
+    kwargs.setdefault("name", _get_variable_name())
+    kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
+    kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
+    kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
+    kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())  # not a typo but inconsistencies within CROWN code generation itself!
+    kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())  # not a typo but inconsistencies within CROWN code generation itself!
+
+    if kwargs["name"] is None:
+        raise NameNotDetermined
+
+    for key in ["scope", "input", "output", "vec_config", "call"]:
+        if kwargs[key] is None:
+            raise MissingValue(key)
+
+    return _ExtendedVectorProducer(*args, **kwargs)
