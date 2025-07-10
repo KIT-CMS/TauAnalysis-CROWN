@@ -1,6 +1,6 @@
 from ..scripts.CROWNWrapper import NanoAODQuantity
 
-# Qauantity name is set to the name of the variable automatically.
+# NanoAODQuantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
 
