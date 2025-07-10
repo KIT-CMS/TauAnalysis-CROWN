@@ -660,9 +660,9 @@ def build_config(
             q.pzetamissvis,
             q.deltaR_ditaupair,
             q.pt_vis,
-            q.muon_veto_flag,
-            q.prefireweight,
-            q.electron_veto_flag,
+            q.extramuon_veto,
+            q.prefiring_wgt,
+            q.extraelec_veto,
         ],
     )
 

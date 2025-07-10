@@ -1,427 +1,185 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
-from code_generation.producer import Producer, ProducerGroup, Filter, BaseFilter
+from ..scripts.CROWNWrapper import Producer, ProducerGroup, Filter, BaseFilter, defaults
 
 ####################
 # Set of producers used for contruction of MT good pairs and the coressponding lorentz vectors
 ####################
 
-MTPairSelection = Producer(
-    name="MTPairSelection",
-    call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Tau_pt_corrected,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
-        nanoAOD.Tau_IDraw,
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        nanoAOD.Muon_iso,
-        q.good_muons_mask,
-        q.good_taus_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["mt"],
-)
 
-GoodMTPairFlag = Producer(
-    name="GoodMTPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["mt"],
-)
+class kinematic_vars:
+    _nanoAOD_Muon = [nanoAOD.Muon_eta, nanoAOD.Muon_phi, nanoAOD.Muon_mass]
+    _nanoAOD_Tau = [nanoAOD.Tau_eta, nanoAOD.Tau_phi]
+    _nanoAOD_Electron = [nanoAOD.Electron_eta, nanoAOD.Electron_phi, nanoAOD.Electron_mass]
 
-GoodMTPairFilter = Filter(
-    name="GoodMTPairFilter",
-    call='event::filter::Flags({df}, "GoodMuTauPairs", {input}, "any_of")',
-    input=[],
-    scopes=["mt"],
-    subproducers=[GoodMTPairFlag],
-)
 
-MuMuPairSelection = Producer(
-    name="MuMuPairSelection",
-    call="ditau_pairselection::mumu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.good_muons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["mm"],
-)
-MuMuPairSelectionOSPreferred = Producer(
-    name="MuMuPairSelectionOSPreferred",
-    call="ditau_pairselection::mumu::PairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        nanoAOD.Muon_charge,
-        q.good_muons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["mm"],
-)
-ZMuMuPairSelection = Producer(
-    name="ZMuMuPairSelection",
-    call="ditau_pairselection::mumu::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.good_muons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["mm"],
-)
-ZMuMuPairSelectionOSPreferred = Producer(
-    name="ZMuMuPairSelectionOSPrefered",
-    call="ditau_pairselection::mumu::ZBosonPairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        nanoAOD.Muon_charge,
-        q.good_muons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["mm"],
-)
-GoodMuMuPairFlag = Producer(
-    name="GoodMuMuPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["mm"],
-)
+kinematic_vars.Muon = [nanoAOD.Muon_pt, *kinematic_vars._nanoAOD_Muon]
+kinematic_vars.Tau = [nanoAOD.Tau_pt, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
+kinematic_vars.Tau_with_corrected_pt = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
+kinematic_vars.Tau_with_corrected_pt_and_mass = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, q.Tau_mass_corrected]
+kinematic_vars.Electron_with_correctrd_pt = [q.Electron_pt_corrected, *kinematic_vars._nanoAOD_Electron]
 
-GoodMuMuPairFilter = Filter(
-    name="GoodMuMuPairFilter",
-    call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any_of")',
-    input=[],
-    scopes=["mm"],
-    subproducers=[GoodMuMuPairFlag],
-)
+with defaults(scopes=["mt"]):
+    MTPairSelection = Producer(
+        call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
+        input=[
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
+            nanoAOD.Tau_IDraw,
+            *kinematic_vars.Muon,
+            nanoAOD.Muon_iso,
+            q.good_muons_mask,
+            q.good_taus_mask,
+        ],
+        output=[q.dileptonpair],
+    )
+    GoodMTPairFlag = Producer(
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodMTPairFilter = Filter(
+        call='event::filter::Flags({df}, "GoodMuTauPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodMTPairFlag],
+    )
 
-ElElPairSelection = Producer(
-    name="ElElPairSelection",
-    call="ditau_pairselection::elel::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.good_electrons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["ee"],
-)
-ZElElPairSelection = Producer(
-    name="ZElElPairSelection",
-    call="ditau_pairselection::elel::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.good_electrons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["ee"],
-)
+with defaults(scopes=["mm"]):
+    with defaults(output=[q.dileptonpair]):
+        with defaults(input=kinematic_vars.Muon + [q.good_muons_mask]):
+            MuMuPairSelection = Producer(call="ditau_pairselection::mumu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})")
+            ZMuMuPairSelection = Producer(call="ditau_pairselection::mumu::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})")
 
-GoodElElPairFlag = Producer(
-    name="GoodElElPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["ee"],
-)
+        with defaults(input=kinematic_vars.Muon + [nanoAOD.Muon_charge, q.good_muons_mask]):
+            MuMuPairSelectionOSPreferred = Producer(call="ditau_pairselection::mumu::PairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})")
+            ZMuMuPairSelectionOSPreferred = Producer(call="ditau_pairselection::mumu::ZBosonPairSelectionOSPreferred({df}, {input_vec}, {output}, {pairselection_min_dR})")
 
-GoodElElPairFilter = Filter(
-    name="GoodElElPairFilter",
-    call='event::filter::Flags({df}, "GoodElElPairs", {input}, "any_of")',
-    input=[],
-    scopes=["ee"],
-    subproducers=[GoodElElPairFlag],
-)
+    GoodMuMuPairFlag = Producer(
+        name="GoodMuMuPairFlag",
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodMuMuPairFilter = Filter(
+        name="GoodMuMuPairFilter",
+        call='event::filter::Flags({df}, "GoodMuMuPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodMuMuPairFlag],
+    )
 
-ETPairSelection = Producer(
-    name="ETPairSelection",
-    call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Tau_pt_corrected,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
-        nanoAOD.Tau_IDraw,
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        nanoAOD.Electron_iso,
-        q.good_electrons_mask,
-        q.good_taus_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["et"],
-)
+with defaults(scopes=["ee"]):
+    with defaults(
+        input=kinematic_vars.Electron_with_correctrd_pt + [q.good_electrons_mask],
+        output=[q.dileptonpair],
+    ):
+        ElElPairSelection = Producer(call="ditau_pairselection::elel::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})")
+        ZElElPairSelection = Producer(call="ditau_pairselection::elel::ZBosonPairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})")
 
-GoodETPairFlag = Producer(
-    name="GoodETPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["et"],
-)
+    GoodElElPairFlag = Producer(
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodElElPairFilter = Filter(
+        call='event::filter::Flags({df}, "GoodElElPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodElElPairFlag],
+    )
 
-GoodETPairFilter = Filter(
-    name="GoodETPairFilter",
-    call='event::filter::Flags({df}, "GoodElTauPairs", {input}, "any_of")',
-    input=[],
-    scopes=["et"],
-    subproducers=[GoodETPairFlag],
-)
+with defaults(scopes=["et"]):
+    ETPairSelection = Producer(
+        call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
+        input=[
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
+            nanoAOD.Tau_IDraw,
+            *kinematic_vars.Electron_with_correctrd_pt,
+            nanoAOD.Electron_iso,
+            q.good_electrons_mask,
+            q.good_taus_mask,
+        ],
+        output=[q.dileptonpair],
+    )
+    GoodETPairFlag = Producer(
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodETPairFilter = Filter(
+        call='event::filter::Flags({df}, "GoodElTauPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodETPairFlag],
+    )
 
 ####################
-## TauTau Pair Selection
-####################
-TTPairSelection = Producer(
-    name="TTPairSelection",
-    call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Tau_pt_corrected,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
-        nanoAOD.Tau_IDraw,
-        q.good_taus_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["tt"],
-)
-
-GoodTTPairFlag = Producer(
-    name="GoodTTPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["tt"],
-)
-
-GoodTTPairFilter = Filter(
-    name="GoodTTPairFilter",
-    call='event::filter::Flags({df}, "GoodTauTauPairs", {input}, "any_of")',
-    input=[],
-    scopes=["tt"],
-    subproducers=[GoodTTPairFlag],
-)
-####################
-## ElMu Pair Selection
+# TauTau Pair Selection
 ####################
 
-EMPairSelection = Producer(
-    name="EMPairSelection",
-    call="ditau_pairselection::elmu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        nanoAOD.Electron_iso,
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        nanoAOD.Muon_iso,
-        q.good_electrons_mask,
-        q.good_muons_mask,
-    ],
-    output=[q.dileptonpair],
-    scopes=["em"],
-)
+with defaults(scopes=["tt"]):
+    TTPairSelection = Producer(
+        call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
+        input=[
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
+            nanoAOD.Tau_IDraw,
+            q.good_taus_mask,
+        ],
+        output=[q.dileptonpair],
+    )
+    GoodTTPairFlag = Producer(
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodTTPairFilter = Filter(
+        call='event::filter::Flags({df}, "GoodTauTauPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodTTPairFlag],
+    )
 
-GoodEMPairFlag = Producer(
-    name="GoodEMPairFlag",
-    call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
-    input=[q.dileptonpair],
-    output=[],
-    scopes=["em"],
-)
+####################
+# ElMu Pair Selection
+####################
 
-GoodEMPairFilter = Filter(
-    name="GoodEMPairFilter",
-    call='event::filter::Flags({df}, "GoodElMuPairs", {input}, "any_of")',
-    input=[],
-    scopes=["em"],
-    subproducers=[GoodEMPairFlag],
-)
+with defaults(scopes=["em"]):
+    EMPairSelection = Producer(
+        call="ditau_pairselection::elmu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
+        input=[
+            *kinematic_vars.Electron_with_correctrd_pt,
+            nanoAOD.Electron_iso,
+            *kinematic_vars.Muon,
+            nanoAOD.Muon_iso,
+            q.good_electrons_mask,
+            q.good_muons_mask,
+        ],
+        output=[q.dileptonpair],
+    )
+    GoodEMPairFlag = Producer(
+        call="ditau_pairselection::flagGoodPairs({df}, {output}, {input})",
+        input=[q.dileptonpair],
+        output=[],
+    )
+    GoodEMPairFilter = Filter(
+        call='event::filter::Flags({df}, "GoodElMuPairs", {input}, "any_of")',
+        input=[],
+        subproducers=[GoodEMPairFlag],
+    )
 
+with defaults(call="lorentzvector::Build({df}, {output}, {input}, 0)"):
+    with defaults(output=[q.p4_1]):
+        LVMu1 = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mt", "mm"])
+        LVEl1 = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["et", "ee", "em"])
+        LVTau1 = Producer(input=kinematic_vars.Tau_with_corrected_pt_and_mass + [q.dileptonpair], scopes=["tt"])
 
-LVMu1 = Producer(
-    name="LVMu1",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1],
-    scopes=["mt", "mm"],
-)
-LVMu2 = Producer(
-    name="LVMu2",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2],
-    scopes=["mm", "em"],
-)
-LVEl1 = Producer(
-    name="LVEl1",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1],
-    scopes=["et", "ee", "em"],
-)
-LVEl2 = Producer(
-    name="LVEl2",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2],
-    scopes=["ee"],
-)
-LVTau1 = Producer(
-    name="LVTau1",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        q.Tau_pt_corrected,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        q.Tau_mass_corrected,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1],
-    scopes=["tt"],
-)
-LVTau2 = Producer(
-    name="LVTau2",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        q.Tau_pt_corrected,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        q.Tau_mass_corrected,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2],
-    scopes=["mt", "et", "tt"],
-)
-## uncorrected versions of all particles, used for MET propagation
-LVMu1Uncorrected = Producer(
-    name="LVMu1Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1_uncorrected],
-    scopes=["mt", "mm"],
-)
-LVMu2Uncorrected = Producer(
-    name="LVMu2Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        nanoAOD.Muon_pt,
-        nanoAOD.Muon_eta,
-        nanoAOD.Muon_phi,
-        nanoAOD.Muon_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2_uncorrected],
-    scopes=["mm", "em"],
-)
-LVEl1Uncorrected = Producer(
-    name="LVEl1Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1_uncorrected],
-    scopes=["em", "et", "ee"],
-)
-LVEl2Uncorrected = Producer(
-    name="LVEl2Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        q.Electron_pt_corrected,
-        nanoAOD.Electron_eta,
-        nanoAOD.Electron_phi,
-        nanoAOD.Electron_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2_uncorrected],
-    scopes=["ee"],
-)
-LVTau1Uncorrected = Producer(
-    name="LVTau1Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 0)",
-    input=[
-        nanoAOD.Tau_pt,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_1_uncorrected],
-    scopes=["tt"],
-)
-LVTau2Uncorrected = Producer(
-    name="LVTau2Uncorrected",
-    call="lorentzvector::Build({df}, {output}, {input}, 1)",
-    input=[
-        nanoAOD.Tau_pt,
-        nanoAOD.Tau_eta,
-        nanoAOD.Tau_phi,
-        nanoAOD.Tau_mass,
-        q.dileptonpair,
-    ],
-    output=[q.p4_2_uncorrected],
-    scopes=["mt", "et", "tt"],
-)
+    with defaults(output=[q.p4_1_uncorrected]):  # uncorrected versions of all particles, used for MET propagation
+        LVMu1Uncorrected = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mt", "mm"])
+        LVEl1Uncorrected = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["em", "et", "ee"])
+        LVTau1Uncorrected = Producer(input=kinematic_vars.Tau + [q.dileptonpair], scopes=["tt"])
+
+with defaults(call="lorentzvector::Build({df}, {output}, {input}, 1)"):
+    with defaults(output=[q.p4_2]):
+        LVMu2 = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mm", "em"])
+        LVEl2 = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["ee"])
+        LVTau2 = Producer(input=kinematic_vars.Tau_with_corrected_pt_and_mass + [q.dileptonpair], scopes=["mt", "et", "tt"])
+
+    with defaults(output=[q.p4_2_uncorrected]):  # uncorrected versions of all particles, used for MET propagation
+        LVMu2Uncorrected = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mm", "em"])
+        LVEl2Uncorrected = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["ee"])
+        LVTau2Uncorrected = Producer(input=kinematic_vars.Tau + [q.dileptonpair], scopes=["mt", "et", "tt"])
