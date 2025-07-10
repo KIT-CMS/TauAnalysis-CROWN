@@ -21,19 +21,43 @@ with defaults(scopes=["global"]):
             input=[nanoAOD.Electron_pt],
         )
 
+    ElectronEtaCut = Producer(
+        call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_eta})",
+        input=[nanoAOD.Electron_eta],
+        output=[q._ElectronEtaCut],
+    )
+    ElectronDxyCut = Producer(
+        call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_dxy})",
+        input=[nanoAOD.Electron_dxy],
+        output=[q._ElectronDxyCut],
+    )
+    ElectronDzCut = Producer(
+        call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_dz})",
+        input=[nanoAOD.Electron_dz],
+        output=[q._ElectronDzCut],
+    )
+    ElectronPtCut = Producer(
+        call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_ele_pt})",
+        input=[q.Electron_pt_corrected],
+        output=[q._ElectronPtCut],
+    )
+    ElectronIDCut = Producer(
+        call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',
+        input=[nanoAOD.Electron_IDWP90],
+        output=[q._ElectronIDCut],
+    )
+    ElectronIsoCut = Producer(
+        call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_iso})",
+        input=[nanoAOD.Electron_iso],
+        output=[q._ElectronIsoCut],
+    )
+
     with defaults(output=[]):
-        ElectronEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_eta})", input=[nanoAOD.Electron_eta])
-        ElectronDxyCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_dxy})", input=[nanoAOD.Electron_dxy])
-        ElectronDzCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_dz})", input=[nanoAOD.Electron_dz])
-        ElectronPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_ele_pt})", input=[q.Electron_pt_corrected])
-        ElectronIDCut = Producer(call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)', input=[nanoAOD.Electron_IDWP90])
-        ElectronIsoCut = Producer(call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_iso})", input=[nanoAOD.Electron_iso])
-        # ---
         DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.Electron_pt_corrected])
         DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<int>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
         DiElectronVetoElectrons = ProducerGroup(
             call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-            input=ElectronEtaCut.output + ElectronDxyCut.output + ElectronDzCut.output + ElectronIsoCut.output,
+            input=[q._ElectronEtaCut, q._ElectronDxyCut, q._ElectronDzCut, q._ElectronIsoCut],
             subproducers=[DiElectronVetoPtCut, DiElectronVetoIDCut],
         )
 

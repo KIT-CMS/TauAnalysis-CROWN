@@ -315,3 +315,19 @@ wjets_correction_wo_DR_SR_1 = Quantity("wjets_correction_wo_DR_SR_1")
 wjets_correction_wo_DR_SR_2 = Quantity("wjets_correction_wo_DR_SR_2")
 ttbar_correction_wo_DR_SR_1 = Quantity("ttbar_correction_wo_DR_SR_1")
 ttbar_correction_wo_DR_SR_2 = Quantity("ttbar_correction_wo_DR_SR_2")
+
+# --- internally used quantities ---
+
+_ElectronEtaCut = Quantity("_ElectronEtaCut")
+_ElectronDxyCut = Quantity("_ElectronDxyCut")
+_ElectronDzCut = Quantity("_ElectronDzCut")
+_ElectronPtCut = Quantity("_ElectronPtCut")
+_ElectronIDCut = Quantity("_ElectronIDCut")
+_ElectronIsoCut = Quantity("_ElectronIsoCut")
+
+_MuonEtaCut = Quantity("_MuonEtaCut")
+_MuonDxyCut = Quantity("_MuonDxyCut")
+_MuonDzCut = Quantity("_MuonDzCut")
+_MuonPtCut = Quantity("_MuonPtCut")
+_MuonIDCut = Quantity("_MuonIDCut")
+_MuonIsoCut = Quantity("_MuonIsoCut")
