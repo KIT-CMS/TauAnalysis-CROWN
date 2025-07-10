@@ -23,7 +23,7 @@ with defaults(scopes=["mt"]):
     MTPairSelection = Producer(
         call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Tau_with_corrected_pt,
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
             nanoAOD.Tau_IDraw,
             *kinematic_vars.Muon,
             nanoAOD.Muon_iso,
@@ -89,7 +89,7 @@ with defaults(scopes=["et"]):
     ETPairSelection = Producer(
         call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Tau_with_corrected_pt,
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
             nanoAOD.Tau_IDraw,
             *kinematic_vars.Electron_with_correctrd_pt,
             nanoAOD.Electron_iso,
@@ -117,7 +117,7 @@ with defaults(scopes=["tt"]):
     TTPairSelection = Producer(
         call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Tau_with_corrected_pt,
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
             nanoAOD.Tau_IDraw,
             q.good_taus_mask,
         ],

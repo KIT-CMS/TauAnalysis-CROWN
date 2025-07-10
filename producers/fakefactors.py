@@ -3,17 +3,6 @@ from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults
 
 with defaults(scopes=["mt", "et"]):
-    RawFakeFactors_nmssm_lt = Producer(
-        call='fakefactors::nmssm::raw_fakefactor_lt({df}, {output}, {input}, "{ff_variation}", "{ff_file}")',
-        input=[q.pt_2, q.njets, q.mt_1, q.nbtag],
-        output=[q.raw_fake_factor],
-    )
-    FakeFactors_nmssm_lt = Producer(
-        call='fakefactors::nmssm::fakefactor_lt({df}, {output}, {input}, "{ff_variation}", "{ff_file}", "{ff_corr_file}")',
-        input=[q.pt_2, q.njets, q.mt_1, q.nbtag, q.pt_1, q.iso_1, q.m_vis],
-        output=[q.fake_factor],
-    )
-
     RawFakeFactors_sm_lt = Producer(
         call='''fakefactors::sm::raw_fakefactor_lt(
             {df},
@@ -114,23 +103,4 @@ with defaults(scopes=["mt", "et"]):
     )
 
 with defaults(scopes=["tt"]):
-    RawFakeFactors_nmssm_tt_1 = Producer(
-        call='fakefactors::nmssm::raw_fakefactor_tt({df}, {output}, 0, {input}, "{ff_variation}", "{ff_file}")',
-        input=[q.pt_1, q.pt_2, q.njets],
-        output=[q.raw_fake_factor_1],
-    )
-    RawFakeFactors_nmssm_tt_2 = Producer(
-        call='fakefactors::nmssm::raw_fakefactor_tt({df}, {output}, 1, {input}, "{ff_variation}", "{ff_file}")',
-        input=[q.pt_1, q.pt_2, q.njets],
-        output=[q.raw_fake_factor_2],
-    )
-    FakeFactors_nmssm_tt_1 = Producer(
-        call='fakefactors::nmssm::fakefactor_tt({df}, {output}, 0, {input}, "{ff_variation}", "{ff_file}", "{ff_corr_file}")',
-        input=[q.pt_1, q.pt_2, q.njets, q.m_vis],
-        output=[q.fake_factor_1],
-    )
-    FakeFactors_nmssm_tt_2 = Producer(
-        call='fakefactors::nmssm::fakefactor_tt({df}, {output}, 1, {input}, "{ff_variation}", "{ff_file}", "{ff_corr_file}")',
-        input=[q.pt_1, q.pt_2, q.njets, q.m_vis],
-        output=[q.fake_factor_2],
-    )
+    pass
