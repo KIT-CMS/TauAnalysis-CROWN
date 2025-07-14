@@ -102,14 +102,21 @@ TriggerObject_phi = NanoAODQuantity("TrigObj_phi")
 TriggerObject_id = NanoAODQuantity("TrigObj_id")
 
 ## HTXS quantities
-HTXS_Higgs_pt = NanoAODQuantity()
-HTXS_Higgs_y = NanoAODQuantity()
-HTXS_njets30 = NanoAODQuantity()
-HTXS_stage_0 = NanoAODQuantity()
-HTXS_stage_1_pTjet30 = NanoAODQuantity()
-HTXS_stage1_1_fine_cat_pTjet30GeV = NanoAODQuantity()
-HTXS_stage1_2_cat_pTjet30GeV = NanoAODQuantity()
-HTXS_stage1_2_fine_cat_pTjet30GeV = NanoAODQuantity()
+HTXS_Higgs_pt = NanoAODQuantity()                           # Float_t   pt of the Higgs boson as identified in HTXS
+HTXS_Higgs_y = NanoAODQuantity()                            # Float_t   rapidity of the Higgs boson as identified in HTXS
+HTXS_njets25 = NanoAODQuantity()                            # UChar_t   number of jets with pt>25 GeV as identified in HTXS
+HTXS_njets30 = NanoAODQuantity()                            # UChar_t   number of jets with pt>30 GeV as identified in HTXS
+HTXS_stage1_1_cat_pTjet25GeV = NanoAODQuantity()            # Int_t     HTXS stage-1.1 category(jet pt>25 GeV)
+HTXS_stage1_1_cat_pTjet30GeV = NanoAODQuantity()            # Int_t     HTXS stage-1.1 category(jet pt>30 GeV)
+HTXS_stage1_1_fine_cat_pTjet25GeV = NanoAODQuantity()       # Int_t     HTXS stage-1.1-fine category(jet pt>25 GeV)
+HTXS_stage1_1_fine_cat_pTjet30GeV = NanoAODQuantity()       # Int_t     HTXS stage-1.1-fine category(jet pt>30 GeV)
+HTXS_stage1_2_cat_pTjet25GeV = NanoAODQuantity()            # Int_t     HTXS stage-1.2 category(jet pt>25 GeV)
+HTXS_stage1_2_cat_pTjet30GeV = NanoAODQuantity()            # Int_t     HTXS stage-1.2 category(jet pt>30 GeV)
+HTXS_stage1_2_fine_cat_pTjet25GeV = NanoAODQuantity()       # Int_t     HTXS stage-1.2-fine category(jet pt>25 GeV)
+HTXS_stage1_2_fine_cat_pTjet30GeV = NanoAODQuantity()       # Int_t     HTXS stage-1.2-fine category(jet pt>30 GeV)
+HTXS_stage_0 = NanoAODQuantity()                            # Int_t     HTXS stage-0 category
+HTXS_stage_1_pTjet25 = NanoAODQuantity()                    # Int_t     HTXS stage-1 category (jet pt>25 GeV)
+HTXS_stage_1_pTjet30 = NanoAODQuantity()                    # Int_t     HTXS stage-1 category (jet pt>30 GeV)
 
 # Theory weights
 LHEScaleWeight = NanoAODQuantity()
