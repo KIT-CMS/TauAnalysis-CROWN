@@ -99,7 +99,6 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[nanoAOD.HTXS_Higgs_pt, nanoAOD.HTXS_njets30],
         output=[q.ggh_NNLO_weight],
     )
-
     GGH_WG1_Uncertainties = Producer(
         call="htxs::ggH_WG1_uncertainties({df}, {output_vec}, {input})",
         input=[
@@ -119,7 +118,6 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
             q.THU_ggH_qmtop,
         ],
     )
-
     QQH_WG1_Uncertainties = Producer(
         call="htxs::qqH_WG1_uncertainties({df}, {output_vec}, {input})",
         input=[nanoAOD.HTXS_stage1_1_fine_cat_pTjet30GeV],  # using fine stage1.1 flag required by the used macro

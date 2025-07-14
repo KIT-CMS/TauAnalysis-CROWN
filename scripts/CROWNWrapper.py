@@ -99,12 +99,10 @@ def get_adjusted_add_shift_SystematicShift(configuration: Configuration) -> Call
                     shift_config=shift_config[direction] if shift_config else {
                         scopes: (
                             dict(zip(shift_key, value))
-                            if all(
-                                [
-                                    isinstance(shift_key, (list, tuple)),
-                                    isinstance(value, (list, tuple)),
-                                    len(shift_key) == len(value),
-                                ]
+                            if (
+                                isinstance(shift_key, (list, tuple)) and
+                                isinstance(value, (list, tuple)) and
+                                len(shift_key) == len(value)
                             )
                             else {shift_key: value}
                         )

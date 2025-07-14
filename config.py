@@ -1517,10 +1517,19 @@ def build_config(
             [
                 nanoAOD.HTXS_Higgs_pt,
                 nanoAOD.HTXS_Higgs_y,
+                nanoAOD.HTXS_njets25,
                 nanoAOD.HTXS_njets30,
-                nanoAOD.HTXS_stage_0,
+                nanoAOD.HTXS_stage1_1_cat_pTjet25GeV,
+                nanoAOD.HTXS_stage1_1_cat_pTjet30GeV,
+                nanoAOD.HTXS_stage1_1_fine_cat_pTjet25GeV,
+                nanoAOD.HTXS_stage1_1_fine_cat_pTjet30GeV,
+                nanoAOD.HTXS_stage1_2_cat_pTjet25GeV,
                 nanoAOD.HTXS_stage1_2_cat_pTjet30GeV,
+                nanoAOD.HTXS_stage1_2_fine_cat_pTjet25GeV,
                 nanoAOD.HTXS_stage1_2_fine_cat_pTjet30GeV,
+                nanoAOD.HTXS_stage_0,
+                nanoAOD.HTXS_stage_1_pTjet25,
+                nanoAOD.HTXS_stage_1_pTjet30,
             ],
         )
     #########################
