@@ -13,7 +13,7 @@ with defaults(scopes=["global"]):
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta],
         )
         ElectronPtCorrectionMC = Producer(
-            call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, {ele_es_file}, {ele_es_era}, "{ele_es_variation}")',
+            call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{ele_es_era}", "{ele_es_variation}")',
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAOD.Electron_dEsigmaUp, nanoAOD.Electron_dEsigmaDown],
         )
         RenameElectronPt = Producer(
