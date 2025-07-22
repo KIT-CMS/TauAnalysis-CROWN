@@ -180,19 +180,20 @@ def build_config(
             "ele_id": "Electron_mvaFall17V2noIso_WP90",
             "ele_es_era": EraModifier(
                 {
-                    "2016preVFP": '"2016preVFP"',
-                    "2016postVFP": '"2016postVFP"',
-                    "2017": '"2017"',
-                    "2018": '"2018"',
+                    "2016preVFP": "2016preVFP",
+                    "2016postVFP": "2016postVFP",
+                    "2017": "2017",
+                    "2018": "2018",
                 }
             ),
             "ele_es_variation": "nom",
+            "ele_es_name": "UL-EGM_ScaleUnc",
             "ele_es_file": EraModifier(
                 {
-                    "2016preVFP": '"data/electron_energy_scale/2016preVFP_UL/EGM_ScaleUnc.json.gz"',
-                    "2016postVFP": '"data/electron_energy_scale/2016postVFP_UL/EGM_ScaleUnc.json.gz"',
-                    "2017": '"data/electron_energy_scale/2017_UL/EGM_ScaleUnc.json.gz"',
-                    "2018": '"data/electron_energy_scale/2018_UL/EGM_ScaleUnc.json.gz"',
+                    "2016preVFP": "data/electron_energy_scale/2016preVFP_UL/EGM_ScaleUnc.json.gz",
+                    "2016postVFP": "data/electron_energy_scale/2016postVFP_UL/EGM_ScaleUnc.json.gz",
+                    "2017": "data/electron_energy_scale/2017_UL/EGM_ScaleUnc.json.gz",
+                    "2018": "data/electron_energy_scale/2018_UL/EGM_ScaleUnc.json.gz",
                 }
             ),
         },
