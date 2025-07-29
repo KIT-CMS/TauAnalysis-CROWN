@@ -1611,7 +1611,7 @@ def build_config(
             SystematicShiftByQuantity(
                 name="prefiringDown",
                 quantity_change={
-                    nanoAOD.prefireWeight: "L1PreFiringWeight_Dn",
+                    nanoAOD.L1PreFiringWeight_Nom: "L1PreFiringWeight_Dn",
                 },
                 scopes=["global"],
             )
@@ -1620,7 +1620,7 @@ def build_config(
             SystematicShiftByQuantity(
                 name="prefiringUp",
                 quantity_change={
-                    nanoAOD.prefireWeight: "L1PreFiringWeight_Up",
+                    nanoAOD.L1PreFiringWeight_Nom: "L1PreFiringWeight_Up",
                 },
                 scopes=["global"],
             )
