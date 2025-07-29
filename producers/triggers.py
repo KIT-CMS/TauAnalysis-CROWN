@@ -6,11 +6,11 @@ from ..scripts.CROWNWrapper import (
 )
 
 TriggerObject_collection = [
-    nanoAOD.TriggerObject_bit,
-    nanoAOD.TriggerObject_id,
-    nanoAOD.TriggerObject_pt,
-    nanoAOD.TriggerObject_eta,
-    nanoAOD.TriggerObject_phi,
+    nanoAOD.TrigObj_filterBits,
+    nanoAOD.TrigObj_id,
+    nanoAOD.TrigObj_pt,
+    nanoAOD.TrigObj_eta,
+    nanoAOD.TrigObj_phi,
 ]
 
 ####################

@@ -6,21 +6,21 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 # Set of producers to get the genParticles from the ditaupair
 ####################
 with defaults(call="ditau_pairselection::buildgenpair({df}, {input}, {output})", output=[q.gen_dileptonpair]):
-    MTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Muon_indexToGen, nanoAOD.Tau_indexToGen], scopes=["mt"])
-    ETGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_indexToGen, nanoAOD.Tau_indexToGen], scopes=["et"])
-    TTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Tau_indexToGen, nanoAOD.Tau_indexToGen], scopes=["tt"])
-    EMGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_indexToGen, nanoAOD.Muon_indexToGen], scopes=["em"])
-    MuMuGenPair = Producer(input=[q.dileptonpair, nanoAOD.Muon_indexToGen, nanoAOD.Muon_indexToGen], scopes=["mm"])
-    ElElGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_indexToGen, nanoAOD.Electron_indexToGen], scopes=["ee"])
+    MTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Muon_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["mt"])
+    ETGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["et"])
+    TTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Tau_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["tt"])
+    EMGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_genPartIdx, nanoAOD.Muon_genPartIdx], scopes=["em"])
+    MuMuGenPair = Producer(input=[q.dileptonpair, nanoAOD.Muon_genPartIdx, nanoAOD.Muon_genPartIdx], scopes=["mm"])
+    ElElGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_genPartIdx, nanoAOD.Electron_genPartIdx], scopes=["ee"])
 
 with defaults(
     call="ditau_pairselection::buildtruegenpair({df}, {input}, {output}, {truegen_mother_pdgid}, {truegen_daughter_1_pdgid}, {truegen_daugher_2_pdgid})",
     input=[
-        nanoAOD.GenParticle_statusFlags,
-        nanoAOD.GenParticle_status,
-        nanoAOD.GenParticle_pdgId,
-        nanoAOD.GenParticle_motherid,
-        nanoAOD.GenParticle_pt,
+        nanoAOD.GenPart_statusFlags,
+        nanoAOD.GenPart_status,
+        nanoAOD.GenPart_pdgId,
+        nanoAOD.GenPart_genPartIdxMother,
+        nanoAOD.GenPart_pt,
     ],
 ):
     EmbeddingGenPair = Producer(output=[q.gen_dileptonpair], scopes=["mm", "ee", "em", "et", "mt", "tt"])
@@ -31,10 +31,10 @@ with defaults(
 ####################
 
 nanoAOD_GenParticle_kinematic_vars = [
-    nanoAOD.GenParticle_pt,
-    nanoAOD.GenParticle_eta,
-    nanoAOD.GenParticle_phi,
-    nanoAOD.GenParticle_mass,
+    nanoAOD.GenPart_pt,
+    nanoAOD.GenPart_eta,
+    nanoAOD.GenPart_phi,
+    nanoAOD.GenPart_mass,
 ]
 
 with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
@@ -60,7 +60,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
 
     gen_pdgid_1 = Producer(
         call="event::quantity::Get<int>({df}, {output}, {input}, 0)",
-        input=[nanoAOD.GenParticle_pdgId, q.gen_dileptonpair],
+        input=[nanoAOD.GenPart_pdgId, q.gen_dileptonpair],
         output=[q.gen_pdgid_1],
     )
 
@@ -72,11 +72,11 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
 
     gen_pdgid_2 = Producer(
         call="event::quantity::Get<int>({df}, {output}, {input}, 1)",
-        input=[nanoAOD.GenParticle_pdgId, q.gen_dileptonpair],
+        input=[nanoAOD.GenPart_pdgId, q.gen_dileptonpair],
         output=[q.gen_pdgid_2],
     )
 
-with defaults(input=[nanoAOD.GenJet_pt, nanoAOD.Jet_associatedGenJet, nanoAOD.Tau_associatedJet, q.dileptonpair]):
+with defaults(input=[nanoAOD.GenJet_pt, nanoAOD.Jet_genJetIdx, nanoAOD.Tau_jetIdx, q.dileptonpair]):
     gen_taujet_pt_1 = Producer(
         call="quantities::GenJetMatching({df}, {output}, {input}, 0)",
         output=[q.gen_taujet_pt_1],
@@ -136,14 +136,14 @@ with defaults(call=None, input=None, output=None):
 #######################
 
 nanoAOD_GenParticle_id_vars = [
-    nanoAOD.GenParticle_pdgId,
-    nanoAOD.GenParticle_statusFlags,
+    nanoAOD.GenPart_pdgId,
+    nanoAOD.GenPart_statusFlags,
 ]
 
 with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
     GenPairForGenMatching = Producer(
         call="genparticles::tau::HadronicGenTaus({df}, {output}, {input})",
-        input=nanoAOD_GenParticle_id_vars + [nanoAOD.GenParticle_motherid],
+        input=nanoAOD_GenParticle_id_vars + [nanoAOD.GenPart_genPartIdxMother],
         output=[q.hadronic_gen_taus],
     )
     GenMatchP1 = Producer(

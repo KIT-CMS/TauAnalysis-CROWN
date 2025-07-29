@@ -38,7 +38,7 @@ with defaults(scopes=["mt", "mm"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 0)"):
         muon_dz_1 = Producer(input=[nanoAOD.Muon_dz, q.dileptonpair], output=[q.dz_1])
         muon_dxy_1 = Producer(input=[nanoAOD.Muon_dxy, q.dileptonpair], output=[q.dxy_1])
-        muon_iso_1 = Producer(input=[nanoAOD.Muon_iso, q.dileptonpair], output=[q.iso_1])
+        muon_iso_1 = Producer(input=[nanoAOD.Muon_pfRelIso04_all, q.dileptonpair], output=[q.iso_1])
         muon_pterr_1 = Producer(input=[nanoAOD.Muon_ptErr, q.dileptonpair], output=[q.muon_pterr_1])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
@@ -68,7 +68,7 @@ with defaults(scopes=["em", "mm"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 1)"):
         muon_dz_2 = Producer(input=[nanoAOD.Muon_dz, q.dileptonpair], output=[q.dz_2])
         muon_dxy_2 = Producer(input=[nanoAOD.Muon_dxy, q.dileptonpair], output=[q.dxy_2])
-        muon_iso_2 = Producer(input=[nanoAOD.Muon_iso, q.dileptonpair], output=[q.iso_2])
+        muon_iso_2 = Producer(input=[nanoAOD.Muon_pfRelIso04_all, q.dileptonpair], output=[q.iso_2])
         muon_pterr_2 = Producer(input=[nanoAOD.Muon_ptErr, q.dileptonpair], output=[q.muon_pterr_2])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
@@ -98,7 +98,7 @@ with defaults(scopes=["et", "ee", "em"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 0)"):
         electron_dz_1 = Producer(input=[nanoAOD.Electron_dz, q.dileptonpair], output=[q.dz_1])
         electron_dxy_1 = Producer(input=[nanoAOD.Electron_dxy, q.dileptonpair], output=[q.dxy_1])
-        electron_iso_1 = Producer(input=[nanoAOD.Electron_iso, q.dileptonpair], output=[q.iso_1])
+        electron_iso_1 = Producer(input=[nanoAOD.Electron_pfRelIso03_all, q.dileptonpair], output=[q.iso_1])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
         electron_q_1 = Producer(input=[nanoAOD.Electron_charge, q.dileptonpair], output=[q.q_1])
@@ -120,7 +120,7 @@ with defaults(scopes=["et", "ee", "em"]):
 with defaults(scopes=["ee"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 1)"):
         electron_dz_2 = Producer(input=[nanoAOD.Electron_dz, q.dileptonpair], output=[q.dz_2])
-        electron_iso_2 = Producer(input=[nanoAOD.Electron_iso, q.dileptonpair], output=[q.iso_2])
+        electron_iso_2 = Producer(input=[nanoAOD.Electron_pfRelIso03_all, q.dileptonpair], output=[q.iso_2])
         electron_dxy_2 = Producer(input=[nanoAOD.Electron_dxy, q.dileptonpair], output=[q.dxy_2])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
@@ -144,7 +144,7 @@ with defaults(scopes=["tt"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 0)"):
         tau_dz_1 = Producer(input=[nanoAOD.Tau_dz, q.dileptonpair], output=[q.dz_1])
         tau_dxy_1 = Producer(input=[nanoAOD.Tau_dxy, q.dileptonpair], output=[q.dxy_1])
-        tau_iso_1 = Producer(input=[nanoAOD.Tau_IDraw, q.dileptonpair], output=[q.iso_1])
+        tau_iso_1 = Producer(input=[nanoAOD.Tau_rawDeepTau2017v2p1VSjet, q.dileptonpair], output=[q.iso_1])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
         tau_q_1 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_1])
@@ -152,27 +152,27 @@ with defaults(scopes=["tt"]):
 
     taujet_pt_1 = Producer(
         call="quantities::JetMatching({df}, {output}, {input}, 0)",
-        input=[nanoAOD.Jet_pt, nanoAOD.Tau_associatedJet, q.dileptonpair],
+        input=[nanoAOD.Jet_pt, nanoAOD.Tau_jetIdx, q.dileptonpair],
         output=[q.taujet_pt_1],
     )
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsjet_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsJet, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSjet, q.dileptonpair],
     ):
         VsJetTauIDFlag_1 = ExtendedVectorProducer(output="tau_1_vsjet_id_outputname", vec_config="vsjet_tau_id")
         VsJetTauIDFlagOnly_1 = ExtendedVectorProducer(output="tau_1_vsjet_id_WPbit_outputname", vec_config="vsjet_tau_id_wp_bit")
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsele_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsEle, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSe, q.dileptonpair],
     ):
         VsEleTauIDFlag_1 = ExtendedVectorProducer(output="tau_1_vsele_id_outputname", vec_config="vsele_tau_id")
         VsEleTauIDFlagOnly_1 = ExtendedVectorProducer(output="tau_1_vsele_id_WPbit_outputname", vec_config="vsele_tau_id_wp_bit")
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsmu_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsMu, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSmu, q.dileptonpair],
     ):
         VsMuTauIDFlag_1 = ExtendedVectorProducer(output="tau_1_vsmu_id_outputname", vec_config="vsmu_tau_id")
         VsMuTauIDFlagOnly_1 = ExtendedVectorProducer(output="tau_1_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
@@ -200,7 +200,7 @@ with defaults(scopes=["et", "mt", "tt"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 1)"):
         tau_dxy_2 = Producer(input=[nanoAOD.Tau_dxy, q.dileptonpair], output=[q.dxy_2])
         tau_dz_2 = Producer(input=[nanoAOD.Tau_dz, q.dileptonpair], output=[q.dz_2])
-        tau_iso_2 = Producer(input=[nanoAOD.Tau_IDraw, q.dileptonpair], output=[q.iso_2])
+        tau_iso_2 = Producer(input=[nanoAOD.Tau_rawDeepTau2017v2p1VSjet, q.dileptonpair], output=[q.iso_2])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
         tau_q_2 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_2])
@@ -208,27 +208,27 @@ with defaults(scopes=["et", "mt", "tt"]):
 
     taujet_pt_2 = Producer(
         call="quantities::JetMatching({df}, {output}, {input}, 1)",
-        input=[nanoAOD.Jet_pt, nanoAOD.Tau_associatedJet, q.dileptonpair],
+        input=[nanoAOD.Jet_pt, nanoAOD.Tau_jetIdx, q.dileptonpair],
         output=[q.taujet_pt_2],
     )
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsjet_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsJet, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSjet, q.dileptonpair],
     ):
         VsJetTauIDFlag_2 = ExtendedVectorProducer(output="tau_2_vsjet_id_outputname", vec_config="vsjet_tau_id")
         VsJetTauIDFlagOnly_2 = ExtendedVectorProducer(output="tau_2_vsjet_id_WPbit_outputname", vec_config="vsjet_tau_id_wp_bit")
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsele_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsEle, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSe, q.dileptonpair],
     ):
         VsEleTauIDFlag_2 = ExtendedVectorProducer(output="tau_2_vsele_id_outputname", vec_config="vsele_tau_id")
         VsEleTauIDFlagOnly_2 = ExtendedVectorProducer(output="tau_2_vsele_id_WPbit_outputname", vec_config="vsele_tau_id_wp_bit")
 
     with defaults(
         call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsmu_tau_id_WPbit})",
-        input=[nanoAOD.Tau_ID_vsMu, q.dileptonpair],
+        input=[nanoAOD.Tau_idDeepTau2017v2p1VSmu, q.dileptonpair],
     ):
         VsMuTauIDFlag_2 = ExtendedVectorProducer(output="tau_2_vsmu_id_outputname", vec_config="vsmu_tau_id")
         VsMuTauIDFlagOnly_2 = ExtendedVectorProducer(output="tau_2_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
