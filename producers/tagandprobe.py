@@ -7,11 +7,11 @@ from ..producers import photons as photons
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 
 TriggerObject_collection = [
-    nanoAOD.TriggerObject_bit,
-    nanoAOD.TriggerObject_id,
-    nanoAOD.TriggerObject_pt,
-    nanoAOD.TriggerObject_eta,
-    nanoAOD.TriggerObject_phi,
+    nanoAOD.TrigObj_filterBits,
+    nanoAOD.TrigObj_id,
+    nanoAOD.TrigObj_pt,
+    nanoAOD.TrigObj_eta,
+    nanoAOD.TrigObj_phi,
 ]
 
 with defaults(scopes=["global"], input=[]):
@@ -88,14 +88,14 @@ with defaults(scopes=["mm"]):
     # Producers to writeout the id variables for the tag and probe pairs
 
     with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 0)"):
-        MuonID_Loose_1 = Producer(input=[nanoAOD.Muon_id_loose, q.dileptonpair], output=[tp_q.id_loose_1])
-        MuonID_Medium_1 = Producer(input=[nanoAOD.Muon_id_medium, q.dileptonpair], output=[tp_q.id_medium_1])
-        MuonID_Tight_1 = Producer(input=[nanoAOD.Muon_id_tight, q.dileptonpair], output=[tp_q.id_tight_1])
+        MuonID_Loose_1 = Producer(input=[nanoAOD.Muon_looseId, q.dileptonpair], output=[tp_q.id_loose_1])
+        MuonID_Medium_1 = Producer(input=[nanoAOD.Muon_mediumId, q.dileptonpair], output=[tp_q.id_medium_1])
+        MuonID_Tight_1 = Producer(input=[nanoAOD.Muon_tightId, q.dileptonpair], output=[tp_q.id_tight_1])
 
     with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 1)"):
-        MuonID_Loose_2 = Producer(input=[nanoAOD.Muon_id_loose, q.dileptonpair], output=[tp_q.id_loose_2])
-        MuonID_Medium_2 = Producer(input=[nanoAOD.Muon_id_medium, q.dileptonpair], output=[tp_q.id_medium_2])
-        MuonID_Tight_2 = Producer(input=[nanoAOD.Muon_id_tight, q.dileptonpair], output=[tp_q.id_tight_2])
+        MuonID_Loose_2 = Producer(input=[nanoAOD.Muon_looseId, q.dileptonpair], output=[tp_q.id_loose_2])
+        MuonID_Medium_2 = Producer(input=[nanoAOD.Muon_mediumId, q.dileptonpair], output=[tp_q.id_medium_2])
+        MuonID_Tight_2 = Producer(input=[nanoAOD.Muon_tightId, q.dileptonpair], output=[tp_q.id_tight_2])
 
     MuonIDs = ProducerGroup(
         call=None,
@@ -141,11 +141,11 @@ with defaults(scopes=["ee"]):
     # Producers to writeout the id variables for the tag and probe pairs
 
     with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 0)"):
-        ElectronID_WP90_1 = Producer(input=[nanoAOD.Electron_IDWP90, q.dileptonpair], output=[tp_q.id_wp90_1])
-        ElectronID_WP80_1 = Producer(input=[nanoAOD.Electron_IDWP80, q.dileptonpair], output=[tp_q.id_wp80_1])
+        ElectronID_WP90_1 = Producer(input=[nanoAOD.Electron_mvaFall17V2noIso_WP90, q.dileptonpair], output=[tp_q.id_wp90_1])
+        ElectronID_WP80_1 = Producer(input=[nanoAOD.Electron_mvaFall17V2noIso_WP80, q.dileptonpair], output=[tp_q.id_wp80_1])
     with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 1)"):
-        ElectronID_WP90_2 = Producer(input=[nanoAOD.Electron_IDWP90, q.dileptonpair], output=[tp_q.id_wp90_2])
-        ElectronID_WP80_2 = Producer(input=[nanoAOD.Electron_IDWP80, q.dileptonpair], output=[tp_q.id_wp80_2])
+        ElectronID_WP90_2 = Producer(input=[nanoAOD.Electron_mvaFall17V2noIso_WP90, q.dileptonpair], output=[tp_q.id_wp90_2])
+        ElectronID_WP80_2 = Producer(input=[nanoAOD.Electron_mvaFall17V2noIso_WP80, q.dileptonpair], output=[tp_q.id_wp80_2])
 
     ElectronIDs = ProducerGroup(
         call=None,

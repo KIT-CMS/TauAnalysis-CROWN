@@ -25,15 +25,15 @@ with defaults(scopes=["et", "mt", "tt"]):
     with defaults(output=[]):  # Tau ID cuts
         VsJetTauIDCut = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsjet_tau_id_bit})",
-            input=[nanoAOD.Tau_ID_vsJet],
+            input=[nanoAOD.Tau_idDeepTau2017v2p1VSjet],
         )
         VsElectronTauIDCut = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsele_tau_id_bit})",
-            input=[nanoAOD.Tau_ID_vsEle],
+            input=[nanoAOD.Tau_idDeepTau2017v2p1VSe],
         )
         VsMuonTauIDCut = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsmu_tau_id_bit})",
-            input=[nanoAOD.Tau_ID_vsMu],
+            input=[nanoAOD.Tau_idDeepTau2017v2p1VSmu],
         )
 
     ####################
@@ -51,7 +51,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             nanoAOD.Tau_pt,
             nanoAOD.Tau_eta,
             nanoAOD.Tau_decayMode,
-            nanoAOD.Tau_genMatch,
+            nanoAOD.Tau_genPartFlav,
         ],
         output=[q.Tau_pt_ele_corrected],
     )
@@ -61,7 +61,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             q.Tau_pt_ele_corrected,
             nanoAOD.Tau_eta,
             nanoAOD.Tau_decayMode,
-            nanoAOD.Tau_genMatch,
+            nanoAOD.Tau_genPartFlav,
         ],
         output=[q.Tau_pt_ele_mu_corrected],
     )
@@ -71,7 +71,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             q.Tau_pt_ele_mu_corrected,
             nanoAOD.Tau_eta,
             nanoAOD.Tau_decayMode,
-            nanoAOD.Tau_genMatch,
+            nanoAOD.Tau_genPartFlav,
         ],
         output=[q.Tau_pt_corrected],
     )

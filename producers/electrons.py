@@ -43,12 +43,12 @@ with defaults(scopes=["global"]):
     )
     ElectronIDCut = Producer(
         call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',
-        input=[nanoAOD.Electron_IDWP90],
+        input=[nanoAOD.Electron_mvaFall17V2noIso_WP90],
         output=[q._ElectronIDCut],
     )
     ElectronIsoCut = Producer(
         call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_iso})",
-        input=[nanoAOD.Electron_iso],
+        input=[nanoAOD.Electron_pfRelIso03_all],
         output=[q._ElectronIsoCut],
     )
 
@@ -97,7 +97,7 @@ with defaults(scopes=["em", "et", "ee"]):
     with defaults(output=[]):
         GoodElectronPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_electron_pt})", input=[q.Electron_pt_corrected])
         GoodElectronEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_electron_eta})", input=[nanoAOD.Electron_eta])
-        GoodElectronIsoCut = Producer(call="physicsobject::CutMax<float>({df}, {output}, {input}, {electron_iso_cut})", input=[nanoAOD.Electron_iso])
+        GoodElectronIsoCut = Producer(call="physicsobject::CutMax<float>({df}, {output}, {input}, {electron_iso_cut})", input=[nanoAOD.Electron_pfRelIso03_all])
 
     GoodElectrons = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
