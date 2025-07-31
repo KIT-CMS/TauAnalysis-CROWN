@@ -119,7 +119,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             subproducers=[
                 PropagateLeptonsToMet,
                 PropagateJetsToMet,
-                ApplyRecoilCorrections,
+                #ApplyRecoilCorrections,
                 MetPt,
                 MetPhi,
             ],
@@ -128,7 +128,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             subproducers=[
                 PropagateLeptonsToPFMet,
                 PropagateJetsToPFMet,
-                ApplyRecoilCorrectionsPFMet,
+                #ApplyRecoilCorrectionsPFMet,
                 PFMetPt,
                 PFMetPhi,
             ],

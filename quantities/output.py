@@ -4,118 +4,18 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
-lumi = Quantity()
-puweight = Quantity()
-prefiring_wgt = Quantity()
-lhe_scale_weight = Quantity()
-lhe_pdf_weight = Quantity()
-lhe_alphaS_weight = Quantity()
-ps_weight = Quantity()
+#### Jet
 
-base_taus_mask = Quantity()
-good_taus_mask = Quantity()
-base_muons_mask = Quantity()
-good_muons_mask = Quantity()
-veto_muons_mask = Quantity()
-veto_muons_mask_2 = Quantity()
-extramuon_veto = Quantity()
-base_electrons_mask = Quantity()
-good_electrons_mask = Quantity()
-veto_electrons_mask = Quantity()
-veto_electrons_mask_2 = Quantity()
-extraelec_veto = Quantity()
-jet_id_mask = Quantity()
-jet_puid_mask = Quantity()
-jet_overlap_veto_mask = Quantity()
-good_jets_mask = Quantity()
-good_bjets_mask = Quantity()
-base_photons_mask = Quantity()
-Tau_pt_ele_corrected = Quantity()
-Tau_pt_ele_mu_corrected = Quantity()
-Tau_pt_corrected = Quantity()
-Tau_mass_corrected = Quantity()
+Jet_ID = Quantity()
 Jet_pt_corrected = Quantity()
 Jet_mass_corrected = Quantity()
-dileptonpair = Quantity()
-gen_dileptonpair = Quantity()
-truegenpair = Quantity()
+jet_id_mask = Quantity()
+jet_puid_mask = Quantity()
 good_jet_collection = Quantity()
 good_bjet_collection = Quantity()
-Electron_pt_corrected = Quantity()
-
-nelectrons = Quantity()
-nmuons = Quantity()
-ntaus = Quantity()
-p4_1 = Quantity()
-p4_1_uncorrected = Quantity()
-pt_1 = Quantity()
-eta_1 = Quantity()
-phi_1 = Quantity()
-p4_2 = Quantity()
-p4_2_uncorrected = Quantity()
-pt_2 = Quantity()
-eta_2 = Quantity()
-phi_2 = Quantity()
-mass_1 = Quantity()
-mass_2 = Quantity()
-dxy_1 = Quantity()
-dxy_2 = Quantity()
-dz_1 = Quantity()
-dz_2 = Quantity()
-q_1 = Quantity()
-q_2 = Quantity()
-iso_1 = Quantity()
-iso_2 = Quantity()
-is_global_1 = Quantity()
-is_global_2 = Quantity()
-tau_decaymode_1 = Quantity()
-tau_decaymode_2 = Quantity()
-gen_match_1 = Quantity()
-gen_match_2 = Quantity()
-gen_tau_pt_1 = Quantity()
-gen_tau_pt_2 = Quantity()
-gen_tau_eta_1 = Quantity()
-gen_tau_eta_2 = Quantity()
-gen_tau_phi_1 = Quantity()
-gen_tau_phi_2 = Quantity()
-taujet_pt_1 = Quantity()
-taujet_pt_2 = Quantity()
-gen_taujet_pt_1 = Quantity()
-gen_taujet_pt_2 = Quantity()
-muon_nstations_1 = Quantity()
-muon_nstations_2 = Quantity()
-muon_ntrackerlayers_1 = Quantity()
-muon_ntrackerlayers_2 = Quantity()
-muon_pterr_1 = Quantity()
-muon_pterr_2 = Quantity()
-
-# Combined event quantities
-m_vis = Quantity()
-p4_fastmtt = Quantity()
-m_fastmtt = Quantity()
-pt_fastmtt = Quantity()
-eta_fastmtt = Quantity()
-phi_fastmtt = Quantity()
-pt_vis = Quantity()
-p4_dilepton = Quantity()
-pzetamissvis = Quantity()
-mTdileptonMET = Quantity()
-mt_1 = Quantity()
-mt_2 = Quantity()
-pt_tt = Quantity()
-pt_ttjj = Quantity()
-mt_tot = Quantity()
-deltaR_ditaupair = Quantity()
-pzetamissvis_pf = Quantity()
-mTdileptonMET_pf = Quantity()
-mt_1_pf = Quantity()
-mt_2_pf = Quantity()
-pt_tt_pf = Quantity()
-pt_ttjj_pf = Quantity()
-mt_tot_pf = Quantity()
-pt_dijet = Quantity()
-jet_hemisphere = Quantity()
-
+good_jets_mask = Quantity()
+good_bjets_mask = Quantity()
+jet_overlap_veto_mask = Quantity()
 njets = Quantity()
 nbtag = Quantity()
 jet_p4_1 = Quantity()
@@ -140,33 +40,26 @@ beta_2 = Quantity()
 bphi_2 = Quantity()
 btag_value_2 = Quantity()
 
-dielectron_veto = Quantity()
-dimuon_veto = Quantity()
-dilepton_veto = Quantity()
+# working points
 
-## Gen Quantities
-gen_p4_1 = Quantity()
-gen_pt_1 = Quantity()
-gen_eta_1 = Quantity()
-gen_phi_1 = Quantity()
-gen_mass_1 = Quantity()
-gen_pdgid_1 = Quantity()
+id_wgt_mu_1 = Quantity()
+id_wgt_mu_2 = Quantity()
+iso_wgt_mu_1 = Quantity()
+iso_wgt_mu_2 = Quantity()
+id_wgt_ele_wp90nonIso_1 = Quantity()
+id_wgt_ele_wp90nonIso_2 = Quantity()
+id_wgt_ele_wp80nonIso_1 = Quantity()
+id_wgt_ele_wp80nonIso_2 = Quantity()
+id_wgt_ele_1 = Quantity()
+id_wgt_ele_2 = Quantity()
+iso_wgt_ele_1 = Quantity()
+iso_wgt_ele_2 = Quantity()
 
-gen_p4_2 = Quantity()
-gen_pt_2 = Quantity()
-gen_eta_2 = Quantity()
-gen_phi_2 = Quantity()
-gen_mass_2 = Quantity()
-gen_pdgid_2 = Quantity()
-gen_m_vis = Quantity()
+btag_weight = Quantity()
 
-hadronic_gen_taus = Quantity()
+#### event
 
-topPtReweightWeight = Quantity()
-# zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
-ZPtMassReweightWeight = Quantity()
-
-## HTXS quantities
+# HTXS quantities 
 ggh_NNLO_weight = Quantity()
 THU_ggH_Mu = Quantity()
 THU_ggH_Res = Quantity()
@@ -188,11 +81,35 @@ THU_qqH_Mjj1500 = Quantity()
 THU_qqH_25 = Quantity()
 THU_qqH_JET01 = Quantity()
 
-## MET quantities
+# SampleFlags
+is_data = Quantity()
+is_ttbar = Quantity()
+is_dyjets = Quantity()
+is_wjets = Quantity()
+is_ggh_htautau = Quantity()
+is_vbf_htautau = Quantity()
+is_diboson = Quantity()
+is_vbf_hbb = Quantity()
+is_ggh_hbb = Quantity()
+is_rem_hbb = Quantity()
+is_singletop = Quantity()
+is_rem_htautau = Quantity()
+is_electroweak_boson = Quantity()
+
+lumi = Quantity()
+npartons = Quantity()
+puweight = Quantity()
+lhe_scale_weight = Quantity()
+lhe_pdf_weight = Quantity()
+lhe_alphaS_weight = Quantity()
+ps_weight = Quantity()
+
+#### MET 
+
+# MetBasics
 met_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genbosonmass = Quantity()
-npartons = Quantity()
 met_p4_leptoncorrected = Quantity()
 met_p4_jetcorrected = Quantity()
 met_p4_recoilcorrected = Quantity()
@@ -205,8 +122,6 @@ metcov10 = Quantity()
 metcov11 = Quantity()
 met_uncorrected = Quantity()
 metphi_uncorrected = Quantity()
-
-## PFMET quantities
 pfmet = Quantity()
 pfmet_p4 = Quantity()
 pfmetphi = Quantity()
@@ -216,122 +131,180 @@ pfmet_p4_leptoncorrected = Quantity()
 pfmet_p4_jetcorrected = Quantity()
 pfmet_p4_recoilcorrected = Quantity()
 
-## embedding quantities
-emb_genweight = Quantity()
-emb_initialMETEt = Quantity()
-emb_initialMETphi = Quantity()
-emb_initialPuppiMETEt = Quantity()
-emb_initialPuppiMETphi = Quantity()
-emb_isMediumLeadingMuon = Quantity()
-emb_isMediumTrailingMuon = Quantity()
-emb_isTightLeadingMuon = Quantity()
-emb_isTightTrailingMuon = Quantity()
-emb_InitialPairCandidates = Quantity()
-emb_SelectionOldMass = Quantity()
-emb_SelectionNewMass = Quantity()
-emb_triggersel_wgt = Quantity()
-emb_idsel_wgt_1 = Quantity()
-emb_idsel_wgt_2 = Quantity()
-emb_trg_wgt_1 = Quantity()
-emb_trg_wgt_2 = Quantity()
+#### Electrons
 
-# sample flags
-is_data = Quantity()
-is_embedding = Quantity()
-is_ttbar = Quantity()
-is_dyjets = Quantity()
-is_wjets = Quantity()
-is_ggh_htautau = Quantity()
-is_vbf_htautau = Quantity()
-is_diboson = Quantity()
-is_vbf_hbb = Quantity()
-is_ggh_hbb = Quantity()
-is_rem_hbb = Quantity()
-is_embedding_mc = Quantity()
-is_singletop = Quantity()
-is_rem_htautau = Quantity()
-is_electroweak_boson = Quantity()
+# RenameElectronPt
+Electron_pt_corrected = Quantity()
 
-
-# Electron Weights
-id_wgt_ele_wp90nonIso_1 = Quantity()
-id_wgt_ele_wp90nonIso_2 = Quantity()
-id_wgt_ele_wp80nonIso_1 = Quantity()
-id_wgt_ele_wp80nonIso_2 = Quantity()
-id_wgt_ele_1 = Quantity()
-id_wgt_ele_2 = Quantity()
-iso_wgt_ele_1 = Quantity()
-iso_wgt_ele_2 = Quantity()
-# Muon weights
-id_wgt_mu_1 = Quantity()
-id_wgt_mu_2 = Quantity()
-iso_wgt_mu_1 = Quantity()
-iso_wgt_mu_2 = Quantity()
-# btag weight
-btag_weight = Quantity()
-
-raw_fake_factor = Quantity()
-raw_fake_factor_1 = Quantity()
-raw_fake_factor_2 = Quantity()
-
-fake_factor = Quantity()
-fake_factor_1 = Quantity()
-fake_factor_2 = Quantity()
-
-raw_qcd_fake_factor_1 = Quantity()
-raw_qcd_fake_factor_2 = Quantity()
-raw_wjets_fake_factor_1 = Quantity()
-raw_wjets_fake_factor_2 = Quantity()
-raw_ttbar_fake_factor_1 = Quantity()
-raw_ttbar_fake_factor_2 = Quantity()
-
-qcd_fake_factor_1 = Quantity()
-qcd_fake_factor_2 = Quantity()
-wjets_fake_factor_1 = Quantity()
-wjets_fake_factor_2 = Quantity()
-ttbar_fake_factor_1 = Quantity()
-ttbar_fake_factor_2 = Quantity()
-
-qcd_fake_factor_fraction_1 = Quantity()
-qcd_fake_factor_fraction_2 = Quantity()
-wjets_fake_factor_fraction_1 = Quantity()
-wjets_fake_factor_fraction_2 = Quantity()
-ttbar_fake_factor_fraction_1 = Quantity()
-ttbar_fake_factor_fraction_2 = Quantity()
-
-qcd_fake_factor_correction_1 = Quantity()
-qcd_fake_factor_correction_2 = Quantity()
-wjets_fake_factor_correction_1 = Quantity()
-wjets_fake_factor_correction_2 = Quantity()
-ttbar_fake_factor_correction_1 = Quantity()
-ttbar_fake_factor_correction_2 = Quantity()
-
-qcd_DR_SR_correction_1 = Quantity()
-qcd_DR_SR_correction_2 = Quantity()
-wjets_DR_SR_correction_1 = Quantity()
-wjets_DR_SR_correction_2 = Quantity()
-ttbar_DR_SR_correction_1 = Quantity()
-ttbar_DR_SR_correction_2 = Quantity()
-
-qcd_correction_wo_DR_SR_1 = Quantity()
-qcd_correction_wo_DR_SR_2 = Quantity()
-wjets_correction_wo_DR_SR_1 = Quantity()
-wjets_correction_wo_DR_SR_2 = Quantity()
-ttbar_correction_wo_DR_SR_1 = Quantity()
-ttbar_correction_wo_DR_SR_2 = Quantity()
-
-# --- internally used quantities ---
-
+# BaseElectrons
 _ElectronEtaCut = Quantity()
 _ElectronDxyCut = Quantity()
 _ElectronDzCut = Quantity()
 _ElectronPtCut = Quantity()
 _ElectronIDCut = Quantity()
 _ElectronIsoCut = Quantity()
+base_electrons_mask = Quantity()
 
+# ExtraElectronsVeto
+extraelec_veto = Quantity()
+
+# DiLeptonVeto->DiElectronVeto
+dilepton_veto = Quantity()
+dielectron_veto = Quantity()
+
+# GoodElectrons
+good_electrons_mask = Quantity()
+
+# NumberOfGoodElectrons
+nelectrons = Quantity()
+
+# VetoElectrons
+veto_electrons_mask = Quantity()
+veto_electrons_mask_2 = Quantity()
+
+#### Muons
+
+# BaseMuons
+base_muons_mask = Quantity()
+good_muons_mask = Quantity()
 _MuonEtaCut = Quantity()
 _MuonDxyCut = Quantity()
 _MuonDzCut = Quantity()
 _MuonPtCut = Quantity()
 _MuonIDCut = Quantity()
 _MuonIsoCut = Quantity()
+
+# NumberGoodMuons
+nmuons = Quantity()
+
+# VetoMuons
+veto_muons_mask = Quantity()
+
+# ExtraMuonsVeto
+veto_muons_mask_2 = Quantity()
+extramuon_veto = Quantity()
+
+# DiMuonVeto
+dimuon_veto = Quantity()
+
+#### Taus
+
+# GoodTaus
+good_taus_mask = Quantity()
+
+# NumberOfGoodTaus
+ntaus = Quantity()
+
+# TauPtCorrection_muFake
+Tau_pt_corrected = Quantity()
+Tau_mass_corrected = Quantity()
+Tau_pt_ele_corrected = Quantity()
+Tau_pt_ele_mu_corrected = Quantity()
+
+#### pairselection
+
+# MTPairSelection
+dileptonpair = Quantity()
+
+# LV...
+p4_1 = Quantity()
+p4_1_uncorrected = Quantity()
+p4_2 = Quantity()
+p4_2_uncorrected = Quantity()
+
+#### pairquantities
+
+# MTDiTauPairQuantities
+pt_1 = Quantity()
+eta_1 = Quantity()
+phi_1 = Quantity()
+pt_2 = Quantity()
+eta_2 = Quantity()
+phi_2 = Quantity()
+mass_1 = Quantity()
+mass_2 = Quantity()
+m_vis = Quantity()
+pt_vis = Quantity()
+deltaR_ditaupair = Quantity()
+dxy_1 = Quantity()
+dxy_2 = Quantity()
+dz_1 = Quantity()
+dz_2 = Quantity()
+q_1 = Quantity()
+q_2 = Quantity()
+iso_1 = Quantity()
+iso_2 = Quantity()
+is_global_1 = Quantity()
+is_global_2 = Quantity()
+tau_decaymode_1 = Quantity()
+tau_decaymode_2 = Quantity()
+
+# DiTauPairMETQuantities
+pzetamissvis = Quantity()
+mTdileptonMET = Quantity()
+mt_1 = Quantity()
+mt_2 = Quantity()
+pt_tt = Quantity()
+pt_ttjj = Quantity()
+mt_tot = Quantity()
+pzetamissvis_pf = Quantity()
+mTdileptonMET_pf = Quantity()
+mt_1_pf = Quantity()
+mt_2_pf = Quantity()
+pt_tt_pf = Quantity()
+pt_ttjj_pf = Quantity()
+mt_tot_pf = Quantity()
+pt_dijet = Quantity()
+jet_hemisphere = Quantity()
+ZPtMassReweightWeight = Quantity()
+topPtReweightWeight = Quantity()
+
+p4_fastmtt = Quantity()
+m_fastmtt = Quantity()
+pt_fastmtt = Quantity()
+eta_fastmtt = Quantity()
+phi_fastmtt = Quantity()
+p4_dilepton = Quantity()
+muon_pterr_1 = Quantity()
+muon_pterr_2 = Quantity()
+muon_nstations_1 = Quantity()
+muon_nstations_2 = Quantity()
+muon_ntrackerlayers_1 = Quantity()
+muon_ntrackerlayers_2 = Quantity()
+
+#### scalefactors
+
+gen_match_1 = Quantity()
+gen_match_2 = Quantity()
+gen_tau_pt_1 = Quantity()
+gen_tau_pt_2 = Quantity()
+gen_tau_eta_1 = Quantity()
+gen_tau_eta_2 = Quantity()
+gen_tau_phi_1 = Quantity()
+gen_tau_phi_2 = Quantity()
+taujet_pt_1 = Quantity()
+taujet_pt_2 = Quantity()
+gen_taujet_pt_1 = Quantity()
+gen_taujet_pt_2 = Quantity()
+gen_dileptonpair = Quantity()
+truegenpair = Quantity()
+
+#### genparticles
+
+# GenMatching
+gen_p4_1 = Quantity()
+gen_pt_1 = Quantity()
+gen_eta_1 = Quantity()
+gen_phi_1 = Quantity()
+gen_mass_1 = Quantity()
+gen_pdgid_1 = Quantity()
+gen_p4_2 = Quantity()
+gen_pt_2 = Quantity()
+gen_eta_2 = Quantity()
+gen_phi_2 = Quantity()
+gen_mass_2 = Quantity()
+gen_pdgid_2 = Quantity()
+gen_m_vis = Quantity()
+
+# MTGenDiTauPairQuantities
+hadronic_gen_taus = Quantity()

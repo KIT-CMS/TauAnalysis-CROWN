@@ -43,6 +43,8 @@ with defaults(scopes=["mt", "mm"]):
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
         muon_q_1 = Producer(input=[nanoAOD.Muon_charge, q.dileptonpair], output=[q.q_1])
+
+    with defaults(call="event::quantity::Get<UChar_t>({df}, {output}, {input}, 0)"):
         muon_nstations_1 = Producer(input=[nanoAOD.Muon_nStations, q.dileptonpair], output=[q.muon_nstations_1])
         muon_ntrackerlayers_1 = Producer(input=[nanoAOD.Muon_nTrackerLayers, q.dileptonpair], output=[q.muon_ntrackerlayers_1])
 
@@ -73,6 +75,8 @@ with defaults(scopes=["em", "mm"]):
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
         muon_q_2 = Producer(input=[nanoAOD.Muon_charge, q.dileptonpair], output=[q.q_2])
+
+    with defaults(call="event::quantity::Get<UChar_t>({df}, {output}, {input}, 1)"):
         muon_nstations_2 = Producer(input=[nanoAOD.Muon_nStations, q.dileptonpair], output=[q.muon_nstations_2])
         muon_ntrackerlayers_2 = Producer(input=[nanoAOD.Muon_nTrackerLayers, q.dileptonpair], output=[q.muon_ntrackerlayers_2])
 
@@ -146,8 +150,10 @@ with defaults(scopes=["tt"]):
         tau_dxy_1 = Producer(input=[nanoAOD.Tau_dxy, q.dileptonpair], output=[q.dxy_1])
         tau_iso_1 = Producer(input=[nanoAOD.Tau_IDraw, q.dileptonpair], output=[q.iso_1])
 
-    with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
+    with defaults(call="event::quantity::Get<Short_t>({df}, {output}, {input}, 0)"):
         tau_q_1 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_1])
+        
+    with defaults(call="event::quantity::Get<UChar_t>({df}, {output}, {input}, 0)"):
         tau_decaymode_1 = Producer(input=[nanoAOD.Tau_decayMode, q.dileptonpair], output=[q.tau_decaymode_1])
 
     taujet_pt_1 = Producer(
@@ -202,8 +208,10 @@ with defaults(scopes=["et", "mt", "tt"]):
         tau_dz_2 = Producer(input=[nanoAOD.Tau_dz, q.dileptonpair], output=[q.dz_2])
         tau_iso_2 = Producer(input=[nanoAOD.Tau_IDraw, q.dileptonpair], output=[q.iso_2])
 
-    with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
+    with defaults(call="event::quantity::Get<Short_t>({df}, {output}, {input}, 1)"):
         tau_q_2 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_2])
+        
+    with defaults(call="event::quantity::Get<UChar_t>({df}, {output}, {input}, 1)"):
         tau_decaymode_2 = Producer(input=[nanoAOD.Tau_decayMode, q.dileptonpair], output=[q.tau_decaymode_2])
 
     taujet_pt_2 = Producer(

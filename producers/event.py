@@ -27,7 +27,7 @@ with defaults(scopes=["global"]):
         # ---
         SampleFlags_ProducerCollection = [
             is_data := Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data]),
-            is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
+            #is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
             is_ttbar := Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
             is_dyjets := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets})", output=[q.is_dyjets]),
             is_wjets := Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets]),
@@ -37,7 +37,7 @@ with defaults(scopes=["global"]):
             is_ggh_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb]),
             is_vbf_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb]),
             is_rem_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb]),
-            is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
+            #is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
             is_singletop := Producer(call="event::quantity::Define({df}, {output}, {is_singletop})", output=[q.is_singletop]),
             is_rem_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau]),
             is_electroweak_boson := Producer(call="event::quantity::Define({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson]),
@@ -49,11 +49,11 @@ with defaults(scopes=["global"]):
         call='event::filter::GoldenJSON({df}, correctionManager, "GoldenJSONFilter",  {input}, "{golden_json_file}")',
         input=[nanoAOD.run, nanoAOD.luminosityBlock],
     )
-    PrefireWeight = Producer(
-        call="event::quantity::Rename<float>({df}, {output}, {input})",
-        input=[nanoAOD.prefireWeight],
-        output=[q.prefiring_wgt],
-    )
+    #PrefireWeight = Producer(
+    #    call="event::quantity::Rename<float>({df}, {output}, {input})",
+    #    input=[nanoAOD.prefireWeight],
+    #    output=[q.prefiring_wgt],
+    #)
 
     MetFilter = VectorProducer(
         call='event::filter::Flag({df}, "{met_filters}", "{met_filters}")',
