@@ -8,15 +8,15 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 with defaults(scopes=["global"]):
     with defaults(call="lorentzvector::BuildMET({df}, {output}, {input})"):
-        BuildMetVector = Producer(input=[nanoAOD.MET_pt, nanoAOD.MET_phi], output=[q.met_p4])
-        BuildPFMetVector = Producer(input=[nanoAOD.PFMET_pt, nanoAOD.PFMET_phi], output=[q.pfmet_p4])
+        BuildMetVector = Producer(input=[nanoAOD.PuppiMET_pt, nanoAOD.PuppiMET_phi], output=[q.met_p4])
+        BuildPFMetVector = Producer(input=[nanoAOD.MET_pt, nanoAOD.MET_phi], output=[q.pfmet_p4])
 
     with defaults(call="event::quantity::Rename<float>({df}, {output}, {input})"):
         MetCov00 = Producer(input=[nanoAOD.MET_covXX], output=[q.metcov00])
         MetCov01 = Producer(input=[nanoAOD.MET_covXY], output=[q.metcov01])
         MetCov10 = Producer(input=[nanoAOD.MET_covXY], output=[q.metcov10])
         MetCov11 = Producer(input=[nanoAOD.MET_covYY], output=[q.metcov11])
-        MetSumEt = Producer(input=[nanoAOD.MET_sumEt], output=[q.metSumEt])
+        MetSumEt = Producer(input=[nanoAOD.PuppiMET_sumEt], output=[q.metSumEt])
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
         MetPt_uncorrected = Producer(input=[q.met_p4], output=[q.met_uncorrected])
@@ -29,13 +29,13 @@ with defaults(scopes=["global"]):
     CalculateGenBosonVector = Producer(
         call="met::calculateGenBosonVector({df}, {input}, {output}, {is_data})",
         input=[
-            nanoAOD.GenParticle_pt,
-            nanoAOD.GenParticle_eta,
-            nanoAOD.GenParticle_phi,
-            nanoAOD.GenParticle_mass,
-            nanoAOD.GenParticle_pdgId,
-            nanoAOD.GenParticle_status,
-            nanoAOD.GenParticle_statusFlags,
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
         ],
         output=[q.recoil_genboson_p4_vec],
     )
