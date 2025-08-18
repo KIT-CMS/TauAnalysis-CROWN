@@ -7,8 +7,17 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 ####################
 
 with defaults(scopes=["global"]):
+    JetPtSmearingSeed = Producer(
+        call="event::quantity::GenerateSeed({df}, {output}, {input}, {jet_jer_master_seed})",
+        input=[
+            nanoAOD.luminosityBlock,
+            nanoAOD.run,
+            nanoAOD.event,
+        ],
+        output=[],
+    )
     with defaults(output=[q.Jet_pt_corrected]):
-        JetPtCorrection = Producer(
+        JetPtCorrection = ProducerGroup(
             call="physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift})",
             input=[
                 nanoAOD.Jet_pt,
@@ -22,6 +31,7 @@ with defaults(scopes=["global"]):
                 nanoAOD.GenJet_phi,
                 nanoAOD.fixedGridRhoFastjetAll,
             ],
+            subproducers=[JetPtSmearingSeed],
         )
         JetPtCorrection_data = Producer(
             call="physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag_data})",
