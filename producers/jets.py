@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD 
+from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 ####################
@@ -139,7 +139,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         output=[q.jet_p4_2],
     )
     NumberOfJets = Producer(
-        call="physicsobject::Count({df}, {output}, {input})",
+        call="physicsobject::Size<Int_t>({df}, {output}, {input})",
         input=[q.good_jet_collection],
         output=[q.njets],
     )
@@ -181,7 +181,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         LVBJet2 = Producer(call="lorentzvector::Build({df}, {output}, {input}, 1)", output=[q.bjet_p4_2])
 
     NumberOfBJets = Producer(
-        call="physicsobject::Count({df}, {output}, {input})",
+        call="physicsobject::Size<Int_t>({df}, {output}, {input})",
         input=[q.good_bjet_collection],
         output=[q.nbtag],
     )
