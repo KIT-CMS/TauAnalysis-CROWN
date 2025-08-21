@@ -1079,7 +1079,7 @@ def build_config(
                 event.LHE_PDF_weight,
                 event.LHE_alphaS_weight,
                 event.PS_weight,
-                ],
+            ],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1091,11 +1091,13 @@ def build_config(
             samples=["data", "embedding", "embedding_mc", "diboson"],
         ),
     )
+    # neither this
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
             producers=[
-                event.LHE_alphaS_weight
+                event.LHE_alphaS_weight,
+                event.LHE_PDF_weight,
             ],
             samples=["diboson"],
         ),
