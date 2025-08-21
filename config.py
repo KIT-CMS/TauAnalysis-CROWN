@@ -835,6 +835,7 @@ def build_config(
             met.MetCorrections,
             met.PFMetCorrections,
             pairquantities.DiTauPairMETQuantities,
+            pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
         ],
     )
@@ -1088,6 +1089,15 @@ def build_config(
         RemoveProducer(
             producers=[event.LHE_Scale_weight],
             samples=["data", "embedding", "embedding_mc", "diboson"],
+        ),
+    )
+    configuration.add_modification_rule(
+        "global",
+        RemoveProducer(
+            producers=[
+                event.LHE_alphaS_weight
+            ],
+            samples=["diboson"],
         ),
     )
     configuration.add_modification_rule(
@@ -1371,6 +1381,33 @@ def build_config(
             q.dimuon_veto,
             q.dilepton_veto,
             q.dielectron_veto,
+            # ---
+            q.deltaPhi_ditaupair,
+            q.deltaEta_ditaupair,
+            q.deltaR_1j1,
+            q.deltaR_1j2,
+            q.deltaR_2j1,
+            q.deltaR_2j2,
+            q.deltaR_jj,
+            q.deltaR_12j1,
+            q.deltaR_12j2,
+            q.deltaR_12jj,
+            q.deltaPhi_1j1,
+            q.deltaPhi_1j2,
+            q.deltaPhi_2j1,
+            q.deltaPhi_2j2,
+            q.deltaPhi_jj,
+            q.deltaPhi_12j1,
+            q.deltaPhi_12j2,
+            q.deltaPhi_12jj,
+            q.deltaEta_1j1,
+            q.deltaEta_1j2,
+            q.deltaEta_2j1,
+            q.deltaEta_2j2,
+            q.deltaEta_jj,
+            q.deltaEta_12j1,
+            q.deltaEta_12j2,
+            q.deltaEta_12jj,
         ],
     )
     # add genWeight for everything but data
