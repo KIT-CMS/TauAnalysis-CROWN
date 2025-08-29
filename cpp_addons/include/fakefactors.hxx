@@ -8,10 +8,12 @@ namespace sm{
         ROOT::RDF::RNode df,
         correctionManager::CorrectionManager &correctionManager,
         const std::string &outputname,
-        const std::string &tau_pt,
+        // for ff
+        const std::string &pt_2,
         const std::string &njets,
-        const std::string &delta_r,
-        const std::string &lep_mt,
+        const std::string &pt_1,
+        // for fraction
+        const std::string &mt_1,
         //
         const std::string &fraction_variation,
         const std::string &QCD_variation,
@@ -26,18 +28,18 @@ namespace sm{
         correctionManager::CorrectionManager &correctionManager,
         const std::string &outputname,
         // for ff
-        const std::string &tau_pt,
+        const std::string &pt_2,
         const std::string &njets,
-        const std::string &delta_r,
+        const std::string &deltaR_ditaupair,
         // for fraction 
-        const std::string &lep_mt,
+        const std::string &mt_1,
         // for DR SR corrections
         const std::string &m_vis,
         // for non closure corrections
-        const std::string &lep_pt,
-        const std::string &tau_decaymode,
-        const std::string &lep_iso,
-        const std::string &tau_mass,
+        const std::string &pt_1,
+        const std::string &tau_decaymode_2,
+        const std::string &iso_1,
+        const std::string &mass_2,
         // for corrections
         const std::string &fraction_variation,
         const std::string &QCD_variation,
