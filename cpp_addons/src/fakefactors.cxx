@@ -189,13 +189,13 @@ namespace fakefactors {
 
                 if (_pt_2 >= 0.) {
 
-                    auto wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
-                    auto qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
-                    auto ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
 
-                    auto qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
-                    auto wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
-                    auto ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM RawFakeFactor (lt)")->debug("RawFakeFactor (lt) - QCD={}, Wjets={}, ttbar={}", qcd_ff, wjets_ff, ttbar_ff);
 
@@ -347,23 +347,22 @@ namespace fakefactors {
                 float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
                 if (_pt_2 >= 0.) {
-                    auto qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
-                    auto wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
-                    auto ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
 
-                    auto qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
-                    auto wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
-                    auto ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
-                    auto qcd_DR_SR_corr = 1.0f;  // evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
-                    auto wjets_DR_SR_corr = 1.0f;  // evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
-                    auto ttbar_DR_SR_corr = 1.0f;  // inherently not present
+                    qcd_DR_SR_corr = 1.0f;  // evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
+                    wjets_DR_SR_corr = 1.0f;  // evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
 
-                    auto qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
-                    auto wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
-                    auto ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
+                    qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
+                    wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
+                    ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
 
                     // ---------------------
 
@@ -382,7 +381,7 @@ namespace fakefactors {
                 }
 
                 Logger::get("SM FaceFactor (lt)")->debug("Event Fake Factor {}", ff);
-                
+
                 return ff;
             };
 
@@ -512,23 +511,22 @@ namespace fakefactors {
                 float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
                 if (_pt_2 >= 0.) {
-                    auto qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
-                    auto wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
-                    auto ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
 
-                    auto qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
-                    auto wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
-                    auto ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
-                    auto qcd_DR_SR_corr = evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
-                    auto wjets_DR_SR_corr = evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
-                    auto ttbar_DR_SR_corr = 1.0f;  // inherently not present
+                    qcd_DR_SR_corr = evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
+                    wjets_DR_SR_corr = evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
 
-                    auto qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
-                    auto wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
-                    auto ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
+                    qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
+                    wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
+                    ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
 
                     // ---------------------
 
@@ -567,7 +565,7 @@ namespace fakefactors {
                     std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * std::max(qcd_correction, (float)0.),
                     std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * std::max(wjets_correction, (float)0.),
                     std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * std::max(ttbar_correction, (float)0.)};
-        
+
                 return result;
             };
 
@@ -584,7 +582,7 @@ namespace fakefactors {
                 ttbar_non_closure_correction_variation,
                 ff_file,
                 ff_corr_file};
-        
+
             std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
 
             auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {pt_2, njets, deltaR_ditaupair, mt_1, pt_1, tau_decaymode_2, m_vis, iso_1, mass_2});
