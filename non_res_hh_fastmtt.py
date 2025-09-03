@@ -31,7 +31,6 @@ def build_config(
         ["mt", "et", "tt"],
         [
             pairquantities.FastMTTQuantities,
-            # pairquantities.BoostedFastMTTQuantities,
         ],
     )
 
@@ -42,10 +41,6 @@ def build_config(
             q.pt_fastmtt,
             q.eta_fastmtt,
             q.phi_fastmtt,
-            # q.boosted_m_fastmtt,
-            # q.boosted_pt_fastmtt,
-            # q.boosted_eta_fastmtt,
-            # q.boosted_phi_fastmtt,
         ],
     )
 
