@@ -12,6 +12,8 @@
 #include <iterator>
 #include <iostream>
 #include <random>
+#include <string_view>
+#include <array>
 
 namespace fakefactors {
     /**
@@ -47,6 +49,78 @@ namespace fakefactors {
         return result;
     }
     namespace sm {
+        namespace config {
+            // Define all unique variable names as constexpr string_views
+            inline constexpr std::string_view pt_2 {"pt_2"};
+            inline constexpr std::string_view njets {"njets"};
+            inline constexpr std::string_view deltaR_ditaupair {"deltaR_ditaupair"};
+            inline constexpr std::string_view mt_1 {"mt_1"};
+            inline constexpr std::string_view m_vis {"m_vis"};
+            inline constexpr std::string_view pt_1 {"pt_1"};
+            inline constexpr std::string_view tau_decaymode_2 {"tau_decaymode_2"};
+            inline constexpr std::string_view iso_1 {"iso_1"};
+            inline constexpr std::string_view mass_2 {"mass_2"};
+            //
+            inline constexpr std::array qcd_ff_inputs = {pt_2, njets};
+            inline constexpr std::array wjets_ff_inputs = {pt_2, njets, pt_1};
+            inline constexpr std::array ttbar_ff_inputs = {pt_2, njets};
+            //
+            inline constexpr std::array fraction_inputs = {mt_1, njets};
+            //
+            inline constexpr std::array DR_SR_inputs = {m_vis, njets};
+            inline constexpr std::array qcd_DR_SR_inputs = DR_SR_inputs;
+            inline constexpr std::array wjets_DR_SR_inputs = DR_SR_inputs;
+            //
+            inline constexpr std::array non_closure_inputs = {
+                m_vis,
+                mass_2,
+                deltaR_ditaupair,
+                iso_1,
+                tau_decaymode_2,
+                njets
+            };
+            inline constexpr std::array qcd_non_closure_inputs = non_closure_inputs;
+            inline constexpr std::array wjets_non_closure_inputs = non_closure_inputs;
+            inline constexpr std::array ttbar_non_closure_inputs = non_closure_inputs;
+        }
+        template <size_t N>
+        std::vector<correction::Variable::Type>
+        build_eval_vector(
+            const std::unordered_map<std::string, float>& available_vars,
+            const std::array<std::string_view, N>& required_vars
+        ) {
+            std::vector<correction::Variable::Type> eval_args;
+            eval_args.reserve(N);
+
+            for (const auto& var_name_sv : required_vars) {
+                std::string var_name(var_name_sv);
+                try {
+                    float value = available_vars.at(var_name);
+                    eval_args.push_back(static_cast<double>(value));
+                } catch (const std::out_of_range& e) {
+                    Logger::get("build_eval_vector")->critical("Required variable '{}' not found in available variables map!", var_name);
+                    throw; // Re-throw the exception
+                }
+            }
+            return eval_args;
+        }
+        template <typename CorrectionType, size_t N>
+        float evaluate(
+            const std::unordered_map<std::string, float>& available_vars,
+            const CorrectionType* corr,
+            const std::array<std::string_view, N>& inputs,
+            const std::string& variation,
+            const std::string& process_name = "" // Optional: for insertion at the beginning
+        ) {
+            auto args = build_eval_vector(available_vars, inputs);
+            args.push_back(variation);
+            
+            if (!process_name.empty()) {
+                args.insert(args.begin(), process_name);
+            }
+            
+            return corr->evaluate(args);
+        }
         /**
          * @brief Function to calculate raw fake factors without corrections with
          * correctionlib for the semileptonic channels
@@ -71,11 +145,11 @@ namespace fakefactors {
             correctionManager::CorrectionManager &correctionManager,
             const std::string &outputname,
             // for ff
-            const std::string &tau_pt,
+            const std::string &pt_2,
             const std::string &njets,
-            const std::string &delta_r,
+            const std::string &pt_1,
             // for fraction
-            const std::string &lep_mt,
+            const std::string &mt_1,
             //
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -95,25 +169,35 @@ namespace fakefactors {
             auto calc_fake_factor = [
                 qcd, wjets, ttbar, fractions,
                 QCD_variation, Wjets_variation, ttbar_variation, fraction_variation](
-                const float &pt_2, const int &njets, const float &mt_1, const float &delta_r) {
+                const float &_pt_2,
+                const int &_njets,
+                const float &_mt_1,
+                const float &_pt_1
+            ) {
+
+                const std::unordered_map<std::string, float> available_vars = {
+                    {"pt_2", _pt_2},
+                    {"njets", static_cast<float>(_njets)},
+                    {"pt_1", _pt_1},
+                    {"mt_1", _mt_1},
+                };
 
                 float ff = 0.0;
 
                 float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;
                 float qcd_frac = 0.0, wjets_frac = 0.0, ttbar_frac = 0.0;
 
-                if (pt_2 >= 0.) {
-                    Logger::get("SM RawFakeFactor (lt)")->debug("pt_tau={}, njets={}, mt={}, delta_r={}", pt_2, njets, mt_1, delta_r);
+                if (_pt_2 >= 0.) {
 
-                    qcd_ff = qcd->evaluate({pt_2, (float)njets, QCD_variation});
-                    wjets_ff = wjets->evaluate({pt_2, (float)njets, delta_r, Wjets_variation});
-                    ttbar_ff = ttbar->evaluate({pt_2, (float)njets, ttbar_variation});
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
+
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM RawFakeFactor (lt)")->debug("RawFakeFactor (lt) - QCD={}, Wjets={}, ttbar={}", qcd_ff, wjets_ff, ttbar_ff);
-
-                    qcd_frac = fractions->evaluate({"QCD", mt_1, (float)njets, fraction_variation});
-                    wjets_frac = fractions->evaluate({"Wjets", mt_1, (float)njets, fraction_variation});
-                    ttbar_frac = fractions->evaluate({"ttbar", mt_1, (float)njets, fraction_variation});
 
                     Logger::get("SM RawFakeFactor (lt)")->debug("Fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
@@ -127,7 +211,7 @@ namespace fakefactors {
                 return ff;
             };
 
-            auto df1 = df.Define(outputname, calc_fake_factor, {tau_pt, njets, lep_mt, delta_r});
+            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, mt_1, pt_1});
 
             return df1;
         }
@@ -170,18 +254,18 @@ namespace fakefactors {
             correctionManager::CorrectionManager &correctionManager,
             const std::string &outputname,
             // for ff
-            const std::string &tau_pt,
+            const std::string &pt_2,
             const std::string &njets,
-            const std::string &delta_r,
+            const std::string &deltaR_ditaupair,
             // for fraction 
-            const std::string &lep_mt,
+            const std::string &mt_1,
             // for DR SR corrections
             const std::string &m_vis,
             // for non closure corrections
-            const std::string &lep_pt,
-            const std::string &tau_decaymode,
-            const std::string &lep_iso,
-            const std::string &tau_mass,
+            const std::string &pt_1,
+            const std::string &tau_decaymode_2,
+            const std::string &iso_1,
+            const std::string &mass_2,
             // for corrections
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -229,15 +313,28 @@ namespace fakefactors {
                 Wjets_DR_SR_correction_variation, Wjets_non_closure_correction_variation,
                 ttbar_non_closure,
                 ttbar_non_closure_correction_variation](
-                const float &pt_2,
-                const int &njets,
-                const float &delta_r,
-                const float &mt_1,
-                const float &pt_1,
-                const int &tau_decaymode,
-                const float &m_vis,
-                const float &lep_iso,
-                const float &tau_mass) {
+                const float &_pt_2,
+                const int &_njets,
+                const float &_deltaR_ditaupair,
+                const float &_mt_1,
+                const float &_pt_1,
+                const int &_tau_decaymode_2,
+                const float &_m_vis,
+                const float &_iso_1,
+                const float &_mass_2
+            ) {
+
+                const std::unordered_map<std::string, float> available_vars = {
+                    {"pt_2", _pt_2},
+                    {"njets", static_cast<float>(_njets)},
+                    {"deltaR_ditaupair", _deltaR_ditaupair},
+                    {"mt_1", _mt_1},
+                    {"pt_1", _pt_1},
+                    {"tau_decaymode_2", static_cast<float>(_tau_decaymode_2)},
+                    {"m_vis", _m_vis},
+                    {"iso_1", _iso_1},
+                    {"mass_2", _mass_2}
+                };
 
                 float ff = 0.0;
 
@@ -249,63 +346,28 @@ namespace fakefactors {
 
                 float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
-                if (pt_2 >= 0.) {
-                    qcd_ff = qcd->evaluate({pt_2, (float)njets, QCD_variation});
-                    wjets_ff = wjets->evaluate({pt_2, (float)njets, pt_1, Wjets_variation});
-                    ttbar_ff = ttbar->evaluate({pt_2, (float)njets, ttbar_variation});
+                if (_pt_2 >= 0.) {
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
 
-                    Logger::get("SM FaceFactor (lt)")->debug("fake factors: QCD={}, Wjets={}, ttbar={}", qcd_ff, wjets_ff, ttbar_ff);
-
-                    qcd_frac = fractions->evaluate({"QCD", mt_1, (float)njets, fraction_variation});
-                    wjets_frac = fractions->evaluate({"Wjets", mt_1, (float)njets, fraction_variation});
-                    ttbar_frac = fractions->evaluate({"ttbar", mt_1, (float)njets, fraction_variation});
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
-                    // qcd_DR_SR_corr = qcd_DR_SR->evaluate({m_vis, (float)njets, QCD_DR_SR_correction_variation});
-                    qcd_DR_SR_corr = 1.0;  // Ignoring QCD DR_SR correction for now
-                    qcd_non_closure_corr = qcd_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            QCD_non_closure_correction_variation
-                        }
-                    );
+                    qcd_DR_SR_corr = 1.0f;  // evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
+                    wjets_DR_SR_corr = 1.0f;  // evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
+
+                    qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
+                    wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
+                    ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
+
+                    // ---------------------
 
                     Logger::get("SM FaceFactor (lt)")->debug("QCD: DR_SR={}, non_closure={}", qcd_DR_SR_corr, qcd_non_closure_corr);
-
-                    // wjets_DR_SR_corr = wjets_DR_SR->evaluate({m_vis, (float)njets, Wjets_DR_SR_correction_variation});
-                    wjets_DR_SR_corr = 1.0;  // Ignoring Wjets DR_SR correction for now
-                    wjets_non_closure_corr = wjets_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            Wjets_non_closure_correction_variation
-                        }
-                    );
-
                     Logger::get("SM FaceFactor (lt)")->debug("Wjets: DR_SR={}, non_closure={}", wjets_DR_SR_corr, wjets_non_closure_corr);
-
-                    ttbar_non_closure_corr = ttbar_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            ttbar_non_closure_correction_variation
-                        }
-                    );
-
                     Logger::get("SM FaceFactor (lt)")->debug("ttbar: non_closure={}", ttbar_non_closure_corr);
 
                     qcd_correction = std::max(qcd_DR_SR_corr, (float)0.) * std::max(qcd_non_closure_corr, (float)0.);
@@ -319,11 +381,11 @@ namespace fakefactors {
                 }
 
                 Logger::get("SM FaceFactor (lt)")->debug("Event Fake Factor {}", ff);
-                
+
                 return ff;
             };
 
-            auto df1 = df.Define(outputname, calc_fake_factor, {tau_pt, njets, delta_r, lep_mt, lep_pt, tau_decaymode, m_vis, lep_iso, tau_mass});
+            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, deltaR_ditaupair, mt_1, pt_1, tau_decaymode_2, m_vis, iso_1, mass_2});
 
             return df1;
         }
@@ -366,18 +428,18 @@ namespace fakefactors {
             correctionManager::CorrectionManager &correctionManager,
             const std::vector<std::string> &outputname,
                 // for ff
-            const std::string &tau_pt,
+            const std::string &pt_2,
             const std::string &njets,
-            const std::string &delta_r,
+            const std::string &deltaR_ditaupair,
             // for fraction 
-            const std::string &lep_mt,
+            const std::string &mt_1,
             // for DR SR corrections
             const std::string &m_vis,
             // for non closure corrections
-            const std::string &lep_pt,
-            const std::string &tau_decaymode,
-            const std::string &lep_iso,
-            const std::string &tau_mass,
+            const std::string &pt_1,
+            const std::string &tau_decaymode_2,
+            const std::string &iso_1,
+            const std::string &mass_2,
             // for corrections
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -418,15 +480,27 @@ namespace fakefactors {
                 Wjets_DR_SR_correction_variation, Wjets_non_closure_correction_variation,
                 ttbar_non_closure,
                 ttbar_non_closure_correction_variation](
-                const float &pt_2,
-                const int &njets,
-                const float &delta_r,
-                const float &mt_1,
-                const float &pt_1,
-                const int &tau_decaymode,
-                const float &m_vis,
-                const float &lep_iso,
-                const float &tau_mass) {
+                const float &_pt_2,
+                const int &_njets,
+                const float &_deltaR_ditaupair,
+                const float &_mt_1,
+                const float &_pt_1,
+                const int &_tau_decaymode_2,
+                const float &_m_vis,
+                const float &_iso_1,
+                const float &_mass_2
+            ) {
+                const std::unordered_map<std::string, float> available_vars = {
+                    {"pt_2", _pt_2},
+                    {"njets", static_cast<float>(_njets)},
+                    {"deltaR_ditaupair", _deltaR_ditaupair},
+                    {"mt_1", _mt_1},
+                    {"pt_1", _pt_1},
+                    {"tau_decaymode_2", static_cast<float>(_tau_decaymode_2)},
+                    {"m_vis", _m_vis},
+                    {"iso_1", _iso_1},
+                    {"mass_2", _mass_2}
+                };
 
                 float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;
                 float qcd_frac = 0.0, wjets_frac = 0.0, ttbar_frac = 0.0;
@@ -436,61 +510,28 @@ namespace fakefactors {
 
                 float qcd_correction = 0.0, wjets_correction = 0.0, ttbar_correction = 0.0;
 
-                if (pt_2 >= 0.) {
-                    qcd_ff = qcd->evaluate({pt_2, (float)njets, QCD_variation});
-                    wjets_ff = wjets->evaluate({pt_2, (float)njets, pt_1, Wjets_variation});
-                    ttbar_ff = ttbar->evaluate({pt_2, (float)njets, ttbar_variation});
+                if (_pt_2 >= 0.) {
+                    qcd_ff = evaluate(available_vars, qcd, config::qcd_ff_inputs, QCD_variation);
+                    wjets_ff = evaluate(available_vars, wjets, config::wjets_ff_inputs, Wjets_variation);
+                    ttbar_ff = evaluate(available_vars, ttbar, config::ttbar_ff_inputs, ttbar_variation);
 
-                    Logger::get("SM FaceFactor (lt)")->debug("fake factors: QCD={}, Wjets={}, ttbar={}", qcd_ff, wjets_ff, ttbar_ff);
-
-                    qcd_frac = fractions->evaluate({"QCD", mt_1, (float)njets, fraction_variation});
-                    wjets_frac = fractions->evaluate({"Wjets", mt_1, (float)njets, fraction_variation});
-                    ttbar_frac = fractions->evaluate({"ttbar", mt_1, (float)njets, fraction_variation});
+                    qcd_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "QCD");
+                    wjets_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "Wjets");
+                    ttbar_frac = evaluate(available_vars, fractions, config::fraction_inputs, fraction_variation, "ttbar");
 
                     Logger::get("SM FaceFactor (lt)")->debug("fractions: QCD={}, Wjets={}, ttbar={}", qcd_frac, wjets_frac, ttbar_frac);
 
-                    qcd_DR_SR_corr = qcd_DR_SR->evaluate({m_vis, (float)njets, QCD_DR_SR_correction_variation});
-                    qcd_non_closure_corr = qcd_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            QCD_non_closure_correction_variation
-                        }
-                    );
+                    qcd_DR_SR_corr = evaluate(available_vars, qcd_DR_SR, config::qcd_DR_SR_inputs, QCD_DR_SR_correction_variation);  // ignore for now
+                    wjets_DR_SR_corr = evaluate(available_vars, wjets_DR_SR, config::wjets_DR_SR_inputs, Wjets_DR_SR_correction_variation);  // ignore for now
+
+                    qcd_non_closure_corr = evaluate(available_vars, qcd_non_closure, config::qcd_non_closure_inputs, QCD_non_closure_correction_variation);
+                    wjets_non_closure_corr = evaluate(available_vars, wjets_non_closure, config::wjets_non_closure_inputs, Wjets_non_closure_correction_variation);
+                    ttbar_non_closure_corr = evaluate(available_vars, ttbar_non_closure, config::ttbar_non_closure_inputs, ttbar_non_closure_correction_variation);
+
+                    // ---------------------
 
                     Logger::get("SM FaceFactor (lt)")->debug("QCD: DR_SR={}, non_closure={}", qcd_DR_SR_corr, qcd_non_closure_corr);
-
-                    wjets_DR_SR_corr = wjets_DR_SR->evaluate({m_vis, (float)njets, Wjets_DR_SR_correction_variation});
-                    wjets_non_closure_corr = wjets_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            Wjets_non_closure_correction_variation
-                        }
-                    );
-
                     Logger::get("SM FaceFactor (lt)")->debug("Wjets: DR_SR={}, non_closure={}", wjets_DR_SR_corr, wjets_non_closure_corr);
-
-                    ttbar_non_closure_corr = ttbar_non_closure->evaluate(
-                        {
-                            m_vis,
-                            tau_mass,
-                            delta_r,
-                            lep_iso,
-                            (float)tau_decaymode,
-                            (float)njets,
-                            ttbar_non_closure_correction_variation
-                        }
-                    );
-
                     Logger::get("SM FaceFactor (lt)")->debug("ttbar: non_closure={}", ttbar_non_closure_corr);
 
                     qcd_correction = std::max(qcd_DR_SR_corr, (float)0.) * std::max(qcd_non_closure_corr, (float)0.);
@@ -524,7 +565,7 @@ namespace fakefactors {
                     std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.) * std::max(qcd_correction, (float)0.),
                     std::max(wjets_frac, (float)0.) * std::max(wjets_ff, (float)0.) * std::max(wjets_correction, (float)0.),
                     std::max(ttbar_frac, (float)0.) * std::max(ttbar_ff, (float)0.) * std::max(ttbar_correction, (float)0.)};
-        
+
                 return result;
             };
 
@@ -541,10 +582,10 @@ namespace fakefactors {
                 ttbar_non_closure_correction_variation,
                 ff_file,
                 ff_corr_file};
-        
+
             std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
 
-            auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt, njets, delta_r, lep_mt, lep_pt, tau_decaymode, m_vis, lep_iso, tau_mass});
+            auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {pt_2, njets, deltaR_ditaupair, mt_1, pt_1, tau_decaymode_2, m_vis, iso_1, mass_2});
             auto df2 = event::quantity::Unroll<float>(df1, outputname, shifted_collection_identifier);
 
             return df2;

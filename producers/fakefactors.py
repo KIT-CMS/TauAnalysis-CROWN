@@ -14,7 +14,12 @@ with defaults(scopes=["mt", "et"]):
             "{Wjets_variation}",
             "{ttbar_variation}",
             "{file}")''',
-        input=[q.pt_2, q.njets, q.deltaR_ditaupair, q.mt_1],
+        input=[
+            q.pt_2,
+            q.njets,
+            q.pt_1,
+            q.mt_1,
+        ],
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_lt = Producer(
