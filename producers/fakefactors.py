@@ -26,7 +26,7 @@ with defaults(scopes=["mt", "et"]):
         call='''fakefactors::sm::fakefactor_lt(
             {df},
             correctionManager,
-            {output},
+            {output_vec},
             {input},
             "{fraction_variation}",
             "{QCD_variation}",
@@ -38,7 +38,8 @@ with defaults(scopes=["mt", "et"]):
             "{Wjets_non_closure_correction}",
             "{ttbar_non_closure_correction}",
             "{file}",
-            "{corr_file}")''',
+            "{corr_file}",
+            0)''',
         input=[
             q.pt_2,
             q.njets,
@@ -53,7 +54,7 @@ with defaults(scopes=["mt", "et"]):
         output=[q.fake_factor_2],
     )
     FakeFactors_sm_lt_split_info = Producer(
-        call='''fakefactors::sm::fakefactor_lt_split_info(
+        call='''fakefactors::sm::fakefactor_lt(
             {df},
             correctionManager,
             {output_vec},
@@ -68,7 +69,8 @@ with defaults(scopes=["mt", "et"]):
             "{Wjets_non_closure_correction}",
             "{ttbar_non_closure_correction}",
             "{file}",
-            "{corr_file}")''',
+            "{corr_file}",
+            1)''',
         input=[
             q.pt_2,
             q.njets,
