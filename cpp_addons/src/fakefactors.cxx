@@ -55,11 +55,22 @@ namespace fakefactors {
             inline constexpr std::string_view njets {"njets"};
             inline constexpr std::string_view deltaR_ditaupair {"deltaR_ditaupair"};
             inline constexpr std::string_view mt_1 {"mt_1"};
-            inline constexpr std::string_view m_vis {"m_vis"};
             inline constexpr std::string_view pt_1 {"pt_1"};
             inline constexpr std::string_view tau_decaymode_2 {"tau_decaymode_2"};
             inline constexpr std::string_view iso_1 {"iso_1"};
             inline constexpr std::string_view mass_2 {"mass_2"};
+            inline constexpr std::string_view eta_1 {"eta_1"};
+            inline constexpr std::string_view eta_2 {"eta_2"};
+            inline constexpr std::string_view jpt_1 {"jpt_1"};
+            inline constexpr std::string_view jpt_2 {"jpt_2"};
+            inline constexpr std::string_view jeta_1 {"jeta_1"};
+            inline constexpr std::string_view jeta_2 {"jeta_2"};
+            inline constexpr std::string_view met {"met"};
+            inline constexpr std::string_view deltaEta_ditaupair {"deltaEta_ditaupair"};
+            inline constexpr std::string_view pt_ttjj {"pt_ttjj"};
+            inline constexpr std::string_view mt_tot {"mt_tot"};
+            inline constexpr std::string_view nbtag {"nbtag"};
+            inline constexpr std::string_view pt_tt {"pt_tt"};
             //
             inline constexpr std::array qcd_ff_inputs = {pt_2, njets};
             inline constexpr std::array wjets_ff_inputs = {pt_2, njets, pt_1};
@@ -67,21 +78,48 @@ namespace fakefactors {
             //
             inline constexpr std::array fraction_inputs = {mt_1, njets};
             //
-            inline constexpr std::array DR_SR_inputs = {m_vis, njets};
+            inline constexpr std::array DR_SR_inputs = {pt_tt, njets};
             inline constexpr std::array qcd_DR_SR_inputs = DR_SR_inputs;
             inline constexpr std::array wjets_DR_SR_inputs = DR_SR_inputs;
             //
             inline constexpr std::array non_closure_inputs = {
-                m_vis,
-                mass_2,
-                deltaR_ditaupair,
-                iso_1,
                 tau_decaymode_2,
+                mass_2,
+                eta_1,
+                eta_2,
+                jpt_1,
+                jeta_1,
+                jpt_2,
+                jeta_2,
+                met,
+                deltaEta_ditaupair,
+                deltaR_ditaupair,
+                pt_ttjj,
+                mt_tot,
+                iso_1,
                 njets
             };
             inline constexpr std::array qcd_non_closure_inputs = non_closure_inputs;
             inline constexpr std::array wjets_non_closure_inputs = non_closure_inputs;
-            inline constexpr std::array ttbar_non_closure_inputs = non_closure_inputs;
+            inline constexpr std::array ttbar_non_closure_inputs = {
+                nbtag,
+                tau_decaymode_2,
+                mass_2,
+                eta_1,
+                eta_2,
+                jpt_1,
+                jeta_1,
+                jpt_2,
+                jeta_2,
+                met,
+                deltaEta_ditaupair,
+                pt_tt,
+                pt_ttjj,
+                deltaR_ditaupair,
+                mt_tot,
+                iso_1,
+                njets
+            };
         }
         template <size_t N>
         std::vector<correction::Variable::Type>
@@ -222,14 +260,26 @@ namespace fakefactors {
          * @param df the input dataframe
          * @param correctionManager the correction manager to load corrections
          * @param outputname name of the output column for the fake factor
-         * @param tau_pt pt of the hadronic tau in the tau pair
+         * @param pt_2 pt of the hadronic tau in the tau pair
          * @param njets number of jets in the event
-         * @param delta_r delta R between the leptonic tau and the hadronic tau
-         * @param lep_mt transverse mass of the leptonic tau in the tau pair
-         * @param lep_pt pt of the leptonic tau in the tau pair
-         * @param tau_decaymode decay mode of the hadronic tau in the tau pair
-         * @param lep_iso isolation of the leptonic tau in the tau pair
-         * @param tau_mass mass of the hadronic tau in the tau pair
+         * @param pt_1 pt of the leptonic tau in the tau pair
+         * @param mt_1 transverse mass of the leptonic tau in the tau pair
+         * @param nbtag number of b-tagged jets in the event
+         * @param tau_decaymode_2 decay mode of the hadronic tau in the tau pair
+         * @param iso_1 isolation of the leptonic tau in the tau pair
+         * @param mass_2 mass of the hadronic tau in the tau pair
+         * @param eta_1 eta of the leptonic tau in the tau pair
+         * @param eta_2 eta of the hadronic tau in the tau pair
+         * @param jpt_1 pt of the leading jet in the event
+         * @param jeta_1 eta of the leading jet in the event
+         * @param jpt_2 pt of the subleading jet in the event
+         * @param jeta_2 eta of the subleading jet in the event
+         * @param met missing transverse energy in the event
+         * @param deltaEta_ditaupair delta eta between the leptonic tau and the hadronic tau
+         * @param pt_tt pt of the ditau system
+         * @param pt_ttjj pt of the ditau + dijet system
+         * @param deltaR_ditaupair delta R between the leptonic tau and the hadronic tau
+         * @param mt_tot total transverse mass of the event
          * @param fraction_variation name of the uncertainty variation or nominal
          * @param QCD_variation name of the uncertainty variation or nominal for QCD
          * @param Wjets_variation name of the uncertainty variation or nominal for Wjets
@@ -259,16 +309,24 @@ namespace fakefactors {
             // for ff
             const std::string &pt_2,
             const std::string &njets,
-            const std::string &deltaR_ditaupair,
-            // for fraction
-            const std::string &mt_1,
-            // for DR SR corrections
-            const std::string &m_vis,
-            // for non closure corrections
             const std::string &pt_1,
+            const std::string &mt_1,
+            const std::string &nbtag,
             const std::string &tau_decaymode_2,
             const std::string &iso_1,
             const std::string &mass_2,
+            const std::string &eta_1,
+            const std::string &eta_2,
+            const std::string &jpt_1,
+            const std::string &jeta_1,
+            const std::string &jpt_2,
+            const std::string &jeta_2,
+            const std::string &met,
+            const std::string &deltaEta_ditaupair,
+            const std::string &pt_tt,
+            const std::string &pt_ttjj,
+            const std::string &deltaR_ditaupair,
+            const std::string &mt_tot,
             // for corrections
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -308,7 +366,28 @@ namespace fakefactors {
 
             auto ttbar_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "ttbar_compound_correction");
 
-            const auto input_columns = {pt_2, njets, deltaR_ditaupair, mt_1, pt_1, tau_decaymode_2, m_vis, iso_1, mass_2};
+            const auto input_columns = {
+                pt_2,
+                njets,
+                pt_1,
+                mt_1,
+                nbtag,
+                tau_decaymode_2,
+                iso_1,
+                mass_2,
+                eta_1,
+                eta_2,
+                jpt_1,
+                jeta_1,
+                jpt_2,
+                jeta_2,
+                met,
+                deltaEta_ditaupair,
+                pt_tt,
+                pt_ttjj,
+                deltaR_ditaupair,
+                mt_tot
+            };
 
             auto calc_fake_factor = [
                 qcd, wjets, ttbar, fractions,
@@ -322,24 +401,46 @@ namespace fakefactors {
                 split_info](
                 const float &_pt_2,
                 const int &_njets,
-                const float &_deltaR_ditaupair,
-                const float &_mt_1,
                 const float &_pt_1,
+                const float &_mt_1,
+                const int &_nbtag,
                 const int &_tau_decaymode_2,
-                const float &_m_vis,
                 const float &_iso_1,
-                const float &_mass_2
+                const float &_mass_2,
+                const float &_eta_1,
+                const float &_eta_2,
+                const float &_jpt_1,
+                const float &_jeta_1,
+                const float &_jpt_2,
+                const float &_jeta_2,
+                const float &_met,
+                const float &_deltaEta_ditaupair,
+                const float &_pt_tt,
+                const float &_pt_ttjj,
+                const float &_deltaR_ditaupair,
+                const float &_mt_tot
             ) {
                 const std::unordered_map<std::string, float> available_vars = {
                     {"pt_2", _pt_2},
                     {"njets", _njets},
-                    {"deltaR_ditaupair", _deltaR_ditaupair},
-                    {"mt_1", _mt_1},
                     {"pt_1", _pt_1},
+                    {"mt_1", _mt_1},
+                    {"nbtag", _nbtag},
                     {"tau_decaymode_2", _tau_decaymode_2},
-                    {"m_vis", _m_vis},
                     {"iso_1", _iso_1},
-                    {"mass_2", _mass_2}
+                    {"mass_2", _mass_2},
+                    {"eta_1", _eta_1},
+                    {"eta_2", _eta_2},
+                    {"jpt_1", _jpt_1},
+                    {"jeta_1", _jeta_1},
+                    {"jpt_2", _jpt_2},
+                    {"jeta_2", _jeta_2},
+                    {"met", _met},
+                    {"deltaEta_ditaupair", _deltaEta_ditaupair},
+                    {"pt_tt", _pt_tt},
+                    {"pt_ttjj", _pt_ttjj},
+                    {"deltaR_ditaupair", _deltaR_ditaupair},
+                    {"mt_tot", _mt_tot}
                 };
 
                 float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;

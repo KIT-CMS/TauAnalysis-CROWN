@@ -27,19 +27,27 @@ namespace sm{
         ROOT::RDF::RNode df, 
         correctionManager::CorrectionManager &correctionManager,
         const std::vector<std::string> &outputnames,
-        // for ff
+        //
         const std::string &pt_2,
         const std::string &njets,
-        const std::string &deltaR_ditaupair,
-        // for fraction 
-        const std::string &mt_1,
-        // for DR SR corrections
-        const std::string &m_vis,
-        // for non closure corrections
         const std::string &pt_1,
+        const std::string &mt_1,
+        const std::string &nbtag,
         const std::string &tau_decaymode_2,
         const std::string &iso_1,
         const std::string &mass_2,
+        const std::string &eta_1,
+        const std::string &eta_2,
+        const std::string &jpt_1,
+        const std::string &jeta_1,
+        const std::string &jpt_2,
+        const std::string &jeta_2,
+        const std::string &met,
+        const std::string &deltaEta_ditaupair,
+        const std::string &pt_tt,
+        const std::string &pt_ttjj,
+        const std::string &deltaR_ditaupair,
+        const std::string &mt_tot,
         // for corrections
         const std::string &fraction_variation,
         const std::string &QCD_variation,
