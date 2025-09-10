@@ -1577,13 +1577,14 @@ def build_config(
     # LHE Scale Weight variations
     #########################
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
-    if "ggh" in sample or "qqh" in sample:
+    if any([it in sample for it in ["ggh", "qqh", "vbf"]]):
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
                 add_shift(name="muFWeight", shift_key="muF", producers=[event.LHE_Scale_weight])
-                add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
-                add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
+                if "ggh" in sample:
+                    add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
+                    add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):
                 add_shift(name="PdfWeight", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
                 add_shift(name="AlphaSWeight", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
