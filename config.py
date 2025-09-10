@@ -1577,7 +1577,7 @@ def build_config(
     # LHE Scale Weight variations
     #########################
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
-    if "ggh" in sample or "qqh" in sample:
+    if any([it in sample for it in ["ggh", "qqh", "vbf"]]):
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
