@@ -6,6 +6,7 @@ from .quantities import output as q
 from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 
+training_type = "equal_events"
 
 def build_config(
     era: str,
@@ -30,8 +31,8 @@ def build_config(
     )
 
     # Aus smhtt_ul:
-    # ("fold0", lambda df: odd_id(df)),
-    # ("fold1", lambda df: ~odd_id(df)),
+    # ("fold0", lambda df: odd_id(df)), -> auf fold0 trainiertes Model (auf ungeraden events trainiert) verwenden, wenn event id gerade ist
+    # ("fold1", lambda df: ~odd_id(df)), -> auf fold1 trainiertes Model (auf geraden events trainiert) verwenden, wenn event id ungerade ist
 
     configuration.add_config_parameters(
         ["tt"],
@@ -41,7 +42,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/tt/odd/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/tt/odd/model.onnx",
                 }
             ),
             "model_file_path_even": EraModifier(
@@ -49,7 +50,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/tt/even/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/tt/even/model.onnx",
                 }
             ),
         },
@@ -63,7 +64,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/mt/odd/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/mt/odd/model.onnx",
                 }
             ),
             "model_file_path_even": EraModifier(
@@ -71,7 +72,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/mt/even/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/mt/even/model.onnx",
                 }
             ),
         },
@@ -85,7 +86,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/et/odd/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/et/odd/model.onnx",
                 }
             ),
             "model_file_path_even": EraModifier(
@@ -93,7 +94,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/ml/equal_events/et/even/model.onnx",
+                    "2018": f"payloads/ml/{training_type}/et/even/model.onnx",
                 }
             ),
         },
