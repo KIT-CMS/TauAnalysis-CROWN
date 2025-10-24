@@ -3,6 +3,7 @@ from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
 from ..producers import electrons as electrons
 from ..producers import muons as muons
+from ..producers import met as met
 
 ####################
 # Set of general producers for event quantities
@@ -29,8 +30,20 @@ with defaults(scopes=["global"]):
             is_data := Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data]),
             #is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
             is_ttbar := Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
-            is_dyjets := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets})", output=[q.is_dyjets]),
-            is_wjets := Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets]),
+            is_dyjets_powheg := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_powheg})", output=[q.is_dyjets_powheg]),
+            is_dyjets_amcatnlo := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_amcatnlo})", output=[q.is_dyjets_amcatnlo]),
+            is_dyjets := Producer(
+                            call="event::CombineFlags({df}, {output}, {input}, \"any_of\")",
+                            input=[q.is_dyjets_powheg, q.is_dyjets_amcatnlo],
+                            output=[q.is_dyjets],
+                        ),
+            is_wjets_temp := Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets_temp]),
+            is_wjets_amcatnlo := Producer(call="event::quantity::Define({df}, {output}, {is_wjets_amcatnlo})", output=[q.is_wjets_amcatnlo]),
+            is_wjets := Producer(
+                            call="event::CombineFlags({df}, {output}, {input}, \"any_of\")",
+                            input=[q.is_wjets_temp, q.is_wjets_amcatnlo],
+                            output=[q.is_wjets],
+                        ),
             is_ggh_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_htautau})", output=[q.is_ggh_htautau]),
             is_vbf_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_htautau})", output=[q.is_vbf_htautau]),
             is_diboson := Producer(call="event::quantity::Define({df}, {output}, {is_diboson})", output=[q.is_diboson]),
@@ -80,17 +93,18 @@ with defaults(scopes=["global"]):
 
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
-    ZPtMassReweighting = Producer(
-        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
-        input=[q.recoil_genboson_p4_vec],
-        output=[q.ZPtMassReweightWeight],
+    ZPtReweighting = ProducerGroup(
+        call='event::reweighting::ZPtWeight({df}, correctionManager, {output}, {input}, "{DY_order}", "{zpt_file}", "{zpt_variation}")',
+        input=[],
+        output=[q.zPtReweightWeight],
+        subproducers=[met.GenZpt],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",
         input=[
-            nanoAOD.GenParticle_pdgId,
-            nanoAOD.GenParticle_statusFlags,
-            nanoAOD.GenParticle_pt,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_statusFlags,
+            nanoAOD.GenPart_pt,
         ],
         output=[q.topPtReweightWeight],
     )

@@ -71,7 +71,7 @@ with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
         output=[q.id_wgt_mu_1],
     )
     TauEmbeddingMuonIsoSF_1 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_Muon_pfRelIso04_all_sf}", "emb")',
         output=[q.iso_wgt_mu_1],
     )
     MTGenerateSingleMuonTriggerSF = ExtendedVectorProducer(
@@ -86,7 +86,7 @@ with defaults(scopes=["mm", "em"], input=[q.pt_2, q.eta_2]):
         output=[q.id_wgt_mu_2],
     )
     TauEmbeddingMuonIsoSF_2 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_Muon_pfRelIso04_all_sf}", "emb")',
         output=[q.iso_wgt_mu_2],
     )
 

@@ -10,13 +10,13 @@ namespace sm{
         const std::string &outputname,
         const std::string &tau_pt,
         const std::string &njets,
-        const std::string &delta_r,
+        //const std::string &delta_r,
         const std::string &lep_mt,
         //
         const std::string &fraction_variation,
         const std::string &QCD_variation,
         const std::string &Wjets_variation,
-        const std::string &ttbar_variation,
+        //const std::string &ttbar_variation,
         //
         const std::string &ff_file
     );
@@ -42,15 +42,15 @@ namespace sm{
         const std::string &fraction_variation,
         const std::string &QCD_variation,
         const std::string &Wjets_variation,
-        const std::string &ttbar_variation,
+        //const std::string &ttbar_variation,
         //
         const std::string &QCD_DR_SR_correction_variation,
         const std::string &QCD_non_closure_correction_variation,
         //
-        const std::string &Wjets_DR_SR_correction_variation,
+        //const std::string &Wjets_DR_SR_correction_variation,
         const std::string &Wjets_non_closure_correction_variation,
         //
-        const std::string &ttbar_non_closure_correction_variation,
+        //const std::string &ttbar_non_closure_correction_variation,
         //
         const std::string &ff_file,
         const std::string &ff_corr_file
@@ -77,15 +77,15 @@ namespace sm{
         const std::string &fraction_variation,
         const std::string &QCD_variation,
         const std::string &Wjets_variation,
-        const std::string &ttbar_variation,
+        //const std::string &ttbar_variation,
         //
         const std::string &QCD_DR_SR_correction_variation,
         const std::string &QCD_non_closure_correction_variation,
         //
-        const std::string &Wjets_DR_SR_correction_variation,
+        //const std::string &Wjets_DR_SR_correction_variation,
         const std::string &Wjets_non_closure_correction_variation,
         //
-        const std::string &ttbar_non_closure_correction_variation,
+        //const std::string &ttbar_non_closure_correction_variation,
         //
         const std::string &ff_file,
         const std::string &ff_corr_file

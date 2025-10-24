@@ -4,7 +4,7 @@ from code_generation.code_generation import CodeGenerator
 
 
 def run(args):
-    analysis_name = "tau-dev"
+    analysis_name = "tau"
 
     available_samples = [
         "ggh_htautau",
@@ -18,12 +18,17 @@ def run(args):
         "singletop",
         "ttbar",
         "diboson",
-        "dyjets",
+        "dyjets_powheg",
+        "dyjets_amcatnlo",
+        "dyjets_amcatnlo_ll",
+        "dyjets_amcatnlo_tt",
         "wjets",
+        "wjets_amcatnlo",
         "data",
         "electroweak_boson",
+        "fake_era",
     ]
-    available_eras = ["2016preVFP", "2016postVFP", "2017", "2018", "2024"]
+    available_eras = ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix", "2024"]
     available_scopes = ["et", "mt", "tt", "em", "ee", "mm"]
 
     ## setup variables

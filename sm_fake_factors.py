@@ -64,24 +64,20 @@ def build_config(
                 "QCD_non_closure_correction": "nominal",
                 # ---------------------------------------
                 "Wjets_variation": "nominal",
-                "Wjets_DR_SR_correction": "nominal",
+                "Wjets_DR_SR_correction": '""',
                 "Wjets_non_closure_correction": "nominal",
                 # ---------------------------------------
-                "ttbar_variation": "nominal",
-                "ttbar_non_closure_correction": "nominal",
+                "ttbar_variation": '""',
+                "ttbar_non_closure_correction": '""',
                 # ---------------------------------------
                 "file": EraModifier(
                     {
-                        "2016": "",
-                        "2017": "",
-                        "2018": "payloads/fake_factors/sm/2018/with_embedding/fake_factors_mt.json.gz",
+                        "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_mt.json.gz",
                     }
                 ),
                 "corr_file": EraModifier(
                     {
-                        "2016": "",
-                        "2017": "",
-                        "2018": "payloads/fake_factors/sm/2018/with_embedding/FF_corrections_mt.json.gz",
+                        "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_mt.json.gz",
                     }
                 ),
             },
@@ -102,27 +98,27 @@ def build_config(
                 # ----------------------
                 q.raw_qcd_fake_factor_2,
                 q.raw_wjets_fake_factor_2,
-                q.raw_ttbar_fake_factor_2,
+                #q.raw_ttbar_fake_factor_2,
                 # ---
                 q.qcd_fake_factor_fraction_2,
                 q.wjets_fake_factor_fraction_2,
-                q.ttbar_fake_factor_fraction_2,
+                #q.ttbar_fake_factor_fraction_2,
                 # ---
-                q.qcd_DR_SR_correction_2,
-                q.wjets_DR_SR_correction_2,
-                q.ttbar_DR_SR_correction_2,
+                q.qcd_DR_SR_correction_2, 
+                q.wjets_DR_SR_correction_2, # set to 1, not reading from file, is not there
+                #q.ttbar_DR_SR_correction_2,
                 # ---
                 q.qcd_correction_wo_DR_SR_2,
                 q.wjets_correction_wo_DR_SR_2,
-                q.ttbar_correction_wo_DR_SR_2,
+                #q.ttbar_correction_wo_DR_SR_2,
                 # ---
                 q.qcd_fake_factor_correction_2,
                 q.wjets_fake_factor_correction_2,
-                q.ttbar_fake_factor_correction_2,
+                #q.ttbar_fake_factor_correction_2,
                 # ---
                 q.qcd_fake_factor_2,
                 q.wjets_fake_factor_2,
-                q.ttbar_fake_factor_2,
+                #q.ttbar_fake_factor_2,
             ],
         )
 

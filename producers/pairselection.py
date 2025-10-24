@@ -24,9 +24,9 @@ with defaults(scopes=["mt"]):
         call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau,
-            nanoAOD.Tau_IDraw,
+            nanoAOD.Tau_rawDeepTau2018v2p5VSjet,
             *kinematic_vars.Muon,
-            nanoAOD.Muon_iso,
+            nanoAOD.Muon_pfRelIso04_all,
             q.good_muons_mask,
             q.good_taus_mask,
         ],
@@ -90,9 +90,10 @@ with defaults(scopes=["et"]):
         call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_IDraw,
+            nanoAOD.Tau_rawDeepTau2018v2p5VSjet
+,
             *kinematic_vars.Electron_with_corrected_pt,
-            nanoAOD.Electron_iso,
+            nanoAOD.Electron_pfRelIso03_all,
             q.good_electrons_mask,
             q.good_taus_mask,
         ],
@@ -118,7 +119,8 @@ with defaults(scopes=["tt"]):
         call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_IDraw,
+            nanoAOD.Tau_rawDeepTau2018v2p5VSjet
+,
             q.good_taus_mask,
         ],
         output=[q.dileptonpair],
@@ -143,9 +145,9 @@ with defaults(scopes=["em"]):
         call="ditau_pairselection::elmu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Electron_with_corrected_pt,
-            nanoAOD.Electron_iso,
+            nanoAOD.Electron_pfRelIso03_all,
             *kinematic_vars.Muon,
-            nanoAOD.Muon_iso,
+            nanoAOD.Muon_pfRelIso04_all,
             q.good_electrons_mask,
             q.good_muons_mask,
         ],

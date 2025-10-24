@@ -14,7 +14,7 @@ def add_tauVariations(configuration: Configuration, sample: str) -> Configuratio
 
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
-    with defaults(shift_map={"Up": "up", "Down": "down"}):
+    with defaults(shift_map={"Up": '"up"', "Down": '"down"'}):
         with defaults(scopes=("et", "mt")):
             with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF]):
                 add_shift(name="vsJetTau30to35", shift_key="tau_sf_vsjet_tau30to35")
@@ -31,7 +31,7 @@ def add_tauVariations(configuration: Configuration, sample: str) -> Configuratio
         # --- TES shifts ---
         with defaults(scopes=("et", "mt", "tt")):
             with defaults(
-                producers=[taus.TauPtCorrection_genTau],
+                producers=[taus.TauPtCorrection_MC],
                 ignore_producers={
                     "et": [pairselection.LVEl1, electrons.VetoElectrons],
                     "mt": [pairselection.LVMu1, muons.VetoMuons],

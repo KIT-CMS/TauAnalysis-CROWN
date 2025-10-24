@@ -12,9 +12,8 @@ with defaults(scopes=["mt", "et"]):
             "{fraction_variation}",
             "{QCD_variation}",
             "{Wjets_variation}",
-            "{ttbar_variation}",
             "{file}")''',
-        input=[q.pt_2, q.njets, q.deltaR_ditaupair, q.mt_1],
+        input=[q.pt_2, q.njets, q.mt_1],
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_lt = Producer(
@@ -26,12 +25,9 @@ with defaults(scopes=["mt", "et"]):
             "{fraction_variation}",
             "{QCD_variation}",
             "{Wjets_variation}",
-            "{ttbar_variation}",
             "{QCD_DR_SR_correction}",
             "{QCD_non_closure_correction}",
-            "{Wjets_DR_SR_correction}",
             "{Wjets_non_closure_correction}",
-            "{ttbar_non_closure_correction}",
             "{file}",
             "{corr_file}")''',
         input=[
@@ -56,12 +52,9 @@ with defaults(scopes=["mt", "et"]):
             "{fraction_variation}",
             "{QCD_variation}",
             "{Wjets_variation}",
-            "{ttbar_variation}",
             "{QCD_DR_SR_correction}",
             "{QCD_non_closure_correction}",
-            "{Wjets_DR_SR_correction}",
             "{Wjets_non_closure_correction}",
-            "{ttbar_non_closure_correction}",
             "{file}",
             "{corr_file}")''',
         input=[
@@ -78,27 +71,27 @@ with defaults(scopes=["mt", "et"]):
         output=[
             q.raw_qcd_fake_factor_2,
             q.raw_wjets_fake_factor_2,
-            q.raw_ttbar_fake_factor_2,
+            #q.raw_ttbar_fake_factor_2,
             # ---
             q.qcd_fake_factor_fraction_2,
             q.wjets_fake_factor_fraction_2,
-            q.ttbar_fake_factor_fraction_2,
+            #q.ttbar_fake_factor_fraction_2,
             # ---
             q.qcd_DR_SR_correction_2,
             q.wjets_DR_SR_correction_2,
-            q.ttbar_DR_SR_correction_2,
+            #q.ttbar_DR_SR_correction_2,
             # ---
             q.qcd_correction_wo_DR_SR_2,
             q.wjets_correction_wo_DR_SR_2,
-            q.ttbar_correction_wo_DR_SR_2,
+            #q.ttbar_correction_wo_DR_SR_2,
             # ---
             q.qcd_fake_factor_correction_2,
             q.wjets_fake_factor_correction_2,
-            q.ttbar_fake_factor_correction_2,
+            #q.ttbar_fake_factor_correction_2,
             # ---
             q.qcd_fake_factor_2,
             q.wjets_fake_factor_2,
-            q.ttbar_fake_factor_2,
+            #q.ttbar_fake_factor_2,
         ],
     )
 
