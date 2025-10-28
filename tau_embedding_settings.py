@@ -851,7 +851,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
         # the corresponding producer has to be picked in taus.py aswell !!!
         add_shift = get_adjusted_add_shift_SystematicShift(configuration)
         with defaults(shift_map={"Up": "up", "Down": "down"}):
-            with defaults(scopes=("et", "mt"), producers=[embedding.Tau_2_VsJetTauID_lt_SF] if configuration.era != "2018" else [embedding.Tau_2_VsJetTauID_lt_SF, taus.TauPtCorrection_emb_genTau]):
+            with defaults(scopes=("et", "mt"), producers=[embedding.Tau_2_VsJetTauID_lt_SF, taus.TauPtCorrection_emb_genTau]):
                 add_shift(name="vsJetTau20to25", shift_key="tau_emb_sf_vsjet_tau20to25")
                 add_shift(name="vsJetTau25to30", shift_key="tau_emb_sf_vsjet_tau25to30")
                 add_shift(name="vsJetTau30to35", shift_key="tau_emb_sf_vsjet_tau30to35")
