@@ -760,7 +760,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
+                        "2018": "analysis_configurations/tau/payloads/scale_factors/2018UL/tau_emb_es_2018UL.json.gz",
                     }
                 ),
                 "tau_emb_ES_json_name": "tau_energy_scale",
