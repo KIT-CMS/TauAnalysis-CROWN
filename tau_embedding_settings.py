@@ -760,15 +760,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_embed.json.gz",
+                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
                     }
                 ),
+                "tau_emb_ES_json_name": "tau_energy_scale",
                 "tau_emb_sf_vsjet_tau20to25": "nom",
                 "tau_emb_sf_vsjet_tau25to30": "nom",
                 "tau_emb_sf_vsjet_tau30to35": "nom",
                 "tau_emb_sf_vsjet_tau35to40": "nom",
                 "tau_emb_sf_vsjet_tau40toInf": "nom",
-                "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+                "tau_emb_sf_vsjet_variation":"nom",
+                "tau_emb_ES_WP": "Tight", # Do also for more WP (vsjets) if needed !!!
+                "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
                 "tau_emb_vsjet_sf_dependence": "pt",
                 "vsjet_tau_id_sf_embedding": [
                     {
@@ -802,14 +805,23 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                         "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_embed.json.gz",
+                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
                     }
                 ),
+                "tau_emb_ES_json_name": "tau_energy_scale",
                 "tau_emb_sf_vsjet_tauDM0": "nom",
+                "tau_emb_sf_vsjet_tauDM0_20to40": "nom",
+                "tau_emb_sf_vsjet_tauDM0_40toInf": "nom",
                 "tau_emb_sf_vsjet_tauDM1": "nom",
+                "tau_emb_sf_vsjet_tauDM1_20to40": "nom",
+                "tau_emb_sf_vsjet_tauDM1_40toInf": "nom",
                 "tau_emb_sf_vsjet_tauDM10": "nom",
+                "tau_emb_sf_vsjet_tauDM10_20to40": "nom",
+                "tau_emb_sf_vsjet_tauDM10_40toInf": "nom",
                 "tau_emb_sf_vsjet_tauDM11": "nom",
-                "tau_emb_id_sf_correctionset": "test_DeepTau2017v2p1VSjet_pt-dm",
+                "tau_emb_sf_vsjet_tauDM11_20to40": "nom",
+                "tau_emb_sf_vsjet_tauDM11_40toInf": "nom",
+                "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
                 "tau_emb_vsjet_sf_dependence": "dm",
                 "vsjet_tau_id_sf_embedding": [
                     {
@@ -835,19 +847,25 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
             },
         )
         # and add the variations for it
+        # depending on the measurement, change the var loop items. [""] is for inclusive pt and ["_20to40", "_40toInf"] for pt dependent applications.
+        # the corresponding producer has to be picked in taus.py aswell !!!
         add_shift = get_adjusted_add_shift_SystematicShift(configuration)
         with defaults(shift_map={"Up": "up", "Down": "down"}):
-            with defaults(scopes=("et", "mt"), producers=[embedding.Tau_2_VsJetTauID_lt_SF]):
+            with defaults(scopes=("et", "mt"), producers=[embedding.Tau_2_VsJetTauID_lt_SF] if configuration.era != "2018" else [embedding.Tau_2_VsJetTauID_lt_SF, taus.TauPtCorrection_emb_genTau]):
                 add_shift(name="vsJetTau20to25", shift_key="tau_emb_sf_vsjet_tau20to25")
                 add_shift(name="vsJetTau25to30", shift_key="tau_emb_sf_vsjet_tau25to30")
                 add_shift(name="vsJetTau30to35", shift_key="tau_emb_sf_vsjet_tau30to35")
                 add_shift(name="vsJetTau35to40", shift_key="tau_emb_sf_vsjet_tau35to40")
                 add_shift(name="vsJetTau40toInf", shift_key="tau_emb_sf_vsjet_tau40toInf")
+                for dm in [("1prong0pizero","DM0"),("1prong1pizero","DM1"),("3prong0pizero","DM10"),("3prong1pizero","DM11")]:
+                    for var in ["", "_20to40", "_40toInf"]:
+                        add_shift(name=f"tauEs{dm[0]}{var}", shift_key=f"tau_ES_shift_{dm[1]}{var}")
 
                 # dm binned variations
             with defaults(scopes="tt", producers=[embedding.Tau_1_VsJetTauID_tt_SF, embedding.Tau_2_VsJetTauID_tt_SF]):
                 for dm in [0, 1, 10, 11]:
-                    add_shift(name=f"vsJetTauDM{dm}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}")
+                    for var in ["", "_20to40", "_40toInf"]:
+                        add_shift(name=f"vsJetTauDM{dm}{var}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}{var}")
 
     #########################
     # Trigger shifts
@@ -1098,227 +1116,12 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                 samples=["embedding"],
             )
     else:
-        tauES_2016preVFP = {  # ToDo: Measure these values for 2016preVFP and add them to the configuration
-            "up": 1.0 - 0.0,
-            "nominal": 1.0,
-            "down": 1.0 + 0.0,
-        }
-        tauES_2016postVFP = {  # ToDo: Measure these values for 2016postVFP and add them to the configuration
-            "up": 1.0 - 0.0,
-            "nominal": 1.0,
-            "down": 1.0 + 0.0,
-        }
-        tauES_2017 = (
-            {  # ToDo: Measure these values for 2017 and add them to the configuration
-                "up": 1.0 - 0.0,
-                "nominal": 1.0,
-                "down": 1.0 + 0.0,
-            }
-        )
-        tauES_2018 = {
-            "up": 0.9865 - 0.0039,
-            "nominal": 0.9865,
-            "down": 0.9865 + 0.0039,
-        }
-        configuration.add_config_parameters(
-            ["mt", "et", "tt"],
-            {
-                "tau_ES_shift_DM0": EraModifier(
-                    {
-                        "2016preVFP": tauES_2016preVFP["nominal"],
-                        "2016postVFP": tauES_2016postVFP["nominal"],
-                        "2017": tauES_2017["nominal"],
-                        "2018": tauES_2018["nominal"],
-                    }
-                ),
-                "tau_ES_shift_DM1": EraModifier(
-                    {
-                        "2016preVFP": tauES_2016preVFP["nominal"],
-                        "2016postVFP": tauES_2016postVFP["nominal"],
-                        "2017": tauES_2017["nominal"],
-                        "2018": tauES_2018["nominal"],
-                    }
-                ),
-                "tau_ES_shift_DM10": EraModifier(
-                    {
-                        "2016preVFP": tauES_2016preVFP["nominal"],
-                        "2016postVFP": tauES_2016postVFP["nominal"],
-                        "2017": tauES_2017["nominal"],
-                        "2018": tauES_2018["nominal"],
-                    }
-                ),
-                "tau_ES_shift_DM11": EraModifier(
-                    {
-                        "2016preVFP": tauES_2016preVFP["nominal"],
-                        "2016postVFP": tauES_2016postVFP["nominal"],
-                        "2017": tauES_2017["nominal"],
-                        "2018": tauES_2018["nominal"],
-                    }
-                ),
-            },
-        )
         configuration.add_modification_rule(
             ["mt", "et", "tt"],
             ReplaceProducer(
-                producers=[
-                    taus.TauEnergyCorrection,
-                    taus.TauEnergyCorrection_Embedding,
-                ],
+                producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_Embedding_ES],
                 samples=["embedding"],
             ),
-        )
-        # default values until we have the correct measured values
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs1prong0pizeroUp",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM0": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["up"],
-                                "2016postVFP": tauES_2016postVFP["up"],
-                                "2017": tauES_2017["up"],
-                                "2018": tauES_2018["up"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs1prong0pizeroDown",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM0": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["down"],
-                                "2016postVFP": tauES_2016postVFP["down"],
-                                "2017": tauES_2017["down"],
-                                "2018": tauES_2018["down"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs1prong1pizeroUp",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM1": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["up"],
-                                "2016postVFP": tauES_2016postVFP["up"],
-                                "2017": tauES_2017["up"],
-                                "2018": tauES_2018["up"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs1prong1pizeroDown",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM1": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["down"],
-                                "2016postVFP": tauES_2016postVFP["down"],
-                                "2017": tauES_2017["down"],
-                                "2018": tauES_2018["down"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs3prong0pizeroUp",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM10": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["up"],
-                                "2016postVFP": tauES_2016postVFP["up"],
-                                "2017": tauES_2017["up"],
-                                "2018": tauES_2018["up"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs3prong0pizeroDown",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM10": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["down"],
-                                "2016postVFP": tauES_2016postVFP["down"],
-                                "2017": tauES_2017["down"],
-                                "2018": tauES_2018["down"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs3prong1pizeroUp",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM11": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["up"],
-                                "2016postVFP": tauES_2016postVFP["up"],
-                                "2017": tauES_2017["up"],
-                                "2018": tauES_2018["up"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name="tauEs3prong1pizeroDown",
-                shift_config={
-                    ("mt", "et", "tt"): {
-                        "tau_ES_shift_DM11": EraModifier(
-                            {
-                                "2016preVFP": tauES_2016preVFP["down"],
-                                "2016postVFP": tauES_2016postVFP["down"],
-                                "2017": tauES_2017["down"],
-                                "2018": tauES_2018["down"],
-                            }
-                        )
-                    }
-                },
-                producers={("mt", "et", "tt"): taus.TauPtCorrection_byValue},
-            ),
-            samples=["embedding"],
         )
 
     if measure_eleES:

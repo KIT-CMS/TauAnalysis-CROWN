@@ -1,6 +1,6 @@
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 
 
 with defaults(scopes=["global"], output=[]):
@@ -75,6 +75,29 @@ with defaults(scopes=["et", "mt", "tt"]):
         ],
         output=[q.Tau_pt_corrected],
     )
+    
+    # Choose one of the TauPtCorrection_emb_genTau producers to use pt measured or inclusive corrections: !!!
+    
+    # TauPtCorrection_emb_genTau = Producer(
+    #     call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0}", "{tau_ES_shift_DM1}", "{tau_ES_shift_DM10}", "{tau_ES_shift_DM11}")',
+    #     input=[
+    #         nanoAOD.Tau_pt,
+    #         nanoAOD.Tau_eta,
+    #         nanoAOD.Tau_decayMode,
+    #         nanoAOD.Tau_genPartFlav,
+    #     ],
+    #     output=[q.Tau_pt_corrected],
+    # )
+    TauPtCorrection_emb_genTau = Producer(
+        call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0_20to40}", "{tau_ES_shift_DM1_20to40}", "{tau_ES_shift_DM10_20to40}", "{tau_ES_shift_DM11_20to40}", "{tau_ES_shift_DM0_40toInf}", "{tau_ES_shift_DM1_40toInf}", "{tau_ES_shift_DM10_40toInf}", "{tau_ES_shift_DM11_40toInf}")',
+        input=[
+            nanoAOD.Tau_pt,
+            nanoAOD.Tau_eta,
+            nanoAOD.Tau_decayMode,
+            nanoAOD.Tau_genPartFlav,
+        ],
+        output=[q.Tau_pt_corrected],
+    )
     TauPtCorrection_data = Producer(
         call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
         input=[nanoAOD.Tau_pt],
@@ -114,6 +137,12 @@ with defaults(scopes=["et", "mt", "tt"]):
         TauEnergyCorrection_Embedding = ProducerGroup(
             subproducers=[
                 TauPtCorrection_byValue,
+                TauMassCorrection,
+            ],
+        )
+        TauEnergyCorrection_Embedding_ES = ProducerGroup(
+            subproducers=[
+                TauPtCorrection_emb_genTau,
                 TauMassCorrection,
             ],
         )
