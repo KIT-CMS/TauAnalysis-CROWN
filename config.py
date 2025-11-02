@@ -146,9 +146,17 @@ def build_config(
             "tau_ES_json_name": "tau_energy_scale",
             "tau_id_algorithm": "DeepTau2017v2p1",
             "tau_ES_shift_DM0": "nom",
+            "tau_ES_shift_DM0_20to40": "nom",
+            "tau_ES_shift_DM0_40toInf": "nom",
             "tau_ES_shift_DM1": "nom",
+            "tau_ES_shift_DM1_20to40": "nom",
+            "tau_ES_shift_DM1_40toInf": "nom",
             "tau_ES_shift_DM10": "nom",
+            "tau_ES_shift_DM10_20to40": "nom",
+            "tau_ES_shift_DM10_40toInf": "nom",
             "tau_ES_shift_DM11": "nom",
+            "tau_ES_shift_DM11_20to40": "nom",
+            "tau_ES_shift_DM11_40toInf": "nom",
             "tau_elefake_es_DM0_barrel": "nom",
             "tau_elefake_es_DM0_endcap": "nom",
             "tau_elefake_es_DM1_barrel": "nom",
@@ -403,7 +411,6 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
-            "tau_vsjet_vseleWP": "VVLoose",
         },
     )
     configuration.add_config_parameters(
