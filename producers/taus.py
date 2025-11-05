@@ -76,20 +76,18 @@ with defaults(scopes=["et", "mt", "tt"]):
         output=[q.Tau_pt_corrected],
     )
     
-    # Choose one of the TauPtCorrection_emb_genTau producers to use pt measured or inclusive corrections: !!!
-    
-    # TauPtCorrection_emb_genTau = Producer(
-    #     call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0}", "{tau_ES_shift_DM1}", "{tau_ES_shift_DM10}", "{tau_ES_shift_DM11}")',
-    #     input=[
-    #         nanoAOD.Tau_pt,
-    #         nanoAOD.Tau_eta,
-    #         nanoAOD.Tau_decayMode,
-    #         nanoAOD.Tau_genPartFlav,
-    #     ],
-    #     output=[q.Tau_pt_corrected],
-    # )
-    TauPtCorrection_emb_genTau = Producer(
-        call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0_20to40}", "{tau_ES_shift_DM1_20to40}", "{tau_ES_shift_DM10_20to40}", "{tau_ES_shift_DM11_20to40}", "{tau_ES_shift_DM0_40toInf}", "{tau_ES_shift_DM1_40toInf}", "{tau_ES_shift_DM10_40toInf}", "{tau_ES_shift_DM11_40toInf}")',
+    TauPtCorrection_emb_genTau_dm_binned = Producer(
+        call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_emb_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0}", "{tau_ES_shift_DM1}", "{tau_ES_shift_DM10}", "{tau_ES_shift_DM11}")',
+        input=[
+            nanoAOD.Tau_pt,
+            nanoAOD.Tau_eta,
+            nanoAOD.Tau_decayMode,
+            nanoAOD.Tau_genPartFlav,
+        ],
+        output=[q.Tau_pt_corrected],
+    )
+    TauPtCorrection_emb_genTau_dm_pt_binned = Producer(
+        call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_emb_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0_20to40}", "{tau_ES_shift_DM1_20to40}", "{tau_ES_shift_DM10_20to40}", "{tau_ES_shift_DM11_20to40}", "{tau_ES_shift_DM0_40toInf}", "{tau_ES_shift_DM1_40toInf}", "{tau_ES_shift_DM10_40toInf}", "{tau_ES_shift_DM11_40toInf}")',
         input=[
             nanoAOD.Tau_pt,
             nanoAOD.Tau_eta,
@@ -140,9 +138,15 @@ with defaults(scopes=["et", "mt", "tt"]):
                 TauMassCorrection,
             ],
         )
-        TauEnergyCorrection_Embedding_ES = ProducerGroup(
+        TauEnergyCorrection_Embedding_ES_dm_binned = ProducerGroup(
             subproducers=[
-                TauPtCorrection_emb_genTau,
+                TauPtCorrection_emb_genTau_dm_binned,
+                TauMassCorrection,
+            ],
+        )
+        TauEnergyCorrection_Embedding_ES_dm_pt_binned = ProducerGroup(
+            subproducers=[
+                TauPtCorrection_emb_genTau_dm_pt_binned,
                 TauMassCorrection,
             ],
         )
