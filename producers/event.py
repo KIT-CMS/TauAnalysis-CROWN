@@ -82,7 +82,7 @@ with defaults(scopes=["global"]):
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     ZPtMassReweighting = Producer(
         call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
-        input=[q.recoil_genboson_p4_vec],
+        input=[q.recoil_genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(

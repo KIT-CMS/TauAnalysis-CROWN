@@ -55,33 +55,33 @@ with defaults(scopes=["mm"]):
     with defaults(output="flagname_1"):
         with defaults(input=[q.p4_1] + TriggerObject_collection):
             MuMuSingleMuonTriggerFlags_1 = ExtendedVectorProducer(
-                call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+                call='tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
                 vec_config="singlemuon_trigger",
             )
             MuMuSingleMuonTriggerBitFlags_1 = ExtendedVectorProducer(
-                call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
+                call="tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
                 vec_config="singlemuon_trigger_bit",  # works
             )
 
         with defaults(input=[q.p4_1, q.p4_2] + TriggerObject_collection):
             MuMuDoubleMuonTriggerFlags_1 = ExtendedVectorProducer(
-                call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
+                call='tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
                 vec_config="doublemuon_trigger",
             )
 
     with defaults(output="flagname_2"):
         with defaults(input=[q.p4_2] + TriggerObject_collection):
             MuMuSingleMuonTriggerFlags_2 = ExtendedVectorProducer(
-                call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+                call='tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
                 vec_config="singlemuon_trigger",
             )
             MuMuSingleMuonTriggerBitFlags_2 = ExtendedVectorProducer(
-                call="trigger::tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
+                call="tagandprobe::MatchSingleTriggerObject({df}, {output}, {input}, {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )",
                 vec_config="singlemuon_trigger_bit",  # works
             )
         with defaults(input=[q.p4_2, q.p4_1] + TriggerObject_collection):
             MuMuDoubleMuonTriggerFlags_2 = ExtendedVectorProducer(
-                call='trigger::tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
+                call='tagandprobe::GenerateDoubleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {p1_ptcut}, {p2_ptcut}, {p1_etacut}, {p2_etacut}, {p1_trigger_particle_id}, {p2_trigger_particle_id}, {p1_filterbit}, {p2_filterbit}, {max_deltaR_triggermatch}, {p1_triggerobject_ptcut}, {p2_triggerobject_ptcut} )',
                 vec_config="doublemuon_trigger",
             )
 
@@ -128,12 +128,12 @@ with defaults(scopes=["ee"]):
 
     with defaults(vec_configs="singleelectron_trigger"):
         ElElSingleElectronTriggerFlags_1 = ExtendedVectorProducer(
-            call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+            call='tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
             input=[q.p4_1] + TriggerObject_collection,
             output="flagname_1",
         )
         ElElSingleElectronTriggerFlags_2 = ExtendedVectorProducer(
-            call='trigger::tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
+            call='tagandprobe::GenerateSingleTriggerFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {filterbit}, {max_deltaR_triggermatch}, {triggerobject_ptcut} )',
             input=[q.p4_2] + TriggerObject_collection,
             output="flagname_2",
         )

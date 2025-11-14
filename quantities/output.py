@@ -190,7 +190,8 @@ THU_qqH_JET01 = Quantity()
 
 ## MET quantities
 met_p4 = Quantity()
-recoil_genboson_p4_vec = Quantity()
+recoil_genboson_p4 = Quantity()
+recoil_vis_genboson_p4 = Quantity()
 genbosonmass = Quantity()
 npartons = Quantity()
 met_p4_leptoncorrected = Quantity()

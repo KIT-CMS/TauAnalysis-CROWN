@@ -27,7 +27,7 @@ with defaults(scopes=["global"]):
         PFMetPhi_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmetphi_uncorrected])
 
     CalculateGenBosonVector = Producer(
-        call="met::calculateGenBosonVector({df}, {input}, {output}, {is_data})",
+        call="genparticles::GetBoson({df}, {output}, {input}, {is_data})",
         input=[
             nanoAOD.GenPart_pt,
             nanoAOD.GenPart_eta,
@@ -37,11 +37,24 @@ with defaults(scopes=["global"]):
             nanoAOD.GenPart_status,
             nanoAOD.GenPart_statusFlags,
         ],
-        output=[q.recoil_genboson_p4_vec],
+        output=[q.recoil_genboson_p4],
+    )
+    CalculateVisGenBosonVector = Producer(
+        call="genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})",
+        input=[
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
+        ],
+        output=[q.recoil_vis_genboson_p4],
     )
     GenBosonMass = Producer(
-        call="met::genBosonMass({df}, {output}, {input})",
-        input=[q.recoil_genboson_p4_vec],
+        call="lorentzvector::GetMass({df}, {output}, {input})",
+        input=[q.recoil_genboson_p4],
         output=[q.genbosonmass],
     )
     MetBasics = ProducerGroup(
@@ -61,12 +74,13 @@ with defaults(scopes=["global"]):
             MetCov11,
             MetSumEt,
             CalculateGenBosonVector,
+            CalculateVisGenBosonVector,
             GenBosonMass,
         ],
     )
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
-    with defaults(call="met::propagateLeptonsToMet({df}, {input}, {output}, {propagateLeptons})"):
+    with defaults(call="lorentzvector::PropagateToMET({df}, {output}, {input}, {propagateLeptons})"):
         PropagateLeptonsToMet = Producer(
             input=[q.met_p4, q.p4_1_uncorrected, q.p4_2_uncorrected, q.p4_1, q.p4_2],
             output=[q.met_p4_leptoncorrected],
@@ -76,7 +90,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_leptoncorrected],
         )
 
-    with defaults(call="met::propagateJetsToMet({df}, {input}, {output}, {propagateJets}, {min_jetpt_met_propagation})"):
+    with defaults(call="physicsobject::PropagateToMET({df}, {output}, {input}, {propagateJets}, {min_jetpt_met_propagation})"):
         PartialJetsToMetInput = [
             q.Jet_pt_corrected,
             nanoAOD.Jet_eta,
@@ -96,13 +110,13 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_jetcorrected],
         )
 
-    with defaults(call='met::applyRecoilCorrections({df}, {input}, {output}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
+    with defaults(call='met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
         ApplyRecoilCorrections = Producer(
-            input=[q.met_p4_jetcorrected, q.recoil_genboson_p4_vec, q.Jet_pt_corrected],
+            input=[q.met_p4_jetcorrected, q.recoil_genboson_p4, q.recoil_vis_genboson_p4, q.Jet_pt_corrected],
             output=[q.met_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet = Producer(
-            input=[q.pfmet_p4_jetcorrected, q.recoil_genboson_p4_vec, q.Jet_pt_corrected],
+            input=[q.pfmet_p4_jetcorrected, q.recoil_genboson_p4, q.recoil_vis_genboson_p4, q.Jet_pt_corrected],
             output=[q.pfmet_p4_recoilcorrected],
         )
 
