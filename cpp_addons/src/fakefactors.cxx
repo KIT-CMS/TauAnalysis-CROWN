@@ -71,6 +71,11 @@ namespace fakefactors {
             inline constexpr std::string_view mt_tot {"mt_tot"};
             inline constexpr std::string_view nbtag {"nbtag"};
             inline constexpr std::string_view pt_tt {"pt_tt"};
+            inline constexpr std::string_view deltaR_jj {"deltaR_jj"};
+            inline constexpr std::string_view deltaR_1j1 {"deltaR_1j1"};
+            inline constexpr std::string_view deltaR_12j1 {"deltaR_12j1"};
+            inline constexpr std::string_view m_vis {"m_vis"};
+
             //
             inline constexpr std::array qcd_ff_inputs = {pt_2, njets};
             inline constexpr std::array wjets_ff_inputs = {pt_2, njets, pt_1};
@@ -84,18 +89,21 @@ namespace fakefactors {
             //
             inline constexpr std::array non_closure_inputs = {
                 tau_decaymode_2,
-                mass_2,
                 eta_1,
                 eta_2,
-                jpt_1,
                 jeta_1,
-                jpt_2,
                 jeta_2,
+                jpt_1,
+                jpt_2,
                 met,
                 deltaEta_ditaupair,
                 deltaR_ditaupair,
+                deltaR_1j1,
+                deltaR_12j1,
                 pt_ttjj,
+                mass_2,
                 mt_tot,
+                m_vis,
                 iso_1,
                 njets
             };
@@ -104,19 +112,22 @@ namespace fakefactors {
             inline constexpr std::array ttbar_non_closure_inputs = {
                 nbtag,
                 tau_decaymode_2,
-                mass_2,
                 eta_1,
                 eta_2,
-                jpt_1,
                 jeta_1,
-                jpt_2,
                 jeta_2,
+                jpt_1,
+                jpt_2,
                 met,
                 deltaEta_ditaupair,
+                deltaR_ditaupair,
+                deltaR_1j1,
+                deltaR_12j1,
                 pt_tt,
                 pt_ttjj,
-                deltaR_ditaupair,
+                mass_2,
                 mt_tot,
+                m_vis,
                 iso_1,
                 njets
             };
@@ -166,10 +177,10 @@ namespace fakefactors {
          * @param df the input dataframe
          * @param correctionManager the correction manager to load corrections
          * @param outputname name of the output column for the fake factor
-         * @param tau_pt pt of the hadronic tau in the tau pair
+         * @param pt_2 pt of the hadronic tau in the tau pair
          * @param njets number of jets in the event
-         * @param delta_r delta R between the leptonic tau and the hadronic tau
-         * @param lep_mt transverse mass of the leptonic tau in the tau pair
+         * @param pt_1 pt of the leptonic tau in the tau pair
+         * @param mt_1 transverse mass of the leptonic tau in the tau pair
          * @param fraction_variation name of the uncertainty variation or nominal
          * @param QCD_variation name of the uncertainty variation or nominal for QCD
          * @param Wjets_variation name of the uncertainty variation or nominal for Wjets
@@ -280,6 +291,10 @@ namespace fakefactors {
          * @param pt_ttjj pt of the ditau + dijet system
          * @param deltaR_ditaupair delta R between the leptonic tau and the hadronic tau
          * @param mt_tot total transverse mass of the event
+         * @param deltaR_jj delta R between the two leading jets in the event
+         * @param deltaR_1j1 delta R between the leptonic tau and the leading jet
+         * @param deltaR_12j1 delta R between the hadronic tau and the leading jet
+         * @param m_vis visible mass of the ditau system
          * @param fraction_variation name of the uncertainty variation or nominal
          * @param QCD_variation name of the uncertainty variation or nominal for QCD
          * @param Wjets_variation name of the uncertainty variation or nominal for Wjets
@@ -296,7 +311,7 @@ namespace fakefactors {
          * nominal for the ttbar non-closure correction
          * @param ff_file correctionlib json file with the fake factors
          * @param ff_corr_file correctionlib json file with corrections for the fake factors
-         * @param split_info integer to define the level of splitting of the information
+         * @param split_info bool to define the level of splitting of the information
          0: only fake factor
          1: raw components (ff and fractions and corrections per process)
          * @returns a dataframe with the fake factors and additional split information
@@ -306,7 +321,7 @@ namespace fakefactors {
             ROOT::RDF::RNode df,
             correctionManager::CorrectionManager &correctionManager,
             const std::vector<std::string> &outputnames,
-            // for ff
+            // correctionlib kinematic variables
             const std::string &pt_2,
             const std::string &njets,
             const std::string &pt_1,
@@ -327,6 +342,10 @@ namespace fakefactors {
             const std::string &pt_ttjj,
             const std::string &deltaR_ditaupair,
             const std::string &mt_tot,
+            const std::string &deltaR_jj,
+            const std::string &deltaR_1j1,
+            const std::string &deltaR_12j1,
+            const std::string &m_vis,
             // for corrections
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -343,7 +362,7 @@ namespace fakefactors {
             //
             const std::string &ff_file,
             const std::string &ff_corr_file,
-            const int split_info
+            const bool split_info
             ) {
 
             Logger::get("SM FakeFactor (lt)")->debug("Setting up functions for fake factor evaluation with correctionlib");
@@ -386,7 +405,11 @@ namespace fakefactors {
                 pt_tt,
                 pt_ttjj,
                 deltaR_ditaupair,
-                mt_tot
+                mt_tot,
+                deltaR_jj,
+                deltaR_1j1,
+                deltaR_12j1,
+                m_vis
             };
 
             auto calc_fake_factor = [
@@ -418,7 +441,11 @@ namespace fakefactors {
                 const float &_pt_tt,
                 const float &_pt_ttjj,
                 const float &_deltaR_ditaupair,
-                const float &_mt_tot
+                const float &_mt_tot,
+                const float &_deltaR_jj,
+                const float &_deltaR_1j1,
+                const float &_deltaR_12j1,
+                const float &_m_vis
             ) {
                 const std::unordered_map<std::string, float> available_vars = {
                     {"pt_2", _pt_2},
@@ -440,7 +467,11 @@ namespace fakefactors {
                     {"pt_tt", _pt_tt},
                     {"pt_ttjj", _pt_ttjj},
                     {"deltaR_ditaupair", _deltaR_ditaupair},
-                    {"mt_tot", _mt_tot}
+                    {"mt_tot", _mt_tot},
+                    {"deltaR_jj", _deltaR_jj},
+                    {"deltaR_1j1", _deltaR_1j1},
+                    {"deltaR_12j1", _deltaR_12j1},
+                    {"m_vis", _m_vis}
                 };
 
                 float qcd_ff = 0.0, wjets_ff = 0.0, ttbar_ff = 0.0;

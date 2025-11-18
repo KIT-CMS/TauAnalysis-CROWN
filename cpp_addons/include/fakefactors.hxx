@@ -48,6 +48,10 @@ namespace sm{
         const std::string &pt_ttjj,
         const std::string &deltaR_ditaupair,
         const std::string &mt_tot,
+        const std::string &deltaR_jj,
+        const std::string &deltaR_1j1,
+        const std::string &deltaR_12j1,
+        const std::string &m_vis,
         // for corrections
         const std::string &fraction_variation,
         const std::string &QCD_variation,
@@ -64,7 +68,7 @@ namespace sm{
         //
         const std::string &ff_file,
         const std::string &ff_corr_file,
-        const int split_info
+        const bool split_info
     );
 }  // namespace sm
 } // namespace fakefactors
