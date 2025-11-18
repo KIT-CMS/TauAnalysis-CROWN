@@ -23,7 +23,7 @@ measure_tauID = False
 def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configuration:
 
     # CHOOSE the tau ES and ID correction type, dm binned or dm-pt binned:
-    ES_ID_SCHEME = "dm_binned"  # "dm_pt_binned" or "dm_binned"
+    ES_ID_SCHEME = "dm_pt_binned"  # "dm_pt_binned" or "dm_binned"
     ES_ID_SCHEME_ProducerES = taus.TauPtCorrection_emb_genTau_dm_binned if ES_ID_SCHEME == "dm_binned" else taus.TauPtCorrection_emb_genTau_dm_pt_binned
     ES_ID_SCHEME_ProducerGroupES = taus.TauEnergyCorrection_Embedding_ES_dm_binned if ES_ID_SCHEME == "dm_binned" else taus.TauEnergyCorrection_Embedding_ES_dm_pt_binned
     ES_ID_SCHEME_ProducerID = embedding.Tau_2_VsJetTauID_lt_SF_dm_binned if ES_ID_SCHEME == "dm_binned" else embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned
