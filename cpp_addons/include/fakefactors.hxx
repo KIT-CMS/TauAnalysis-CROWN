@@ -32,7 +32,6 @@ namespace sm{
         const std::string &njets,
         const std::string &pt_1,
         const std::string &mt_1,
-        const std::string &nbtag,
         const std::string &tau_decaymode_2,
         const std::string &iso_1,
         const std::string &mass_2,

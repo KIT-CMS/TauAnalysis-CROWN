@@ -16,7 +16,6 @@ class Inputs:
         q.pt_1,
         q.mt_1,
         # ---
-        q.nbtag,
         q.tau_decaymode_2,
         q.iso_1,
         q.mass_2,
