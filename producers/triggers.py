@@ -6,11 +6,11 @@ from ..scripts.CROWNWrapper import (
 )
 
 TriggerObject_collection = [
-    nanoAOD.TrigObj_filterBits,
-    nanoAOD.TrigObj_id,
     nanoAOD.TrigObj_pt,
     nanoAOD.TrigObj_eta,
     nanoAOD.TrigObj_phi,
+    nanoAOD.TrigObj_id,
+    nanoAOD.TrigObj_filterBits,
 ]
 
 ####################
@@ -18,7 +18,7 @@ TriggerObject_collection = [
 ####################
 with defaults(output="flagname"):
     with defaults(
-        call='''trigger::GenerateSingleTriggerFlag(
+        call='''trigger::SingleObjectFlag(
             {df},
             {output},
             {input},
@@ -43,7 +43,7 @@ with defaults(output="flagname"):
             # ---
             GenerateSingleTrailingTauTriggerFlags = EVP(scope=["et", "mt", "tt"], vec_config="singletau_trigger_trailing")
     with defaults(
-        call='''trigger::GenerateDoubleTriggerFlag(
+        call='''trigger::DoubleObjectFlag(
             {df},
             {output},
             {input},
@@ -66,7 +66,7 @@ with defaults(output="flagname"):
             MuMuGenerateDoubleMuonTriggerFlags = EVP(scope=["mm"], vec_config="doublemuon_trigger")
             ElElGenerateDoubleMuonTriggerFlags = EVP(scope=["ee"], vec_config="doubleelectron_trigger")
     with defaults(
-        call='''trigger::MatchDoubleTriggerObject(
+        call='''trigger::DoubleObjectFlag(
             {df},
             {output},
             {input},
