@@ -26,6 +26,7 @@ from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from .scripts.SpecialSetups import ES_ID_SCHEME
 
 
 def build_config(
@@ -46,6 +47,8 @@ def build_config(
         available_eras,
         available_scopes,
     )
+
+    configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_pt_binned")  # or "dm_binned"
 
     # first add default parameters necessary for all scopes
     configuration.add_config_parameters(
@@ -411,6 +414,14 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
+            "variation_DM0_pt20to40": "nom",
+            "variation_DM0_pt40toInf": "nom",
+            "variation_DM1_pt20to40": "nom",
+            "variation_DM1_pt40toInf": "nom",
+            "variation_DM10_pt20to40": "nom",
+            "variation_DM10_pt40toInf": "nom",
+            "variation_DM11_pt20to40": "nom",
+            "variation_DM11_pt40toInf": "nom",
         },
     )
     configuration.add_config_parameters(
@@ -909,6 +920,7 @@ def build_config(
             genparticles.MTGenDiTauPairQuantities,
             #  scalefactors.MuonIDIso_SF,
             scalefactors.Tau_2_VsJetTauID_lt_SF,
+            scalefactors.Tau_2_VsJetTauID_lt_SF_pt_dm_binned,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
             triggers.MTGenerateSingleMuonTriggerFlags,
@@ -940,6 +952,7 @@ def build_config(
             pairquantities.ETDiTauPairQuantities,
             genparticles.ETGenDiTauPairQuantities,
             scalefactors.Tau_2_VsJetTauID_lt_SF,
+            scalefactors.Tau_2_VsJetTauID_lt_SF_pt_dm_binned,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
             # scalefactors.EleID_SF,
@@ -1017,6 +1030,7 @@ def build_config(
             producers=[
                 scalefactors.Tau_2_VsMuTauID_SF,
                 scalefactors.Tau_2_VsJetTauID_lt_SF,
+                scalefactors.Tau_2_VsJetTauID_lt_SF_pt_dm_binned,
                 scalefactors.Tau_2_VsEleTauID_SF,
             ],
             samples="data",
@@ -1436,6 +1450,7 @@ def build_config(
             q.nmuons,
             q.ntaus,
             scalefactors.Tau_2_VsJetTauID_lt_SF.output_group,
+            scalefactors.Tau_2_VsJetTauID_lt_SF_pt_dm_binned.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,

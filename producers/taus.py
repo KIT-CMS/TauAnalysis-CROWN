@@ -75,7 +75,35 @@ with defaults(scopes=["et", "mt", "tt"]):
         ],
         output=[q.Tau_pt_corrected],
     )
-    
+
+    TauPtCorrection_genTau_pt_dm_binned = Producer(
+        name="TauPtCorrection_genTau_pt_dm_binned",
+        call='''physicsobject::tau::PtCorrectionMC_genuineTau(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_ES_json_name}",
+            "{tau_id_algorithm}",
+            "{tau_ES_shift_DM0_20to40}",
+            "{tau_ES_shift_DM0_40toInf}",
+            "{tau_ES_shift_DM1_20to40}",
+            "{tau_ES_shift_DM1_40toInf}",
+            "{tau_ES_shift_DM10_20to40}",
+            "{tau_ES_shift_DM10_40toInf}",
+            "{tau_ES_shift_DM11_20to40}",
+            "{tau_ES_shift_DM11_40toInf}")''',
+        input=[
+            q.Tau_pt_ele_mu_corrected,
+            nanoAOD.Tau_eta,
+            nanoAOD.Tau_decayMode,
+            nanoAOD.Tau_genPartFlav,
+        ],
+        output=[q.Tau_pt_corrected],
+        scopes=["et", "mt", "tt"],
+    )
+
     TauPtCorrection_emb_genTau_dm_binned = Producer(
         call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_emb_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0}", "{tau_ES_shift_DM1}", "{tau_ES_shift_DM10}", "{tau_ES_shift_DM11}")',
         input=[
@@ -87,7 +115,24 @@ with defaults(scopes=["et", "mt", "tt"]):
         output=[q.Tau_pt_corrected],
     )
     TauPtCorrection_emb_genTau_dm_pt_binned = Producer(
-        call='physicsobject::tau::PtCorrectionMC_genuineTau({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_emb_ES_json_name}", "{tau_id_algorithm}", "{tau_emb_ES_WP}", "{tau_vsjet_vseleWP}", "{tau_ES_shift_DM0_20to40}", "{tau_ES_shift_DM1_20to40}", "{tau_ES_shift_DM10_20to40}", "{tau_ES_shift_DM11_20to40}", "{tau_ES_shift_DM0_40toInf}", "{tau_ES_shift_DM1_40toInf}", "{tau_ES_shift_DM10_40toInf}", "{tau_ES_shift_DM11_40toInf}")',
+        call='''physicsobject::tau::PtCorrectionMC_genuineTau(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_emb_sf_file}",
+            "{tau_emb_ES_json_name}",
+            "{tau_id_algorithm}",
+            "{tau_emb_ES_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_ES_shift_DM0_20to40}",
+            "{tau_ES_shift_DM1_20to40}",
+            "{tau_ES_shift_DM10_20to40}",
+            "{tau_ES_shift_DM11_20to40}",
+            "{tau_ES_shift_DM0_40toInf}",
+            "{tau_ES_shift_DM1_40toInf}",
+            "{tau_ES_shift_DM10_40toInf}",
+            "{tau_ES_shift_DM11_40toInf}")''',
         input=[
             nanoAOD.Tau_pt,
             nanoAOD.Tau_eta,
@@ -128,7 +173,8 @@ with defaults(scopes=["et", "mt", "tt"]):
             subproducers=[
                 TauPtCorrection_eleFake,
                 TauPtCorrection_muFake,
-                TauPtCorrection_genTau,
+                # TauPtCorrection_genTau,  # TODO: FIXME
+                TauPtCorrection_genTau_pt_dm_binned,
                 TauMassCorrection,
             ],
         )

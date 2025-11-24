@@ -22,6 +22,15 @@ def add_tauVariations(configuration: Configuration, sample: str) -> Configuratio
                 add_shift(name="vsJetTau40to500", shift_key="tau_sf_vsjet_tau40to500")
                 add_shift(name="vsJetTau500to1000", shift_key="tau_sf_vsjet_tau500to1000")
                 add_shift(name="vsJetTau1000toInf", shift_key="tau_sf_vsjet_tau1000toinf")
+            with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF_pt_dm_binned]):
+                for dm in [
+                    ("1prong0pizero", "DM0"),
+                    ("1prong1pizero", "DM1"),
+                    ("3prong0pizero", "DM10"),
+                    ("3prong1pizero", "DM11"),
+                ]:
+                    for pt in configuration.ES_ID_SCHEME.pt_binning:
+                        add_shift(name=f"vsJetTau{dm[0]}_{pt}", shift_key=f"variation_{dm[1]}_pt{pt}")
             with defaults(producers=[scalefactors.Tau_2_VsEleTauID_SF]):
                 add_shift(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel")
                 add_shift(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap")
@@ -30,18 +39,27 @@ def add_tauVariations(configuration: Configuration, sample: str) -> Configuratio
                     add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
         # --- TES shifts ---
         with defaults(scopes=("et", "mt", "tt")):
-            with defaults(
-                producers=[taus.TauPtCorrection_genTau],
-                ignore_producers={
-                    "et": [pairselection.LVEl1, electrons.VetoElectrons],
-                    "mt": [pairselection.LVMu1, muons.VetoMuons],
-                    "tt": [],
-                },
-            ):
-                add_shift(name="tauEs1prong0pizero", shift_key="tau_ES_shift_DM0")
-                add_shift(name="tauEs1prong1pizero", shift_key="tau_ES_shift_DM1")
-                add_shift(name="tauEs3prong0pizero", shift_key="tau_ES_shift_DM10")
-                add_shift(name="tauEs3prong1pizero", shift_key="tau_ES_shift_DM11")
+            # with defaults(
+            #     producers=[taus.TauPtCorrection_genTau],
+            #     ignore_producers={
+            #         "et": [pairselection.LVEl1, electrons.VetoElectrons],
+            #         "mt": [pairselection.LVMu1, muons.VetoMuons],
+            #         "tt": [],
+            #     },
+            # ):
+            #     add_shift(name="tauEs1prong0pizero", shift_key="tau_ES_shift_DM0")
+            #     add_shift(name="tauEs1prong1pizero", shift_key="tau_ES_shift_DM1")
+            #     add_shift(name="tauEs3prong0pizero", shift_key="tau_ES_shift_DM10")
+            #     add_shift(name="tauEs3prong1pizero", shift_key="tau_ES_shift_DM11")
+            with defaults(producers=[taus.TauPtCorrection_genTau_pt_dm_binned]):
+                for dm in [
+                    ("1prong0pizero", "DM0"),
+                    ("1prong1pizero", "DM1"),
+                    ("3prong0pizero", "DM10"),
+                    ("3prong1pizero", "DM11"),
+                ]:
+                    for pt in configuration.ES_ID_SCHEME.pt_binning:
+                        add_shift(name=f"tauEs{dm[0]}_{pt}", shift_key=f"tau_ES_shift_{dm[1]}_pt{pt}")
 
         with defaults(scopes="tt"):
             with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF, scalefactors.Tau_2_VsJetTauID_tt_SF]):
