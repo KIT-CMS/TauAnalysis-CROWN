@@ -714,7 +714,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
             ReplaceProducer(
                 producers=[
                     scalefactors.Tau_2_VsJetTauID_lt_SF,
-                    configuration.ES_ID_SCHEME.ProducerID,
+                    configuration.ES_ID_SCHEME.embedding.ProducerID,
                 ],
                 samples="embedding",
             ),
@@ -741,7 +741,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
         )
         configuration.add_outputs(
             ["et", "mt"],
-            configuration.ES_ID_SCHEME.ProducerID.output_group,
+            configuration.ES_ID_SCHEME.embedding.ProducerID.output_group,
         )
         configuration.add_modification_rule(
             ["et", "mt"],
@@ -770,7 +770,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                         "2018": "payloads/scale_factors/2018UL/tau_emb_es_2018UL.json.gz",
                     }
                 ),
-                "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.tau_emb_ES_json_name,
+                "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
                 "tau_emb_sf_vsjet_tauDM0": "nom",
                 "tau_emb_sf_vsjet_tauDM0_20to40": "nom",
                 "tau_emb_sf_vsjet_tauDM0_40toInf": "nom",
@@ -786,7 +786,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                 "tau_emb_sf_vsjet_variation": "nom",
                 "tau_emb_ES_WP": "Tight",  # Do also for more WP (vsjets) if needed !!!
                 "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
-                "tau_emb_vsjet_sf_dependence": configuration.ES_ID_SCHEME.tau_emb_vsjet_sf_dependence,
+                "tau_emb_vsjet_sf_dependence": configuration.ES_ID_SCHEME.embedding.tau_emb_vsjet_sf_dependence,
                 "vsjet_tau_id_sf_embedding": [
                     {
                         "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
@@ -822,7 +822,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                         "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
                     }
                 ),
-                "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.tau_emb_ES_json_name,
+                "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
                 "tau_emb_sf_vsjet_tauDM0": "nom",
                 "tau_emb_sf_vsjet_tauDM0_20to40": "nom",
                 "tau_emb_sf_vsjet_tauDM0_40toInf": "nom",
@@ -836,7 +836,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
                 "tau_emb_sf_vsjet_tauDM11_20to40": "nom",
                 "tau_emb_sf_vsjet_tauDM11_40toInf": "nom",
                 "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
-                "tau_emb_vsjet_sf_dependence": configuration.ES_ID_SCHEME.tau_emb_vsjet_sf_dependence,
+                "tau_emb_vsjet_sf_dependence": configuration.ES_ID_SCHEME.embedding.tau_emb_vsjet_sf_dependence,
                 "vsjet_tau_id_sf_embedding": [
                     {
                         "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
@@ -865,30 +865,30 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
         add_shift = get_adjusted_add_shift_SystematicShift(configuration)
         with defaults(shift_map={"Up": "up", "Down": "down"}):
             with defaults(scopes=("et", "mt")):
-                with defaults(producers=[configuration.ES_ID_SCHEME.ProducerID]):
+                with defaults(producers=[configuration.ES_ID_SCHEME.embedding.ProducerID]):
                     for dm in [
                         ("1prong0pizero", "DM0"),
                         ("1prong1pizero", "DM1"),
                         ("3prong0pizero", "DM10"),
                         ("3prong1pizero", "DM11"),
                     ]:
-                        for var in configuration.ES_ID_SCHEME.pt_binning:
+                        for var in configuration.ES_ID_SCHEME.embedding.pt_binning:
                             add_shift(name=f"vsJetTau{dm[0]}{var}", shift_key=f"tau_emb_sf_vsjet_tau{dm[1]}_{var}")
 
-                with defaults(producers=[configuration.ES_ID_SCHEME.ProducerES]):
+                with defaults(producers=[configuration.ES_ID_SCHEME.embedding.ProducerES]):
                     for dm in [
                         ("1prong0pizero", "DM0"),
                         ("1prong1pizero", "DM1"),
                         ("3prong0pizero", "DM10"),
                         ("3prong1pizero", "DM11"),
                     ]:
-                        for var in configuration.ES_ID_SCHEME.pt_binning:
+                        for var in configuration.ES_ID_SCHEME.embedding.pt_binning:
                             add_shift(name=f"tauEs{dm[0]}{var}", shift_key=f"tau_ES_shift_{dm[1]}_{var}")
 
                 # dm binned variations
             with defaults(scopes="tt", producers=[embedding.Tau_1_VsJetTauID_tt_SF, embedding.Tau_2_VsJetTauID_tt_SF]):
                 for dm in [0, 1, 10, 11]:
-                    for var in configuration.ES_ID_SCHEME.pt_binning:
+                    for var in configuration.ES_ID_SCHEME.embedding.pt_binning:
                         add_shift(name=f"vsJetTauDM{dm}{var}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}{var}")
 
     #########################
@@ -1139,7 +1139,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
         configuration.add_modification_rule(
             ["mt", "et", "tt"],
             ReplaceProducer(
-                producers=[taus.TauEnergyCorrection, configuration.ES_ID_SCHEME.ProducerGroupES],
+                producers=[taus.TauEnergyCorrection, configuration.ES_ID_SCHEME.embedding.ProducerGroupES],
                 samples=["embedding"],
             ),
         )
