@@ -82,54 +82,70 @@ with defaults(scopes=["tt"]):
         vec_config="vsjet_tau_id",
     )
 
-Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
-    call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
-        {df},
-        correctionManager,
-        {output},
-        {input},
-        "{tau_sf_file}",
-        "{tau_id_discriminator}",
-        {vec_open}{tau_dms}{vec_close},
-        "{vsjet_tau_id_WP}",
-        "{tau_vsjet_vseleWP}",
-        "{tau_vsjet_sf_dependence}",
-        "{tau_sf_vsjet_tau30to35}",
-        "{tau_sf_vsjet_tau35to40}",
-        "{tau_sf_vsjet_tau40to500}",
-        "{tau_sf_vsjet_tau500to1000}",
-        "{tau_sf_vsjet_tau1000toinf}")''',
+with defaults(
+    scopes=["et", "mt"],
     input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
     output="tau_2_vsjet_sf_outputname",
-    scope=["et", "mt"],
-    vec_config="vsjet_tau_id",
-)
+    vec_configs="vsjet_tau_id",
+):
+    Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            {vec_open}{tau_dms}{vec_close},
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_tau30to35}",
+            "{tau_sf_vsjet_tau35to40}",
+            "{tau_sf_vsjet_tau40to500}",
+            "{tau_sf_vsjet_tau500to1000}",
+            "{tau_sf_vsjet_tau1000toinf}")''',
+    )
 
-Tau_2_VsJetTauID_lt_SF_pt_dm_binned = ExtendedVectorProducer(
-    call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
-        {df},
-        correctionManager,
-        {output},
-        {input},
-        "{tau_sf_file}",
-        "{tau_id_discriminator}",
-        {vec_open}{tau_dms}{vec_close},
-        "{vsjet_tau_id_WP}",
-        "{tau_vsjet_vseleWP}",
-        "{tau_vsjet_sf_dependence}",
-        "{variation_DM0_pt20to40}",
-        "{variation_DM0_pt40toInf}",
-        "{variation_DM1_pt20to40}",
-        "{variation_DM1_pt40toInf}",
-        "{variation_DM10_pt20to40}",
-        "{variation_DM10_pt40toInf}",
-        "{variation_DM11_pt20to40}",
-        "{variation_DM11_pt40toInf}")''',
-    input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
-    output="tau_2_vsjet_sf_outputname",
-    scope=["et", "mt"],
-    vec_config="vsjet_tau_id",
-)
+    Tau_2_VsJetTauID_lt_SF_dm_binned = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            {vec_open}{tau_dms}{vec_close},
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_1prong0pizero}",
+            "{tau_sf_vsjet_1prong1pizero}",
+            "{tau_sf_vsjet_3prong0pizero}",
+            "{tau_sf_vsjet_3prong1pizero}")''',
+    )
+
+    Tau_2_VsJetTauID_lt_SF_dm_pt_binned = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            {vec_open}{tau_dms}{vec_close},
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_1prong0pizero20to40}",
+            "{tau_sf_vsjet_1prong0pizero40toInf}",
+            "{tau_sf_vsjet_1prong1pizero20to40}",
+            "{tau_sf_vsjet_1prong1pizero40toInf}",
+            "{tau_sf_vsjet_3prong0pizero20to40}",
+            "{tau_sf_vsjet_3prong0pizero40toInf}",
+            "{tau_sf_vsjet_3prong1pizero20to40}",
+            "{tau_sf_vsjet_3prong1pizero40toInf}")''',
+    )
 
 with defaults(scopes=["et", "mt", "tt"], input=[q.eta_2, q.gen_match_2],):
     Tau_2_VsEleTauID_SF = ExtendedVectorProducer(
@@ -238,13 +254,15 @@ with defaults(call=None, input=None, output=None):
             ],
             "mt": [
                 Tau_2_VsJetTauID_lt_SF,
-                Tau_2_VsJetTauID_lt_SF_pt_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
                 Tau_2_VsEleTauID_SF,
                 Tau_2_VsMuTauID_SF,
             ],
             "et": [
                 Tau_2_VsJetTauID_lt_SF,
-                Tau_2_VsJetTauID_lt_SF_pt_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
                 Tau_2_VsEleTauID_SF,
                 Tau_2_VsMuTauID_SF,
             ],
