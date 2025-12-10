@@ -106,7 +106,7 @@ with defaults(scopes=["et", "mt", "tt"], input=[q.eta_2, q.gen_match_2],):
 # Electron ID/ISO SF
 #########################
 
-with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2]):
+with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2, q.phi_2]):
     Ele_2_IDWP90_SF = Producer(
         call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
         output=[q.id_wgt_ele_wp90nonIso_2],
@@ -125,7 +125,7 @@ with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2]):
         output=[q.iso_wgt_ele_2],
     )
 
-with defaults(scopes=["em", "ee", "et"], input=[q.pt_1, q.eta_1]):
+with defaults(scopes=["em", "ee", "et"], input=[q.pt_1, q.eta_1, q.phi_1]):
     Ele_1_IDWP90_SF = Producer(
         call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", "{ele_sf_file}", "{ele_id_sf_name}, "{ele_sf_varation}")',
         output=[q.id_wgt_ele_wp90nonIso_1],
@@ -157,7 +157,7 @@ ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(  # --- from our m
 #########################
 
 btagging_SF = Producer(
-    call='physicsobject::jet::scalefactor::Btagging({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}")',
+    call='physicsobject::jet::scalefactor::BtaggingShape({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}")',
     input=[
         q.Jet_pt_corrected,
         nanoAOD.Jet_eta,
