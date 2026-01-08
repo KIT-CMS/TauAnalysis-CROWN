@@ -57,14 +57,14 @@ with defaults(scopes=["global"]):
         input=[q.Electron_pt_corrected],
         output=[q._ElectronPtCutMin],
     )
-    ElectronPtCutMax = Producer(
-        call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_pt})",
-        input=[q.Electron_pt_corrected],
-        output=[q._ElectronPtCutMax],
-    )
+    #ElectronPtCutMax = Producer(
+    #    call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_pt})",
+    #    input=[q.Electron_pt_corrected],
+    #    output=[q._ElectronPtCutMax],
+    #)
     ElectronIDCut = Producer(
         call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',
-        input=[nanoAOD.Electron_mvaNoIso_WP90],
+        input=[nanoAOD.Electron_mvaIso_WP90],
         output=[q._ElectronIDCut],
     )
     ElectronIsoCut = Producer(
@@ -88,7 +88,7 @@ with defaults(scopes=["global"]):
         output=[q.base_electrons_mask],
         subproducers=[
             ElectronPtCutMin,
-            ElectronPtCutMax,
+            #ElectronPtCutMax,
             ElectronEtaCut,
             ElectronDxyCut,
             ElectronDzCut,

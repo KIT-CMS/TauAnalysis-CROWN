@@ -679,14 +679,14 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
         "tt",
         ReplaceProducer(
             producers=[
-                triggers.TTGenerateDoubleTriggerFlags,
-                triggers.TTGenerateDoubleTriggerFlagsEmbedding,
+                triggers.TTGenerateDoubleTauFlags,
+                triggers.TTGenerateDoubleTauFlagsEmbedding,
             ],
             samples="embedding",
         ),
     )
     configuration.add_outputs(
-        "tt", triggers.TTGenerateDoubleTriggerFlagsEmbedding.output_group
+        "tt", triggers.TTGenerateDoubleTauFlagsEmbedding.output_group
     )
 
     # use other trigger flags for embedding samples

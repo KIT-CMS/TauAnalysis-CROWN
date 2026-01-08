@@ -3,7 +3,7 @@ from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
 from ..producers import electrons as electrons
 from ..producers import muons as muons
-from ..producers import met as met
+from ..producers import genparticles as genparticles
 
 ####################
 # Set of general producers for event quantities
@@ -28,7 +28,7 @@ with defaults(scopes=["global"]):
         # ---
         SampleFlags_ProducerCollection = [
             is_data := Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data]),
-            #is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
+            is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
             is_ttbar := Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
             is_dyjets_powheg := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_powheg})", output=[q.is_dyjets_powheg]),
             is_dyjets_amcatnlo := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_amcatnlo})", output=[q.is_dyjets_amcatnlo]),
@@ -50,7 +50,7 @@ with defaults(scopes=["global"]):
             is_ggh_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb]),
             is_vbf_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb]),
             is_rem_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb]),
-            #is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
+            is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
             is_singletop := Producer(call="event::quantity::Define({df}, {output}, {is_singletop})", output=[q.is_singletop]),
             is_rem_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau]),
             is_electroweak_boson := Producer(call="event::quantity::Define({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson]),
@@ -90,14 +90,19 @@ with defaults(scopes=["global"]):
         input=[nanoAOD.Pileup_nTrueInt],
         output=[q.puweight],
     )
+    PUweights_root = Producer(
+        call='event::reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
+        input=[nanoAOD.Pileup_nTrueInt],
+        output=[q.puweight],
+    )
 
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     ZPtReweighting = ProducerGroup(
-        call='event::reweighting::ZPtWeight({df}, correctionManager, {output}, {input}, "{DY_order}", "{zpt_file}", "{zpt_variation}")',
+        call='event::reweighting::ZPtWeight({df}, correctionManager, {output}, {input}, "{zpt_file}", "DY_pTll_reweighting", "{DY_order}", "{zpt_variation}")',
         input=[],
         output=[q.zPtReweightWeight],
-        subproducers=[met.GenZpt],
+        subproducers=[genparticles.GenZpt],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",

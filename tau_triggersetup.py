@@ -15,7 +15,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     {
                     "flagname": "trg_single_mu24",
                     "hlt_path": "HLT_IsoMu24",
-                    "ptcut": 25,
+                    "ptcut": 26,
                     "etacut": 2.4,
                     "filterbit": 1,
                     "trigger_particle_id": 13,
@@ -56,7 +56,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "flagname": "trg_single_ele30",
                     "hlt_path": "HLT_Ele30_WPTight_Gsf",
                     "ptcut": 32,
-                    "etacut": 2.1,
+                    "etacut": 2.5,
                     "filterbit": 1,  # matching the tight WP
                     "trigger_particle_id": 11,
                     "max_deltaR_triggermatch": 0.4,
@@ -93,12 +93,66 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "doubletau_trigger": 
                 [
                     {
-                    "flagname": "trg_double_tau35_mediumiso_hps",
-                    "hlt_path": "HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1", 
-                    "p1_ptcut": 40,
-                    "p2_ptcut": 40,
-                    "p1_etacut": 2.1,
-                    "p2_etacut": 2.1,
+                    "flagname": EraModifier(
+                        {
+                            "2022preEE": "trg_double_tau35_mediumiso_hps",
+                            "2022postEE": "trg_double_tau35_mediumiso_hps",
+                            "2023preBPix": "trg_double_tau35_mediumiso_hps",
+                            "2023postBPix": "trg_double_tau35_mediumiso_hps",
+                            "2024": "trg_double_tau30_mediumiso_pnet",
+                            "2025": "trg_double_tau30_mediumiso_pnet",
+                        }
+                    ),
+                    "hlt_path": EraModifier(
+                        {
+                            "2022preEE":"HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1", 
+                            "2022postEE":"HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1", 
+                            "2023preBPix":"HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1", 
+                            "2023postBPix":"HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1", 
+                            "2024":"HLT_DoublePNetTauhPFJet30_Medium_L2NN_eta2p3", 
+                            "2025":"HLT_DoublePNetTauhPFJet30_Medium_L2NN_eta2p3"
+                        }
+                    ),
+                    "p1_ptcut": EraModifier(
+                        {
+                            "2022preEE": 40,
+                            "2022postEE": 40,
+                            "2023preBPix": 40,
+                            "2023postBPix": 40,
+                            "2024": 35,
+                            "2025": 35,
+                        }
+                    ),  
+                    "p2_ptcut": EraModifier(
+                        {
+                            "2022preEE": 40,
+                            "2022postEE": 40,
+                            "2023preBPix": 40,
+                            "2023postBPix": 40,
+                            "2024": 35,
+                            "2025": 35,
+                        }
+                    ),   
+                    "p1_etacut": EraModifier(
+                        {
+                            "2022preEE": 2.1,
+                            "2022postEE": 2.1,
+                            "2023preBPix": 2.1,
+                            "2023postBPix": 2.1,
+                            "2024": 2.3,
+                            "2025": 2.3,
+                        }
+                    ),  
+                    "p2_etacut": EraModifier(
+                        {
+                            "2022preEE": 2.1,
+                            "2022postEE": 2.1,
+                            "2023preBPix": 2.1,
+                            "2023postBPix": 2.1,
+                            "2024": 2.3,
+                            "2025": 2.3, 
+                        }
+                    ),  
                     "p1_filterbit": EraModifier(
                         {
                             "2022preEE": 7,
@@ -106,6 +160,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023preBPix": 7,
                             "2023postBPix": 7,
                             "2024": 11,
+                            "2025": 11,
                         }
                     ),  
                     "p2_filterbit": EraModifier(
@@ -115,6 +170,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023preBPix": 7,
                             "2023postBPix": 7,
                             "2024": 11,
+                            "2025": 11,
                         }
                     ),   
                     "p1_trigger_particle_id": 15,
@@ -209,6 +265,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023preBPix": "data/jsonpog-integration/POG/EGM/2023_Summer23/electronHlt.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/EGM/2023_Summer23BPix/electronHlt.json.gz",
                     "2024": "data/jsonpog-integration/POG/EGM/2023_Summer23BPix/electronHlt.json.gz",
+                    "2025": "data/jsonpog-integration/POG/EGM/2023_Summer23BPix/electronHlt.json.gz",
                 }
             ),
             "et_trigger_leg1_sf_file": EraModifier(
@@ -218,6 +275,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023preBPix": "data/hleprare/TriggerScaleFactors/2023preBPix/CrossEleTauHlt_EleLeg_v1.json",
                     "2023postBPix": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                     "2024": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
+                    "2025": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                 }
             ),
             "e_trigger_era": EraModifier(
@@ -227,6 +285,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023preBPix": "2023PromptC",
                     "2023postBPix": "2023PromptD",
                     "2024": "2023PromptD",
+                    "2025": "2023PromptD",
                 }
             ),
             "single_ele_trigger_sf": [
@@ -270,6 +329,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023preBPix": '"data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json"',
                     "2023postBPix": '"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
                     "2024":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2025":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
                 }
             ),
             "single_mu_trigger_sf": [
@@ -306,16 +366,52 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "doubletau_trigger_leg1_sf": [
                 {
-                    "tt_trigger_leg1_flagname": "trg_wgt_doubletau35_leg1",
-                    "tt_trigger_flag": "trg_double_tau35_mediumiso_hps",
+                    "tt_trigger_leg1_flagname": EraModifier(
+                        {
+                            "2022preEE": "trg_wgt_doubletau35_leg1",
+                            "2022postEE": "trg_wgt_doubletau35_leg1",
+                            "2023preBPix": "trg_wgt_doubletau35_leg1",
+                            "2023postBPix": "trg_wgt_doubletau35_leg1",
+                            "2024": "trg_wgt_doubletau30_leg1",
+                            "2025": "trg_wgt_doubletau30_leg1",
+                        }
+                    ),
+                    "tt_trigger_flag": EraModifier(
+                        {
+                            "2022preEE": "trg_double_tau35_mediumiso_hps",
+                            "2022postEE": "trg_double_tau35_mediumiso_hps",
+                            "2023preBPix": "trg_double_tau35_mediumiso_hps",
+                            "2023postBPix": "trg_double_tau35_mediumiso_hps",
+                            "2024": "trg_double_tau30_mediumiso_pnet",
+                            "2025": "trg_double_tau30_mediumiso_pnet",
+                        }
+                    ),
                     "tt_trigger_leg1_sf_name": "ditau",
                     "tt_trigger_leg1_variation": "nom",
                 },
             ],
             "doubletau_trigger_leg2_sf": [
                 {
-                    "tt_trigger_leg2_flagname": "trg_wgt_doubletau35_leg2",
-                    "tt_trigger_flag": "trg_double_tau35_mediumiso_hps",
+                    "tt_trigger_leg2_flagname": EraModifier(
+                        {
+                            "2022preEE": "trg_wgt_doubletau35_leg2",
+                            "2022postEE": "trg_wgt_doubletau35_leg2",
+                            "2023preBPix": "trg_wgt_doubletau35_leg2",
+                            "2023postBPix": "trg_wgt_doubletau35_leg2",
+                            "2024": "trg_wgt_doubletau30_leg2",
+                            "2025": "trg_wgt_doubletau30_leg2",
+                        }
+                    ),
+                    "tt_trigger_flag": EraModifier(
+                        {
+                            "2022preEE": "trg_double_tau35_mediumiso_hps",
+                            "2022postEE": "trg_double_tau35_mediumiso_hps",
+                            "2023preBPix": "trg_double_tau35_mediumiso_hps",
+                            "2023postBPix": "trg_double_tau35_mediumiso_hps",
+                            "2024": "trg_double_tau30_mediumiso_pnet",
+                            "2025": "trg_double_tau30_mediumiso_pnet",
+                        }
+                    ),
                     "tt_trigger_leg2_sf_name": "ditau",
                     "tt_trigger_leg2_variation": "nom",
                 },
@@ -436,16 +532,52 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ("tt"): {
                         "doubletau_trigger_leg1_sf": [
                             {
-                                "tt_trigger_leg1_flagname": "trg_wgt_doubletau35_leg1",
-                                "tt_trigger_flag": "trg_double_tau35_mediumiso_hps",
+                                "tt_trigger_leg1_flagname": EraModifier(
+                                    {
+                                        "2022preEE": "trg_wgt_doubletau35_leg1",
+                                        "2022postEE": "trg_wgt_doubletau35_leg1",
+                                        "2023preBPix": "trg_wgt_doubletau35_leg1",
+                                        "2023postBPix": "trg_wgt_doubletau35_leg1",
+                                        "2024": "trg_wgt_doubletau30_leg1",
+                                        "2025": "trg_wgt_doubletau30_leg1",
+                                    }
+                                ),
+                                "tt_trigger_flag":  EraModifier(
+                                    {
+                                        "2022preEE": "trg_double_tau35_mediumiso_hps",
+                                        "2022postEE": "trg_double_tau35_mediumiso_hps",
+                                        "2023preBPix": "trg_double_tau35_mediumiso_hps",
+                                        "2023postBPix": "trg_double_tau35_mediumiso_hps",
+                                        "2024": "trg_double_tau30_mediumiso_pnet",
+                                        "2025": "trg_double_tau30_mediumiso_pnet",
+                                    }
+                                ),
                                 "tt_trigger_leg1_sf_name": "ditau",
                                 "tt_trigger_leg1_variation": _variation,
                             },
                         ],
                         "doubletau_trigger_leg2_sf": [
                             {
-                                "tt_trigger_leg2_flagname": "trg_wgt_doubletau35_leg2",
-                                "tt_trigger_flag": "trg_double_tau35_mediumiso_hps",
+                                "tt_trigger_leg2_flagname": EraModifier(
+                                    {
+                                        "2022preEE": "trg_wgt_doubletau35_leg2",
+                                        "2022postEE": "trg_wgt_doubletau35_leg2",
+                                        "2023preBPix": "trg_wgt_doubletau35_leg2",
+                                        "2023postBPix": "trg_wgt_doubletau35_leg2",
+                                        "2024": "trg_wgt_doubletau30_leg2",
+                                        "2025": "trg_wgt_doubletau30_leg2",
+                                    }
+                                ),
+                                "tt_trigger_flag":  EraModifier(
+                                    {
+                                        "2022preEE": "trg_double_tau35_mediumiso_hps",
+                                        "2022postEE": "trg_double_tau35_mediumiso_hps",
+                                        "2023preBPix": "trg_double_tau35_mediumiso_hps",
+                                        "2023postBPix": "trg_double_tau35_mediumiso_hps",
+                                        "2024": "trg_double_tau30_mediumiso_pnet",
+                                        "2025": "trg_double_tau30_mediumiso_pnet",
+                                    }
+                                ),
                                 "tt_trigger_leg2_sf_name": "ditau",
                                 "tt_trigger_leg2_variation": _variation,
                             },

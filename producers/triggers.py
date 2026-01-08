@@ -18,7 +18,7 @@ TrigObj_collection = [
 ####################
 with defaults(output="flagname"):
     with defaults(
-        call='''trigger::GenerateSingleTriggerFlag(
+        call='''trigger::SingleObjectFlag(
             {df},
             {output},
             {input},
@@ -41,7 +41,7 @@ with defaults(output="flagname"):
             # ---
             GenerateSingleTrailingTauTriggerFlags = EVP(scope=["et", "mt"], vec_config="singletau_trigger_trailing")
     with defaults(
-        call='''trigger::GenerateDoubleTriggerFlag(
+        call='''trigger::DoubleObjectFlag(
             {df},
             {output},
             {input},
@@ -60,7 +60,7 @@ with defaults(output="flagname"):
             EMGenerateCrossTriggerFlags = EVP(scope=["em"], vec_config="elmu_cross_trigger")
             ETGenerateCrossTriggerFlags = EVP(scope=["et"], vec_config="eltau_cross_trigger")
             MTGenerateCrossTriggerFlags = EVP(scope=["mt"], vec_config="mutau_cross_trigger")
-            TTGenerateDoubleTriggerFlags = EVP(scope=["tt"], vec_config="doubletau_trigger")
+            TTGenerateDoubleTauFlags = EVP(scope=["tt"], vec_config="doubletau_trigger")
             MuMuGenerateDoubleMuonTriggerFlags = EVP(scope=["mm"], vec_config="doublemuon_trigger")
             ElElGenerateDoubleMuonTriggerFlags = EVP(scope=["ee"], vec_config="doubleelectron_trigger")
     with defaults(
@@ -80,4 +80,4 @@ with defaults(output="flagname"):
     ):
         with defaults(input=[q.p4_1, q.p4_2] + TrigObj_collection):
             MTGenerateCrossTriggerFlagsEmbedding = EVP(scope=["mt"], vec_config="mutau_cross_trigger_embedding")
-            TTGenerateDoubleTriggerFlagsEmbedding = EVP(scope=["tt"], vec_config="doubletau_trigger_embedding")
+            TTGenerateDoubleTauFlagsEmbedding = EVP(scope=["tt"], vec_config="doubletau_trigger_embedding")

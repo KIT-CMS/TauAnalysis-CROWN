@@ -119,8 +119,7 @@ with defaults(scopes=["tt"]):
         call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_rawDeepTau2018v2p5VSjet
-,
+            nanoAOD.Tau_rawDeepTau2018v2p5VSjet,
             q.good_taus_mask,
         ],
         output=[q.dileptonpair],
