@@ -58,7 +58,7 @@ with defaults(scopes=["em", "mm"], input=[q.pt_2, q.eta_2]):
 
 with defaults(scopes=["tt"]):
     Tau_1_VsJetTauID_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsJet_tt({df}, correctionManager, {output}, {input}, "{tau_sf_file}", "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_vsjet_sf_dependence}", "{tau_sf_vsjet_tauDM0}", "{tau_sf_vsjet_tauDM1}", "{tau_sf_vsjet_tauDM10}", "{tau_sf_vsjet_tauDM11}")',
+        call='physicsobject::tau::scalefactor::Id_vsJet({df}, correctionManager, {output}, {input}, "{tau_sf_file}", "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_vsjet_sf_dependence}", "{tau_sf_vsjet_tauDM0}", "{tau_sf_vsjet_tauDM1}", "{tau_sf_vsjet_tauDM10}", "{tau_sf_vsjet_tauDM11}")',
         input=[q.pt_1, q.tau_decaymode_1, q.gen_match_1],
         output="tau_1_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
@@ -76,19 +76,74 @@ with defaults(scopes=["tt"]):
         vec_config="vsmu_tau_id",
     )
     Tau_2_VsJetTauID_tt_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsJet_tt({df}, correctionManager, {output}, {input}, "{tau_sf_file}", "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_vsjet_sf_dependence}", "{tau_sf_vsjet_tauDM0}", "{tau_sf_vsjet_tauDM1}", "{tau_sf_vsjet_tauDM10}", "{tau_sf_vsjet_tauDM11}")',
+        call='physicsobject::tau::scalefactor::Id_vsJet({df}, correctionManager, {output}, {input}, "{tau_sf_file}", "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_vsjet_sf_dependence}", "{tau_sf_vsjet_tauDM0}", "{tau_sf_vsjet_tauDM1}", "{tau_sf_vsjet_tauDM10}", "{tau_sf_vsjet_tauDM11}")',
         input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
         output="tau_2_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
     )
 
-Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
-    call='physicsobject::tau::scalefactor::Id_vsJet_lt({df}, correctionManager, {output}, {input}, "{tau_sf_file}", "{tau_id_discriminator}", {vec_open}{tau_dms}{vec_close}, "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_vsjet_sf_dependence}", "{tau_sf_vsjet_tau30to35}", "{tau_sf_vsjet_tau35to40}", "{tau_sf_vsjet_tau40to500}", "{tau_sf_vsjet_tau500to1000}", "{tau_sf_vsjet_tau1000toinf}")',
+with defaults(
+    scopes=["et", "mt"],
     input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
     output="tau_2_vsjet_sf_outputname",
-    scope=["et", "mt"],
-    vec_config="vsjet_tau_id",
-)
+    vec_configs="vsjet_tau_id",
+):
+    Tau_2_VsJetTauID_lt_SF = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            {vec_open}{tau_dms}{vec_close},
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_tau30to35}",
+            "{tau_sf_vsjet_tau35to40}",
+            "{tau_sf_vsjet_tau40to500}",
+            "{tau_sf_vsjet_tau500to1000}",
+            "{tau_sf_vsjet_tau1000toinf}")''',
+    )
+
+    Tau_2_VsJetTauID_lt_SF_dm_binned = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_1prong0pizero}",
+            "{tau_sf_vsjet_1prong1pizero}",
+            "{tau_sf_vsjet_3prong0pizero}",
+            "{tau_sf_vsjet_3prong1pizero}")''',
+    )
+
+    Tau_2_VsJetTauID_lt_SF_dm_pt_binned = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::Id_vsJet(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_discriminator}",
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_1prong0pizero20to40}",
+            "{tau_sf_vsjet_1prong0pizero40toInf}",
+            "{tau_sf_vsjet_1prong1pizero20to40}",
+            "{tau_sf_vsjet_1prong1pizero40toInf}",
+            "{tau_sf_vsjet_3prong0pizero20to40}",
+            "{tau_sf_vsjet_3prong0pizero40toInf}",
+            "{tau_sf_vsjet_3prong1pizero20to40}",
+            "{tau_sf_vsjet_3prong1pizero40toInf}")''',
+    )
 
 with defaults(scopes=["et", "mt", "tt"], input=[q.eta_2, q.gen_match_2],):
     Tau_2_VsEleTauID_SF = ExtendedVectorProducer(
@@ -197,11 +252,15 @@ with defaults(call=None, input=None, output=None):
             ],
             "mt": [
                 Tau_2_VsJetTauID_lt_SF,
+                Tau_2_VsJetTauID_lt_SF_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
                 Tau_2_VsEleTauID_SF,
                 Tau_2_VsMuTauID_SF,
             ],
             "et": [
                 Tau_2_VsJetTauID_lt_SF,
+                Tau_2_VsJetTauID_lt_SF_dm_binned,
+                Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
                 Tau_2_VsEleTauID_SF,
                 Tau_2_VsMuTauID_SF,
             ],

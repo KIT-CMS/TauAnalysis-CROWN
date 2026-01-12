@@ -113,7 +113,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 ("RelativeSample",
                  f'{{"Regrouped_RelativeSample_{era}"}}', era),
             ]:
-                with defaults(name=f"jesUnc{name}{era}" if is_yearly else f"jesUnc{name}"):
+                with defaults(name=f"jesUnc{name}Year" if is_yearly else f"jesUnc{name}"):
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, JES_source], "Down": [-1, JES_source]},

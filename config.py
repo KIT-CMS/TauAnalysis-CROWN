@@ -26,6 +26,7 @@ from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from .scripts.SpecialSetups import ES_ID_SCHEME
 
 
 def build_config(
@@ -46,6 +47,8 @@ def build_config(
         available_eras,
         available_scopes,
     )
+
+    configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_pt_binned")  # or "dm_binned"
 
     # first add default parameters necessary for all scopes
     configuration.add_config_parameters(
@@ -145,10 +148,18 @@ def build_config(
             ),
             "tau_ES_json_name": "tau_energy_scale",
             "tau_id_algorithm": "DeepTau2017v2p1",
-            "tau_ES_shift_DM0": "nom",
-            "tau_ES_shift_DM1": "nom",
-            "tau_ES_shift_DM10": "nom",
-            "tau_ES_shift_DM11": "nom",
+            "tau_ES_shift_1prong0pizero": "nom",
+            "tau_ES_shift_1prong0pizero20to40": "nom",
+            "tau_ES_shift_1prong0pizero40toInf": "nom",
+            "tau_ES_shift_1prong1pizero": "nom",
+            "tau_ES_shift_1prong1pizero20to40": "nom",
+            "tau_ES_shift_1prong1pizero40toInf": "nom",
+            "tau_ES_shift_3prong0pizero": "nom",
+            "tau_ES_shift_3prong0pizero20to40": "nom",
+            "tau_ES_shift_3prong0pizero40toInf": "nom",
+            "tau_ES_shift_3prong1pizero": "nom",
+            "tau_ES_shift_3prong1pizero20to40": "nom",
+            "tau_ES_shift_3prong1pizero40toInf": "nom",
             "tau_elefake_es_DM0_barrel": "nom",
             "tau_elefake_es_DM0_endcap": "nom",
             "tau_elefake_es_DM1_barrel": "nom",
@@ -218,7 +229,7 @@ def build_config(
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
             "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
-            "jet_jer_master_seed": 42, 
+            "jet_jer_master_seed": 42,
             "jet_jec_file": EraModifier(
                 {
                     "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
@@ -301,7 +312,7 @@ def build_config(
     ###### scope Specifics ######
     # MT/TT/ET scope tau ID flags and SFs
 
-    # ID flags without where scalefactors does not exist or are requiered withouth them
+    # ID flags where scalefactors does not exist or are requiered withouth them
     configuration.add_config_parameters(
         ["mt", "tt", "et"],
         {
@@ -402,8 +413,22 @@ def build_config(
             "tau_sf_vsjet_tau40to500": "nom",
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
-            "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
-            "tau_vsjet_vseleWP": "VVLoose",
+            # ---
+            "tau_vsjet_sf_dependence": "pt",  # or "dm"
+            # ---
+            "tau_sf_vsjet_1prong0pizero20to40": "nom",
+            "tau_sf_vsjet_1prong0pizero40toInf": "nom",
+            "tau_sf_vsjet_1prong1pizero20to40": "nom",
+            "tau_sf_vsjet_1prong1pizero40toInf": "nom",
+            "tau_sf_vsjet_3prong0pizero20to40": "nom",
+            "tau_sf_vsjet_3prong0pizero40toInf": "nom",
+            "tau_sf_vsjet_3prong1pizero20to40": "nom",
+            "tau_sf_vsjet_3prong1pizero40toInf": "nom",
+            # ---
+            "tau_sf_vsjet_1prong0pizero": "nom",
+            "tau_sf_vsjet_1prong1pizero": "nom",
+            "tau_sf_vsjet_3prong0pizero": "nom",
+            "tau_sf_vsjet_3prong1pizero": "nom",
         },
     )
     configuration.add_config_parameters(
@@ -426,7 +451,7 @@ def build_config(
             "tau_sf_vsjet_tauDM1": "nom",
             "tau_sf_vsjet_tauDM10": "nom",
             "tau_sf_vsjet_tauDM11": "nom",
-            "tau_vsjet_sf_dependence": "dm",  # or "dm", "eta"
+            "tau_vsjet_sf_dependence": "dm",  # or "dm"
             "tau_vsjet_vseleWP": "VVLoose",
         },
     )
@@ -552,7 +577,7 @@ def build_config(
         },
     )
 
-    ## all scopes misc settings
+    # all scopes misc settings
     configuration.add_config_parameters(
         scopes,
         {
@@ -560,7 +585,7 @@ def build_config(
             "pairselection_min_dR": 0.5,
         },
     )
-    ## all scopes MET selection
+    # all scopes MET selection
     configuration.add_config_parameters(
         scopes,
         {
@@ -815,7 +840,7 @@ def build_config(
             met.MetBasics,
         ],
     )
-    ## add prefiring
+    # add prefiring
     if era != "2018":
         configuration.add_producers(
             "global",
@@ -886,7 +911,7 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrection,
+            configuration.ES_ID_SCHEME.mc.producerGroupES,
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -901,7 +926,7 @@ def build_config(
             # pairquantities.FastMTTQuantities,
             genparticles.MTGenDiTauPairQuantities,
             #  scalefactors.MuonIDIso_SF,
-            scalefactors.Tau_2_VsJetTauID_lt_SF,
+            configuration.ES_ID_SCHEME.mc.producerID,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
             triggers.MTGenerateSingleMuonTriggerFlags,
@@ -916,7 +941,7 @@ def build_config(
         "et",
         [
             electrons.GoodElectrons,
-            taus.TauEnergyCorrection,
+            configuration.ES_ID_SCHEME.mc.producerGroupES,
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -932,7 +957,7 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.ETDiTauPairQuantities,
             genparticles.ETGenDiTauPairQuantities,
-            scalefactors.Tau_2_VsJetTauID_lt_SF,
+            configuration.ES_ID_SCHEME.mc.producerID,
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
             # scalefactors.EleID_SF,
@@ -949,7 +974,7 @@ def build_config(
         [
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrection,
+            configuration.ES_ID_SCHEME.mc.producerGroupES,
             # taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -1009,7 +1034,7 @@ def build_config(
         RemoveProducer(
             producers=[
                 scalefactors.Tau_2_VsMuTauID_SF,
-                scalefactors.Tau_2_VsJetTauID_lt_SF,
+                configuration.ES_ID_SCHEME.mc.producerID,
                 scalefactors.Tau_2_VsEleTauID_SF,
             ],
             samples="data",
@@ -1042,7 +1067,7 @@ def build_config(
     configuration.add_modification_rule(
         ["et", "mt", "tt"],
         ReplaceProducer(
-            producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_data],
+            producers=[configuration.ES_ID_SCHEME.mc.producerGroupES, taus.TauEnergyCorrection_data],
             samples="data",
         ),
     )
@@ -1428,7 +1453,7 @@ def build_config(
         [
             q.nmuons,
             q.ntaus,
-            scalefactors.Tau_2_VsJetTauID_lt_SF.output_group,
+            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
@@ -1456,7 +1481,7 @@ def build_config(
         [
             q.nelectrons,
             q.ntaus,
-            scalefactors.Tau_2_VsJetTauID_lt_SF.output_group,
+            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
             pairquantities.VsJetTauIDFlag_2.output_group,
@@ -1577,13 +1602,14 @@ def build_config(
     # LHE Scale Weight variations
     #########################
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
-    if "ggh" in sample or "qqh" in sample:
+    if any([it in sample for it in ["ggh", "qqh", "vbf"]]):
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
                 add_shift(name="muFWeight", shift_key="muF", producers=[event.LHE_Scale_weight])
-                add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
-                add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
+                if "ggh" in sample:
+                    add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
+                    add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):
                 add_shift(name="PdfWeight", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
                 add_shift(name="AlphaSWeight", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
