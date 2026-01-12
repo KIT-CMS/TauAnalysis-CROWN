@@ -414,7 +414,7 @@ def build_config(
             "tau_sf_vsjet_tau500to1000": "nom",
             "tau_sf_vsjet_tau1000toinf": "nom",
             # ---
-            "tau_vsjet_sf_dependence": "pt",  # or "dm", "eta"
+            "tau_vsjet_sf_dependence": "pt",  # or "dm"
             # ---
             "tau_sf_vsjet_1prong0pizero20to40": "nom",
             "tau_sf_vsjet_1prong0pizero40toInf": "nom",
@@ -451,7 +451,7 @@ def build_config(
             "tau_sf_vsjet_tauDM1": "nom",
             "tau_sf_vsjet_tauDM10": "nom",
             "tau_sf_vsjet_tauDM11": "nom",
-            "tau_vsjet_sf_dependence": "dm",  # or "dm", "eta"
+            "tau_vsjet_sf_dependence": "dm",  # or "dm"
             "tau_vsjet_vseleWP": "VVLoose",
         },
     )
