@@ -52,7 +52,7 @@ with defaults(scopes=["global"]):
     )
     PrefireWeight = Producer(
        call="event::quantity::Rename<float>({df}, {output}, {input})",
-       input=[nanoAODv9.prefireWeight],
+       input=[nanoAODv9.L1PreFiringWeight_Nom],
        output=[q.prefiring_wgt],
     )
 
@@ -95,7 +95,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     # Run 2
     ZPtMassReweighting = Producer(
         call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
-        input=[q.recoil_genboson_p4],
+        input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(

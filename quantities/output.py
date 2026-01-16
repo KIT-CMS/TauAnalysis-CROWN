@@ -123,6 +123,7 @@ lhe_scale_weight = Quantity()
 lhe_pdf_weight = Quantity()
 lhe_alphaS_weight = Quantity()
 ps_weight = Quantity()
+prefiring_wgt = Quantity()
 
 #### MET 
 
@@ -281,6 +282,7 @@ mt_tot_pf = Quantity()
 pt_dijet = Quantity()
 jet_hemisphere = Quantity()
 zPtReweightWeight = Quantity()
+ZPtMassReweightWeight = Quantity()
 topPtReweightWeight = Quantity()
 
 p4_fastmtt = Quantity()
