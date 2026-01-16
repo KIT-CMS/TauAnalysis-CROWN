@@ -14,7 +14,7 @@ with defaults(call="ditau_pairselection::buildgenpair({df}, {input}, {output})",
     ElElGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_genPartIdx, nanoAOD.Electron_genPartIdx], scopes=["ee"])
 
 with defaults(
-    call="ditau_pairselection::buildtruegenpair({df}, {input}, {output}, {truegen_mother_pdgid}, {truegen_daughter_1_pdgid}, {truegen_daugher_2_pdgid})",
+    call="ditau_pairselection::buildtruegenpair({df}, {output}, {input}, {truegen_mother_pdgid}, {truegen_daughter_1_pdgid}, {truegen_daugher_2_pdgid})",
     input=[
         nanoAOD.GenPart_statusFlags,
         nanoAOD.GenPart_status,
@@ -30,7 +30,7 @@ with defaults(
 # Set of general producers for Gen DiTauPair Quantities
 ####################
 
-nanoAOD_GenParticle_kinematic_vars = [
+nanoAOD_GenPart_kinematic_vars = [
     nanoAOD.GenPart_pt,
     nanoAOD.GenPart_eta,
     nanoAOD.GenPart_phi,
@@ -39,12 +39,12 @@ nanoAOD_GenParticle_kinematic_vars = [
 
 with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
     with defaults(call="lorentzvector::Build({df}, {output}, {input}, 0)", output=[q.gen_p4_1]):
-        LVGenParticle1 = Producer(input=nanoAOD_GenParticle_kinematic_vars + [q.gen_dileptonpair])
-        LVTrueGenParticle1 = Producer(input=nanoAOD_GenParticle_kinematic_vars + [q.truegenpair])
+        LVGenParticle1 = Producer(input=nanoAOD_GenPart_kinematic_vars + [q.gen_dileptonpair])
+        LVTrueGenParticle1 = Producer(input=nanoAOD_GenPart_kinematic_vars + [q.truegenpair])
 
     with defaults(call="lorentzvector::Build({df}, {output}, {input}, 1)", output=[q.gen_p4_2]):
-        LVGenParticle2 = Producer(input=nanoAOD_GenParticle_kinematic_vars + [q.gen_dileptonpair])
-        LVTrueGenParticle2 = Producer(input=nanoAOD_GenParticle_kinematic_vars + [q.truegenpair])
+        LVGenParticle2 = Producer(input=nanoAOD_GenPart_kinematic_vars + [q.gen_dileptonpair])
+        LVTrueGenParticle2 = Producer(input=nanoAOD_GenPart_kinematic_vars + [q.truegenpair])
 
     gen_m_vis = Producer(
         call="lorentzvector::GetMass({df}, {output}, {input})",
@@ -135,7 +135,7 @@ with defaults(call=None, input=None, output=None):
 # DiTau Genmatching
 #######################
 
-nanoAOD_GenParticle_id_vars = [
+nanoAOD_GenPart_id_vars = [
     nanoAOD.GenPart_pdgId,
     nanoAOD.GenPart_statusFlags,
 ]
@@ -143,17 +143,17 @@ nanoAOD_GenParticle_id_vars = [
 with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
     GenPairForGenMatching = Producer(
         call="genparticles::tau::HadronicGenTaus({df}, {output}, {input})",
-        input=nanoAOD_GenParticle_id_vars + [nanoAOD.GenPart_genPartIdxMother],
+        input=nanoAOD_GenPart_id_vars + [nanoAOD.GenPart_genPartIdxMother],
         output=[q.hadronic_gen_taus],
     )
     GenMatchP1 = Producer(
         call="genparticles::tau::GenMatching({df}, {output}, {input})",
-        input=[q.hadronic_gen_taus] + nanoAOD_GenParticle_id_vars + nanoAOD_GenParticle_kinematic_vars + [q.p4_1],
+        input=[q.hadronic_gen_taus] + nanoAOD_GenPart_id_vars + nanoAOD_GenPart_kinematic_vars + [q.p4_1],
         output=[q.gen_match_1],
     )
     GenMatchP2 = Producer(
         call="genparticles::tau::GenMatching({df}, {output}, {input})",
-        input=[q.hadronic_gen_taus] + nanoAOD_GenParticle_id_vars + nanoAOD_GenParticle_kinematic_vars +[q.p4_2],
+        input=[q.hadronic_gen_taus] + nanoAOD_GenPart_id_vars + nanoAOD_GenPart_kinematic_vars +[q.p4_2],
         output=[q.gen_match_2],
     )
 
@@ -163,3 +163,51 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         output=None,
         subproducers=[GenPairForGenMatching, GenMatchP1, GenMatchP2],
     )
+
+CalculateGenBosonVector = Producer(
+    call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
+    scopes=['global'],
+    input=[
+        nanoAOD.GenPart_pt,
+        nanoAOD.GenPart_eta,
+        nanoAOD.GenPart_phi,
+        nanoAOD.GenPart_mass,
+        nanoAOD.GenPart_pdgId,
+        nanoAOD.GenPart_status,
+        nanoAOD.GenPart_statusFlags,
+    ],
+    output=[q.genboson_p4],
+)
+
+CalculateVisGenBosonVector = Producer(
+    call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
+    scopes=['global'],
+    input=[
+        nanoAOD.GenPart_pt,
+        nanoAOD.GenPart_eta,
+        nanoAOD.GenPart_phi,
+        nanoAOD.GenPart_mass,
+        nanoAOD.GenPart_pdgId,
+        nanoAOD.GenPart_status,
+        nanoAOD.GenPart_statusFlags,
+    ],
+    output=[q.visgenboson_p4],
+)
+
+##############
+## DY bug samples
+##############
+
+GenDYFlavor = Producer(
+    scopes=["global"],
+    call="genparticles::drell_yan::DecayFlavor({df}, {output}, {input})",
+    input=[nanoAOD.LHEPart_pdgId, nanoAOD.LHEPart_status],
+    output=[q.gen_dyflavor],
+)
+
+GenDYFilter = Producer(
+    scopes=["global"],
+    call='event::filter::Quantity<int>({df}, "DYFlavor", {input}, {vec_open}{DY_flavors_list}{vec_close})',
+    input=[q.gen_dyflavor],
+    output=[],
+)
