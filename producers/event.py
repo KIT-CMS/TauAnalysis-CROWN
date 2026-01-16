@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv9
 from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
 from ..producers import electrons as electrons
 from ..producers import muons as muons
@@ -50,11 +50,11 @@ with defaults(scopes=["global"]):
         call='event::filter::GoldenJSON({df}, correctionManager, "GoldenJSONFilter",  {input}, "{golden_json_file}")',
         input=[nanoAOD.run, nanoAOD.luminosityBlock],
     )
-    #PrefireWeight = Producer(
-    #    call="event::quantity::Rename<float>({df}, {output}, {input})",
-    #    input=[nanoAOD.prefireWeight],
-    #    output=[q.prefiring_wgt],
-    #)
+    PrefireWeight = Producer(
+       call="event::quantity::Rename<float>({df}, {output}, {input})",
+       input=[nanoAODv9.L1PreFiringWeight_Nom],
+       output=[q.prefiring_wgt],
+    )
 
     MetFilter = VectorProducer(
         call='event::filter::Flag({df}, "{met_filters}", "{met_filters}")',
@@ -86,10 +86,17 @@ with defaults(scopes=["global"]):
 
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
+    # Run 3
     ZPtReweighting = Producer(
         call='event::reweighting::ZBosonPt({df}, correctionManager, {output}, {input}, "{zpt_file}", "DY_pTll_reweighting", "{DY_order}", "{zpt_variation}")',
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
+    )
+    # Run 2
+    ZPtMassReweighting = Producer(
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        input=[q.genboson_p4],
+        output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",

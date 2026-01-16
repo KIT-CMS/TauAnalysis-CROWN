@@ -69,6 +69,10 @@ def build_config(
                 # ---------------------------------------
                 "file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_et.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/fake_factors_et.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_et.json.gz",
@@ -79,6 +83,10 @@ def build_config(
                 ),
                 "corr_file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_et.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/FF_corrections_et.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_et.json.gz",
@@ -172,6 +180,10 @@ def build_config(
                 # ---------------------------------------
                 "file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "payloads/fake_factors/sm/2018/with_embedding/fake_factors_mt.json.gz",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_mt.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/fake_factors_mt.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_mt.json.gz",
@@ -182,6 +194,10 @@ def build_config(
                 ),
                 "corr_file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "payloads/fake_factors/sm/2018/with_embedding/FF_corrections_mt.json.gz",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_mt.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/FF_corrections_mt.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_mt.json.gz",
@@ -272,6 +288,10 @@ def build_config(
                 # ---------------------------------------
                 "file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_tt.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/fake_factors_tt.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_tt.json.gz",
@@ -282,6 +302,10 @@ def build_config(
                 ),
                 "corr_file": EraModifier(
                     {
+                        "2016preVFP": "",
+                        "2016postVFP": "",
+                        "2017": "",
+                        "2018": "",
                         "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_tt.json.gz",
                         "2022postEE": "payloads/fake_factors/sm/2022postEE/FF_corrections_tt.json.gz",
                         "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_tt.json.gz",

@@ -33,7 +33,8 @@ def run(args):
         "data_G",
         "electroweak_boson",
     ]
-    available_eras = ["2016preVFP", "2016postVFP", "2017", "2018", "2022preEE", "2022postEE", "2023preBPix", "2023postBPix", "2024", "2025"]
+    available_eras = ["2016preVFP", "2016postVFP", "2017", "2018", 
+                    "2022preEE", "2022postEE", "2023preBPix", "2023postBPix", "2024", "2025"]
     available_scopes = ["et", "mt", "tt", "em", "ee", "mm"]
 
     ## setup variables

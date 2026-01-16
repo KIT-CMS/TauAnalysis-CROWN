@@ -3,6 +3,10 @@ from code_generation.configuration import Configuration
 
 # Map internal era names to JERC JSON era names for JERC sources
 JERC_ERA_MAP = {
+    "2016preVFP":"2016preVFP",
+    "2016postVFP":"2016postVFP", 
+    "2017":"2017", 
+    "2018":"2018",
     "2022preEE": "2022",
     "2022postEE": "2022EE",
     "2023preBPix": "2023",
@@ -31,7 +35,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
         REGROUPED = False  # preferred configuration for run2
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
-        if era not in ["2024"]:
+        if era not in ["2024", "2025"]:
             with defaults(
                 scopes=("mt", "et", "tt"),
                 shift_key="btag_sf_variation",
