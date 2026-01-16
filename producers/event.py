@@ -27,33 +27,21 @@ with defaults(scopes=["global"]):
         )
         # ---
         SampleFlags_ProducerCollection = [
-            is_data := Producer(call="event::quantity::Define({df}, {output}, {is_data})", output=[q.is_data]),
-            is_embedding := Producer(call="event::quantity::Define({df}, {output}, {is_embedding})", output=[q.is_embedding]),
-            is_ttbar := Producer(call="event::quantity::Define({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
-            is_dyjets_powheg := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_powheg})", output=[q.is_dyjets_powheg]),
-            is_dyjets_amcatnlo := Producer(call="event::quantity::Define({df}, {output}, {is_dyjets_amcatnlo})", output=[q.is_dyjets_amcatnlo]),
-            is_dyjets := Producer(
-                            call="event::CombineFlags({df}, {output}, {input}, \"any_of\")",
-                            input=[q.is_dyjets_powheg, q.is_dyjets_amcatnlo],
-                            output=[q.is_dyjets],
-                        ),
-            is_wjets_temp := Producer(call="event::quantity::Define({df}, {output}, {is_wjets})", output=[q.is_wjets_temp]),
-            is_wjets_amcatnlo := Producer(call="event::quantity::Define({df}, {output}, {is_wjets_amcatnlo})", output=[q.is_wjets_amcatnlo]),
-            is_wjets := Producer(
-                            call="event::CombineFlags({df}, {output}, {input}, \"any_of\")",
-                            input=[q.is_wjets_temp, q.is_wjets_amcatnlo],
-                            output=[q.is_wjets],
-                        ),
-            is_ggh_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_htautau})", output=[q.is_ggh_htautau]),
-            is_vbf_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_htautau})", output=[q.is_vbf_htautau]),
-            is_diboson := Producer(call="event::quantity::Define({df}, {output}, {is_diboson})", output=[q.is_diboson]),
-            is_ggh_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb]),
-            is_vbf_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb]),
-            is_rem_hbb := Producer(call="event::quantity::Define({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb]),
-            is_embedding_mc := Producer(call="event::quantity::Define({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
-            is_singletop := Producer(call="event::quantity::Define({df}, {output}, {is_singletop})", output=[q.is_singletop]),
-            is_rem_htautau := Producer(call="event::quantity::Define({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau]),
-            is_electroweak_boson := Producer(call="event::quantity::Define({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson]),
+            is_data := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_data})", output=[q.is_data]),
+            is_embedding := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_embedding})", output=[q.is_embedding]),
+            is_ttbar := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_ttbar})", output=[q.is_ttbar]),
+            is_dyjets := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_dyjets})", output=[q.is_dyjets]),
+            is_wjets := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_wjets})", output=[q.is_wjets]),
+            is_ggh_htautau := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_ggh_htautau})", output=[q.is_ggh_htautau]),
+            is_vbf_htautau := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_vbf_htautau})", output=[q.is_vbf_htautau]),
+            is_diboson := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_diboson})", output=[q.is_diboson]),
+            is_ggh_hbb := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_ggh_hbb})", output=[q.is_ggh_hbb]),
+            is_vbf_hbb := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_vbf_hbb})", output=[q.is_vbf_hbb]),
+            is_rem_hbb := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_rem_hbb})", output=[q.is_rem_hbb]),
+            is_embedding_mc := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_embedding_mc})", output=[q.is_embedding_mc]),
+            is_singletop := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_singletop})", output=[q.is_singletop]),
+            is_rem_htautau := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_rem_htautau})", output=[q.is_rem_htautau]),
+            is_electroweak_boson := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_electroweak_boson})", output=[q.is_electroweak_boson]),
         ]
 
     SampleFlags = ProducerGroup(call=None, input=None, output=None, subproducers=SampleFlags_ProducerCollection)
@@ -98,11 +86,10 @@ with defaults(scopes=["global"]):
 
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
-    ZPtReweighting = ProducerGroup(
-        call='event::reweighting::ZPtWeight({df}, correctionManager, {output}, {input}, "{zpt_file}", "DY_pTll_reweighting", "{DY_order}", "{zpt_variation}")',
-        input=[],
+    ZPtReweighting = Producer(
+        call='event::reweighting::ZBosonPt({df}, correctionManager, {output}, {input}, "{zpt_file}", "DY_pTll_reweighting", "{DY_order}", "{zpt_variation}")',
+        input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
-        subproducers=[genparticles.GenZpt],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",

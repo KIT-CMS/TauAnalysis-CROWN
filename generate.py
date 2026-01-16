@@ -18,6 +18,7 @@ def run(args):
         "singletop",
         "ttbar",
         "diboson",
+        "dyjets",
         "dyjets_powheg",
         "dyjets_amcatnlo",
         "dyjets_amcatnlo_ll",

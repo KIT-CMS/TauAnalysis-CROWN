@@ -58,7 +58,7 @@ with defaults(scopes=["em", "mm"], input=[q.pt_2, q.eta_2]):
 
 with defaults(scopes=["tt"]):
     Tau_1_VsJetTauID_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsJet_tt({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", {tau_vsjet_sf_dependence}, {tau_sf_vsjet_tauDM0}, {tau_sf_vsjet_tauDM1}, {tau_sf_vsjet_tauDM10}, {tau_sf_vsjet_tauDM11})',
+        call='physicsobject::tau::scalefactor::Id_vsJet({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", {tau_vsjet_sf_dependence}, {tau_sf_vsjet_tauDM0}, {tau_sf_vsjet_tauDM1}, {tau_sf_vsjet_tauDM10}, {tau_sf_vsjet_tauDM11})',
         input=[q.pt_1, q.tau_decaymode_1, q.gen_match_1],
         output="tau_1_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
@@ -70,13 +70,13 @@ with defaults(scopes=["tt"]):
         vec_config="vsele_tau_id",
     )
     Tau_1_VsMuTauID_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsMu({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{tau_sf_era}", "{vsmu_tau_id_WP}", "{vsele_tau_id_WP}", "{vsjet_tau_id_WP}", {tau_sf_vsmu_wheel1}, {tau_sf_vsmu_wheel2}, {tau_sf_vsmu_wheel3}, {tau_sf_vsmu_wheel4}, {tau_sf_vsmu_wheel5})',
+        call='physicsobject::tau::scalefactor::Id_vsMu({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{era}", "{vsmu_tau_id_WP}", "{vsele_tau_id_WP}", "{vsjet_tau_id_WP}", {tau_sf_vsmu_wheel1}, {tau_sf_vsmu_wheel2}, {tau_sf_vsmu_wheel3}, {tau_sf_vsmu_wheel4}, {tau_sf_vsmu_wheel5})',
         input=[q.eta_1, q.gen_match_1],
         output="tau_1_vsmu_sf_outputname",
         vec_config="vsmu_tau_id",
     )
     Tau_2_VsJetTauID_tt_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsJet_tt({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", {tau_vsjet_sf_dependence}, {tau_sf_vsjet_tauDM0}, {tau_sf_vsjet_tauDM1}, {tau_sf_vsjet_tauDM10}, {tau_sf_vsjet_tauDM11})',
+        call='physicsobject::tau::scalefactor::Id_vsJet({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", {tau_vsjet_sf_dependence}, {tau_sf_vsjet_tauDM0}, {tau_sf_vsjet_tauDM1}, {tau_sf_vsjet_tauDM10}, {tau_sf_vsjet_tauDM11})',
         input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
         output="tau_2_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
@@ -98,7 +98,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         vec_config="vsele_tau_id",
     )
     Tau_2_VsMuTauID_SF = ExtendedVectorProducer(
-        call='physicsobject::tau::scalefactor::Id_vsMu({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{tau_sf_era}", "{vsmu_tau_id_WP}", "{vsele_tau_id_WP}", "{vsjet_tau_id_WP}", {tau_sf_vsmu_wheel1}, {tau_sf_vsmu_wheel2}, {tau_sf_vsmu_wheel3}, {tau_sf_vsmu_wheel4}, {tau_sf_vsmu_wheel5})',
+        call='physicsobject::tau::scalefactor::Id_vsMu({df}, correctionManager, {output}, {input}, {tau_sf_file}, "{tau_id_discriminator}", "{era}", "{vsmu_tau_id_WP}", "{vsele_tau_id_WP}", "{vsjet_tau_id_WP}", {tau_sf_vsmu_wheel1}, {tau_sf_vsmu_wheel2}, {tau_sf_vsmu_wheel3}, {tau_sf_vsmu_wheel4}, {tau_sf_vsmu_wheel5})',
         input=[q.eta_2, q.gen_match_2],
         output="tau_2_vsmu_sf_outputname",
         vec_config="vsmu_tau_id",
@@ -200,7 +200,7 @@ MuTauTriggerLeg1SF = ExtendedVectorProducer(
 
 MuTauTriggerLeg2SF = ExtendedVectorProducer(
     name="GenerateMuTauCrossTriggerLeg2SF",
-    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{mt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{mt_trigger_leg2_sf_name}", "Medium", "sf", "{mt_trigger_leg2_variation}")',
+    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{mt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{mt_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{mt_trigger_leg2_variation}")',
     input=[
         q.pt_2,
         q.tau_decaymode_2,
@@ -237,7 +237,7 @@ EleTauTriggerLeg1SF = ExtendedVectorProducer(
 
 EleTauTriggerLeg2SF = ExtendedVectorProducer(
     name="EleTauTriggerLeg2SF",
-    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{et_trigger_flag}", {tau_sf_file}, "tau_trigger", "{et_trigger_leg2_sf_name}", "Medium", "sf", "{et_trigger_leg2_variation}")',
+    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{et_trigger_flag}", {tau_sf_file}, "tau_trigger", "{et_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{et_trigger_leg2_variation}")',
     input=[
         q.pt_2,
         q.tau_decaymode_2,
@@ -261,7 +261,7 @@ EleTauTriggerSF = ProducerGroup(
 
 DoubleTauTriggerLeg1SF = ExtendedVectorProducer(
     name="DoubleTauTriggerLeg1SF",
-    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{tt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{tt_trigger_leg1_sf_name}", "Medium", "sf", "{tt_trigger_leg1_variation}")',
+    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{tt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{tt_trigger_leg1_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{tt_trigger_leg1_variation}")',
     input=[
         q.pt_1,
         q.tau_decaymode_1,
@@ -273,7 +273,7 @@ DoubleTauTriggerLeg1SF = ExtendedVectorProducer(
 
 DoubleTauTriggerLeg2SF = ExtendedVectorProducer(
     name="DoubleTauTriggerLeg2SF",
-    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{tt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{tt_trigger_leg2_sf_name}", "Medium", "sf", "{tt_trigger_leg2_variation}")',
+    call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{tt_trigger_flag}", {tau_sf_file}, "tau_trigger", "{tt_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{tt_trigger_leg2_variation}")',
     input=[
         q.pt_2,
         q.tau_decaymode_2,
@@ -304,7 +304,7 @@ btagging_SF = Producer(
     input=[
         q.Jet_pt_corrected,
         nanoAOD.Jet_eta,
-        nanoAOD.Jet_btagDeepFlavB,
+        nanoAOD.Jet_btagPNetB,
         nanoAOD.Jet_hadronFlavour,
         q.good_jets_mask,
         q.good_bjets_mask,

@@ -78,7 +78,7 @@ with defaults(scopes=["global"]):
     )
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
-    with defaults(call="met::propagateLeptonsToMet({df}, {output}, {input}, {propagateLeptons})"):
+    with defaults(call="lorentzvector::PropagateToMET({df}, {output}, {input}, {propagateLeptons})"):
         PropagateLeptonsToMet = Producer(
             input=[q.met_p4, q.p4_1_uncorrected, q.p4_2_uncorrected, q.p4_1, q.p4_2],
             output=[q.met_p4_leptoncorrected],
@@ -88,7 +88,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_leptoncorrected],
         )
 
-    with defaults(call="met::propagateJetsToMet({df}, {output}, {input}, {propagateJets}, {min_jetpt_met_propagation})"):
+    with defaults(call="physicsobject::PropagateToMET({df}, {output}, {input}, {propagateJets}, {min_jetpt_met_propagation})"):
         PartialJetsToMetInput = [
             q.Jet_pt_corrected,
             nanoAOD.Jet_eta,
@@ -108,13 +108,13 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_jetcorrected],
         )
 
-    with defaults(call='met::applyRecoilCorrectionsRun3({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'):
+    with defaults(call='met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'):
         ApplyRecoilCorrections = Producer(
-            input=[q.met_p4_jetcorrected, q.genboson_p4_vec, q.visgenboson_p4_vec, q.njets],
+            input=[q.met_p4_jetcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
             output=[q.met_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet = Producer(
-            input=[q.pfmet_p4_jetcorrected, q.genboson_p4_vec, q.visgenboson_p4_vec, q.njets],
+            input=[q.pfmet_p4_jetcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
             output=[q.pfmet_p4_recoilcorrected],
         )
 

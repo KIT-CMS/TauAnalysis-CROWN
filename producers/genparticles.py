@@ -164,27 +164,8 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         subproducers=[GenPairForGenMatching, GenMatchP1, GenMatchP2],
     )
 
-    GenZpt = Producer(
-        call="met::calculateGenBosonPt({df}, {output}, {input}, {is_data})",
-        input=[
-            nanoAOD.GenPart_pt,
-            nanoAOD.GenPart_eta,
-            nanoAOD.GenPart_phi,
-            nanoAOD.GenPart_mass,
-            nanoAOD.GenPart_pdgId,
-            nanoAOD.GenPart_status,
-            nanoAOD.GenPart_statusFlags,
-        ],
-        output=[],
-    )
-    GenBosonMass = Producer(
-        call="met::genBosonMass({df}, {output}, {input})",
-        input=[q.recoil_genboson_p4_vec],
-        output=[q.genbosonmass],
-    )
-
 CalculateGenBosonVector = Producer(
-    call="genparticles::GetBoson({df}, {output}, {input}, {is_data})",
+    call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
     scopes=['global'],
     input=[
         nanoAOD.GenPart_pt,
@@ -195,11 +176,11 @@ CalculateGenBosonVector = Producer(
         nanoAOD.GenPart_status,
         nanoAOD.GenPart_statusFlags,
     ],
-    output=[q.genboson_p4_vec],
+    output=[q.genboson_p4],
 )
 
 CalculateVisGenBosonVector = Producer(
-    call="genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})",
+    call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
     scopes=['global'],
     input=[
         nanoAOD.GenPart_pt,
@@ -210,7 +191,7 @@ CalculateVisGenBosonVector = Producer(
         nanoAOD.GenPart_status,
         nanoAOD.GenPart_statusFlags,
     ],
-    output=[q.visgenboson_p4_vec],
+    output=[q.visgenboson_p4],
 )
 
 ##############

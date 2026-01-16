@@ -386,7 +386,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
-                    "tt_trigger_leg1_sf_name": "ditau",
+                    "tt_trigger_leg1_sf_name": EraModifier(
+                        {
+                            "2022preEE":"ditau",
+                            "2022postEE":"ditau",
+                            "2023preBPix":"ditau",
+                            "2023postBPix":"ditau",
+                            "2024":"ditau_pnet_medium",
+                            "2025":"ditau_pnet_medium"
+                        }
+                    ),
                     "tt_trigger_leg1_variation": "nom",
                 },
             ],
@@ -412,7 +421,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
-                    "tt_trigger_leg2_sf_name": "ditau",
+                    "tt_trigger_leg2_sf_name": EraModifier(
+                        {
+                            "2022preEE":"ditau",
+                            "2022postEE":"ditau",
+                            "2023preBPix":"ditau",
+                            "2023postBPix":"ditau",
+                            "2024":"ditau_pnet_medium",
+                            "2025":"ditau_pnet_medium"
+                        }
+                    ),
                     "tt_trigger_leg2_variation": "nom",
                 },
             ],
@@ -552,7 +570,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
-                                "tt_trigger_leg1_sf_name": "ditau",
+                                "tt_trigger_leg1_sf_name": EraModifier(
+                                    {
+                                        "2022preEE":"ditau",
+                                        "2022postEE":"ditau",
+                                        "2023preBPix":"ditau",
+                                        "2023postBPix":"ditau",
+                                        "2024":"ditau_pnet_medium",
+                                        "2025":"ditau_pnet_medium"
+                                    }
+                                ),
                                 "tt_trigger_leg1_variation": _variation,
                             },
                         ],
@@ -578,7 +605,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
-                                "tt_trigger_leg2_sf_name": "ditau",
+                                "tt_trigger_leg2_sf_name": EraModifier(
+                                    {
+                                        "2022preEE":"ditau",
+                                        "2022postEE":"ditau",
+                                        "2023preBPix":"ditau",
+                                        "2023postBPix":"ditau",
+                                        "2024":"ditau_pnet_medium",
+                                        "2025":"ditau_pnet_medium"
+                                    }
+                                ),
                                 "tt_trigger_leg2_variation": _variation,
                             },
                         ],

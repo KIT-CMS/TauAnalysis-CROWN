@@ -19,7 +19,7 @@ from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
-from .tau_embedding_settings import setup_embedding
+#from .tau_embedding_settings import setup_embedding
 #from .btag_variations import add_btagVariations
 #from .jec_data import add_jetCorrectionData
 from code_generation.configuration import Configuration
@@ -54,6 +54,13 @@ def build_config(
 
     # first add default parameters necessary for all scopes
     configuration.add_config_parameters(
+        ["global", "tt", "mt", "et", "ee", "mm", "em"],
+        {
+            # lhc era parameter
+            "era": era,
+        }
+    )
+    configuration.add_config_parameters(
         "global",
         {
             # for LHE weights
@@ -61,9 +68,6 @@ def build_config(
             "muF": 1.0,
             "isr": 1.0,
             "fsr": 1.0,
-
-            # lhc run parameter
-            "lhc_run": 3,
 
             # dy selection for bug samples
             "DY_flavors_list": "11,13",
@@ -182,10 +186,16 @@ def build_config(
             "max_bjet_eta": 2.5,
             "btag_cut": EraModifier( ## values from the wiki for a medium wp https://btv-wiki.docs.cern.ch/ScaleFactors
                 {
-                    "2022preEE": 0.3086, 
-                    "2022postEE": 0.3196,
-                    "2023preBPix": 0.2431,
-                    "2023postBPix": 0.2435,
+                    # wp for deepJEt
+                    # "2022preEE": 0.3086, 
+                    # "2022postEE": 0.3196,
+                    # "2023preBPix": 0.2431,
+                    # "2023postBPix": 0.2435,
+                    # wp for partNet
+                    "2022preEE": 0.245, 
+                    "2022postEE": 0.2605,
+                    "2023preBPix": 0.1917,
+                    "2023postBPix": 0.1919,
                     "2024": 0.1272,
                     "2025": 0.1272,
                 }
@@ -198,7 +208,7 @@ def build_config(
                     "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07jetid.json.gz"',
                     "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetid.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jetid.json.gz"',
+                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                 }
             ),
             "jet_collection_name":'"AK4PUPPI"',
@@ -219,14 +229,7 @@ def build_config(
             "jet_jes_tag_data": EraModifier(
                 {
                     "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"',
-                    "2022postEE": SampleModifier(
-                        {
-                            "data_E": '"Summer22EE_22Sep2023_RunE_V3_DATA"',
-                            "data_F": '"Summer22EE_22Sep2023_RunF_V3_DATA"',
-                            "data_G": '"Summer22EE_22Sep2023_RunG_V3_DATA"',
-                        },
-                        default = '""',
-                    ), 
+                    "2022postEE": '""',
                     "2023preBPix": '"Summer23Prompt23_V2_DATA"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
                     "2024": '"Summer24Prompt24_V2_DATA"',
@@ -308,10 +311,10 @@ def build_config(
             "btag_sf_variation": "central",
             "btag_corr_algo": EraModifier(
                 {
-                    "2022preEE":"deepJet_shape", 
-                    "2022postEE":"deepJet_shape",
-                    "2023preBPix":"deepJet_shape",
-                    "2023postBPix":"deepJet_shape",
+                    "2022preEE":"particleNet_shape", 
+                    "2022postEE":"particleNet_shape",
+                    "2023preBPix":"particleNet_shape",
+                    "2023postBPix":"particleNet_shape",
                     "2024":"UParTAK4_kinfit",
                     "2025":"UParTAK4_kinfit",
                 }
@@ -329,13 +332,7 @@ def build_config(
                 "data_G": False},
                 default=True,
             ),
-            "propagateJets": SampleModifier(
-                {"data": False,
-                "data_E": False,
-                "data_F": False,
-                "data_G": False},
-                default=True,
-            ),
+            "propagateJets": True,
             # recoil corrections
             "recoil_corrections_file": EraModifier(
                 {
@@ -435,7 +432,7 @@ def build_config(
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
                     "vsele_tau_id_WP": "{wp_ele}".format(wp_ele=wp_ele),
-                    "vsjet_tau_id_WP": "{wp}".format(wp="Medium"), #eventually add more if available and used
+                    "vsjet_tau_id_WP": "Medium", #eventually add more if available and used
                     "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
                     "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WPbit": bit,
@@ -477,18 +474,11 @@ def build_config(
                 {
                     "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-22CDSep23-Summer22-NanoAODv12/2025-12-25/tau.json.gz"',
                     "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-25/tau.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/taujson.gz"',
+                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz"',
                     "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz"',
                     "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz"',
                 }
-            ),
-            "tau_sf_era": EraModifier(
-                {
-                    "2024": "2024",
-                    "2025": "2024"
-                }, 
-                default="2022",
             ),
             "tau_sf_vsele_barrel": '"nom"',  # or "up"/"down" for up/down variation
             "tau_sf_vsele_endcap": '"nom"',  # or "up"/"down" for up/down variation
@@ -510,6 +500,10 @@ def build_config(
             "tau_elefake_es_DM1_barrel": '"nom"',
             "tau_elefake_es_DM1_endcap": '"nom"',
             "tau_mufake_es": '"nom"',
+            # trigger SF
+            "ditau_trigger_wp": "Medium",
+            "ditau_trigger_corrtype": "sf",
+            "ditau_trigger_syst": "nom",
         },
     )
     configuration.add_config_parameters(
@@ -622,12 +616,6 @@ def build_config(
             "tau_sf_vsjet_tauDM11": '"nom"',
             "tau_vsjet_sf_dependence": '"dm"',  # or "dm", "eta"
             "tau_vsjet_vseleWP": "VVLoose",
-            # ditau trigger SF from embedding measurements so doesn't impact now
-            "ditau_trigger_wp": "Medium",
-            "ditau_trigger_type": "ditau",
-            "ditau_trigger_corrtype": "sf",
-            "ditau_trigger_syst": "nom",
-
         },
     )
     configuration.add_config_parameters(
@@ -692,8 +680,22 @@ def build_config(
             ]
         },
     )
-    
 
+    if era == "2022postEE":
+        configuration.add_config_parameters(
+            "global",
+            {
+                "jet_jes_tag_data": SampleModifier(
+                    {
+                        "data_E": '"Summer22EE_22Sep2023_RunE_V3_DATA"',
+                        "data_F": '"Summer22EE_22Sep2023_RunF_V3_DATA"',
+                        "data_G": '"Summer22EE_22Sep2023_RunG_V3_DATA"',
+                    },
+                    default = '""',
+                ),
+            }
+        )
+        
     ############################
     ######## Producers #########
     ############################
@@ -722,13 +724,13 @@ def build_config(
             jets.GoodJets_loose,
             jets.GoodJets_tight,
             jets.GoodJets,
-            jets.GoodBJets,
+            jets.GoodBJets_UParT,
             event.DiLeptonVeto,
             jets.JetID, 
             met.MetBasics,
             met.MetMask,
             genparticles.CalculateGenBosonVector,
-            genparticles.CalculateVisGenBosonVector
+            genparticles.CalculateVisGenBosonVector,
         ],
     )
     configuration.add_producers(
@@ -773,7 +775,7 @@ def build_config(
             triggers.MTGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleMuTriggerSF,
-            scalefactors.MuTauTriggerSF,
+            #scalefactors.MuTauTriggerSF,
             pairquantities.VsJetTauIDFlagOnly_2,
             #pairquantities.VsEleTauIDFlagOnly_2,
             #pairquantities.VsMuTauIDFlagOnly_2,
@@ -830,7 +832,7 @@ def build_config(
             # pairquantities.VsEleTauIDFlagOnly_2,
             # pairquantities.VsMuTauIDFlagOnly_2,
             scalefactors.SingleEleTriggerSF,
-            scalefactors.EleTauTriggerSF,
+            #scalefactors.EleTauTriggerSF,
         ],
     )
     configuration.add_producers(
@@ -934,6 +936,13 @@ def build_config(
                 exclude_samples=["fake_era"],
             ),
         )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[jets.GoodBJets_UParT, jets.GoodBJets],
+                exclude_samples=["fake_era"],
+            ),
+        )
         #configuration.add_modification_rule(
         #    "global",
         #    ReplaceProducer(
@@ -959,7 +968,7 @@ def build_config(
         "global",
         ReplaceProducer(
             producers=[jets.JetEnergyCorrection, jets.JetEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G",],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc",],
         ),
     )
     configuration.add_modification_rule(
@@ -974,9 +983,7 @@ def build_config(
         RemoveProducer(
             producers=[
                 event.PUweights,
-                event.LHE_PDF_weight,
-                event.LHE_alphaS_weight,
-                event.PS_weight
+                event.PS_weight,
                 ],
             samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
@@ -984,7 +991,11 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
-            producers=[event.LHE_Scale_weight],
+            producers=[
+                event.LHE_Scale_weight,
+                event.LHE_PDF_weight,
+                event.LHE_alphaS_weight,
+                ],
             samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc", "diboson"],
         ),
     )
@@ -1189,7 +1200,7 @@ def build_config(
         scopes,
         [
             q.is_data,
-            #q.is_embedding,
+            q.is_embedding,
             q.is_ttbar,
             q.is_dyjets,
             q.is_wjets,
@@ -1325,8 +1336,8 @@ def build_config(
             q.extraelec_veto,
             #q.id_wgt_mu_1, #Quantity id_wgt_mu_1 is already defined in mt scope !
             #q.iso_wgt_mu_1,
-            scalefactors.SingleMuTriggerSF.output_group,
-        ] + [p for p in scalefactors.MuTauTriggerSF.get_outputs("mt")],
+            scalefactors.SingleMuTriggerSF.output_group,] 
+        #] + [p for p in scalefactors.MuTauTriggerSF.get_outputs("mt")],
     )
     configuration.add_outputs(
         "mm",
@@ -1361,8 +1372,8 @@ def build_config(
             q.extraelec_veto,
             # q.id_wgt_ele_wp90iso_1,
             # q.id_wgt_ele_wp80iso_1,
-            scalefactors.SingleEleTriggerSF.output_group,
-        ] + [p for p in scalefactors.EleTauTriggerSF.get_outputs("et")],
+            scalefactors.SingleEleTriggerSF.output_group,]
+        #] + [p for p in scalefactors.EleTauTriggerSF.get_outputs("et")],
     )
     configuration.add_outputs(
         "em",
