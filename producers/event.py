@@ -86,10 +86,17 @@ with defaults(scopes=["global"]):
 
 # zptmass not used in 2016preVFP and 2016postVFP atm due to broken file.
 with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
+    # Run 3
     ZPtReweighting = Producer(
         call='event::reweighting::ZBosonPt({df}, correctionManager, {output}, {input}, "{zpt_file}", "DY_pTll_reweighting", "{DY_order}", "{zpt_variation}")',
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
+    )
+    # Run 2
+    ZPtMassReweighting = Producer(
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        input=[q.recoil_genboson_p4],
+        output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",
