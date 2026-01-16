@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 
@@ -25,15 +25,15 @@ with defaults(scopes=["et", "mt", "tt"]):
     with defaults(output=[]):  # Tau ID cuts
         VsJetTauIDCut_v9 = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsjet_tau_id_bit})",
-            input=[nanoAOD.Tau_idDeepTau2017v2p1VSjet],
+            input=[nanoAODv9.Tau_idDeepTau2017v2p1VSjet],
         )
         VsElectronTauIDCut_v9 = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsele_tau_id_bit})",
-            input=[nanoAOD.Tau_idDeepTau2017v2p1VSe],
+            input=[nanoAODv9.Tau_idDeepTau2017v2p1VSe],
         )
         VsMuonTauIDCut_v9 = Producer(
             call="physicsobject::CutBitmask({df}, {output}, {input}, {vsmu_tau_id_bit})",
-            input=[nanoAOD.Tau_idDeepTau2017v2p1VSmu],
+            input=[nanoAODv9.Tau_idDeepTau2017v2p1VSmu],
         )
 
         VsJetTauIDCut = Producer(
