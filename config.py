@@ -834,6 +834,7 @@ def build_config(
             electrons.ElectronPtCorrectionMC,
             electrons.BaseElectrons,
             jets.JetEnergyCorrection,
+            jets.BJetEnergyCorrection,
             jets.GoodJets,
             jets.GoodBJets,
             event.DiLeptonVeto,
