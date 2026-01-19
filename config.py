@@ -715,22 +715,23 @@ def build_config(
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC,
             electrons.BaseElectrons,
-            jets.JetEnergyCorrection,
+            jets.JetBTagUParT,
+            jets.JetID, 
             jets.JetVetoMapVeto,
             jets.JetIDCut,
+            jets.JetEnergyCorrection,
             jets.JetPtCut_loose,
             jets.LooseJets_LowEta,
             jets.LooseJets_HighEta,
             jets.GoodJets_loose,
             jets.GoodJets_tight,
             jets.GoodJets,
-            jets.GoodBJets_UParT,
+            jets.GoodBJets,
             event.DiLeptonVeto,
-            jets.JetID, 
-            met.MetBasics,
-            met.MetMask,
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
+            met.MetBasics,
+            met.MetMask,
         ],
     )
     configuration.add_producers(
@@ -925,6 +926,13 @@ def build_config(
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
+                producers=[jets.JetBTagUParT, jets.JetBTagPNet],
+                exclude_samples=["fake_era"],
+            ),
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
                 producers=[jets.JetID, jets.JetIDRun3NanoV12Corrected,],
                 exclude_samples=["fake_era"],
             ),
@@ -933,13 +941,6 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[met.MetBasics, met.MetBasicsv12,],
-                exclude_samples=["fake_era"],
-            ),
-        )
-        configuration.add_modification_rule(
-            "global",
-            ReplaceProducer(
-                producers=[jets.GoodBJets_UParT, jets.GoodBJets],
                 exclude_samples=["fake_era"],
             ),
         )

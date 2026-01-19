@@ -10,6 +10,7 @@ gen_dyfilter = Quantity()
 
 #### Jet
 
+Jet_BTag = Quantity()
 Jet_ID = Quantity()
 Jet_pt_corrected = Quantity()
 Jet_mass_corrected = Quantity()

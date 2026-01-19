@@ -265,10 +265,10 @@ namespace fakefactors {
                     //qcd_DR_SR_corr = 1.0;  // Ignoring QCD DR_SR correction for now
                     qcd_non_closure_corr = qcd_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             QCD_non_closure_correction_variation
                         }
@@ -280,10 +280,10 @@ namespace fakefactors {
                     //wjets_DR_SR_corr = 1.0;  // Ignoring Wjets DR_SR correction for now
                     wjets_non_closure_corr = wjets_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             Wjets_non_closure_correction_variation
                         }
@@ -293,10 +293,10 @@ namespace fakefactors {
 
                     ttbar_non_closure_corr = ttbar_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             ttbar_non_closure_correction_variation
                         }
@@ -448,10 +448,10 @@ namespace fakefactors {
                     qcd_DR_SR_corr = qcd_DR_SR->evaluate({pt_tt, (float)njets, QCD_DR_SR_correction_variation});
                     qcd_non_closure_corr = qcd_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             QCD_non_closure_correction_variation
                         }
@@ -463,10 +463,10 @@ namespace fakefactors {
                     //wjets_DR_SR_corr = 1.0;
                     wjets_non_closure_corr = wjets_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             Wjets_non_closure_correction_variation
                         }
@@ -476,10 +476,10 @@ namespace fakefactors {
 
                     ttbar_non_closure_corr = ttbar_non_closure->evaluate(
                         {
-                            //delta_r,
-                            mass_2,
-                            //iso_1,
                             (float)decaymode_2,
+                            mass_2,
+                            iso_1,
+                            delta_r,
                             (float)njets,
                             ttbar_non_closure_correction_variation
                         }
@@ -565,7 +565,7 @@ namespace fakefactors {
                                 const std::string &outputname,
                                 const int &tau_idx, const std::string &pt_1,
                                 const std::string &pt_2, const std::string &njets, 
-                                const std::string &pt_tt, 
+                                const std::string &m_vis, 
                                 const std::string &qcd_variation,
                                 const std::string &fraction_variation, const std::string &ff_file) {
 
@@ -581,7 +581,7 @@ namespace fakefactors {
 
             auto calc_fake_factor = [tau_idx, qcd_variation, fraction_variation, qcd, qcd_subleading, fractions, fractions_subleading](
                                         const float &pt_1, const float &pt_2,
-                                        const int &njets, const float &pt_tt) {
+                                        const int &njets, const float &m_vis) {
                 
                 float ff = 0.;
                 
@@ -597,7 +597,7 @@ namespace fakefactors {
                     if (tau_idx == 0) {
                         qcd_ff = qcd->evaluate({pt_1, (float)njets, qcd_variation});
                         Logger::get("RawFakeFactor")->debug("QCD - value {}", qcd_ff);
-                        qcd_frac = fractions->evaluate({"QCD", pt_tt, (float)njets, fraction_variation});
+                        qcd_frac = fractions->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         Logger::get("RawFakeFactor")->debug("QCD - fraction {}", qcd_frac);
                         
                         ff = std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.);
@@ -605,7 +605,7 @@ namespace fakefactors {
                     } else if (tau_idx == 1) {
                         qcd_ff = qcd_subleading->evaluate({pt_2, (float)njets, qcd_variation});
                         Logger::get("RawFakeFactor")->debug("QCD - value {}", qcd_ff);
-                        qcd_frac = fractions_subleading->evaluate({"QCD", pt_tt, (float)njets, fraction_variation});
+                        qcd_frac = fractions_subleading->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         
                         ff = std::max(qcd_frac, (float)0.) * std::max(qcd_ff, (float)0.);
                     }
@@ -615,7 +615,7 @@ namespace fakefactors {
                 return ff;
             };
             auto df1 =
-                df.Define(outputname, calc_fake_factor, {pt_1, pt_2, njets, pt_tt});
+                df.Define(outputname, calc_fake_factor, {pt_1, pt_2, njets, m_vis});
             return df1;
         }
 
@@ -654,7 +654,9 @@ namespace fakefactors {
                             const std::string &decaymode_1,
                             const std::string &decaymode_2,
                             const std::string &njets,
-                            const std::string &pt_tt, const std::string &m_vis,
+                            const std::string &delta_r,
+                            const std::string &pt_tt,
+                            const std::string &m_vis,
                             const std::string &qcd_variation, 
                             const std::string &fraction_variation, const std::string &qcd_non_closure_correction_variation,
                             const std::string &qcd_DR_SR_correction_variation,
@@ -684,7 +686,10 @@ namespace fakefactors {
                                     qcd_subleading, fractions_subleading, qcd_subleading_non_closure, qcd_subleading_DR_SR](
                                         const float &pt_1, const float &pt_2, const float &mass_1, const float &mass_2,
                                         const int &decaymode_1, const int &decaymode_2,
-                                        const int &njets, const float &pt_tt, const float &m_vis) {
+                                        const int &njets, 
+                                        const float &delta_r,
+                                        const float &pt_tt,
+                                        const float &m_vis) {
                 
                 float ff = 0.;
                 
@@ -706,8 +711,14 @@ namespace fakefactors {
                         qcd_frac = fractions->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         Logger::get("FakeFactor")->debug("QCD - fraction {}", qcd_frac);
 
-                        qcd_non_closure_corr = qcd_non_closure->evaluate({mass_1, (float)decaymode_1, (float)njets, qcd_non_closure_correction_variation});
+                        qcd_non_closure_corr = qcd_non_closure->evaluate({
+                            (float)decaymode_1,
+                            mass_1,
+                            delta_r, 
+                            (float)njets, 
+                            qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
+
                         qcd_DR_SR_corr = qcd_DR_SR->evaluate({pt_tt, (float)njets, qcd_DR_SR_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - DR to SR correction {}", qcd_DR_SR_correction_variation);
 
@@ -721,8 +732,14 @@ namespace fakefactors {
                         qcd_frac = fractions_subleading->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         Logger::get("FakeFactor")->debug("QCD - fraction {}", qcd_frac);
 
-                        qcd_non_closure_corr = qcd_subleading_non_closure->evaluate({mass_2, (float)decaymode_2, (float)njets, qcd_non_closure_correction_variation});
+                        qcd_non_closure_corr = qcd_subleading_non_closure->evaluate({
+                            (float)decaymode_2,
+                            mass_2,
+                            delta_r,  
+                            (float)njets,
+                            qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
+
                         qcd_DR_SR_corr = qcd_subleading_DR_SR->evaluate({pt_tt, (float)njets, qcd_DR_SR_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - DR to SR correction {}", qcd_DR_SR_correction_variation);
 
@@ -736,7 +753,7 @@ namespace fakefactors {
                 return ff;
             };
             auto df1 = df.Define(outputname, calc_fake_factor,
-                                {tau_pt_1, tau_pt_2, mass_1, mass_2, decaymode_1, decaymode_2, njets, pt_tt, m_vis});
+                                {tau_pt_1, tau_pt_2, mass_1, mass_2, decaymode_1, decaymode_2, njets, delta_r, pt_tt, m_vis});
             return df1;
         }
 
@@ -775,7 +792,9 @@ namespace fakefactors {
                             const std::string &decaymode_1,
                             const std::string &decaymode_2,
                             const std::string &njets,
-                            const std::string &pt_tt, const std::string &m_vis,
+                            const std::string &delta_r,
+                            const std::string &pt_tt,
+                            const std::string &m_vis,
                             const std::string &qcd_variation, 
                             const std::string &fraction_variation, const std::string &qcd_non_closure_correction_variation,
                             const std::string &qcd_DR_SR_correction_variation,
@@ -806,7 +825,10 @@ namespace fakefactors {
                                         const float &pt_1, const float &pt_2,
                                         const float &mass_1, const float &mass_2,
                                         const int &decaymode_1, const int &decaymode_2,
-                                        const int &njets, const float &pt_tt, const float &m_vis) {
+                                        const int &njets,
+                                        const float &delta_r,
+                                        const float &pt_tt,
+                                        const float &m_vis) {
                 
                 float ff = 0.;
                 float qcd_ff = 0.;
@@ -827,8 +849,14 @@ namespace fakefactors {
                         qcd_frac = fractions->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         Logger::get("FakeFactor")->debug("QCD - fraction {}", qcd_frac);
 
-                        qcd_non_closure_corr = qcd_non_closure->evaluate({mass_1, (float)decaymode_1, (float)njets, qcd_non_closure_correction_variation});
+                        qcd_non_closure_corr = qcd_non_closure->evaluate({
+                            (float)decaymode_1,
+                            mass_1,
+                            delta_r, 
+                            (float)njets, 
+                            qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
+                        
                         qcd_DR_SR_corr = qcd_DR_SR->evaluate({pt_tt, (float)njets, qcd_DR_SR_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - DR to SR correction {}", qcd_DR_SR_correction_variation);
 
@@ -842,8 +870,14 @@ namespace fakefactors {
                         qcd_frac = fractions_subleading->evaluate({"QCD", m_vis, (float)njets, fraction_variation});
                         Logger::get("FakeFactor")->debug("QCD - fraction {}", qcd_frac);
 
-                        qcd_non_closure_corr = qcd_subleading_non_closure->evaluate({mass_2, (float)decaymode_2, (float)njets, qcd_non_closure_correction_variation});
+                        qcd_non_closure_corr = qcd_subleading_non_closure->evaluate({
+                            (float)decaymode_2,
+                            mass_2,
+                            delta_r, 
+                            (float)njets, 
+                            qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
+
                         qcd_DR_SR_corr = qcd_subleading_DR_SR->evaluate({pt_tt, (float)njets, qcd_DR_SR_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - DR to SR correction {}", qcd_DR_SR_correction_variation);
 
@@ -884,7 +918,7 @@ namespace fakefactors {
         
             std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
 
-            auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt_1, tau_pt_2, mass_1, mass_2, decaymode_1, decaymode_2, njets, pt_tt, m_vis});
+            auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {tau_pt_1, tau_pt_2, mass_1, mass_2, decaymode_1, decaymode_2, njets, delta_r, pt_tt, m_vis});
             auto df2 = event::quantity::Unroll<float>(df1, outputname, shifted_collection_identifier);
 
             return df2;
