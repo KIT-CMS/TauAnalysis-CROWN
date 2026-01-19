@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv12
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 ####################
@@ -9,13 +9,25 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 with defaults(scopes=["global"]):
     with defaults(call="lorentzvector::BuildMET({df}, {output}, {input})"):
         BuildMetVector = Producer(input=[nanoAOD.PuppiMET_pt, nanoAOD.PuppiMET_phi], output=[q.met_p4])
-        BuildPFMetVector = Producer(input=[nanoAOD.MET_pt, nanoAOD.MET_phi], output=[q.pfmet_p4])
+        
+        with defaults(output=[q.pfmet_p4]):
+            BuildPFMetVector = Producer(input=[nanoAOD.PFMET_pt, nanoAOD.PFMET_phi])
+            BuildPFMetVectorv12 = Producer(input=[nanoAODv12.MET_pt, nanoAODv12.MET_phi])
 
     with defaults(call="event::quantity::Rename<float>({df}, {output}, {input})"):
-        MetCov00 = Producer(input=[nanoAOD.MET_covXX], output=[q.metcov00])
-        MetCov01 = Producer(input=[nanoAOD.MET_covXY], output=[q.metcov01])
-        MetCov10 = Producer(input=[nanoAOD.MET_covXY], output=[q.metcov10])
-        MetCov11 = Producer(input=[nanoAOD.MET_covYY], output=[q.metcov11])
+        with defaults(output=[q.metcov00]):
+            MetCov00 = Producer(input=[nanoAOD.PuppiMET_covXX])
+            MetCov00v12 = Producer(input=[nanoAODv12.MET_covXX])
+        with defaults(output=[q.metcov01]):
+            MetCov01 = Producer(input=[nanoAOD.PuppiMET_covXY])
+            MetCov01v12 = Producer(input=[nanoAODv12.MET_covXY])
+        with defaults(output=[q.metcov10]):
+            MetCov10 = Producer(input=[nanoAOD.PuppiMET_covXY])
+            MetCov10v12 = Producer(input=[nanoAODv12.MET_covXY])
+        with defaults(output=[q.metcov11]):
+            MetCov11 = Producer(input=[nanoAOD.PuppiMET_covYY])
+            MetCov11v12 = Producer(input=[nanoAODv12.MET_covYY])
+        
         MetSumEt = Producer(input=[nanoAOD.PuppiMET_sumEt], output=[q.metSumEt])
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
@@ -26,57 +38,30 @@ with defaults(scopes=["global"]):
         MetPhi_uncorrected = Producer(input=[q.met_p4], output=[q.metphi_uncorrected])
         PFMetPhi_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmetphi_uncorrected])
 
-    CalculateGenBosonVector = Producer(
-        call="genparticles::GetBoson({df}, {output}, {input}, {is_data})",
-        input=[
-            nanoAOD.GenPart_pt,
-            nanoAOD.GenPart_eta,
-            nanoAOD.GenPart_phi,
-            nanoAOD.GenPart_mass,
-            nanoAOD.GenPart_pdgId,
-            nanoAOD.GenPart_status,
-            nanoAOD.GenPart_statusFlags,
-        ],
-        output=[q.recoil_genboson_p4],
-    )
-    CalculateVisGenBosonVector = Producer(
-        call="genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})",
-        input=[
-            nanoAOD.GenPart_pt,
-            nanoAOD.GenPart_eta,
-            nanoAOD.GenPart_phi,
-            nanoAOD.GenPart_mass,
-            nanoAOD.GenPart_pdgId,
-            nanoAOD.GenPart_status,
-            nanoAOD.GenPart_statusFlags,
-        ],
-        output=[q.recoil_vis_genboson_p4],
-    )
-    GenBosonMass = Producer(
-        call="lorentzvector::GetMass({df}, {output}, {input})",
-        input=[q.recoil_genboson_p4],
-        output=[q.genbosonmass],
-    )
     MetBasics = ProducerGroup(
         call=None,
-        input=None,
+        input=[
+            q.pfmet_p4,
+            q.metcov00,
+            q.metcov01,
+            q.metcov10,
+            q.metcov11,
+            ],
         output=None,
         subproducers=[
-            BuildPFMetVector,
             BuildMetVector,
             MetPt_uncorrected,
             MetPhi_uncorrected,
             PFMetPt_uncorrected,
             PFMetPhi_uncorrected,
-            MetCov00,
-            MetCov01,
-            MetCov10,
-            MetCov11,
             MetSumEt,
-            CalculateGenBosonVector,
-            CalculateVisGenBosonVector,
-            GenBosonMass,
         ],
+    )
+
+    MetMask = Producer(
+        call="physicsobject::CutMinSingle<float>({df}, {output}, {input}, 0)",
+        input=[nanoAOD.PuppiMET_ptUnclusteredUp],
+        output=[q.met_mask],
     )
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -110,13 +95,23 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_jetcorrected],
         )
 
-    with defaults(call='met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
+    with defaults(call='met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'):
         ApplyRecoilCorrections = Producer(
-            input=[q.met_p4_jetcorrected, q.recoil_genboson_p4, q.recoil_vis_genboson_p4, q.Jet_pt_corrected],
+            input=[q.met_p4_jetcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
             output=[q.met_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet = Producer(
-            input=[q.pfmet_p4_jetcorrected, q.recoil_genboson_p4, q.recoil_vis_genboson_p4, q.Jet_pt_corrected],
+            input=[q.pfmet_p4_jetcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
+            output=[q.pfmet_p4_recoilcorrected],
+        )
+
+    with defaults(call='met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
+        ApplyRecoilCorrections_Run2 = Producer(
+            input=[q.met_p4_jetcorrected, q.genboson_p4, q.vis_genboson_p4, q.Jet_pt_corrected],
+            output=[q.met_p4_recoilcorrected],
+        )
+        ApplyRecoilCorrectionsPFMet_Run2 = Producer(
+            input=[q.pfmet_p4_jetcorrected, q.genboson_p4, q.vis_genboson_p4, q.Jet_pt_corrected],
             output=[q.pfmet_p4_recoilcorrected],
         )
 
@@ -143,6 +138,25 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 PropagateLeptonsToPFMet,
                 PropagateJetsToPFMet,
                 ApplyRecoilCorrectionsPFMet,
+                PFMetPt,
+                PFMetPhi,
+            ],
+        )
+
+        MetCorrections_Run2 = ProducerGroup(
+            subproducers=[
+                PropagateLeptonsToMet,
+                PropagateJetsToMet,
+                ApplyRecoilCorrections_Run2,
+                MetPt,
+                MetPhi,
+            ],
+        )
+        PFMetCorrections_Run2 = ProducerGroup(
+            subproducers=[
+                PropagateLeptonsToPFMet,
+                PropagateJetsToPFMet,
+                ApplyRecoilCorrectionsPFMet_Run2,
                 PFMetPt,
                 PFMetPhi,
             ],
