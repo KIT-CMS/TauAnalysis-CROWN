@@ -31,8 +31,8 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
     class JES_CONFIG:
-        INDIVIDUAL = True # preferred configuration for run3 (as of Oct. 25)
-        REGROUPED = False  # preferred configuration for run2
+        INDIVIDUAL = True if int(era[:4]) >= 2022 else False # preferred configuration for run3 (as of Oct. 25)
+        INDIVIDUAL = False if int(era[:4]) >= 2022 else True  # preferred configuration for run2
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if era not in ["2024", "2025"]:
@@ -145,7 +145,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                     )
 
         elif JES_CONFIG.REGROUPED:  # preferred configuration
-            for name, JES_source, btag_variation_source, *is_yearly in [
+            for name, JES_source, *is_yearly in [
                 ("Absolute", '{"Regrouped_Absolute"}'),
                 ("FlavorQCD", '{"Regrouped_FlavorQCD"}'),
                 ("BBEC1", '{"Regrouped_BBEC1"}'),
@@ -162,12 +162,12 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 if is_yearly:
                     mapped_era = JERC_ERA_MAP[era]
                     JES_source_val = JES_source(era)
-                    name_val = f"jesUnc{name}{mapped_era}"
-                    btag_variation_source = name
+                    name_val = f"jesUnc{name}Year"
                 else:
                     JES_source_val = JES_source
                     name_val = f"jesUnc{name}"
-                    btag_variation_source = name
+                btag_variation_source = name
+
                 with defaults(name=name_val):
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
