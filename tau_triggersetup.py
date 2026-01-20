@@ -1324,8 +1324,52 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     #######################
     #trigger scale factors#
     #######################
+
+    # muon trigger scale factors
     configuration.add_config_parameters(
-        ["et"],
+        ["mt", "mm", "em"],
+        {
+            "mutau_cross_trigger_leg1_sf_file": EraModifier(
+                {
+                    "2022preEE": '"data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2022postEE": '"data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2023preBPix": '"data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2023postBPix": '"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2024":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2025":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                }
+            ),
+            "singlemuon_trigger_sf": [
+                {
+                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                    "singlemuon_trigger_flag": "trg_single_mu24",
+                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                    "singlemuon_trigger_variation": "nominal",
+                },
+            ],
+
+            "mutau_trigger_leg1_sf": [
+                {
+                    "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
+                    "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                    "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
+                    "mutau_cross_trigger_leg1_variation": "nominal",
+                },
+            ],
+            "mutau_trigger_leg2_sf": [
+                {
+                    "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
+                    "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                    "mutau_cross_trigger_leg2_sf_name": "mutau",
+                    "mutau_cross_trigger_leg2_variation": "nom",
+                },
+            ],
+        },
+    )
+
+    # electron scale factors
+    configuration.add_config_parameters(
+        ["et", "ee", "em"],
         {
             "singleelectron_trigger_sf_file": EraModifier(
                 {
@@ -1337,7 +1381,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2025": "data/jsonpog-integration/POG/EGM/2023_Summer23BPix/electronHlt.json.gz",
                 }
             ),
-            "singleelectron_trigger_era": EraModifier(
+            "singleelctron_trigger_era": EraModifier(
                 {
                     "2022preEE": "2022Re-recoBCD",
                     "2022postEE": "2022Re-recoE+PromptFG",
@@ -1349,13 +1393,14 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             ),
             "singleelectron_trigger_sf": [
                 {
-                    "e_trigger_flagname": "trg_wgt_single_ele30",
-                    "e_trigger_flag": "trg_single_ele30",
-                    "e_trigger_sf_name": "Electron-HLT-SF",
-                    "e_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
-                    "e_trigger_variation": "sf",
+                    "singleelectron_trigger_flagname": "trg_wgt_single_ele30",
+                    "singleelectron_trigger_flag": "trg_single_ele30",
+                    "singleelectron_trigger_sf_name": "Electron-HLT-SF",
+                    "singleelectron_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
+                    "singleelectron_trigger_variation": "sf",
                 },
             ],
+
             "eletau_cross_trigger_leg1_sf_file": EraModifier(
                 {
                     "2022preEE": "data/hleprare/TriggerScaleFactors/2022preEE/CrossEleTauHlt_EleLeg_v1.json",
@@ -1366,64 +1411,23 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2025": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                 }
             ),
-            "eletau_cross_ctrigger_leg1_sf": [
+            "eletau_cross_trigger_leg1_sf": [
                 {
-                    "et_trigger_flag": "trg_cross_ele24tau30_hps",
-                    "et_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
-                    "et_trigger_leg1_sf_name": "Electron-HLT-SF",
-                    "et_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
-                    "et_trigger_leg1_variation": "sf",
+                    "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                    "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
+                    "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
+                    "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
+                    "eletau_cross_trigger_leg1_variation": "sf",
                 },
             ],
-            "eletau_ccross_trigger_leg2_sf": [
+            "eletau_cross_trigger_leg2_sf": [
                 {
-                    "et_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                    "et_trigger_flag": "trg_cross_ele24tau30_hps",
-                    "et_trigger_leg2_sf_name": "etau",
-                    "et_trigger_leg2_variation": "nom",
+                    "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
+                    "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                    "eletau_cross_trigger_leg2_sf_name": "etau",
+                    "eletau_cross_trigger_leg2_variation": "nom",
                 },
             ]
-        },
-    )
-
-    # single muon trigger scale factors
-    configuration.add_config_parameters(
-        ["mt"],
-        {
-            "singlemuon_trigger_sf": [
-                {
-                    "m_trigger_flagname": "trg_wgt_single_mu24",
-                    "m_trigger_flag": "trg_single_mu24",
-                    "m_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                    "m_trigger_variation": "nominal",
-                },
-            ],
-            "muta_cross_trigger_leg1_sf_file": EraModifier(
-                {
-                    "2022preEE": '"data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2022postEE": '"data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023preBPix": '"data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023postBPix": '"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2024":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2025":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                }
-            ),
-            "mutau_cross_trigger_leg1_sf": [
-                {
-                    "mt_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                    "mt_trigger_flag": "trg_cross_mu20tau27_hps",
-                    "mt_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
-                    "mt_trigger_leg1_variation": "nominal",
-                },
-            ],
-            "mutau_cross_trigger_leg2_sf": [
-                {
-                    "mt_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
-                    "mt_trigger_flag": "trg_cross_mu20tau27_hps",
-                    "mt_trigger_leg2_sf_name": "mutau",
-                    "mt_trigger_leg2_variation": "nom",
-                },
-            ],
         },
     )
 
@@ -1433,7 +1437,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "doubletau_trigger_leg1_sf": [
                 {
-                    "tt_trigger_leg1_flagname": EraModifier(
+                    "doubletau_trigger_leg1_flagname": EraModifier(
                         {
                             "2022preEE": "trg_wgt_doubletau35_leg1",
                             "2022postEE": "trg_wgt_doubletau35_leg1",
@@ -1443,7 +1447,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_wgt_doubletau30_leg1",
                         }
                     ),
-                    "tt_trigger_flag": EraModifier(
+                    "doubletau_trigger_flag": EraModifier(
                         {
                             "2022preEE": "trg_double_tau35_mediumiso_hps",
                             "2022postEE": "trg_double_tau35_mediumiso_hps",
@@ -1453,7 +1457,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
-                    "tt_trigger_leg1_sf_name": EraModifier(
+                    "doubletau_trigger_leg1_sf_name": EraModifier(
                         {
                             "2022preEE":"ditau",
                             "2022postEE":"ditau",
@@ -1463,12 +1467,12 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025":"ditau_pnet_medium"
                         }
                     ),
-                    "tt_trigger_leg1_variation": "nom",
+                    "doubletau_trigger_leg1_variation": "nom",
                 },
             ],
             "doubletau_trigger_leg2_sf": [
                 {
-                    "tt_trigger_leg2_flagname": EraModifier(
+                    "doubletau_trigger_leg2_flagname": EraModifier(
                         {
                             "2022preEE": "trg_wgt_doubletau35_leg2",
                             "2022postEE": "trg_wgt_doubletau35_leg2",
@@ -1478,7 +1482,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_wgt_doubletau30_leg2",
                         }
                     ),
-                    "tt_trigger_flag": EraModifier(
+                    "doubletau_trigger_flag": EraModifier(
                         {
                             "2022preEE": "trg_double_tau35_mediumiso_hps",
                             "2022postEE": "trg_double_tau35_mediumiso_hps",
@@ -1488,7 +1492,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
-                    "tt_trigger_leg2_sf_name": EraModifier(
+                    "doubletau_trigger_leg2_sf_name": EraModifier(
                         {
                             "2022preEE":"ditau",
                             "2022postEE":"ditau",
@@ -1498,7 +1502,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2025":"ditau_pnet_medium"
                         }
                     ),
-                    "tt_trigger_leg2_variation": "nom",
+                    "doubletau_trigger_leg2_variation": "nom",
                 },
             ],
         },
@@ -1513,13 +1517,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 name=f"singleEleTriggerSF{_variation.upper()}",
                 shift_config={
                     ("et"): {
-                        "single_ele_trigger_sf": [
+                        "singleelectron_trigger_sf": [
                             {
-                                "e_trigger_flagname": "trg_wgt_single_ele30",
-                                "e_trigger_flag": "trg_single_ele30",
-                                "e_trigger_sf_name": "Electron-HLT-SF",
-                                "e_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
-                                "e_trigger_variation": f"sf{_variation}",
+                                "singleelectron_trigger_flagname": "trg_wgt_single_ele30",
+                                "singleelectron_trigger_flag": "trg_single_ele30",
+                                "singleelectron_trigger_sf_name": "Electron-HLT-SF",
+                                "singleelectron_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
+                                "singleelectron_trigger_variation": f"sf{_variation}",
                             },
                         ],
                     }
@@ -1533,21 +1537,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 name=f"EleTauTriggerSF{_variation.upper()}",
                 shift_config={
                     ("et"): {
-                        "eletau_trigger_leg1_sf": [
+                        "eletau_cross_trigger_leg1_sf": [
                             {
-                                "et_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
-                                "et_trigger_flag": "trg_cross_ele24tau30_hps",
-                                "et_trigger_leg1_sf_name": "Electron-HLT-SF",
-                                "et_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
-                                "et_trigger_leg1_variation": f"sf{_variation}",
+                                "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
+                                "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                                "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
+                                "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
+                                "eletau_cross_trigger_leg1_variation": f"sf{_variation}",
                             },
                         ],
-                        "eletau_trigger_leg2_sf": [
+                        "eletau_cross_trigger_leg2_sf": [
                             {
-                                "et_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                                "et_trigger_flag": "trg_cross_ele24tau30_hps",
-                                "et_trigger_leg2_sf_name": "etau",
-                                "et_trigger_leg2_variation": _variation,
+                                "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
+                                "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                                "eletau_cross_trigger_leg2_sf_name": "etau",
+                                "eletau_cross_trigger_leg2_variation": _variation,
                             },
                         ]
                     },
@@ -1565,12 +1569,12 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     name=f"singleMuTriggerSF{_variation.upper()}",
                     shift_config={
                         ("mt"): {
-                            "single_mu_trigger_sf": [
+                            "singlemuon_trigger_sf": [
                                 {
-                                    "m_trigger_flagname": "trg_wgt_single_mu24",
-                                    "m_trigger_flag": "trg_single_mu24",
-                                    "m_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                                    "m_trigger_variation": f"syst{_variation}",
+                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                                    "singlemuon_trigger_flag": "trg_single_mu24",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                                    "singlemuon_trigger_variation": f"syst{_variation}",
                                 },
                             ],
                         }
@@ -1586,18 +1590,18 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
                             {
-                                "mt_trigger_flag": "trg_cross_mu20tau27_hps",
-                                "mt_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                                "mt_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
-                                "mt_trigger_leg1_variation": f"syst{_variation}",
+                                "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                                "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
+                                "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
+                                "mutau_cross_trigger_leg1_variation": f"syst{_variation}",
                             },
                         ],
                         "mutau_trigger_leg2_sf": [
                             {
-                                "mt_trigger_flag": "trg_cross_mu20tau27_hps",
-                                "mt_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
-                                "mt_trigger_leg2_sf_name": "mutau",
-                                "mt_trigger_leg2_variation": _variation,
+                                "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                                "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
+                                "mutau_cross_trigger_leg2_sf_name": "mutau",
+                                "mutau_cross_trigger_leg2_variation": _variation,
                             },
                         ],
                     },
@@ -1617,7 +1621,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ("tt"): {
                         "doubletau_trigger_leg1_sf": [
                             {
-                                "tt_trigger_leg1_flagname": EraModifier(
+                                "doubletau_trigger_leg1_flagname": EraModifier(
                                     {
                                         "2022preEE": "trg_wgt_doubletau35_leg1",
                                         "2022postEE": "trg_wgt_doubletau35_leg1",
@@ -1627,7 +1631,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_wgt_doubletau30_leg1",
                                     }
                                 ),
-                                "tt_trigger_flag":  EraModifier(
+                                "doubletau_trigger_flag":  EraModifier(
                                     {
                                         "2022preEE": "trg_double_tau35_mediumiso_hps",
                                         "2022postEE": "trg_double_tau35_mediumiso_hps",
@@ -1637,7 +1641,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
-                                "tt_trigger_leg1_sf_name": EraModifier(
+                                "doubletau_trigger_leg1_sf_name": EraModifier(
                                     {
                                         "2022preEE":"ditau",
                                         "2022postEE":"ditau",
@@ -1647,12 +1651,12 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025":"ditau_pnet_medium"
                                     }
                                 ),
-                                "tt_trigger_leg1_variation": _variation,
+                                "doubletau_trigger_leg1_variation": _variation,
                             },
                         ],
                         "doubletau_trigger_leg2_sf": [
                             {
-                                "tt_trigger_leg2_flagname": EraModifier(
+                                "doubletau_trigger_leg2_flagname": EraModifier(
                                     {
                                         "2022preEE": "trg_wgt_doubletau35_leg2",
                                         "2022postEE": "trg_wgt_doubletau35_leg2",
@@ -1662,7 +1666,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_wgt_doubletau30_leg2",
                                     }
                                 ),
-                                "tt_trigger_flag":  EraModifier(
+                                "doubletau_trigger_flag":  EraModifier(
                                     {
                                         "2022preEE": "trg_double_tau35_mediumiso_hps",
                                         "2022postEE": "trg_double_tau35_mediumiso_hps",
@@ -1672,7 +1676,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
-                                "tt_trigger_leg2_sf_name": EraModifier(
+                                "doubletau_trigger_leg2_sf_name": EraModifier(
                                     {
                                         "2022preEE":"ditau",
                                         "2022postEE":"ditau",
@@ -1682,7 +1686,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2025":"ditau_pnet_medium"
                                     }
                                 ),
-                                "tt_trigger_leg2_variation": _variation,
+                                "doubletau_trigger_leg2_variation": _variation,
                             },
                         ],
                     },
@@ -1695,5 +1699,405 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             ),
             exclude_samples=["data", "embedding", "embedding_mc"],
         )
+
+        # muon trigger SF settings from embedding measurements
+    configuration.add_config_parameters(
+        ["mt", "mm"],
+        {
+            "singlemuon_trigger_sf_mc": EraModifier(
+                {
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                }
+            )
+        },
+    )
+    # electron trigger SF settings from embedding measurements
+    configuration.add_config_parameters(
+        ["et", "ee"],
+        {
+            "singlelectron_trigger_sf_mc": EraModifier(
+                {
+                    "2018": [
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2017": [
+                        {
+                            "flagname": "trg_wgt_single_ele32",
+                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele35",
+                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele32orele35",
+                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                        {
+                            "flagname": "trg_wgt_single_ele27orele32orele35",
+                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
+                    "2016postVFP": [
+                        {
+                            "flagname": "trg_wgt_single_ele25",
+                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        }
+                    ],
+                    "2016preVFP": [
+                        {
+                            "flagname": "trg_wgt_single_ele25",
+                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                        }
+                    ],
+                }
+            )
+        },
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFUp",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf_mc": EraModifier(
+                        {
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                }
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 1.02,
+                                }
+                            ],
+                        }
+                    )
+                }
+            },
+            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
+        ),
+        exclude_samples=["data", "embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleElectronTriggerSFDown",
+            shift_config={
+                ("et"): {
+                    "singlelectron_trigger_sf_mc": EraModifier(
+                        {
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_ele32orele35",
+                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele32",
+                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele35",
+                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_ele27orele32orele35",
+                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                }
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_ele25",
+                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
+                                    "mc_electron_trg_extrapolation": 0.98,
+                                }
+                            ],
+                        }
+                    )
+                }
+            },
+            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
+        ),
+        exclude_samples=["data", "embedding", "embedding_mc"],
+    )
+
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFUp",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf_mc": EraModifier(
+                        {
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 1.02,
+                                },
+                            ],
+                        }
+                    )
+                }
+            },
+            producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
+        ),
+        exclude_samples=["data", "embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="singleMuonTriggerSFDown",
+            shift_config={
+                ("mt"): {
+                    "singlemuon_trigger_sf_mc": EraModifier(
+                        {
+                            "2018": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2017": [
+                                {
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                                {
+                                    "flagname": "trg_wgt_single_mu24ormu27",
+                                    "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016postVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                            "2016preVFP": [
+                                {
+                                    "flagname": "trg_wgt_single_mu22",
+                                    "mc_trigger_sf": "Trg_pt_eta_bins",
+                                    "mc_muon_trg_extrapolation": 0.98,
+                                },
+                            ],
+                        }
+                    )
+                }
+            },
+            producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
+        ),
+        exclude_samples=["data", "embedding", "embedding_mc"],
+    )
 
     return configuration
