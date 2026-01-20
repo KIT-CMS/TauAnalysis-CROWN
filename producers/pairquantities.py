@@ -358,6 +358,10 @@ with defaults(call=None, input=None, output=None):
         scopes=["tt"],
         subproducers=[UnrollTauLV1, UnrollTauLV2] + DiTauPairQuantitiesCollection,
     )
+    TTDiTauPairQuantities_v9 = ProducerGroup(
+        scopes=["tt"],
+        subproducers=[UnrollTauLV1_v9, UnrollTauLV2_v9] + DiTauPairQuantitiesCollection,
+    )
     MTDiTauPairQuantities = ProducerGroup(
         scopes=["mt"],
         subproducers=[UnrollMuLV1, UnrollTauLV2, tau_decaymode_1_notau] + DiTauPairQuantitiesCollection,

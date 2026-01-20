@@ -10,11 +10,11 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProduc
 
 with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
     Muon_1_ID_SF = Producer(
-        call='physicsobject::muon::scalefactor::Id({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_id_sf_name}", "{muon_sf_varation}")',
+        call='physicsobject::muon::scalefactor::Id({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_id_sf_name}", "{muon_sf_variation}")',
         output=[q.id_wgt_mu_1],
     )
     Muon_1_Iso_SF = Producer(
-        call='physicsobject::muon::scalefactor::Iso({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_iso_sf_name}", "{muon_sf_varation}")',
+        call='physicsobject::muon::scalefactor::Iso({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_iso_sf_name}", "{muon_sf_variation}")',
         output=[q.iso_wgt_mu_1],
     )
     # --- from our measurement ---
@@ -34,11 +34,11 @@ with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
 
 with defaults(scopes=["em", "mm"], input=[q.pt_2, q.eta_2]):
     Muon_2_ID_SF = Producer(
-        call='physicsobject::muon::scalefactor::Id({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_id_sf_name}", "{muon_sf_varation}")',
+        call='physicsobject::muon::scalefactor::Id({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_id_sf_name}", "{muon_sf_variation}")',
         output=[q.id_wgt_mu_2],
     )
     Muon_2_Iso_SF = Producer(
-        call='physicsobject::muon::scalefactor::Iso({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_iso_sf_name}", "{muon_sf_varation}")',
+        call='physicsobject::muon::scalefactor::Iso({df}, correctionManager, {output}, {input}, "{muon_sf_file}", "{muon_iso_sf_name}", "{muon_sf_variation}")',
         output=[q.iso_wgt_mu_2],
     )
     # --- from our measurement ---
