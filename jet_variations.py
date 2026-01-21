@@ -3,8 +3,8 @@ from code_generation.configuration import Configuration
 
 # Map internal era names to JERC JSON era names for JERC sources
 JERC_ERA_MAP = {
-    "2016preVFP":"2016preVFP",
-    "2016postVFP":"2016postVFP", 
+    "2016preVFP":"2016",
+    "2016postVFP":"2016", 
     "2017":"2017", 
     "2018":"2018",
     "2022preEE": "2022",
@@ -31,8 +31,8 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
     class JES_CONFIG:
-        INDIVIDUAL = True if int(era[:4]) >= 2022 else False # preferred configuration for run3 (as of Oct. 25)
-        INDIVIDUAL = False if int(era[:4]) >= 2022 else True  # preferred configuration for run2
+        INDIVIDUAL = False 
+        REGROUPED = True 
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if era not in ["2024", "2025"]:
@@ -81,12 +81,13 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 scopes="global",
                 producers=[jets.JetEnergyCorrection]
             )
-            add_shift(
-                shift_key="btag_sf_variation",
-                shift_map={"Up": "up_jes", "Down": "down_jes"},
-                scopes=("mt", "et", "tt"),
-                producers=[scalefactors.btagging_SF]
-            )
+            if era not in ["2024", "2025"]:
+                add_shift(
+                    shift_key="btag_sf_variation",
+                    shift_map={"Up": "up_jes", "Down": "down_jes"},
+                    scopes=("mt", "et", "tt"),
+                    producers=[scalefactors.btagging_SF]
+                )
 
         if JES_CONFIG.INDIVIDUAL:
             for name in [
@@ -137,12 +138,13 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         scopes="global",
                         producers=[jets.JetEnergyCorrection]
                     )
-                    add_shift(
-                        shift_key="btag_sf_variation",
-                        shift_map={"Up": f"up_jes{name}", "Down": f"down_jes{name}"},
-                        scopes=("mt", "et", "tt"),
-                        producers=[scalefactors.btagging_SF]
-                    )
+                    if era not in ["2024", "2025"]:
+                        add_shift(
+                            shift_key="btag_sf_variation",
+                            shift_map={"Up": f"up_jes{name}", "Down": f"down_jes{name}"},
+                            scopes=("mt", "et", "tt"),
+                            producers=[scalefactors.btagging_SF]
+                        )
 
         elif JES_CONFIG.REGROUPED:  # preferred configuration
             for name, JES_source, *is_yearly in [
@@ -159,27 +161,22 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 ("EC2", lambda era: f'{{"Regrouped_EC2_{JERC_ERA_MAP[era]}"}}', era),
                 ("RelativeSample", lambda era: f'{{"Regrouped_RelativeSample_{JERC_ERA_MAP[era]}"}}', era),
             ]:
-                if is_yearly:
-                    mapped_era = JERC_ERA_MAP[era]
-                    JES_source_val = JES_source(era)
-                    name_val = f"jesUnc{name}Year"
-                else:
-                    JES_source_val = JES_source
-                    name_val = f"jesUnc{name}"
-                btag_variation_source = name
-
-                with defaults(name=name_val):
+                with defaults(name=f"jesUnc{name}Year" if is_yearly else f"jesUnc{name}"):
+                    JES_source_val = JES_source(era) if is_yearly else JES_source
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, JES_source_val], "Down": [-1, JES_source_val]},
                         scopes="global",
                         producers=[jets.JetEnergyCorrection],
                     )
-                    add_shift(
-                        shift_key="btag_sf_variation",
-                        shift_map={"Up": f"up_jes{btag_variation_source}", "Down": f"down_jes{btag_variation_source}"},
-                        scopes=("mt", "et", "tt"),
-                        producers=[scalefactors.btagging_SF]
-                    )
+
+                    if era not in ["2024", "2025"]:
+                        btag_variation_source = f"{name}_{era}" if is_yearly else name
+                        add_shift(
+                            shift_key="btag_sf_variation",
+                            shift_map={"Up": f"up_jes{btag_variation_source}", "Down": f"down_jes{btag_variation_source}"},
+                            scopes=("mt", "et", "tt"),
+                            producers=[scalefactors.btagging_SF]
+                        )
 
     return configuration
