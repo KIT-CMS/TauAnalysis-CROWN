@@ -773,8 +773,8 @@ def build_config(
             scalefactors.Tau_2_VsEleTauID_SF,
             scalefactors.Tau_2_VsMuTauID_SF,
             triggers.MTGenerateSingleMuonTriggerFlags,
-            triggers.MTGenerateCrossTriggerFlags,
-            triggers.GenerateSingleTrailingTauTriggerFlags,
+            #triggers.MTGenerateCrossTriggerFlags,
+            #triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleMuTriggerSF,
             #scalefactors.MuTauTriggerSF,
             pairquantities.VsJetTauIDFlagOnly_2,
@@ -827,8 +827,8 @@ def build_config(
             scalefactors.Tau_2_VsMuTauID_SF,
             # scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
-            triggers.ETGenerateCrossTriggerFlags,
-            triggers.GenerateSingleTrailingTauTriggerFlags,
+            #triggers.ETGenerateCrossTriggerFlags,
+            #triggers.GenerateSingleTrailingTauTriggerFlags,
             pairquantities.VsJetTauIDFlagOnly_2,
             # pairquantities.VsEleTauIDFlagOnly_2,
             # pairquantities.VsMuTauIDFlagOnly_2,
@@ -1326,8 +1326,8 @@ def build_config(
             # pairquantities.VsEleTauIDFlagOnly_2.output_group,
             # pairquantities.VsMuTauIDFlagOnly_2.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
-            triggers.MTGenerateCrossTriggerFlags.output_group,
-            triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
+            #triggers.MTGenerateCrossTriggerFlags.output_group,
+            #triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             q.taujet_pt_2,
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
@@ -1362,8 +1362,8 @@ def build_config(
             # pairquantities.VsEleTauIDFlagOnly_2.output_group,
             # pairquantities.VsMuTauIDFlagOnly_2.output_group,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
-            triggers.ETGenerateCrossTriggerFlags.output_group,
-            triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
+            #triggers.ETGenerateCrossTriggerFlags.output_group,
+            #triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             q.taujet_pt_2,
             # q.gen_taujet_pt_2,
             q.tau_decaymode_1,
@@ -1562,8 +1562,8 @@ def build_config(
         SystematicShiftByQuantity(
             name="metUnclusteredEnDown",
             quantity_change={
-                nanoAOD.PuppiMET_pt: "PuppiMET_ptUnclusterledDown",
-                nanoAOD.PuppiMET_phi: "PuppiMET_phiUnclusterledDown",
+                nanoAOD.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
+                nanoAOD.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
             },
             scopes=["global"],
         ),
@@ -1573,20 +1573,20 @@ def build_config(
     #########################
     # MET Recoil Shifts
     #########################
-    with defaults(
-        scopes=("et", "mt", "tt", "em", "ee", "mm"),
-        producers=[met.ApplyRecoilCorrections],
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
-        shift_key=["recoil_method", "recoil_variation",]
-    ):
-        add_shift(
-            name="metRecoilResponse",
-            shift_map={"Up": ["Uncertainty", "RespUp"], "Down": ["Uncertainty", "RespDown"]}
-        )
-        add_shift(
-            name="metRecoilResolution",
-            shift_map={"Up": ["Uncertainty", "ResolUp"], "Down": ["Uncertainty", "ResolDown"]}
-        )
+    # with defaults(
+    #     scopes=("et", "mt", "tt", "em", "ee", "mm"),
+    #     producers=[met.ApplyRecoilCorrections],
+    #     exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+    #     shift_key=["recoil_method", "recoil_variation",]
+    # ):
+    #     add_shift(
+    #         name="metRecoilResponse",
+    #         shift_map={"Up": ["Uncertainty", "RespUp"], "Down": ["Uncertainty", "RespDown"]}
+    #     )
+    #     add_shift(
+    #         name="metRecoilResolution",
+    #         shift_map={"Up": ["Uncertainty", "ResolUp"], "Down": ["Uncertainty", "ResolDown"]}
+    #     )
 
     #########################
     # Pileup Shifts
