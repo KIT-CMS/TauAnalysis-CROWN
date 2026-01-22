@@ -4,6 +4,14 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
+# run dependent denitions
+Tau_IDvsEle = Quantity()
+Tau_IDvsMu = Quantity()
+Tau_IDvsJet = Quantity()
+Tau_rawIDvsEle = Quantity()
+Tau_rawIDvsMu = Quantity()
+Tau_rawIDvsJet = Quantity()
+
 # DY flavor bug selection
 gen_dyflavor = Quantity()
 gen_dyfilter = Quantity()
