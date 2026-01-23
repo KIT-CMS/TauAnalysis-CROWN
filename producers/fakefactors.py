@@ -12,10 +12,12 @@ class Inputs:
         q.pt_2,
         q.njets,
         q.mt_1,
-        q.deltaR_ditaupair,
         q.tau_decaymode_2,
         q.mass_2,
+        q.pt_1,
         q.iso_1,
+        q.deltaR_ditaupair,
+        q.met,
         q.pt_tt,
     ]
     raw_fakefactor_tt = [
@@ -27,14 +29,14 @@ class Inputs:
     fakefactor_tt = [
         q.pt_1,
         q.pt_2,
-        q.mass_1,
-        q.mass_2,
+        q.njets,
+        q.m_vis,
         q.tau_decaymode_1,
         q.tau_decaymode_2,
-        q.njets,
-        q.deltaR_ditaupair,
+        q.mass_1,
+        q.mass_2,
+        q.met,
         q.pt_tt,
-        q.m_vis,
     ]
 
 with defaults(scopes=["mt", "et"]):
@@ -94,22 +96,17 @@ with defaults(scopes=["mt", "et"]):
             q.raw_qcd_fake_factor_2,
             q.raw_wjets_fake_factor_2,
             q.raw_ttbar_fake_factor_2,
-            # ---
             q.qcd_fake_factor_fraction_2,
             q.wjets_fake_factor_fraction_2,
             q.ttbar_fake_factor_fraction_2,
-            # ---
             q.qcd_DR_SR_correction_2,
             q.wjets_DR_SR_correction_2,
-            # ---
             q.qcd_correction_wo_DR_SR_2,
             q.wjets_correction_wo_DR_SR_2,
             q.ttbar_correction_wo_DR_SR_2,
-            # ---
             q.qcd_fake_factor_correction_2,
             q.wjets_fake_factor_correction_2,
             q.ttbar_fake_factor_correction_2,
-            # ---
             q.qcd_fake_factor_2,
             q.wjets_fake_factor_2,
             q.ttbar_fake_factor_2,

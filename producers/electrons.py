@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 ####################
@@ -19,11 +19,15 @@ with defaults(scopes=["global"]):
     )
 
     with defaults(output=[q.Electron_pt_corrected]):
-        #ElectronPtCorrectionEmbedding = Producer(
-        #    call='embedding::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{embedding_electron_es_sf_file}", "{ele_ES_json_name}", "{ele_energyscale_barrel}", "{ele_energyscale_endcap}")',
-        #    input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta],
-        #)
-        ElectronPtCorrectionMC = ProducerGroup(
+        ElectronPtCorrectionEmbedding = Producer(
+           call='embedding::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{embedding_electron_es_sf_file}", "{ele_ES_json_name}", "{ele_energyscale_barrel}", "{ele_energyscale_endcap}")',
+           input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta],
+        )
+        ElectronPtCorrectionMC_Run2 = Producer(
+            call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{ele_es_era}", "{ele_es_variation}")',
+            input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAODv9.Electron_dEsigmaUp, nanoAODv9.Electron_dEsigmaDown],
+        )
+        ElectronPtCorrectionMC_Run3 = ProducerGroup(
             call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, {ele_es_file}, {ele_es_mc_name}, "{ele_es_variation}")',
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_deltaEtaSC, nanoAOD.Electron_r9,],
             subproducers=[ElectronPtSmearingSeed],
@@ -52,21 +56,19 @@ with defaults(scopes=["global"]):
         input=[nanoAOD.Electron_dz],
         output=[q._ElectronDzCut],
     )
-    ElectronPtCutMin = Producer(
+    ElectronPtCut= Producer(
         call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_ele_pt})",
         input=[q.Electron_pt_corrected],
-        output=[q._ElectronPtCutMin],
+        output=[q._ElectronPtCut],
     )
-    #ElectronPtCutMax = Producer(
-    #    call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_pt})",
-    #    input=[q.Electron_pt_corrected],
-    #    output=[q._ElectronPtCutMax],
-    #)
-    ElectronIDCut = Producer(
-        call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',
-        input=[nanoAOD.Electron_mvaIso_WP90],
-        output=[q._ElectronIDCut],
-    )
+    with defaults(output=[q._ElectronIDCut], call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',):
+        ElectronIDCut = Producer(
+            input=[nanoAOD.Electron_mvaIso_WP90],
+        )
+        ElectronIDCut_v9 = Producer(
+            input=[nanoAODv9.Electron_mvaFall17V2noIso_WP90],
+        )
+
     ElectronIsoCut = Producer(
         call="physicsobject::CutMax<float>({df}, {output}, {input}, {ele_iso_cut})",
         input=[nanoAOD.Electron_pfRelIso03_all],
@@ -75,6 +77,7 @@ with defaults(scopes=["global"]):
 
     with defaults(output=[]):
         DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.Electron_pt_corrected])
+        # int for v9, UChar_t for v12 and v15
         DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<UChar_t>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
         DiElectronVetoElectrons = ProducerGroup(
             call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
@@ -87,12 +90,25 @@ with defaults(scopes=["global"]):
         input=[],
         output=[q.base_electrons_mask],
         subproducers=[
-            ElectronPtCutMin,
-            #ElectronPtCutMax,
+            ElectronPtCut,
             ElectronEtaCut,
             ElectronDxyCut,
             ElectronDzCut,
             ElectronIDCut,
+            ElectronIsoCut,
+        ],
+    )
+
+    BaseElectrons_v9 = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.base_electrons_mask],
+        subproducers=[
+            ElectronPtCut,
+            ElectronEtaCut,
+            ElectronDxyCut,
+            ElectronDzCut,
+            ElectronIDCut_v9,
             ElectronIsoCut,
         ],
     )

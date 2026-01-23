@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD, nanoAODv12
+from ..quantities import nanoAOD, nanoAODv15, nanoAODv12
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 from code_generation.configuration import Configuration
 
@@ -9,44 +9,49 @@ from code_generation.configuration import Configuration
 
 with defaults(scopes=["global"]):
     with defaults(output=[q.Jet_BTag]):
+        JetBTagDeep = Producer(
+            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            input=[nanoAOD.Jet_btagDeepFlavB],
+        )
         JetBTagPNet = Producer(
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
             input=[nanoAOD.Jet_btagPNetB],
         )
-
         JetBTagUParT = Producer(
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
             input=[nanoAOD.Jet_btagUParTAK4B],
         )
 
-    JetID = Producer(
-        call="physicsobject::jet::quantity::ID({df}, correctionManager, {output}, {input}, {jet_id_json}, {jet_collection_name})",
-        input=[
-            nanoAOD.Jet_eta,
-            nanoAOD.Jet_chHEF,
-            nanoAOD.Jet_neHEF,
-            nanoAOD.Jet_chEmEF,
-            nanoAOD.Jet_neEmEF,
-            nanoAOD.Jet_muEF,
-            nanoAOD.Jet_chMultiplicity,
-            nanoAOD.Jet_neMultiplicity,
-        ],
-        output=[q.Jet_ID],
-    )
-
-    JetIDRun3NanoV12Corrected = Producer(
-        call="physicsobject::jet::quantities::CorrectJetIDRun3NanoV12({df}, {output}, {input})",
-        input=[
-            nanoAOD.Jet_pt,
-            nanoAOD.Jet_eta,
-            nanoAODv12.Jet_jetId,
-            nanoAOD.Jet_neHEF,
-            nanoAOD.Jet_neEmEF,
-            nanoAOD.Jet_muEF,
-            nanoAOD.Jet_chEmEF,
-        ],
-        output=[q.Jet_ID],
-    )
+    with defaults(output=[q.Jet_ID]):
+        JetID = Producer(
+            call="physicsobject::jet::quantity::ID({df}, correctionManager, {output}, {input}, {jet_id_json}, {jet_collection_name})",
+            input=[
+                nanoAOD.Jet_eta,
+                nanoAOD.Jet_chHEF,
+                nanoAOD.Jet_neHEF,
+                nanoAOD.Jet_chEmEF,
+                nanoAOD.Jet_neEmEF,
+                nanoAOD.Jet_muEF,
+                nanoAODv15.Jet_chMultiplicity,
+                nanoAODv15.Jet_neMultiplicity,
+            ],
+        )
+        JetIDRun3NanoV12Corrected = Producer(
+            call="physicsobject::jet::quantities::CorrectJetIDRun3NanoV12({df}, {output}, {input})",
+            input=[
+                nanoAOD.Jet_pt,
+                nanoAOD.Jet_eta,
+                nanoAODv12.Jet_jetId,
+                nanoAOD.Jet_neHEF,
+                nanoAOD.Jet_neEmEF,
+                nanoAOD.Jet_muEF,
+                nanoAOD.Jet_chEmEF,
+            ],
+        )
+        JetID_rename = Producer(
+            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            input=[nanoAODv12.Jet_jetId],
+        )
 
     JetVetoMapVeto = Producer(
         call="""physicsobject::jet::vetoes::jet_vetomap({df}, correctionManager, {output}, {input}, "{jet_veto_map_file}", "{jet_veto_map_name}", "{jet_veto_map_type}", {jet_veto_min_pt}, {jet_veto_id_wp}, {jet_veto_max_em_frac})""",

@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv9
 from ..scripts.CROWNWrapper import (
     Producer,
     ProducerGroup,
@@ -29,6 +29,8 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         m_vis = Producer(call="lorentzvector::GetMass({df}, {output}, {input})", output=[q.m_vis])
         pt_vis = Producer(call="lorentzvector::GetPt({df}, {output}, {input})", output=[q.pt_vis])
         deltaR_ditaupair = Producer(call="quantities::DeltaR({df}, {output}, {input})", output=[q.deltaR_ditaupair])
+        deltaPhi_ditaupair = Producer(call="quantities::DeltaPhi({df}, {output}, {input})", output=[q.deltaPhi_ditaupair])
+        deltaEta_ditaupair = Producer(call="quantities::DeltaEta({df}, {output}, {input})", output=[q.deltaEta_ditaupair])
 
 ####################
 # Set of channel specific producers
@@ -148,7 +150,7 @@ with defaults(scopes=["tt"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 0)"):
         tau_dz_1 = Producer(input=[nanoAOD.Tau_dz, q.dileptonpair], output=[q.dz_1])
         tau_dxy_1 = Producer(input=[nanoAOD.Tau_dxy, q.dileptonpair], output=[q.dxy_1])
-        tau_iso_1 = Producer(input=[nanoAOD.Tau_rawDeepTau2018v2p5VSjet, q.dileptonpair], output=[q.iso_1])
+        tau_iso_1 = Producer(input=[q.Tau_rawIDvsJet, q.dileptonpair], output=[q.iso_1])
 
     with defaults(call="event::quantity::Get<Short_t>({df}, {output}, {input}, 0)"):
         tau_q_1 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_1])
@@ -183,6 +185,27 @@ with defaults(scopes=["tt"]):
         VsMuTauIDFlag_1 = ExtendedVectorProducer(output="tau_1_vsmu_id_outputname", vec_config="vsmu_tau_id")
         VsMuTauIDFlagOnly_1 = ExtendedVectorProducer(output="tau_1_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
 
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsjet_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSjet, q.dileptonpair],
+    ):
+        VsJetTauIDFlag_1_v9 = ExtendedVectorProducer(output="tau_1_vsjet_id_outputname", vec_config="vsjet_tau_id")
+        VsJetTauIDFlagOnly_1_v9 = ExtendedVectorProducer(output="tau_1_vsjet_id_WPbit_outputname", vec_config="vsjet_tau_id_wp_bit")
+
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsele_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSe, q.dileptonpair],
+    ):
+        VsEleTauIDFlag_1_v9 = ExtendedVectorProducer(output="tau_1_vsele_id_outputname", vec_config="vsele_tau_id")
+        VsEleTauIDFlagOnly_1_v9 = ExtendedVectorProducer(output="tau_1_vsele_id_WPbit_outputname", vec_config="vsele_tau_id_wp_bit")
+
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 0, {vsmu_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSmu, q.dileptonpair],
+    ):
+        VsMuTauIDFlag_1_v9 = ExtendedVectorProducer(output="tau_1_vsmu_id_outputname", vec_config="vsmu_tau_id")
+        VsMuTauIDFlagOnly_1_v9 = ExtendedVectorProducer(output="tau_1_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
+
     with defaults(call=None, input=None, output=None):
         UnrollTauLV1 = ProducerGroup(
             subproducers=[
@@ -201,12 +224,29 @@ with defaults(scopes=["tt"]):
                 VsMuTauIDFlag_1,
             ],
         )
+        UnrollTauLV1_v9 = ProducerGroup(
+            subproducers=[
+                pt_1,
+                eta_1,
+                phi_1,
+                mass_1,
+                tau_dxy_1,
+                tau_dz_1,
+                tau_q_1,
+                tau_iso_1,
+                tau_decaymode_1,
+                taujet_pt_1,
+                VsJetTauIDFlag_1_v9,
+                VsEleTauIDFlag_1_v9,
+                VsMuTauIDFlag_1_v9,
+            ],
+        )
 
 with defaults(scopes=["et", "mt", "tt"]):
     with defaults(call="event::quantity::Get<float>({df}, {output}, {input}, 1)"):
         tau_dxy_2 = Producer(input=[nanoAOD.Tau_dxy, q.dileptonpair], output=[q.dxy_2])
         tau_dz_2 = Producer(input=[nanoAOD.Tau_dz, q.dileptonpair], output=[q.dz_2])
-        tau_iso_2 = Producer(input=[nanoAOD.Tau_rawDeepTau2018v2p5VSjet, q.dileptonpair], output=[q.iso_2])
+        tau_iso_2 = Producer(input=[q.Tau_rawIDvsJet, q.dileptonpair], output=[q.iso_2])
 
     with defaults(call="event::quantity::Get<Short_t>({df}, {output}, {input}, 1)"):
         tau_q_2 = Producer(input=[nanoAOD.Tau_charge, q.dileptonpair], output=[q.q_2])
@@ -240,6 +280,27 @@ with defaults(scopes=["et", "mt", "tt"]):
     ):
         VsMuTauIDFlag_2 = ExtendedVectorProducer(output="tau_2_vsmu_id_outputname", vec_config="vsmu_tau_id")
         VsMuTauIDFlagOnly_2 = ExtendedVectorProducer(output="tau_2_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
+    
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsjet_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSjet, q.dileptonpair],
+    ):
+        VsJetTauIDFlag_2_v9 = ExtendedVectorProducer(output="tau_2_vsjet_id_outputname", vec_config="vsjet_tau_id")
+        VsJetTauIDFlagOnly_2_v9 = ExtendedVectorProducer(output="tau_2_vsjet_id_WPbit_outputname", vec_config="vsjet_tau_id_wp_bit")
+
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsele_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSe, q.dileptonpair],
+    ):
+        VsEleTauIDFlag_2_v9 = ExtendedVectorProducer(output="tau_2_vsele_id_outputname", vec_config="vsele_tau_id")
+        VsEleTauIDFlagOnly_2_v9 = ExtendedVectorProducer(output="tau_2_vsele_id_WPbit_outputname", vec_config="vsele_tau_id_wp_bit")
+
+    with defaults(
+        call="physicsobject::tau::quantity::IDFlag_v9({df}, {output}, {input}, 1, {vsmu_tau_id_WPbit})",
+        input=[nanoAODv9.Tau_idDeepTau2017v2p1VSmu, q.dileptonpair],
+    ):
+        VsMuTauIDFlag_2_v9 = ExtendedVectorProducer(output="tau_2_vsmu_id_outputname", vec_config="vsmu_tau_id")
+        VsMuTauIDFlagOnly_2_v9 = ExtendedVectorProducer(output="tau_2_vsmu_id_WPbit_outputname", vec_config="vsmu_tau_id_wp_bit")
 
     with defaults(call=None, input=None, output=None):   
         UnrollTauLV2 = ProducerGroup(
@@ -259,6 +320,23 @@ with defaults(scopes=["et", "mt", "tt"]):
                 VsMuTauIDFlag_2,
             ],
         )
+        UnrollTauLV2_v9 = ProducerGroup(
+            subproducers=[
+                pt_2,
+                eta_2,
+                phi_2,
+                mass_2,
+                tau_dxy_2,
+                tau_dz_2,
+                tau_q_2,
+                tau_iso_2,
+                tau_decaymode_2,
+                taujet_pt_2,
+                VsJetTauIDFlag_2_v9,
+                VsEleTauIDFlag_2_v9,
+                VsMuTauIDFlag_2_v9,
+            ],
+        )
 
 with defaults(call="event::quantity::Define({df}, {output}, -1)", input=[]):
     tau_decaymode_1_notau = Producer(output=[q.tau_decaymode_1], scopes=["et", "mt", "em", "ee", "mm"])
@@ -268,17 +346,29 @@ with defaults(call="event::quantity::Define({df}, {output}, -1)", input=[]):
 # Producer Groups
 #####################
 
+DiTauPairQuantitiesCollection = [
+    deltaPhi_ditaupair,
+    deltaEta_ditaupair,
+    deltaR_ditaupair,
+    pt_vis,
+    m_vis,
+]
 with defaults(call=None, input=None, output=None):
+    TTDiTauPairQuantities = ProducerGroup(
+        scopes=["tt"],
+        subproducers=[UnrollTauLV1, UnrollTauLV2] + DiTauPairQuantitiesCollection,
+    )
+    TTDiTauPairQuantities_v9 = ProducerGroup(
+        scopes=["tt"],
+        subproducers=[UnrollTauLV1_v9, UnrollTauLV2_v9] + DiTauPairQuantitiesCollection,
+    )
     MTDiTauPairQuantities = ProducerGroup(
         scopes=["mt"],
-        subproducers=[
-            UnrollMuLV1,
-            UnrollTauLV2,
-            tau_decaymode_1_notau,
-            m_vis,
-            pt_vis,
-            deltaR_ditaupair,
-        ],
+        subproducers=[UnrollMuLV1, UnrollTauLV2, tau_decaymode_1_notau] + DiTauPairQuantitiesCollection,
+    )
+    ETDiTauPairQuantities = ProducerGroup(
+        scopes=["et"],
+        subproducers=[UnrollElLV1, UnrollTauLV2, tau_decaymode_1_notau] + DiTauPairQuantitiesCollection,
     )
     MuMuPairQuantities = ProducerGroup(
         scopes=["mm"],
@@ -287,10 +377,7 @@ with defaults(call=None, input=None, output=None):
             UnrollMuLV2,
             tau_decaymode_1_notau,
             tau_decaymode_2_notau,
-            m_vis,
-            pt_vis,
-            deltaR_ditaupair,
-        ],
+        ] + DiTauPairQuantitiesCollection,
     )
     ElElPairQuantities = ProducerGroup(
         scopes=["ee"],
@@ -299,31 +386,7 @@ with defaults(call=None, input=None, output=None):
             UnrollElLV2,
             tau_decaymode_1_notau,
             tau_decaymode_2_notau,
-            m_vis,
-            pt_vis,
-            deltaR_ditaupair,
-        ],
-    )
-    ETDiTauPairQuantities = ProducerGroup(
-        scopes=["et"],
-        subproducers=[
-            UnrollElLV1,
-            UnrollTauLV2,
-            tau_decaymode_1_notau,
-            m_vis,
-            pt_vis,
-            deltaR_ditaupair,
-        ],
-    )
-    TTDiTauPairQuantities = ProducerGroup(
-        scopes=["tt"],
-        subproducers=[
-            UnrollTauLV1, 
-            UnrollTauLV2, 
-            m_vis, 
-            pt_vis, 
-            deltaR_ditaupair,
-        ],
+        ] + DiTauPairQuantitiesCollection,
     )
     EMDiTauPairQuantities = ProducerGroup(
         scopes=["em"],
@@ -332,10 +395,7 @@ with defaults(call=None, input=None, output=None):
             UnrollMuLV2,
             tau_decaymode_1_notau,
             tau_decaymode_2_notau,
-            m_vis,
-            pt_vis,
-            deltaR_ditaupair,
-        ],
+        ] + DiTauPairQuantitiesCollection,
     )
 
 # advanced event quantities (can be caluculated when ditau pair and met and all jets are determined)
@@ -345,11 +405,9 @@ with defaults(call=None, input=None, output=None):
 # bjets: gen_bjet_collection
 
 with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
-    LV_dilepton_pair = Producer(
-        call="lorentzvector::Sum({df}, {output}, {input})",
-        input=[q.p4_1, q.p4_2],
-        output=[q.p4_dilepton],
-    )
+    with defaults(call="lorentzvector::Sum({df}, {output}, {input})"):
+        LV_dilepton_pair = Producer(input=[q.p4_1, q.p4_2], output=[q.p4_dilepton])
+        LV_dijet_pair = Producer(input=[q.jet_p4_1, q.jet_p4_2], output=[q.p4_dijet])
     Pzetamissvis = Producer(
         call="quantities::PzetaMissVis({df}, {output}, {input})",
         input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
@@ -431,6 +489,36 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         output=[q.jet_hemisphere],
     )
 
+    with defaults(call="quantities::DeltaR({df}, {output}, {input})"):
+        deltaR_1j1 = Producer(input=[q.p4_1, q.jet_p4_1], output=[q.deltaR_1j1])
+        deltaR_1j2 = Producer(input=[q.p4_1, q.jet_p4_2], output=[q.deltaR_1j2])
+        deltaR_2j1 = Producer(input=[q.p4_2, q.jet_p4_1], output=[q.deltaR_2j1])
+        deltaR_2j2 = Producer(input=[q.p4_2, q.jet_p4_2], output=[q.deltaR_2j2])
+        deltaR_jj = Producer(input=[q.jet_p4_1, q.jet_p4_2], output=[q.deltaR_jj])
+        deltaR_12j1 = Producer(input=[q.p4_dilepton, q.jet_p4_1], output=[q.deltaR_12j1])
+        deltaR_12j2 = Producer(input=[q.p4_dilepton, q.jet_p4_2], output=[q.deltaR_12j2])
+        deltaR_12jj = Producer(input=[q.p4_dilepton, q.p4_dijet], output=[q.deltaR_12jj])
+
+    with defaults(call="quantities::DeltaPhi({df}, {output}, {input})"):
+        deltaPhi_1j1 = Producer(input=[q.p4_1, q.jet_p4_1], output=[q.deltaPhi_1j1])
+        deltaPhi_1j2 = Producer(input=[q.p4_1, q.jet_p4_2], output=[q.deltaPhi_1j2])
+        deltaPhi_2j1 = Producer(input=[q.p4_2, q.jet_p4_1], output=[q.deltaPhi_2j1])
+        deltaPhi_2j2 = Producer(input=[q.p4_2, q.jet_p4_2], output=[q.deltaPhi_2j2])
+        deltaPhi_jj = Producer(input=[q.jet_p4_1, q.jet_p4_2], output=[q.deltaPhi_jj])
+        deltaPhi_12j1 = Producer(input=[q.p4_dilepton, q.jet_p4_1], output=[q.deltaPhi_12j1])
+        deltaPhi_12j2 = Producer(input=[q.p4_dilepton, q.jet_p4_2], output=[q.deltaPhi_12j2])
+        deltaPhi_12jj = Producer(input=[q.p4_dilepton, q.p4_dijet], output=[q.deltaPhi_12jj])
+
+    with defaults(call="quantities::DeltaEta({df}, {output}, {input})"):
+        deltaEta_1j1 = Producer(input=[q.p4_1, q.jet_p4_1], output=[q.deltaEta_1j1])
+        deltaEta_1j2 = Producer(input=[q.p4_1, q.jet_p4_2], output=[q.deltaEta_1j2])
+        deltaEta_2j1 = Producer(input=[q.p4_2, q.jet_p4_1], output=[q.deltaEta_2j1])
+        deltaEta_2j2 = Producer(input=[q.p4_2, q.jet_p4_2], output=[q.deltaEta_2j2])
+        deltaEta_jj = Producer(input=[q.jet_p4_1, q.jet_p4_2], output=[q.deltaEta_jj])
+        deltaEta_12j1 = Producer(input=[q.p4_dilepton, q.jet_p4_1], output=[q.deltaEta_12j1])
+        deltaEta_12j2 = Producer(input=[q.p4_dilepton, q.jet_p4_2], output=[q.deltaEta_12j2])
+        deltaEta_12jj = Producer(input=[q.p4_dilepton, q.p4_dijet], output=[q.deltaEta_12jj])
+
     with defaults(call=None, input=None, output=None):
         DiTauPairMETQuantities = ProducerGroup(
             subproducers=[
@@ -452,6 +540,36 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
                 pt_dijet,
                 jet_hemisphere,
             ],
+        )
+
+        DiObjectAngleQuantities = ProducerGroup(
+            subproducers=[
+                LV_dijet_pair,
+                deltaR_1j1,
+                deltaR_1j2,
+                deltaR_2j1,
+                deltaR_2j2,
+                deltaR_jj,
+                deltaR_12j1,
+                deltaR_12j2,
+                deltaR_12jj,
+                deltaPhi_1j1,
+                deltaPhi_1j2,
+                deltaPhi_2j1,
+                deltaPhi_2j2,
+                deltaPhi_jj,
+                deltaPhi_12j1,
+                deltaPhi_12j2,
+                deltaPhi_12jj,
+                deltaEta_1j1,
+                deltaEta_1j2,
+                deltaEta_2j1,
+                deltaEta_2j2,
+                deltaEta_jj,
+                deltaEta_12j1,
+                deltaEta_12j2,
+                deltaEta_12jj,
+            ]
         )
 
 with defaults(

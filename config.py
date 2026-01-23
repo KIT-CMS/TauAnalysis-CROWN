@@ -715,7 +715,7 @@ def build_config(
             event.LHE_alphaS_weight,
             event.PS_weight,
             muons.BaseMuons,
-            electrons.ElectronPtCorrectionMC,
+            electrons.ElectronPtCorrectionMC_Run3,
             electrons.BaseElectrons,
             jets.JetBTagUParT,
             jets.JetID, 
@@ -758,7 +758,7 @@ def build_config(
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
             configuration.ES_ID_SCHEME.mc.producerGroupES,
-            taus.BasicTaus,
+            taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
             electrons.ExtraElectronsVeto, 
@@ -810,7 +810,7 @@ def build_config(
         [
             electrons.GoodElectrons,
             configuration.ES_ID_SCHEME.mc.producerGroupES,
-            taus.BasicTaus,
+            taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
             electrons.NumberOfGoodElectrons,
@@ -891,7 +891,7 @@ def build_config(
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
             configuration.ES_ID_SCHEME.mc.producerGroupES,
-            taus.BasicTaus,
+            taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
             pairselection.TTPairSelection,
@@ -964,7 +964,7 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
-            producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionData,],
+            producers=[electrons.ElectronPtCorrectionMC_Run3, electrons.ElectronPtCorrectionData,],
             samples=["data", "data_E", "data_F", "data_G",],
         ),
     )
@@ -1512,7 +1512,7 @@ def build_config(
     with defaults(
         scopes="global",
         shift_key="ele_es_variation",
-        producers=[electrons.ElectronPtCorrectionMC],
+        producers=[electrons.ElectronPtCorrectionMC_Run3],
         exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
     ):
         add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
