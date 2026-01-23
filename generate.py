@@ -19,11 +19,21 @@ def run(args):
         "ttbar",
         "diboson",
         "dyjets",
+        "dyjets_powheg",
+        "dyjets_amcatnlo",
+        "dyjets_amcatnlo_ll",
+        "dyjets_amcatnlo_tt",
         "wjets",
+        "wjets_amcatnlo",
         "data",
+        "data_E",
+        "data_F",
+        "data_G",
         "electroweak_boson",
+        "fake_era",
     ]
-    available_eras = ["2016preVFP", "2016postVFP", "2017", "2018"]
+    available_eras = ["2016preVFP", "2016postVFP", "2017", "2018", 
+                    "2022preEE", "2022postEE", "2023preBPix", "2023postBPix", "2024", "2025"]
     available_scopes = ["et", "mt", "tt", "em", "ee", "mm"]
 
     ## setup variables
