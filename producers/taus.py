@@ -377,7 +377,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             input=[nanoAOD.Tau_decayMode],
         )
 
-    BasicTaus = ProducerGroup(
+    BaseTaus = ProducerGroup(
         call=None,
         input=None,
         output=None,

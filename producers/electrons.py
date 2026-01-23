@@ -25,7 +25,7 @@ with defaults(scopes=["global"]):
         )
         ElectronPtCorrectionMC_Run2 = Producer(
             call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{ele_es_era}", "{ele_es_variation}")',
-            input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAOD.Electron_dEsigmaUp, nanoAOD.Electron_dEsigmaDown],
+            input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAODv9.Electron_dEsigmaUp, nanoAODv9.Electron_dEsigmaDown],
         )
         ElectronPtCorrectionMC_Run3 = ProducerGroup(
             call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, {ele_es_file}, {ele_es_mc_name}, "{ele_es_variation}")',
@@ -61,11 +61,11 @@ with defaults(scopes=["global"]):
         input=[q.Electron_pt_corrected],
         output=[q._ElectronPtCut],
     )
-    with defaults(output=[q.ElectronIDCut], call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',):
-        ElectronIDCut_Run3 = Producer(
+    with defaults(output=[q._ElectronIDCut], call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',):
+        ElectronIDCut = Producer(
             input=[nanoAOD.Electron_mvaIso_WP90],
         )
-        ElectronIDCut_Run2 = Producer(
+        ElectronIDCut_v9 = Producer(
             input=[nanoAODv9.Electron_mvaFall17V2noIso_WP90],
         )
 
@@ -87,13 +87,28 @@ with defaults(scopes=["global"]):
 
     BaseElectrons = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.ElectronIDCut],
+        input=[],
         output=[q.base_electrons_mask],
         subproducers=[
             ElectronPtCut,
             ElectronEtaCut,
             ElectronDxyCut,
             ElectronDzCut,
+            ElectronIDCut,
+            ElectronIsoCut,
+        ],
+    )
+
+    BaseElectrons_v9 = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.base_electrons_mask],
+        subproducers=[
+            ElectronPtCut,
+            ElectronEtaCut,
+            ElectronDxyCut,
+            ElectronDzCut,
+            ElectronIDCut_v9,
             ElectronIsoCut,
         ],
     )

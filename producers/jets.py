@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD, nanoAODv12
+from ..quantities import nanoAOD, nanoAODv15, nanoAODv12
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 from code_generation.configuration import Configuration
 
