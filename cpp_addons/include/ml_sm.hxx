@@ -5,9 +5,7 @@
 #include "../../../../include/utility/OnnxSessionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
 #include "../../../../include/ml.hxx"
-#include "../../../../includeTMVA/RModel.hxx"
-#include "../../../../includeTMVA/RModelParser_ONNX.hxx"
-#include "../../../../includeutility/utility.hxx"
+#include "../../../../include/utility/utility.hxx"
 #include <cstddef>
 
 namespace ml_sm {
@@ -19,7 +17,7 @@ namespace ml_sm {
         const std::string &model_file_path,
         const std::vector<std::string> &input_vec) {
 
-        auto df1 = GenericOnnxEvaluator<nParameters>(
+        auto df1 = ml::GenericOnnxEvaluator<nParameters>(
             df,
             onnxSessionManager,
             outputname_vector,
