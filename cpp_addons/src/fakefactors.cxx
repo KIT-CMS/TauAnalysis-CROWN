@@ -15,6 +15,9 @@
 #include <string_view>
 #include <array>
 
+#include <regex>
+#include <cmath>
+
 namespace fakefactors {
     /**
      * @brief Function to join and replace characters in a vector of strings
@@ -49,6 +52,72 @@ namespace fakefactors {
         return result;
     }
     namespace sm {
+
+        struct NonClosureHandler {
+            std::string prefix;
+            const correction::CompoundCorrection* compound; 
+            std::vector<std::string> variables;
+
+            NonClosureHandler(const std::string& proc, 
+                              const std::string& file,
+                              const correction::CompoundCorrection* c) 
+                : compound(c) {
+                
+                prefix = proc + "_non_closure_";
+                std::string pattern_str = prefix + "(.*)_correction";
+                std::regex pattern(pattern_str);
+                std::smatch match;
+
+                auto cset = correction::CorrectionSet::from_file(file);
+
+                for (const auto& [name, _] : *cset) {
+                    if (std::regex_match(name, match, pattern)) {
+                        variables.push_back(match[1].str());
+                    }
+                }
+            }
+
+            float evaluate(
+                const std::string& systematic,
+                std::vector<correction::Variable::Type> args // Pass by value
+            ) {
+                args.push_back("nominal");  // baseline
+                float nominal_value = compound->evaluate(args);
+
+                bool is_target_variation = (systematic != "nominal") && 
+                                           (systematic.find(prefix) == 0) &&
+                                           (systematic.find("non_closure_Corr") != std::string::npos);
+
+                if (!is_target_variation) {
+                    if (systematic == "nominal"){
+                        return nominal_value;
+                    }
+                    
+                    args.back() = systematic;
+                    return compound->evaluate(args);
+                }
+
+                std::string coarse_correction = systematic.substr(prefix.length());
+
+                double sum_sq_diff = 0.0;
+
+                for (const auto& variable : variables) {
+                    std::string specific_key = prefix + variable + "_" + coarse_correction;
+                    args.back() = specific_key;
+
+                    float variation_val = compound->evaluate(args);
+                    float diff = nominal_value - variation_val;
+
+                    sum_sq_diff += (diff * diff);
+                }
+
+                float total_uncertainty = std::sqrt(sum_sq_diff);
+                bool is_up = (systematic.compare(systematic.length() - 2, 2, "Up") == 0);
+                
+                return is_up ? (nominal_value + total_uncertainty) : (nominal_value - total_uncertainty);
+            }
+        };
+
         /**
          * @brief Function to calculate raw fake factors without corrections with
          * correctionlib for the semileptonic channels
@@ -255,6 +324,12 @@ namespace fakefactors {
 
             auto ttbar_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "ttbar_compound_correction");
 
+            // ---
+
+            auto qcd_handler = std::make_shared<NonClosureHandler>("QCD", ff_corr_file, qcd_non_closure);
+            auto wjets_handler = std::make_shared<NonClosureHandler>("Wjets", ff_corr_file, wjets_non_closure);
+            auto ttbar_handler = std::make_shared<NonClosureHandler>("ttbar", ff_corr_file, ttbar_non_closure);
+
             const auto input_columns = {
                 pt_2,
                 njets,
@@ -282,6 +357,7 @@ namespace fakefactors {
             };
 
             auto calc_fake_factor = [
+                qcd_handler, wjets_handler, ttbar_handler,
                 qcd, wjets, ttbar, fractions,
                 QCD_variation, Wjets_variation, ttbar_variation, fraction_variation,
                 qcd_DR_SR, qcd_non_closure,
@@ -360,18 +436,9 @@ namespace fakefactors {
                         __njets
                     };
 
-                    auto qcd_non_closure_args = _non_closure_args;
-                    qcd_non_closure_args.push_back(QCD_non_closure_correction_variation);
-
-                    auto wjets_non_closure_args = _non_closure_args;
-                    wjets_non_closure_args.push_back(Wjets_non_closure_correction_variation);
-
-                    auto ttbar_non_closure_args = _non_closure_args;
-                    ttbar_non_closure_args.push_back(ttbar_non_closure_correction_variation);
-
-                    qcd_non_closure_corr = qcd_non_closure->evaluate(qcd_non_closure_args);
-                    wjets_non_closure_corr = wjets_non_closure->evaluate(wjets_non_closure_args);
-                    ttbar_non_closure_corr = ttbar_non_closure->evaluate(ttbar_non_closure_args);
+                    qcd_non_closure_corr = qcd_handler->evaluate(QCD_non_closure_correction_variation, _non_closure_args);
+                    wjets_non_closure_corr = wjets_handler->evaluate(Wjets_non_closure_correction_variation, _non_closure_args);
+                    ttbar_non_closure_corr = ttbar_handler->evaluate(ttbar_non_closure_correction_variation, _non_closure_args);
 
                     qcd_correction = std::max(qcd_DR_SR_corr, 0.0f) * std::max(qcd_non_closure_corr, 0.0f);
                     wjets_correction = std::max(wjets_DR_SR_corr, 0.0f) * std::max(wjets_non_closure_corr, 0.0f);
