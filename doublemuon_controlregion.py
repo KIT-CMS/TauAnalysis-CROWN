@@ -37,7 +37,7 @@ def build_config(
     available_sample_types: List[str],
     available_eras: List[str],
     available_scopes: List[str],
-):
+) -> Configuration:
     configuration = Configuration(
         era,
         sample,
@@ -660,9 +660,9 @@ def build_config(
             q.pzetamissvis,
             q.deltaR_ditaupair,
             q.pt_vis,
-            q.muon_veto_flag,
-            q.prefireweight,
-            q.electron_veto_flag,
+            q.extramuon_veto,
+            q.prefiring_wgt,
+            q.extraelec_veto,
         ],
     )
 

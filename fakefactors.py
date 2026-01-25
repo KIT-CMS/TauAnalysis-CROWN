@@ -1,14 +1,34 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
+
 import json
 import os
+from dataclasses import dataclass, field
+from typing import List, Union, Callable
+
 import correctionlib
-from typing import List, Union
-from .producers import fakefactors as fakefactors
-from .quantities import output as q
 from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
-from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
+from code_generation.systematics import SystematicShift
+
+from .producers import fakefactors as fakefactors
+from .quantities import output as q
+
+
+@dataclass
+class NonClosureGranularity:
+    granularity: str
+    coarse_check: Callable[[str], bool] = field(default=lambda x: "_non_closure_Corr" in x)
+
+    def check(self, name: str) -> bool:
+        if self.granularity == "both":
+            return True
+        is_coarse = self.coarse_check(name)
+
+        if self.granularity == "coarse":
+            return is_coarse
+
+        if self.granularity == "fine":
+            return not is_coarse
 
 
 def build_config(
@@ -20,7 +40,7 @@ def build_config(
     available_eras: List[str],
     available_scopes: List[str],
     quantities_map: Union[str, None] = None,
-):
+) -> FriendTreeConfiguration:
     configuration = FriendTreeConfiguration(
         era,
         sample,
@@ -31,6 +51,8 @@ def build_config(
         available_scopes,
         quantities_map,
     )
+
+    non_closure_granularity = NonClosureGranularity("coarse")  # "both", "coarse", "fine"
 
     # --- helper ---
 
@@ -48,6 +70,11 @@ def build_config(
     def load_ff_correctionlib(path: str) -> correctionlib.CorrectionSet:
         path = os.path.join("analysis_configurations/tau", path)
         return json.loads(correctionlib.CorrectionSet.from_file(path)._data)["corrections"]
+
+    def apply_variation_based_on_granularity(name: str) -> bool:
+        if "non_closure" not in name:
+            return True
+        return non_closure_granularity.check(name)
 
     # ---
 
@@ -127,7 +154,7 @@ def build_config(
             ],
         )
 
-        for _key, _name in [
+        all_variations = (
             (ff_process_name(correction["name"]), value["key"].replace("Up", ""))
             for corrections in (
                 load_ff_correctionlib(configuration.config_parameters["mt"]["file"]),
@@ -137,7 +164,11 @@ def build_config(
             for value in correction["data"]["content"]
             if value["key"].endswith("Up")
             # ("<producer variation argument>", "<variation name without direction>")
-        ]:
+        )
+
+        for _key, _name in set(all_variations):
+            if not apply_variation_based_on_granularity(_name):
+                continue
             for _shift in ["Up", "Down"]:
 
                 variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)

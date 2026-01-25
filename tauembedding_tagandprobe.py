@@ -29,7 +29,7 @@ def build_config(
     available_sample_types: List[str],
     available_eras: List[str],
     available_channels: List[str],
-):
+) -> Configuration:
     if sample != "data" and sample != "embedding" and sample != "dyjets":
         print(
             "WARNING: TagandProbe measurement uses only data, dyjets and embedding samples"
@@ -953,8 +953,8 @@ def build_config(
             q.nmuons,
             q.is_global_1,
             q.is_global_2,
-            q.muon_veto_flag,
-            q.electron_veto_flag,
+            q.extramuon_veto,
+            q.extraelec_veto,
             tagandprobe.MuMuSingleMuonTriggerFlags_1.output_group,
             tagandprobe.MuMuSingleMuonTriggerFlags_2.output_group,
             tp_q.fsr_photon_veto_1,
@@ -1004,7 +1004,7 @@ def build_config(
             q.dz_2,
             q.dxy_1,
             q.dxy_2,
-            q.electron_veto_flag,
+            q.extraelec_veto,
             tp_q.id_wp90_1,
             tp_q.id_wp90_2,
             tp_q.id_wp80_1,
