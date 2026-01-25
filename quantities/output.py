@@ -349,6 +349,17 @@ wjets_correction_wo_DR_SR_2 = Quantity()
 ttbar_correction_wo_DR_SR_1 = Quantity()
 ttbar_correction_wo_DR_SR_2 = Quantity()
 
+nn_output_vector = Quantity()
+nn_predicted_class = Quantity()
+nn_predicted_max_value = Quantity()
+
+njets_float = Quantity()
+nbtag_float = Quantity()
+event_parity_float = Quantity()
+tau_decaymode_2_float = Quantity()
+tau_decaymode_1_float = Quantity()
+pzetamissvis_float = Quantity()
+
 # --- internally used quantities ---
 
 _ElectronEtaCut = Quantity()
