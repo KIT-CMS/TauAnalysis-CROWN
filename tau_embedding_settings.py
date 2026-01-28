@@ -757,10 +757,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str]) -> Configur
             {
                 "tau_emb_sf_file": EraModifier(
                     {
-                        "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                        "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/embedding/tau_emb_2018UL.json.gz",
+                        "2016preVFP": "data/embedding/tau_id_es_embedding2016preVFPUL.json.gz",
+                        "2016postVFP": "data/embedding/tau_id_es_embedding2016postVFPUL.json.gz",
+                        "2017": "data/embedding/tau_id_es_embedding2017UL.json.gz",
+                        "2018": "data/embedding/tau_id_es_embedding2018UL.json.gz",
                     }
                 ),
                 "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
