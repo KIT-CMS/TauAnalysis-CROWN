@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD, nanoAODv9
 from ..scripts.CROWNWrapper import (
     Producer,
     ProducerGroup,
@@ -224,7 +224,7 @@ with defaults(scopes=["tt"]):
                 VsMuTauIDFlag_1,
             ],
         )
-        UnrollTauLV1_v9 = ProducerGroup(
+        UnrollTauLV1_Run2 = ProducerGroup(
             subproducers=[
                 pt_1,
                 eta_1,
@@ -320,7 +320,7 @@ with defaults(scopes=["et", "mt", "tt"]):
                 VsMuTauIDFlag_2,
             ],
         )
-        UnrollTauLV2_v9 = ProducerGroup(
+        UnrollTauLV2_Run2 = ProducerGroup(
             subproducers=[
                 pt_2,
                 eta_2,
@@ -358,9 +358,9 @@ with defaults(call=None, input=None, output=None):
         scopes=["tt"],
         subproducers=[UnrollTauLV1, UnrollTauLV2] + DiTauPairQuantitiesCollection,
     )
-    TTDiTauPairQuantities_v9 = ProducerGroup(
+    TTDiTauPairQuantities_Run2 = ProducerGroup(
         scopes=["tt"],
-        subproducers=[UnrollTauLV1_v9, UnrollTauLV2_v9] + DiTauPairQuantitiesCollection,
+        subproducers=[UnrollTauLV1_Run2, UnrollTauLV2_Run2] + DiTauPairQuantitiesCollection,
     )
     MTDiTauPairQuantities = ProducerGroup(
         scopes=["mt"],

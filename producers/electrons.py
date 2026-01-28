@@ -24,10 +24,10 @@ with defaults(scopes=["global"]):
            input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta],
         )
         ElectronPtCorrectionMC_Run2 = Producer(
-            call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{ele_es_era}", "{ele_es_variation}")',
+            call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{era}", "{ele_es_variation}")',
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAODv9.Electron_dEsigmaUp, nanoAODv9.Electron_dEsigmaDown],
         )
-        ElectronPtCorrectionMC_Run3 = ProducerGroup(
+        ElectronPtCorrectionMC = ProducerGroup(
             call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, {ele_es_file}, {ele_es_mc_name}, "{ele_es_variation}")',
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_deltaEtaSC, nanoAOD.Electron_r9,],
             subproducers=[ElectronPtSmearingSeed],
@@ -99,7 +99,7 @@ with defaults(scopes=["global"]):
         ],
     )
 
-    BaseElectrons_v9 = ProducerGroup(
+    BaseElectrons_Run2 = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
         input=[],
         output=[q.base_electrons_mask],

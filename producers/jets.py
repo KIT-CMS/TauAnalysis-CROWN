@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD, nanoAODv15, nanoAODv12
+from ..quantities import nanoAOD, nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 from code_generation.configuration import Configuration
 
@@ -13,13 +13,15 @@ with defaults(scopes=["global"]):
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
             input=[nanoAOD.Jet_btagDeepFlavB],
         )
+        # not present in v9
         JetBTagPNet = Producer(
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
-            input=[nanoAOD.Jet_btagPNetB],
+            input=[nanoAODv12.Jet_btagPNetB],
         )
+        # not present in v9 or v12
         JetBTagUParT = Producer(
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
-            input=[nanoAOD.Jet_btagUParTAK4B],
+            input=[nanoAODv15.Jet_btagUParTAK4B],
         )
 
     with defaults(output=[q.Jet_ID]):
@@ -133,7 +135,7 @@ with defaults(scopes=["global"]):
         JetEtaCut_Min2 = Producer(call="physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})", input=[nanoAOD.Jet_eta])
         JetEtaCut_Max1 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_1})", input=[nanoAOD.Jet_eta])
         JetEtaCut_Max2 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_2})", input=[nanoAOD.Jet_eta])
-        JetEtaCut_Max3 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_3})", input=[nanoAOD.Jet_eta])
+        JetEtaCut_Max3 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_3})", input=[nanoAOD.Jet_eta], output=[q.Jet_eta_max_cut])
 
         BJetPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_bjet_pt})", input=[q.Jet_pt_corrected])
         BJetEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_bjet_eta})", input=[nanoAOD.Jet_eta])
@@ -143,22 +145,28 @@ with defaults(scopes=["global"]):
     JetIDCut = Producer(
         call="physicsobject::CutMin<int>({df}, {output}, {input}, {jet_id})",
         input=[q.Jet_ID],
-        output=[q.jet_id_mask],
+        output=[q.Jet_id_cut],
+    )
+
+    JetPUIDCut = Producer(
+        call="physicsobject::jet::CutPileupID({df}, {output}, {input}, {jet_puid}, {jet_puid_max_pt})",
+        input=[nanoAODv9.Jet_puId, q.Jet_pt_corrected],
+        output=[q.jet_puid_mask],
     )
 
     # pt>30 & |eta| < 2.5 & id
     LooseJets_LowEta = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.jet_id_mask, q.Jet_pt_cut_loose],
+        input=[q.Jet_id_cut, q.Jet_pt_cut_loose],
         output=[q.loose_jets_mask_loweta],
         subproducers=[JetEtaCut_Max1],
     )
     # pt>30 &  3 < |eta| < 4.7 & id
     LooseJets_HighEta = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.jet_id_mask, q.Jet_pt_cut_loose],
+        input=[q.Jet_id_cut, q.Jet_pt_cut_loose, q.Jet_eta_max_cut],
         output=[q.loose_jets_mask_higheta],
-        subproducers=[JetEtaCut_Min2, JetEtaCut_Max3],
+        subproducers=[JetEtaCut_Min2],
     )
     # pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id
     GoodJets_loose = Producer(
@@ -169,22 +177,28 @@ with defaults(scopes=["global"]):
     # pt>50 & 2.5<|eta|<3 & id
     GoodJets_tight = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.jet_id_mask],
+        input=[q.Jet_id_cut],
         output=[q.good_jets_mask_tight],
         subproducers=[JetPtCut_tight, JetEtaCut_Min1, JetEtaCut_Max2],
     )
-    # (pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id) || (pt>50 & 2.5<|eta|<3 & id)
-    GoodJets = Producer(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "any_of")',
-        input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
-        output=[q.good_jets_mask],
-    )
-    GoodBJets = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[q.jet_id_mask],
-        output=[q.good_bjets_mask],
-        subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
-    )
+    
+    with defaults(call='physicsobject::CombineMasks({df}, {output}, {input}, "any_of")'):
+        # (pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id) || (pt>50 & 2.5<|eta|<3 & id) for run 3
+        GoodJets = Producer(
+            input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
+            output=[q.good_jets_mask],
+        )
+        # run 2 without horn selection, pt>30 and eta<4.7
+        GoodJets_Run2 = ProducerGroup(
+            input=[q.Jet_pt_cut_loose, q.Jet_id_cut, q.Jet_eta_max_cut],
+            output=[q.good_jets_mask],
+            subproducers=[JetPUIDCut],
+        )
+        GoodBJets = ProducerGroup(
+            input=[q.Jet_id_cut],
+            output=[q.good_bjets_mask],
+            subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
+        )
 
 ####################
 # Set of producers to apply a veto of jets overlapping with ditaupair candidates and ordering jets by their pt

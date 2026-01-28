@@ -391,6 +391,20 @@ with defaults(scopes=["et", "mt", "tt"]):
         ],
     )
 
+    BaseTaus_Run2 = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[
+            TauID_vsEle_2p1,
+            TauID_vsMu_2p1,
+            TauID_vsJet_2p1,
+            TauIDraw_vsEle_2p1,
+            TauIDraw_vsMu_2p1,
+            TauIDraw_vsJet_2p1,
+        ],
+    )
+
     GoodTaus = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
         input=[],
