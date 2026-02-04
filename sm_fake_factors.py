@@ -127,9 +127,9 @@ def build_config(
     configuration.add_producers(
         ["et"],
         [
-            fakefactors.RawFakeFactors_sm_lt,
-            fakefactors.FakeFactors_sm_lt,
-            fakefactors.FakeFactors_sm_lt_split_info,
+            fakefactors.RawFakeFactors_sm_et,
+            fakefactors.FakeFactors_sm_et,
+            fakefactors.FakeFactors_sm_et_split_info,
         ],
     )
     configuration.add_outputs(
@@ -180,9 +180,9 @@ def build_config(
             continue
         for _shift in ["Up", "Down"]:
 
-            variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
+            variables = (fakefactors.FakeFactors_sm_et, fakefactors.RawFakeFactors_sm_et)
             if "_correction" in _key:
-                variables = (fakefactors.FakeFactors_sm_lt,)
+                variables = (fakefactors.FakeFactors_sm_et,)
 
             configuration.add_shift(
                 SystematicShift(
@@ -243,9 +243,9 @@ def build_config(
     configuration.add_producers(
         ["mt"],
         [
-            fakefactors.RawFakeFactors_sm_lt,
-            fakefactors.FakeFactors_sm_lt,
-            fakefactors.FakeFactors_sm_lt_split_info,
+            fakefactors.RawFakeFactors_sm_mt,
+            fakefactors.FakeFactors_sm_mt,
+            fakefactors.FakeFactors_sm_mt_split_info,
         ],
     )
     configuration.add_outputs(
@@ -296,9 +296,9 @@ def build_config(
             continue
         for _shift in ["Up", "Down"]:
 
-            variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
+            variables = (fakefactors.FakeFactors_sm_mt, fakefactors.RawFakeFactors_sm_mt)
             if "_correction" in _key:
-                variables = (fakefactors.FakeFactors_sm_lt,)
+                variables = (fakefactors.FakeFactors_sm_mt,)
 
             configuration.add_shift(
                 SystematicShift(
