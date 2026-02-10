@@ -5,7 +5,7 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 ####################
 # Set of producers to get the genParticles from the ditaupair
 ####################
-with defaults(call="ditau_pairselection::buildgenpair({df}, {input}, {output})", output=[q.gen_dileptonpair]):
+with defaults(call="ditau_pairselection::buildgenpair({df}, {output}, {input})", output=[q.gen_dileptonpair]):
     MTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Muon_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["mt"])
     ETGenPair = Producer(input=[q.dileptonpair, nanoAOD.Electron_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["et"])
     TTGenPair = Producer(input=[q.dileptonpair, nanoAOD.Tau_genPartIdx, nanoAOD.Tau_genPartIdx], scopes=["tt"])

@@ -39,7 +39,11 @@ with defaults(output="flagname"):
         with defaults(input=[q.p4_2] + TrigObj_collection):
             EMGenerateSingleMuonTriggerFlags = EVP(scope=["em"], vec_config="singlemuon_trigger")
             # ---
-            GenerateSingleTrailingTauTriggerFlags = EVP(scope=["et", "mt"], vec_config="singletau_trigger_trailing")
+            GenerateSingleLeadingTauTriggerFlags = EVP(scope=["tt"], vec_config="singletau_trigger_leading")
+        with defaults(input=[q.p4_2] + TrigObj_collection):
+            EMGenerateSingleMuonTriggerFlags = EVP(scope=["em"], vec_config="singlemuon_trigger")
+            # ---
+            GenerateSingleTrailingTauTriggerFlags = EVP(scope=["et", "mt", "tt"], vec_config="singletau_trigger_trailing")
     with defaults(
         call='''trigger::DoubleObjectFlag(
             {df},

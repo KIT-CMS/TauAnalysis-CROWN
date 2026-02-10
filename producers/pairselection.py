@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAOD
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, Filter, BaseFilter, defaults
 
 ####################
@@ -17,14 +17,14 @@ kinematic_vars.Muon = [nanoAOD.Muon_pt, *kinematic_vars._nanoAOD_Muon]
 kinematic_vars.Tau = [nanoAOD.Tau_pt, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
 kinematic_vars.Tau_with_corrected_pt = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
 kinematic_vars.Tau_with_corrected_pt_and_mass = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, q.Tau_mass_corrected]
-kinematic_vars.Electron_with_correctrd_pt = [q.Electron_pt_corrected, *kinematic_vars._nanoAOD_Electron]
+kinematic_vars.Electron_with_corrected_pt = [q.Electron_pt_corrected, *kinematic_vars._nanoAOD_Electron]
 
 with defaults(scopes=["mt"]):
     MTPairSelection = Producer(
         call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_rawDeepTau2017v2p1VSjet,
+            *kinematic_vars.Tau,
+            q.Tau_rawIDvsJet,
             *kinematic_vars.Muon,
             nanoAOD.Muon_pfRelIso04_all,
             q.good_muons_mask,
@@ -68,7 +68,7 @@ with defaults(scopes=["mm"]):
 
 with defaults(scopes=["ee"]):
     with defaults(
-        input=kinematic_vars.Electron_with_correctrd_pt + [q.good_electrons_mask],
+        input=kinematic_vars.Electron_with_corrected_pt + [q.good_electrons_mask],
         output=[q.dileptonpair],
     ):
         ElElPairSelection = Producer(call="ditau_pairselection::elel::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})")
@@ -90,8 +90,8 @@ with defaults(scopes=["et"]):
         call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_rawDeepTau2017v2p1VSjet,
-            *kinematic_vars.Electron_with_correctrd_pt,
+            q.Tau_rawIDvsJet,
+            *kinematic_vars.Electron_with_corrected_pt,
             nanoAOD.Electron_pfRelIso03_all,
             q.good_electrons_mask,
             q.good_taus_mask,
@@ -118,7 +118,7 @@ with defaults(scopes=["tt"]):
         call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            nanoAOD.Tau_rawDeepTau2017v2p1VSjet,
+            q.Tau_rawIDvsJet,
             q.good_taus_mask,
         ],
         output=[q.dileptonpair],
@@ -142,7 +142,7 @@ with defaults(scopes=["em"]):
     EMPairSelection = Producer(
         call="ditau_pairselection::elmu::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Electron_with_correctrd_pt,
+            *kinematic_vars.Electron_with_corrected_pt,
             nanoAOD.Electron_pfRelIso03_all,
             *kinematic_vars.Muon,
             nanoAOD.Muon_pfRelIso04_all,
@@ -165,21 +165,21 @@ with defaults(scopes=["em"]):
 with defaults(call="lorentzvector::Build({df}, {output}, {input}, 0)"):
     with defaults(output=[q.p4_1]):
         LVMu1 = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mt", "mm"])
-        LVEl1 = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["et", "ee", "em"])
+        LVEl1 = Producer(input=kinematic_vars.Electron_with_corrected_pt + [q.dileptonpair], scopes=["et", "ee", "em"])
         LVTau1 = Producer(input=kinematic_vars.Tau_with_corrected_pt_and_mass + [q.dileptonpair], scopes=["tt"])
 
     with defaults(output=[q.p4_1_uncorrected]):  # uncorrected versions of all particles, used for MET propagation
         LVMu1Uncorrected = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mt", "mm"])
-        LVEl1Uncorrected = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["em", "et", "ee"])
+        LVEl1Uncorrected = Producer(input=kinematic_vars.Electron_with_corrected_pt + [q.dileptonpair], scopes=["em", "et", "ee"])
         LVTau1Uncorrected = Producer(input=kinematic_vars.Tau + [q.dileptonpair], scopes=["tt"])
 
 with defaults(call="lorentzvector::Build({df}, {output}, {input}, 1)"):
     with defaults(output=[q.p4_2]):
         LVMu2 = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mm", "em"])
-        LVEl2 = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["ee"])
+        LVEl2 = Producer(input=kinematic_vars.Electron_with_corrected_pt + [q.dileptonpair], scopes=["ee"])
         LVTau2 = Producer(input=kinematic_vars.Tau_with_corrected_pt_and_mass + [q.dileptonpair], scopes=["mt", "et", "tt"])
 
     with defaults(output=[q.p4_2_uncorrected]):  # uncorrected versions of all particles, used for MET propagation
         LVMu2Uncorrected = Producer(input=kinematic_vars.Muon + [q.dileptonpair], scopes=["mm", "em"])
-        LVEl2Uncorrected = Producer(input=kinematic_vars.Electron_with_correctrd_pt + [q.dileptonpair], scopes=["ee"])
+        LVEl2Uncorrected = Producer(input=kinematic_vars.Electron_with_corrected_pt + [q.dileptonpair], scopes=["ee"])
         LVTau2Uncorrected = Producer(input=kinematic_vars.Tau + [q.dileptonpair], scopes=["mt", "et", "tt"])
