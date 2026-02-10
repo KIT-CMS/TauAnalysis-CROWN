@@ -23,6 +23,18 @@ with defaults(scopes=["global"]):
             call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
             input=[nanoAODv15.Jet_btagUParTAK4B],
         )
+    
+    with defaults(output=[q.fixedGridRho]):
+        # not present in v9
+        JetRho = Producer(
+            call="event::quantity::Rename<float>({df}, {output}, {input})",
+            input=[nanoAODv12.Rho_fixedGridRhoFastjetAll],
+        )
+        # not present in v12 and above
+        JetRho_Run2 = Producer(
+            call="event::quantity::Rename<float>({df}, {output}, {input})",
+            input=[nanoAODv9.fixedGridRhoFastjetAll],
+        )
 
     with defaults(output=[q.Jet_ID]):
         JetID = Producer(
@@ -51,7 +63,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetID_rename = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call="event::quantity::Rename<ROOT::RVec<int>>({df}, {output}, {input})",
             input=[nanoAODv12.Jet_jetId],
         )
 
@@ -92,7 +104,7 @@ with defaults(scopes=["global"]):
                 nanoAOD.GenJet_pt,
                 nanoAOD.GenJet_eta,
                 nanoAOD.GenJet_phi,
-                nanoAOD.Rho_fixedGridRhoFastjetAll,
+                q.fixedGridRho,
             ],
             subproducers=[JetSmearingSeed],
         )
@@ -103,7 +115,7 @@ with defaults(scopes=["global"]):
                 nanoAOD.Jet_eta, 
                 nanoAOD.Jet_area, 
                 nanoAOD.Jet_rawFactor, 
-                nanoAOD.Rho_fixedGridRhoFastjetAll, 
+                q.fixedGridRho, 
                 nanoAOD.Jet_phi, 
                 nanoAOD.run],
         )

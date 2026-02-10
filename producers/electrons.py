@@ -63,7 +63,7 @@ with defaults(scopes=["global"]):
     )
     with defaults(output=[q._ElectronIDCut], call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',):
         ElectronIDCut = Producer(
-            input=[nanoAOD.Electron_mvaIso_WP90],
+            input=[nanoAOD.Electron_mvaNoIso_WP90],
         )
         ElectronIDCut_v9 = Producer(
             input=[nanoAODv9.Electron_mvaFall17V2noIso_WP90],
@@ -77,8 +77,7 @@ with defaults(scopes=["global"]):
 
     with defaults(output=[]):
         DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.Electron_pt_corrected])
-        # int for v9, UChar_t for v12 and v15
-        DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<UChar_t>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
+        DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<int>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
         DiElectronVetoElectrons = ProducerGroup(
             call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
             input=[q._ElectronEtaCut, q._ElectronDxyCut, q._ElectronDzCut, q._ElectronIsoCut],
@@ -95,20 +94,6 @@ with defaults(scopes=["global"]):
             ElectronDxyCut,
             ElectronDzCut,
             ElectronIDCut,
-            ElectronIsoCut,
-        ],
-    )
-
-    BaseElectrons_Run2 = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[],
-        output=[q.base_electrons_mask],
-        subproducers=[
-            ElectronPtCut,
-            ElectronEtaCut,
-            ElectronDxyCut,
-            ElectronDzCut,
-            ElectronIDCut_v9,
             ElectronIsoCut,
         ],
     )

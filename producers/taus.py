@@ -16,9 +16,8 @@ with defaults(scopes=["global"], output=[]):
         call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})",
         input=[nanoAOD.Tau_dz],
     )
-    # int for v9, UChar_t from v12
     TauDMCut = Producer(
-        call="physicsobject::CutQuantity<UChar_t>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
+        call="physicsobject::CutQuantity<int>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
         input=[nanoAOD.Tau_decayMode],
     )
 
@@ -371,9 +370,8 @@ with defaults(scopes=["et", "mt", "tt"]):
             call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})",
             input=[nanoAOD.Tau_dz],
         )
-        #int for v9, UChart_t for v12 and v15
         GoodTauDMCut = Producer(
-            call="physicsobject::CutQuantity<UChar_t>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
+            call="physicsobject::CutQuantity<int>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
             input=[nanoAOD.Tau_decayMode],
         )
 
