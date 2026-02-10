@@ -1557,6 +1557,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     #######################
     # trigger shifts #
     #######################
+
     for _variation in ["up", "down"]:
         configuration.add_shift(
             SystematicShift(
@@ -1785,491 +1786,97 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                             "mc_trg_extrapolation": 1.0,  # for nominal case
-                    "2024": [ ## TODO: not implemented, here as a placeholder
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2023postBPix": [ ## TODO: not implemented, here as a placeholder
-                        {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2023preBPix": [ ## TODO: not implemented, here as a placeholder
-                        {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2022postEE": [ ## TODO: not implemented, here as a placeholder
-                        {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2022preEE": [ ## TODO: not implemented, here as a placeholder
-                        {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2018": [
-                        {
-                            "flagname": "trg_wgt_single_mu24",
-                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu24ormu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2017": [
-                        {
-                            "flagname": "trg_wgt_single_mu24",
-                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                        {
-                            "flagname": "trg_wgt_single_mu24ormu27",
-                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2016postVFP": [
-                        {
-                            "flagname": "trg_wgt_single_mu22",
-                            "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                    "2016preVFP": [
-                        {
-                            "flagname": "trg_wgt_single_mu22",
-                            "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
-                            "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
-                        },
-                    ],
-                }
-            )
-        },
-    )
-    # electron trigger SF settings from embedding measurements
-    configuration.add_config_parameters(
-        ["et", "ee"],
-        {
-            "singlelectron_trigger_sf_mc": EraModifier(
-                {
-                    "2025": [ ## TODO: not implemented, here as a placeholder
-                        {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2024": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022postEE": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022preEE": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
                             "mc_trigger_sf": '""',
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2018": [
                         {
-                            "flagname": "trg_wgt_single_ele32",
-                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
-                            "flagname": "trg_wgt_single_ele35",
-                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2017": [
                         {
-                            "flagname": "trg_wgt_single_ele32",
-                            "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu24",
+                            "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
-                            "flagname": "trg_wgt_single_ele35",
-                            "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
+                            "flagname": "trg_wgt_single_mu24ormu27",
+                            "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016postVFP": [
                         {
-                            "flagname": "trg_wgt_single_ele25",
-                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                        }
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
+                        },
                     ],
                     "2016preVFP": [
                         {
-                            "flagname": "trg_wgt_single_ele25",
-                            "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                            "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                        }
+                            "flagname": "trg_wgt_single_mu22",
+                            "mc_trigger_sf": "Trg_pt_eta_bins",
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
+                        },
                     ],
                 }
             )
         },
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="singleElectronTriggerSFUp",
-            shift_config={
-                ("et"): {
-                    "singlelectron_trigger_sf_mc": EraModifier(
-                        {
-                            "2025": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2024": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2023postBPix": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2023preBPix": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2022postEE": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2022preEE": [ ## TODO: not implemented, here as a placeholder
-                                {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
-                                    "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                },
-                            ],
-                            "2018": [
-                                {
-                                    "flagname": "trg_wgt_single_ele32orele35",
-                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele32",
-                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele35",
-                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele27orele32orele35",
-                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                            ],
-                            "2017": [
-                                {
-                                    "flagname": "trg_wgt_single_ele32orele35",
-                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele32",
-                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele35",
-                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele27orele32orele35",
-                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                },
-                            ],
-                            "2016postVFP": [
-                                {
-                                    "flagname": "trg_wgt_single_ele25",
-                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                }
-                            ],
-                            "2016preVFP": [
-                                {
-                                    "flagname": "trg_wgt_single_ele25",
-                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 1.02,
-                                }
-                            ],
-                        }
-                    )
-                }
-            },
-            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="singleElectronTriggerSFDown",
-            shift_config={
-                ("et"): {
-                    "singlelectron_trigger_sf_mc": EraModifier(
-                        {
-                            "2025": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2024": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2023postBPix": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2023preBPix": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2022postEE": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2022preEE": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_electron_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                            "2018": [
-                                {
-                                    "flagname": "trg_wgt_single_ele32orele35",
-                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele32",
-                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele35",
-                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele27orele32orele35",
-                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                            ],
-                            "2017": [
-                                {
-                                    "flagname": "trg_wgt_single_ele32orele35",
-                                    "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele32",
-                                    "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele35",
-                                    "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                                {
-                                    "flagname": "trg_wgt_single_ele27orele32orele35",
-                                    "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                },
-                            ],
-                            "2016postVFP": [
-                                {
-                                    "flagname": "trg_wgt_single_ele25",
-                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                }
-                            ],
-                            "2016preVFP": [
-                                {
-                                    "flagname": "trg_wgt_single_ele25",
-                                    "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                                    "mc_electron_trg_extrapolation": 0.98,
-                                }
-                            ],
-                        }
-                    )
-                }
-            },
-            producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
-<<<<<<< HEAD
-=======
     configuration.add_config_parameters(
         ["et", "ee"],
         {
@@ -2615,7 +2222,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
->>>>>>> second_update
     configuration.add_shift(
         SystematicShift(
             name="singleMuonTriggerSFUp",
@@ -2627,146 +2233,90 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2024": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2018": [
                                 {
                                     "flagname": "trg_wgt_single_mu24",
                                     "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu24ormu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                             ],
                             "2017": [
                                 {
                                     "flagname": "trg_wgt_single_mu24",
                                     "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu24ormu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                             ],
                             "2016postVFP": [
                                 {
                                     "flagname": "trg_wgt_single_mu22",
                                     "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                             ],
                             "2016preVFP": [
                                 {
                                     "flagname": "trg_wgt_single_mu22",
                                     "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.02,
-=======
                                     "mc_trg_extrapolation": 1.02,
->>>>>>> second_update
                                 },
                             ],
                         }
@@ -2788,146 +2338,90 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2024": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
                                     "mc_trigger_sf": '""',
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 1.0,  # for nominal case
-=======
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
->>>>>>> second_update
                                 },
                             ],
                             "2018": [
                                 {
                                     "flagname": "trg_wgt_single_mu24",
                                     "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu24ormu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                             ],
                             "2017": [
                                 {
                                     "flagname": "trg_wgt_single_mu24",
                                     "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                                 {
                                     "flagname": "trg_wgt_single_mu24ormu27",
                                     "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                             ],
                             "2016postVFP": [
                                 {
                                     "flagname": "trg_wgt_single_mu22",
                                     "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                             ],
                             "2016preVFP": [
                                 {
                                     "flagname": "trg_wgt_single_mu22",
                                     "mc_trigger_sf": "Trg_pt_eta_bins",
-<<<<<<< HEAD
-                                    "mc_muon_trg_extrapolation": 0.98,
-=======
                                     "mc_trg_extrapolation": 0.98,
->>>>>>> second_update
                                 },
                             ],
                         }
