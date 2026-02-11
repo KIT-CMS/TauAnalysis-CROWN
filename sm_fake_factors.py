@@ -129,7 +129,7 @@ def build_config(
         [
             fakefactors.RawFakeFactors_sm_et,
             fakefactors.FakeFactors_sm_et,
-            fakefactors.FakeFactors_sm_et_split_info,
+            # fakefactors.FakeFactors_sm_et_split_info,
         ],
     )
     configuration.add_outputs(
@@ -138,28 +138,28 @@ def build_config(
             q.raw_fake_factor_2,
             q.fake_factor_2,
             # ----------------------
-            q.raw_qcd_fake_factor_2,
-            q.raw_wjets_fake_factor_2,
-            q.raw_ttbar_fake_factor_2,
-            # ---
-            q.qcd_fake_factor_fraction_2,
-            q.wjets_fake_factor_fraction_2,
-            q.ttbar_fake_factor_fraction_2,
-            # ---
-            q.qcd_DR_SR_correction_2, 
-            q.wjets_DR_SR_correction_2, 
-            # ---
-            q.qcd_correction_wo_DR_SR_2,
-            q.wjets_correction_wo_DR_SR_2,
-            q.ttbar_correction_wo_DR_SR_2,
-            # ---
-            q.qcd_fake_factor_correction_2,
-            q.wjets_fake_factor_correction_2,
-            q.ttbar_fake_factor_correction_2,
-            # ---
-            q.qcd_fake_factor_2,
-            q.wjets_fake_factor_2,
-            q.ttbar_fake_factor_2,
+            # q.raw_qcd_fake_factor_2,
+            # q.raw_wjets_fake_factor_2,
+            # q.raw_ttbar_fake_factor_2,
+            # # ---
+            # q.qcd_fake_factor_fraction_2,
+            # q.wjets_fake_factor_fraction_2,
+            # q.ttbar_fake_factor_fraction_2,
+            # # ---
+            # q.qcd_DR_SR_correction_2, 
+            # q.wjets_DR_SR_correction_2, 
+            # # ---
+            # q.qcd_correction_wo_DR_SR_2,
+            # q.wjets_correction_wo_DR_SR_2,
+            # q.ttbar_correction_wo_DR_SR_2,
+            # # ---
+            # q.qcd_fake_factor_correction_2,
+            # q.wjets_fake_factor_correction_2,
+            # q.ttbar_fake_factor_correction_2,
+            # # ---
+            # q.qcd_fake_factor_2,
+            # q.wjets_fake_factor_2,
+            # q.ttbar_fake_factor_2,
         ],
     )
 
@@ -245,7 +245,7 @@ def build_config(
         [
             fakefactors.RawFakeFactors_sm_mt,
             fakefactors.FakeFactors_sm_mt,
-            fakefactors.FakeFactors_sm_mt_split_info,
+            # fakefactors.FakeFactors_sm_mt_split_info,
         ],
     )
     configuration.add_outputs(
@@ -254,28 +254,28 @@ def build_config(
             q.raw_fake_factor_2,
             q.fake_factor_2,
             # ----------------------
-            q.raw_qcd_fake_factor_2,
-            q.raw_wjets_fake_factor_2,
-            q.raw_ttbar_fake_factor_2,
-            # ---
-            q.qcd_fake_factor_fraction_2,
-            q.wjets_fake_factor_fraction_2,
-            q.ttbar_fake_factor_fraction_2,
-            # ---
-            q.qcd_DR_SR_correction_2, 
-            q.wjets_DR_SR_correction_2,
-            # ---
-            q.qcd_correction_wo_DR_SR_2,
-            q.wjets_correction_wo_DR_SR_2,
-            q.ttbar_correction_wo_DR_SR_2,
-            # ---
-            q.qcd_fake_factor_correction_2,
-            q.wjets_fake_factor_correction_2,
-            q.ttbar_fake_factor_correction_2,
-            # ---
-            q.qcd_fake_factor_2,
-            q.wjets_fake_factor_2,
-            q.ttbar_fake_factor_2,
+            # q.raw_qcd_fake_factor_2,
+            # q.raw_wjets_fake_factor_2,
+            # q.raw_ttbar_fake_factor_2,
+            # # ---
+            # q.qcd_fake_factor_fraction_2,
+            # q.wjets_fake_factor_fraction_2,
+            # q.ttbar_fake_factor_fraction_2,
+            # # ---
+            # q.qcd_DR_SR_correction_2, 
+            # q.wjets_DR_SR_correction_2,
+            # # ---
+            # q.qcd_correction_wo_DR_SR_2,
+            # q.wjets_correction_wo_DR_SR_2,
+            # q.ttbar_correction_wo_DR_SR_2,
+            # # ---
+            # q.qcd_fake_factor_correction_2,
+            # q.wjets_fake_factor_correction_2,
+            # q.ttbar_fake_factor_correction_2,
+            # # ---
+            # q.qcd_fake_factor_2,
+            # q.wjets_fake_factor_2,
+            # q.ttbar_fake_factor_2,
         ],
     )
 

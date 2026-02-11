@@ -16,9 +16,36 @@ namespace sm{
         const std::string &Wjets_variation,
         const std::string &ttbar_variation,
         const std::string &ff_file);
+
+    ROOT::RDF::RNode
+    fakefactor_mt(
+            ROOT::RDF::RNode df, 
+            correctionManager::CorrectionManager &correctionManager,
+            const std::string &outputname,
+            const std::string &pt_2,
+            const std::string &njets,
+            const std::string &mt_1,
+            const std::string &decaymode_2,
+            const std::string &mass_2,
+            const std::string &iso_1,
+            const std::string &pt_1,
+            const std::string &met,
+            const std::string &m_vis,
+            const std::string &pt_tt,
+            const std::string &fraction_variation,
+            const std::string &QCD_variation,
+            const std::string &Wjets_variation,
+            const std::string &ttbar_variation,
+            const std::string &QCD_DR_SR_correction_variation,
+            const std::string &QCD_non_closure_correction_variation,
+            const std::string &Wjets_DR_SR_correction_variation,
+            const std::string &Wjets_non_closure_correction_variation,
+            const std::string &ttbar_non_closure_correction_variation,
+            const std::string &ff_file,
+            const std::string &ff_corr_file);
         
     ROOT::RDF::RNode
-    fakefactor_lt(
+    fakefactor_et(
         ROOT::RDF::RNode df, 
         correctionManager::CorrectionManager &correctionManager,
         const std::string &outputname,
