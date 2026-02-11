@@ -287,48 +287,48 @@ def build_config(
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2017": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016postVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "mc_trigger_sf": "Trg_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016preVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "mc_trigger_sf": "Trg_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                 }
@@ -345,48 +345,48 @@ def build_config(
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2017": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016postVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "embedding_trigger_sf": "Trg_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016preVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "embedding_trigger_sf": "Trg_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                 }
@@ -716,7 +716,7 @@ def build_config(
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
-            producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
+            producers=embedding.PrivateSelectionSF, samples=["embedding"]
         ),
     )
 
@@ -749,10 +749,10 @@ def build_config(
         ["mm"],
         AppendProducer(
             producers=[
-                scalefactors.TauEmbeddingMuonIDSF_1_MC,
-                scalefactors.TauEmbeddingMuonIsoSF_1_MC,
-                scalefactors.TauEmbeddingMuonIDSF_2_MC,
-                scalefactors.TauEmbeddingMuonIsoSF_2_MC,
+                scalefactors.PrivateMuonIDSF_1_MC,
+                scalefactors.PrivateMuonIsoSF_1_MC,
+                scalefactors.PrivateMuonIDSF_2_MC,
+                scalefactors.PrivateMuonIsoSF_2_MC,
                 scalefactors.MTGenerateSingleMuonTriggerSF_MC,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
@@ -763,10 +763,10 @@ def build_config(
         ["mm"],
         AppendProducer(
             producers=[
-                embedding.TauEmbeddingMuonIDSF_1,
-                embedding.TauEmbeddingMuonIsoSF_1,
-                embedding.TauEmbeddingMuonIDSF_2,
-                embedding.TauEmbeddingMuonIsoSF_2,
+                embedding.PrivateMuonIDSF_1,
+                embedding.PrivateMuonIsoSF_1,
+                embedding.PrivateMuonIDSF_2,
+                embedding.PrivateMuonIsoSF_2,
                 embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],

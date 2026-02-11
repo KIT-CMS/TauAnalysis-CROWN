@@ -149,10 +149,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 ApplyRecoilCorrections,
                 MetPt,
                 MetPhi,
-            ],
-        )
-        PFMetCorrections = ProducerGroup(
-            subproducers=[
                 PropagateLeptonsToPFMet,
                 PropagateJetsToPFMet,
                 ApplyRecoilCorrectionsPFMet,
