@@ -88,6 +88,31 @@ with defaults(scopes=["global"]):
             subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
         )
 
+    BJetPtCorrection = Producer(
+        call="physicsobject::jet::PtCorrectionBJets({df}, {output}, {input})",
+        input=[
+            q.Jet_pt_corrected,
+            nanoAOD.Jet_bRegCorr,
+            q.good_bjets_mask,
+        ],
+        output=[q.Jet_pt_corrected_bReg],
+    )
+    BJetMassCorrection = Producer(
+        call="physicsobject::MassCorrectionWithPt({df}, {output}, {input})",
+        input=[
+            q.Jet_mass_corrected,
+            q.Jet_pt_corrected,
+            q.Jet_pt_corrected_bReg,
+        ],
+        output=[q.Jet_mass_corrected_bReg],
+    )
+    BJetEnergyCorrection = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[BJetPtCorrection, BJetMassCorrection],
+    )
+
 ####################
 # Set of producers to apply a veto of jets overlapping with ditaupair candidates and ordering jets by their pt
 # 1. check all jets vs the two lepton candidates, if they are not within deltaR = 0.5, keep them --> mask
