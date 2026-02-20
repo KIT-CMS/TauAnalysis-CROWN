@@ -180,7 +180,16 @@ def build_config(
             "min_jet_pt_loose": 30,
             "min_jet_pt_tight": 50,
             "jet_eta_1": 2.5,
-            "jet_eta_2": 3,
+            "jet_eta_2": EraModifier(
+                {
+                    "2022preEE": 4.7, # should be 5 but max cut is 4.7 anyway https://indico.cern.ch/event/1624984/contributions/6896120/attachments/3208048/5713070/20260127_JetMET_PerformanceRun3_HIGMeeting.pdf
+                    "2022postEE": 4.7,
+                    "2023preBPix": 4.7,
+                    "2023postBPix": 4.7,
+                    "2024": 3,
+                    "2025": 2.5, #do not cut pt>50
+                }
+            ),
             "jet_eta_3": 4.7,
             "jet_id": 2,  #2==pass tight ID and fail tightLepVeto, 6== pass tight and pass tightLepVeto, new minimal selection https://cms-talk.web.cern.ch/t/updated-jet-selection-criterion-for-jet-veto-map/130527
             # bjet selection -> need to be in global
@@ -225,7 +234,17 @@ def build_config(
                     "2023preBPix": '"Summer23Prompt23_V2_MC"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_MC"',
                     "2024": '"Summer24Prompt24_V2_MC"',
-                    "2025": '"Winter25Prompt25_V2_MC"',
+                    "2025": '"Winter25Prompt25_V3_MC"',
+                }
+            ),
+            "jet_jes_tag": EraModifier(
+                {
+                    "2022preEE": '"Summer22_22Sep2023_V3"',
+                    "2022postEE": '"Summer22EE_22Sep2023_V3"',
+                    "2023preBPix": '"Summer23Prompt23_V2"',
+                    "2023postBPix": '"Summer23BPixPrompt23_V3"',
+                    "2024": '"Summer24Prompt24_V2"',
+                    "2025": '"Winter25Prompt25_V3"',
                 }
             ),
             "jet_jes_tag_data": EraModifier(
@@ -235,7 +254,7 @@ def build_config(
                     "2023preBPix": '"Summer23Prompt23_V2_DATA"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
                     "2024": '"Summer24Prompt24_V2_DATA"',
-                    "2025": '"Winter25Prompt25_V2_DATA"',
+                    "2025": '"Winter25Prompt25_V3_DATA"',
                 }
             ),
             # jet resolution correction
@@ -247,7 +266,7 @@ def build_config(
                     "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
                     "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jet_jerc.json.gz"',
+                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
                 }
             ),
             "jet_jer_tag": EraModifier(
@@ -269,7 +288,7 @@ def build_config(
                     "2023preBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
                     "2023postBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
                     "2024":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
-                    "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jetvetomaps.json.gz",
+                    "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jetvetomaps.json.gz",
                 }
             ),
             "jet_veto_map_name": EraModifier(
@@ -279,7 +298,7 @@ def build_config(
                     "2023preBPix": "Summer23Prompt23_RunC_V1",
                     "2023postBPix": "Summer23BPixPrompt23_RunD_V1",
                     "2024": "Summer24Prompt24_RunBCDEFGHI_V1",
-                    "2025": "Winter25Prompt25_RunCDE_V1",
+                    "2025": "Winter25Prompt25_RunCDEFG_V1",
                 },
             ),
             "jet_veto_map_type": "jetvetomap",
@@ -717,11 +736,13 @@ def build_config(
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC_Run3,
             electrons.BaseElectrons,
+            jets.JetSmearingSeed,
+            jets.RawJet,
             jets.JetBTagUParT,
             jets.JetID, 
             jets.JetVetoMapVeto,
             jets.JetIDCut,
-            jets.JetEnergyCorrection,
+            jets.JetEnergyCorrection_Run3,
             jets.JetPtCut_loose,
             jets.LooseJets_LowEta,
             jets.LooseJets_HighEta,
@@ -734,6 +755,7 @@ def build_config(
             genparticles.CalculateVisGenBosonVector,
             met.MetBasics,
             met.MetMask,
+            jets.GenJet,
         ],
     )
     configuration.add_producers(
@@ -971,8 +993,8 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
-            producers=[jets.JetEnergyCorrection, jets.JetEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc",],
+            producers=[jets.GenJet, jets.GenJet_data],
+            samples=["data", "data_E", "data_F", "data_G",],
         ),
     )
     configuration.add_modification_rule(
@@ -1312,6 +1334,18 @@ def build_config(
             q.dimuon_veto,
             q.dilepton_veto,
             q.dielectron_veto,
+            # q.met_raw,
+            # q.TypeIMET_pt,
+            # q.Jet_rawPt,
+            # q.good_jets_mask,
+            # q.Jet_pt_corrected,
+            # nanoAOD.Jet_pt,
+            # nanoAOD.Jet_eta,
+            # nanoAOD.Jet_phi,
+            # nanoAOD.CorrT1METJet_rawPt,
+            # nanoAOD.CorrT1METJet_eta,
+            # nanoAOD.CorrT1METJet_phi,
+            # nanoAOD.PV_npvsGood,
         ],
     )
     configuration.add_outputs(

@@ -4,6 +4,17 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
+# test
+Jet_pt_L1corrected = Quantity()
+Jet_rawPt = Quantity()
+Jet_seed = Quantity()
+puppimet_p4 = Quantity()
+puppimet = Quantity()
+puppimetphi = Quantity()
+gen_pt = Quantity ()
+gen_eta = Quantity ()
+gen_phi = Quantity ()
+
 # run dependent denitions
 Tau_IDvsEle = Quantity()
 Tau_IDvsMu = Quantity()

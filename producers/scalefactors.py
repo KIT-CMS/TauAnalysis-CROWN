@@ -82,8 +82,9 @@ with defaults(scopes=["tt"]):
             correctionManager, 
             {output}, 
             {input}, 
+            "{era}",
             "{tau_sf_file}", 
-            "{tau_id_discriminator}", 
+            "{tau_id_algorithm}VSe",
             "{vsele_tau_id_WP}",
             "{tau_sf_vsele_barrel}", 
             "{tau_sf_vsele_endcap}")''',
@@ -199,13 +200,14 @@ with defaults(
 with defaults(scopes=["et", "mt", "tt"]):
     Tau_2_VsEleTauID_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsEle(
-            {df},
+            {df}, 
             correctionManager, 
-            {output},
-            {input},
+            {output}, 
+            {input}, 
+            "{era}",
             "{tau_sf_file}", 
-            "{tau_id_discriminator}", 
-            "{vsele_tau_id_WP}", 
+            "{tau_id_algorithm}VSe",
+            "{vsele_tau_id_WP}",
             "{tau_sf_vsele_barrel}", 
             "{tau_sf_vsele_endcap}")''',
         input=[q.eta_2, q.tau_decaymode_2, q.gen_match_2], #remove DM for run2

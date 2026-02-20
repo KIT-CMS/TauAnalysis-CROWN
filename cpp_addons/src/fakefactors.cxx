@@ -220,7 +220,7 @@ namespace fakefactors {
                 const int &decaymode_2,
                 const float &mass_2,
                 const float &iso_1,
-                const float $pt_1,
+                const float &pt_1,
                 const float &met,                
                 const float &m_vis,
                 const float &pt_tt) {
