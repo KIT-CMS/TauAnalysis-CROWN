@@ -91,9 +91,6 @@ with defaults(scopes=["global"]):
         output=[q.met_mask],
     )
 
-with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
-    # PuppiMET with jet propagated
-    # for run 3
     METTypeI = Producer(
         call='met::TypeIMET({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}", {is_data})',
         input=[
@@ -111,22 +108,26 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             nanoAOD.Jet_chEmEF,
             nanoAOD.Jet_neEmEF,
             nanoAOD.CorrT1METJet_EmEF,
-            q.gen_pt,
-            q.gen_eta,
-            q.gen_phi,
+            q.gen_jet_pt,
+            q.gen_jet_eta,
+            q.gen_jet_phi,
             nanoAOD.Rho_fixedGridRhoFastjetAll,
             q.Jet_seed,
             nanoAOD.run,
         ],
-        output = [q.met_p4_jetcorrected],
+        output = [q.met_p4_jetcorrected_1],
     )
+
+with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
+    # PuppiMET with jet propagated
+    # for run 3
 
     METTypeI_v2 = Producer(
         call='met::TypeIMET_v2({df}, correctionManager, {output}, {input})',
         input=[
             q.met_p4,
             q.Jet_pt_L1corrected, 
-            q.Jet_pt_corrected,
+            q.CorrT1METJet_pt_corrected,
             nanoAOD.Jet_eta,
             nanoAOD.CorrT1METJet_eta,
             nanoAOD.Jet_phi,
@@ -191,6 +192,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
+        MetPt_jet = Producer(input=[q.met_p4_jetcorrected], output=[q.met_p4_jetcorrected_pt])
+        MetPt_jet_1 = Producer(input=[q.met_p4_jetcorrected_1], output=[q.met_p4_jetcorrected_pt_1])
         MetPt = Producer(input=[q.met_p4_recoilcorrected], output=[q.met])
         PFMetPt = Producer(input=[q.pfmet_p4_recoilcorrected], output=[q.pfmet])
 
@@ -204,14 +207,16 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 METTypeI_v2,
                 PropagateLeptonsToMet,
                 ApplyRecoilCorrections,
+                MetPt_jet,
+                MetPt_jet_1,
                 MetPt,
                 MetPhi,
             ],
         )
         PFMetCorrections = ProducerGroup(
             subproducers=[
-                PropagateLeptonsToPFMet,
                 PropagateJetsToPFMet,
+                PropagateLeptonsToPFMet,
                 ApplyRecoilCorrectionsPFMet,
                 PFMetPt,
                 PFMetPhi,

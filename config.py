@@ -20,7 +20,7 @@ from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
 #from .tau_embedding_settings import setup_embedding
-#from .jec_data import add_jetCorrectionData
+#from .je import add_jetCorrectionData
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
@@ -756,6 +756,7 @@ def build_config(
             met.MetBasics,
             met.MetMask,
             jets.GenJet,
+            met.METTypeI,
         ],
     )
     configuration.add_producers(
@@ -1301,12 +1302,12 @@ def build_config(
             q.gen_m_vis,
             q.met,
             q.metphi,
-            q.pfmet,
-            q.pfmetphi,
+            # q.pfmet,
+            # q.pfmetphi,
             q.met_uncorrected,
             q.metphi_uncorrected,
-            q.pfmet_uncorrected,
-            q.pfmetphi_uncorrected,
+            # q.pfmet_uncorrected,
+            # q.pfmetphi_uncorrected,
             q.metSumEt,
             q.metcov00,
             q.metcov01,
@@ -1334,6 +1335,8 @@ def build_config(
             q.dimuon_veto,
             q.dilepton_veto,
             q.dielectron_veto,
+            q.met_p4_jetcorrected_pt,
+            q.met_p4_jetcorrected_pt_1,
             # q.met_raw,
             # q.TypeIMET_pt,
             # q.Jet_rawPt,
@@ -1345,7 +1348,7 @@ def build_config(
             # nanoAOD.CorrT1METJet_rawPt,
             # nanoAOD.CorrT1METJet_eta,
             # nanoAOD.CorrT1METJet_phi,
-            # nanoAOD.PV_npvsGood,
+            nanoAOD.PV_npvsGood,
         ],
     )
     configuration.add_outputs(
