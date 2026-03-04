@@ -12,6 +12,7 @@ JERC_ERA_MAP = {
     "2023preBPix": "2023",
     "2023postBPix": "2023BPix",
     "2024": "2024",
+    "2025": "2024",
 }
 
 # for btag jes sources look here https://docs.google.com/spreadsheets/d/1Feuj1n0MdotcPq19Mht7SUIgvkXkA4hiB0BxEuBShLw/edit?gid=1345121349#gid=1345121349
@@ -66,7 +67,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 add_shift(name="btagUncstat", shift_map={"Up": "up_statistic", "Down": "down_statistic"})
                 add_shift(name="btagUnctune", shift_map={"Up": "up_tune", "Down": "down_tune"})
 
-        with defaults(scopes="global", producers=[jets.JetEnergyCorrection]):
+        with defaults(scopes="global", producers=[jets.JetEnergyCorrection_Run3]):
             add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
@@ -80,7 +81,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 shift_key=["jet_jes_shift", "jet_jes_sources"],
                 shift_map={"Up": [1, '{"Total"}'], "Down": [-1, '{"Total"}']},
                 scopes="global",
-                producers=[jets.JetEnergyCorrection]
+                producers=[jets.JetEnergyCorrection_Run3]
             )
             if era not in ["2024", "2025"]:
                 add_shift(
@@ -137,7 +138,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, f'{{"{name}"}}'], "Down": [-1, f'{{"{name}"}}']},
                         scopes="global",
-                        producers=[jets.JetEnergyCorrection]
+                        producers=[jets.JetEnergyCorrection_Run3]
                     )
                     if era not in ["2024", "2025"]:
                         add_shift(
@@ -168,7 +169,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, JES_source_val], "Down": [-1, JES_source_val]},
                         scopes="global",
-                        producers=[jets.JetEnergyCorrection],
+                        producers=[jets.JetEnergyCorrection_Run3],
                     )
 
                     if era not in ["2024", "2025"]:
