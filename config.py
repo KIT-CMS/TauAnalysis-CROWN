@@ -144,71 +144,66 @@ def build_config(
                         "Flag_eeBadScFilter",
                         "Flag_ecalBadCalibFilter",
                     ],
+                    # reccomendations for run 3 https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_2_recommendations
                     "2022preEE": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                     "2022postEE": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                     "20223preBPix": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                     "2023postBPix": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                     "2024": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                     "2025": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
                         "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  
+                        "Flag_BadPFMuonDzFilter",
+                        "Flag_hfNoisyHitsFilter",
                         "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
+                        "Flag_ecalBadCalibFilter", 
                     ],
                 }
             ),
@@ -311,7 +306,16 @@ def build_config(
             "min_jet_pt_loose": 30,
             "min_jet_pt_tight": 50,
             "jet_eta_1": 2.5,
-            "jet_eta_2": 3,
+            "jet_eta_2": EraModifier(
+                {
+                    "2022preEE": 4.7, # should be 5 but max cut is 4.7 anyway https://indico.cern.ch/event/1624984/contributions/6896120/attachments/3208048/5713070/20260127_JetMET_PerformanceRun3_HIGMeeting.pdf
+                    "2022postEE": 4.7,
+                    "2023preBPix": 4.7,
+                    "2023postBPix": 4.7,
+                    "2024": 3,
+                    "2025": 2.5, #do not cut pt>50
+                }
+            ),
             "jet_eta_3": 4.7,
             "jet_id": 2,  #2==pass tight ID and fail tightLepVeto, 6== pass tight and pass tightLepVeto, new minimal selection https://cms-talk.web.cern.ch/t/updated-jet-selection-criterion-for-jet-veto-map/130527
             # bjet selection -> need to be in global
@@ -373,6 +377,16 @@ def build_config(
             "jet_reapplyJES": True,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
+            "jet_jes_tag": EraModifier(
+                {
+                    "2022preEE": '"Summer22_22Sep2023_V3"',
+                    "2022postEE": '"Summer22EE_22Sep2023_V3"',
+                    "2023preBPix": '"Summer23Prompt23_V2"',
+                    "2023postBPix": '"Summer23BPixPrompt23_V3"',
+                    "2024": '"Summer24Prompt24_V2"',
+                    "2025": '"Winter25Prompt25_V3"',
+                }
+            ),
             "jet_jes_tag_mc": EraModifier(
                 {
                     "2016preVFP": '"Summer19UL16APV_V7_MC"',
@@ -384,7 +398,7 @@ def build_config(
                     "2023preBPix": '"Summer23Prompt23_V2_MC"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_MC"',
                     "2024": '"Summer24Prompt24_V2_MC"',
-                    "2025": '"Winter25Prompt25_V2_MC"',
+                    "2025": '"Winter25Prompt25_V3_MC"',
                 }
             ),
             "jet_jes_tag_data": EraModifier(
@@ -398,7 +412,7 @@ def build_config(
                     "2023preBPix": '"Summer23Prompt23_V2_DATA"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
                     "2024": '"Summer24Prompt24_V2_DATA"',
-                    "2025": '"Winter25Prompt25_V2_DATA"',
+                    "2025": '"Winter25Prompt25_V3_DATA"',
                 }
             ),
             # jet resolution correction
@@ -414,7 +428,7 @@ def build_config(
                     "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
                     "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jet_jerc.json.gz"',
+                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
                 }
             ),
             "jet_jer_tag": EraModifier(
@@ -457,7 +471,7 @@ def build_config(
                     "2023preBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
                     "2023postBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
                     "2024":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
-                    "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2025-10-27/jetvetomaps.json.gz",
+                    "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jetvetomaps.json.gz",
                 }
             ),
             "jet_veto_map_name": EraModifier(
@@ -471,7 +485,7 @@ def build_config(
                     "2023preBPix": "Summer23Prompt23_RunC_V1",
                     "2023postBPix": "Summer23BPixPrompt23_RunD_V1",
                     "2024": "Summer24Prompt24_RunBCDEFGHI_V1",
-                    "2025": "Winter25Prompt25_RunCDE_V1",
+                    "2025": "Winter25Prompt25_RunCDEFG_V1",
                 },
             ),
             "jet_veto_map_type": "jetvetomap",
@@ -1140,12 +1154,14 @@ def build_config(
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC,
             electrons.BaseElectrons,
+            jets.GenJet,
+            jets.JetSmearingSeed,
             jets.JetBTagUParT,
             jets.JetRho,
             jets.JetID, 
             jets.JetVetoMapVeto,
             jets.JetIDCut,
-            jets.JetEnergyCorrection,
+            jets.JetEnergyCorrection_Run3,
             jets.JetPtCut_loose,
             jets.JetEtaCut_Max3,
             jets.LooseJets_LowEta,
@@ -1169,7 +1185,7 @@ def build_config(
             jets.BJetCollection,
             jets.BasicBJetQuantities,
             met.MetCorrections, 
-            # met.PFMetCorrections,
+            met.PFMetCorrections,
             pairquantities.DiTauPairMETQuantities,
             pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
@@ -1335,13 +1351,6 @@ def build_config(
 
     configuration.add_modification_rule(
         "global",
-        ReplaceProducer(
-            producers=[jets.JetEnergyCorrection, jets.JetEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G"],
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
         RemoveProducer(
             producers=[event.npartons],
             exclude_samples=["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"],
@@ -1387,6 +1396,13 @@ def build_config(
         RemoveProducer(
             producers=[genparticles.GenMatching],
             samples=["data", "data_E", "data_F", "data_G"],
+        ),
+    )
+    configuration.add_modification_rule(
+        "global",
+        ReplaceProducer(
+            producers=[jets.GenJet, jets.GenJet_data],
+            samples=["data", "data_E", "data_F", "data_G",],
         ),
     )
     configuration.add_modification_rule(
@@ -1532,6 +1548,20 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt],
+                samples=["data", "data_E", "data_F", "data_G"],
+            ),
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection],
+                exclude_samples=["data", "data_E", "data_F", "data_G"],
+            ),
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection_data],
                 samples=["data", "data_E", "data_F", "data_G"],
             ),
         )

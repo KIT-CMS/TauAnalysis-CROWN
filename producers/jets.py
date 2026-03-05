@@ -88,11 +88,95 @@ with defaults(scopes=["global"]):
             nanoAOD.run,
             nanoAOD.event,
         ],
-        output=[],
+        output=[q.Jet_seed],
+    )
+
+    RawJet = Producer(
+        call="physicsobject::jet::RawPt({df}, {output}, {input})",
+        input=[
+            nanoAOD.Jet_pt,
+            nanoAOD.Jet_rawFactor,
+        ],
+        output=[q.Jet_rawPt],
+    )
+
+    with defaults(call="event::quantity::Rename<ROOT::VecOps::RVec<float>>({df}, {output}, {input})"):
+        # rename gen jet variable for data otherwise jet pt correction producer doesn't work for both mc and data at the same time
+        with defaults(output=[q.gen_jet_pt]):
+            GenPt = Producer(input=[nanoAOD.GenJet_pt])
+            GenPt_data = Producer(input=[nanoAOD.Jet_pt])
+        with defaults(output=[q.gen_jet_eta]):
+            GenEta = Producer(input=[nanoAOD.GenJet_eta])
+            GenEta_data = Producer(input=[nanoAOD.Jet_eta])
+        with defaults(output=[q.gen_jet_phi]):
+            GenPhi = Producer(input=[nanoAOD.GenJet_phi])
+            GenPhi_data = Producer(input=[nanoAOD.Jet_phi])
+
+    GenJet = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[GenPt, GenEta, GenPhi],
+    )
+
+    GenJet_data = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[GenPt_data, GenEta_data, GenPhi_data],
+    )
+
+    JetPtCorrection_L1 = Producer(
+        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}", {is_data})',
+        input=[
+            nanoAOD.Jet_pt,
+            nanoAOD.Jet_eta,
+            nanoAOD.Jet_phi,
+            nanoAOD.Jet_area,
+            nanoAOD.Jet_rawFactor,
+            nanoAOD.Jet_muonSubtrFactor,
+            nanoAOD.CorrT1METJet_rawPt,
+            nanoAOD.CorrT1METJet_eta,
+            nanoAOD.CorrT1METJet_phi,
+            nanoAOD.CorrT1METJet_area,
+            nanoAOD.CorrT1METJet_muonSubtrFactor,
+            q.fixedGridRho,
+        ],
+        output=[q.Jet_pt_L1corrected],
+    )
+    JetPtCorrection_Run3 = Producer(
+        call='physicsobject::jet::PtCorrection({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}", {is_data})',
+        input=[
+            q.Jet_pt_L1corrected,
+            nanoAOD.Jet_eta,
+            nanoAOD.Jet_phi,
+            nanoAOD.Jet_area,
+            q.Jet_ID,
+            nanoAOD.CorrT1METJet_eta,
+            nanoAOD.CorrT1METJet_phi,
+            nanoAOD.CorrT1METJet_area,
+            q.gen_jet_pt,
+            q.gen_jet_eta,
+            q.gen_jet_phi,
+            q.fixedGridRho,
+            q.Jet_seed,
+            nanoAOD.run
+        ],
+        output=[q.CorrT1METJet_pt_corrected],
+    )
+
+    # resize jet pt corrected for masks to orginal puppi jet size collection
+    JetPtCorrection_Run3_cut = Producer(
+        call='physicsobject::TruncateToSize<float>({df}, {output}, {input})',
+        input=[
+            q.CorrT1METJet_pt_corrected,
+            nanoAOD.Jet_eta,
+        ],
+        output=[q.Jet_pt_corrected],
     )
 
     with defaults(output=[q.Jet_pt_corrected]):
-        JetPtCorrection = ProducerGroup(
+        JetPtCorrection = Producer(
             call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_mc}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
             input=[
                 nanoAOD.Jet_pt,
@@ -105,8 +189,8 @@ with defaults(scopes=["global"]):
                 nanoAOD.GenJet_eta,
                 nanoAOD.GenJet_phi,
                 q.fixedGridRho,
+                q.Jet_seed,
             ],
-            subproducers=[JetSmearingSeed],
         )
         JetPtCorrection_data = Producer(
             call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, "{era}", {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_data})',
@@ -136,6 +220,7 @@ with defaults(scopes=["global"]):
 
     with defaults(call=None, input=None, output=None):
         RenameJetsData = ProducerGroup(subproducers=[RenameJetPt, RenameJetMass])
+        JetEnergyCorrection_Run3 = ProducerGroup(subproducers=[RawJet, JetPtCorrection_L1, JetPtCorrection_Run3, JetPtCorrection_Run3_cut, JetMassCorrection])
         JetEnergyCorrection = ProducerGroup(subproducers=[JetPtCorrection, JetMassCorrection])
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])
 
