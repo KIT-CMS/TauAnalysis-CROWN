@@ -46,8 +46,9 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_1,
         q.mass_2,
+        q.eta_1,
+        q.eta_2,
         q.met,
-        q.m_vis,
         q.pt_tt,
     ]
 

@@ -356,10 +356,10 @@ def build_config(
         [
             fakefactors.RawFakeFactors_sm_tt_1,
             fakefactors.FakeFactors_sm_tt_1,
-            fakefactors.FakeFactors_sm_tt_split_info_1,
+            #fakefactors.FakeFactors_sm_tt_split_info_1,
             fakefactors.RawFakeFactors_sm_tt_2,
             fakefactors.FakeFactors_sm_tt_2,
-            fakefactors.FakeFactors_sm_tt_split_info_2,
+            #fakefactors.FakeFactors_sm_tt_split_info_2,
         ],
     )
     configuration.add_outputs(
@@ -370,23 +370,23 @@ def build_config(
             q.raw_fake_factor_2,
             q.fake_factor_2,
             # ----------------------
-            q.raw_qcd_fake_factor_1,
-            q.raw_qcd_fake_factor_2,
-            # ---
-            q.qcd_fake_factor_fraction_1,
-            q.qcd_fake_factor_fraction_2,
-            # ---
-            q.qcd_DR_SR_correction_1, 
-            q.qcd_DR_SR_correction_2,
-            # ---
-            q.qcd_correction_wo_DR_SR_1,
-            q.qcd_correction_wo_DR_SR_2,
-            # ---
-            q.qcd_fake_factor_correction_1,
-            q.qcd_fake_factor_correction_2,
-            # ---
-            q.qcd_fake_factor_1,
-            q.qcd_fake_factor_2,
+            # q.raw_qcd_fake_factor_1,
+            # q.raw_qcd_fake_factor_2,
+            # # ---
+            # q.qcd_fake_factor_fraction_1,
+            # q.qcd_fake_factor_fraction_2,
+            # # ---
+            # q.qcd_DR_SR_correction_1, 
+            # q.qcd_DR_SR_correction_2,
+            # # ---
+            # q.qcd_correction_wo_DR_SR_1,
+            # q.qcd_correction_wo_DR_SR_2,
+            # # ---
+            # q.qcd_fake_factor_correction_1,
+            # q.qcd_fake_factor_correction_2,
+            # # ---
+            # q.qcd_fake_factor_1,
+            # q.qcd_fake_factor_2,
         ],
     )
 

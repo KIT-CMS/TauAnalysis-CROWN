@@ -837,7 +837,8 @@ namespace fakefactors {
             const std::string &decaymode_2,
             const std::string &mass_1,
             const std::string &mass_2,
-            const std::string &delta_r,
+            const std::string &eta_1,
+            const std::string &eta_2,
             const std::string &met,
             const std::string &pt_tt,
             const std::string &qcd_variation, 
@@ -877,7 +878,8 @@ namespace fakefactors {
                 const int &decaymode_2,
                 const float &mass_1, 
                 const float &mass_2,
-                const float &delta_r,
+                const float &eta_1, 
+                const float &eta_2,
                 const float &met,
                 const float &pt_tt) {
                 
@@ -905,8 +907,9 @@ namespace fakefactors {
                             (float)decaymode_1,
                             mass_1,
                             pt_1,
-                            delta_r,
+                            eta_1,
                             met,
+                            m_vis,
                             (float)njets, 
                             qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
@@ -928,8 +931,9 @@ namespace fakefactors {
                             (float)decaymode_2,
                             mass_2,
                             pt_2,
-                            delta_r,
-                            met,  
+                            eta_2,
+                            met,
+                            m_vis,
                             (float)njets,
                             qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
@@ -947,7 +951,7 @@ namespace fakefactors {
                 return ff;
             };
             auto df1 = df.Define(outputname, calc_fake_factor,
-                {tau_pt_1, tau_pt_2, njets, m_vis, decaymode_1, decaymode_2, mass_1, mass_2, delta_r, met, pt_tt});
+                {tau_pt_1, tau_pt_2, njets, m_vis, decaymode_1, decaymode_2, mass_1, mass_2, eta_1, eta_2, met, pt_tt});
             return df1;
         }
 
