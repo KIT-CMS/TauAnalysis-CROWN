@@ -8,7 +8,7 @@ from .producers import taus as taus
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 
-def add_tauVariations(configuration: Configuration, sample: str, era: str) -> Configuration:
+def add_tauVariations(configuration: Configuration, sample: str) -> Configuration:
     if sample == "embedding" or sample == "embedding_mc" or sample == "data":
         return configuration
 
@@ -32,7 +32,6 @@ def add_tauVariations(configuration: Configuration, sample: str, era: str) -> Co
                 for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
                     for pt in configuration.ES_ID_SCHEME.pt_binning:
                         add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
-
         with defaults(scopes="tt"):
             with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF, scalefactors.Tau_2_VsJetTauID_tt_SF]):
                 add_shift(name="vsJetTauDM0", shift_key="tau_sf_vsjet_tauDM0")

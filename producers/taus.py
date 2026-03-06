@@ -16,7 +16,6 @@ with defaults(scopes=["global"], output=[]):
         call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})",
         input=[nanoAOD.Tau_dz],
     )
-    # int for v9, UChar_t from v12
     TauDMCut = Producer(
         call="physicsobject::CutQuantity<UChar_t>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
         input=[nanoAOD.Tau_decayMode],
@@ -371,7 +370,6 @@ with defaults(scopes=["et", "mt", "tt"]):
             call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})",
             input=[nanoAOD.Tau_dz],
         )
-        #int for v9, UChart_t for v12 and v15
         GoodTauDMCut = Producer(
             call="physicsobject::CutQuantity<UChar_t>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
             input=[nanoAOD.Tau_decayMode],
@@ -388,6 +386,20 @@ with defaults(scopes=["et", "mt", "tt"]):
             TauIDraw_vsEle_2p5,
             TauIDraw_vsMu_2p5,
             TauIDraw_vsJet_2p5,
+        ],
+    )
+
+    BaseTaus_Run2 = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[
+            TauID_vsEle_2p1,
+            TauID_vsMu_2p1,
+            TauID_vsJet_2p1,
+            TauIDraw_vsEle_2p1,
+            TauIDraw_vsMu_2p1,
+            TauIDraw_vsJet_2p1,
         ],
     )
 

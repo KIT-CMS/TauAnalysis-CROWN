@@ -32,8 +32,9 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
 
     class JES_CONFIG:
-        INDIVIDUAL = True 
-        REGROUPED = False 
+        # no regrouped btag variations for 2022 and 2023, for 2024 it's a different scheme in any case
+        # regrouped jes are available for all eras
+        REGROUPED = True if int(era[:4])<2022 else False
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if era not in ["2024", "2025"]:
@@ -90,7 +91,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                     producers=[scalefactors.btagging_SF]
                 )
 
-        if JES_CONFIG.INDIVIDUAL:
+        if not JES_CONFIG.REGROUPED:
             for name in [
                 # --- jesUncAbsolute ---
                 "SinglePionECAL",
@@ -147,7 +148,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                             producers=[scalefactors.btagging_SF]
                         )
 
-        elif JES_CONFIG.REGROUPED:  # preferred configuration
+        else:  # preferred configuration
             for name, JES_source, *is_yearly in [
                 ("Absolute", '{"Regrouped_Absolute"}'),
                 ("FlavorQCD", '{"Regrouped_FlavorQCD"}'),
