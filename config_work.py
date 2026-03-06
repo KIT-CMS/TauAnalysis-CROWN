@@ -19,8 +19,8 @@ from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
-from .tau_embedding_settings import setup_embedding
-from .jec_data import add_jetCorrectionData
+#from .tau_embedding_settings import setup_embedding
+#from .jec_data import add_jetCorrectionData
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
@@ -2309,7 +2309,7 @@ def build_config(
     #########################
     # Jet energy correction for data for run 2
     #########################
-    # configuration = add_jetCorrectionData(configuration, era)
+    #configuration = add_jetCorrectionData(configuration, era)
 
     #########################
     # Finalize and validate the configuration

@@ -63,7 +63,7 @@ with defaults(scopes=["global"]):
     )
     with defaults(output=[q._ElectronIDCut], call='physicsobject::CutEqual<bool>({df}, {output}, {input}, true)',):
         ElectronIDCut = Producer(
-            input=[nanoAOD.Electron_mvaNoIso_WP90],
+            input=[nanoAOD.Electron_mvaIso_WP90],
         )
         ElectronIDCut_v9 = Producer(
             input=[nanoAODv9.Electron_mvaFall17V2noIso_WP90],
