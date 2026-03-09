@@ -16,10 +16,6 @@ with defaults(scopes=["global"], output=[]):
         call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})",
         input=[nanoAOD.Tau_dz],
     )
-    TauDMCut = Producer(
-        call="physicsobject::CutQuantity<int>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
-        input=[nanoAOD.Tau_decayMode],
-    )
 
 with defaults(scopes=["et", "mt", "tt"]):
     with defaults(output=[q.Tau_IDvsEle]):
@@ -371,6 +367,10 @@ with defaults(scopes=["et", "mt", "tt"]):
             input=[nanoAOD.Tau_dz],
         )
         GoodTauDMCut = Producer(
+            call="physicsobject::CutQuantity<UChar_t>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
+            input=[nanoAOD.Tau_decayMode],
+        )
+        GoodTauDMCut_v9 = Producer(
             call="physicsobject::CutQuantity<int>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})",
             input=[nanoAOD.Tau_decayMode],
         )
@@ -389,7 +389,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         ],
     )
 
-    BaseTaus_Run2 = ProducerGroup(
+    BaseTaus_v9 = ProducerGroup(
         call=None,
         input=None,
         output=None,
@@ -412,6 +412,20 @@ with defaults(scopes=["et", "mt", "tt"]):
             GoodTauEtaCut,
             GoodTauDzCut,
             GoodTauDMCut,
+            VsJetTauIDCut,
+            VsElectronTauIDCut,
+            VsMuonTauIDCut,
+        ],
+    )
+    GoodTaus_v9 = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.good_taus_mask],
+        subproducers=[
+            GoodTauPtCut,
+            GoodTauEtaCut,
+            GoodTauDzCut,
+            GoodTauDMCut_v9,
             VsJetTauIDCut,
             VsElectronTauIDCut,
             VsMuonTauIDCut,

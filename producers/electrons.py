@@ -23,7 +23,7 @@ with defaults(scopes=["global"]):
            call='embedding::electron::PtCorrection({df}, correctionManager, {output}, {input}, "{embedding_electron_es_sf_file}", "{ele_ES_json_name}", "{ele_energyscale_barrel}", "{ele_energyscale_endcap}")',
            input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta],
         )
-        ElectronPtCorrectionMC_Run2 = Producer(
+        ElectronPtCorrectionMC_v9 = Producer(
             call='physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{ele_es_file}", "{ele_es_name}", "{era}", "{ele_es_variation}")',
             input=[nanoAOD.Electron_pt, nanoAOD.Electron_eta, nanoAOD.Electron_seedGain, nanoAODv9.Electron_dEsigmaUp, nanoAODv9.Electron_dEsigmaDown],
         )
@@ -77,11 +77,17 @@ with defaults(scopes=["global"]):
 
     with defaults(output=[]):
         DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.Electron_pt_corrected])
-        DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<int>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
+        DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<UChar_t>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
+        DiElectronVetoIDCut_v9 = Producer(call='physicsobject::CutMin<int>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAOD.Electron_cutBased])
         DiElectronVetoElectrons = ProducerGroup(
             call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
             input=[q._ElectronEtaCut, q._ElectronDxyCut, q._ElectronDzCut, q._ElectronIsoCut],
             subproducers=[DiElectronVetoPtCut, DiElectronVetoIDCut],
+        )
+        DiElectronVetoElectrons_v9 = ProducerGroup(
+            call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+            input=[q._ElectronEtaCut, q._ElectronDxyCut, q._ElectronDzCut, q._ElectronIsoCut],
+            subproducers=[DiElectronVetoPtCut, DiElectronVetoIDCut_v9],
         )
 
     BaseElectrons = ProducerGroup(
@@ -109,6 +115,18 @@ with defaults(scopes=["global"]):
         ],
         output=[q.dielectron_veto],
         subproducers=[DiElectronVetoElectrons],
+    )
+    DiElectronVeto_v9 = ProducerGroup(
+        call="physicsobject::LeptonPairVeto({df}, {output}, {input}, {dileptonveto_dR})",
+        input=[
+            q.Electron_pt_corrected,
+            nanoAOD.Electron_eta,
+            nanoAOD.Electron_phi,
+            nanoAOD.Electron_mass,
+            nanoAOD.Electron_charge,
+        ],
+        output=[q.dielectron_veto],
+        subproducers=[DiElectronVetoElectrons_v9],
     )
 
 
