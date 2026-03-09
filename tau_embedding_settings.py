@@ -1069,21 +1069,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
         ),
     )
     configuration.add_modification_rule(
-        "global",
-        AppendProducer(
-            producers=jets.RenameJetsData,
-            samples=["embedding", "embedding_mc"],
-            update_output=False,
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
-        RemoveProducer(
-            producers=jets.JetEnergyCorrection, 
-            samples=["embedding", "embedding_mc"]
-        ),
-    )
-    configuration.add_modification_rule(
         ["et", "mt", "tt"],
         RemoveProducer(
             producers=[pairquantities.taujet_pt_2, genparticles.gen_taujet_pt_2],

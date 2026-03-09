@@ -31,7 +31,7 @@ with defaults(scopes=["global"]):
             input=[nanoAODv12.Rho_fixedGridRhoFastjetAll],
         )
         # not present in v12 and above
-        JetRho_Run2 = Producer(
+        JetRho_v9 = Producer(
             call="event::quantity::Rename<float>({df}, {output}, {input})",
             input=[nanoAODv9.fixedGridRhoFastjetAll],
         )
@@ -127,7 +127,7 @@ with defaults(scopes=["global"]):
     )
 
     JetPtCorrection_L1 = Producer(
-        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}", {is_data})',
+        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_mc}, {jet_jes_tag_data}, "{era}", {is_data}, {is_embedding})',
         input=[
             nanoAOD.Jet_pt,
             nanoAOD.Jet_eta,
@@ -145,7 +145,7 @@ with defaults(scopes=["global"]):
         output=[q.Jet_pt_L1corrected],
     )
     JetPtCorrection_Run3 = Producer(
-        call='physicsobject::jet::PtCorrection({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}", {is_data})',
+        call='physicsobject::jet::PtCorrection({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_mc}, {jet_jes_tag_data}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}", {is_data}, {is_embedding})',
         input=[
             q.Jet_pt_L1corrected,
             nanoAOD.Jet_eta,
@@ -193,7 +193,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetPtCorrection_data = Producer(
-            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, "{era}", {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_data})',
+            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_data}, "{era}")',
             input=[
                 nanoAOD.Jet_pt, 
                 nanoAOD.Jet_eta, 

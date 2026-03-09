@@ -86,17 +86,17 @@ with defaults(scopes=["global"]):
     )
 
     MetMask = Producer(
-        call="physicsobject::CutMinSingle<float>({df}, {output}, {input}, 0)",
+        call="physicsobject::CutMin<float>({df}, {output}, {input}, 0)",
         input=[nanoAOD.PuppiMET_ptUnclusteredUp],
         output=[q.met_mask],
     )
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     # PuppiMET with jet propagated
-    # for run 3
+    # for run 3 v15
 
     METTypeI = Producer(
-        call='met::TypeIMET_v2({df}, correctionManager, {output}, {input})',
+        call='met::TypeIMETCorrections({df}, correctionManager, {output}, {input})',
         input=[
             q.met_p4,
             q.Jet_pt_L1corrected, 
@@ -112,7 +112,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         output = [q.met_p4_jetcorrected],
     )
     
-    # for run 2
+    # for run 2 and run3 v12
     with defaults(call="physicsobject::PropagateToMET({df}, {output}, {input}, {propagateJets}, {min_jetpt_met_propagation})"):
         PartialJetsToMetInput = [
             q.Jet_pt_corrected,
@@ -182,6 +182,15 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 MetPhi,
             ],
         )
+        MetCorrections_v12 = ProducerGroup(
+            subproducers=[
+                PropagateJetsToMet,
+                PropagateLeptonsToMet,
+                ApplyRecoilCorrections,
+                MetPt,
+                MetPhi,
+            ],
+        )
         PFMetCorrections = ProducerGroup(
             subproducers=[
                 PropagateJetsToPFMet,
@@ -194,8 +203,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
         MetCorrections_Run2 = ProducerGroup(
             subproducers=[
-                PropagateLeptonsToMet,
                 PropagateJetsToMet,
+                PropagateLeptonsToMet,
                 ApplyRecoilCorrections_Run2,
                 MetPt,
                 MetPhi,
@@ -203,8 +212,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
         PFMetCorrections_Run2 = ProducerGroup(
             subproducers=[
-                PropagateLeptonsToPFMet,
                 PropagateJetsToPFMet,
+                PropagateLeptonsToPFMet,
                 ApplyRecoilCorrectionsPFMet_Run2,
                 PFMetPt,
                 PFMetPhi,

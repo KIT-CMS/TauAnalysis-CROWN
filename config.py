@@ -273,14 +273,14 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.3, 
+            "muon_iso_cut": 0.25, 
             
             # electron base selection
             "min_ele_pt": 10.0,
             "max_ele_eta": 2.5,
             "max_ele_dxy": 0.045,
             "max_ele_dz": 0.2,
-            "ele_iso_cut": 0.3,
+            "ele_iso_cut": 0.25,
             # electron energy scale
             "ele_es_name": "UL-EGM_ScaleUnc",
             "ele_es_master_seed": 44,
@@ -308,6 +308,10 @@ def build_config(
             "jet_eta_1": 2.5,
             "jet_eta_2": EraModifier(
                 {
+                    "2016preVFP": 4.7,
+                    "2016postVFP": 4.7,
+                    "2017": 4.7,
+                    "2018": 4.7,
                     "2022preEE": 4.7, # should be 5 but max cut is 4.7 anyway https://indico.cern.ch/event/1624984/contributions/6896120/attachments/3208048/5713070/20260127_JetMET_PerformanceRun3_HIGMeeting.pdf
                     "2022postEE": 4.7,
                     "2023preBPix": 4.7,
@@ -377,16 +381,6 @@ def build_config(
             "jet_reapplyJES": True,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            "jet_jes_tag": EraModifier(
-                {
-                    "2022preEE": '"Summer22_22Sep2023_V3"',
-                    "2022postEE": '"Summer22EE_22Sep2023_V3"',
-                    "2023preBPix": '"Summer23Prompt23_V2"',
-                    "2023postBPix": '"Summer23BPixPrompt23_V3"',
-                    "2024": '"Summer24Prompt24_V2"',
-                    "2025": '"Winter25Prompt25_V3"',
-                }
-            ),
             "jet_jes_tag_mc": EraModifier(
                 {
                     "2016preVFP": '"Summer19UL16APV_V7_MC"',
@@ -1395,14 +1389,14 @@ def build_config(
         scopes,
         RemoveProducer(
             producers=[genparticles.GenMatching],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
             producers=[jets.GenJet, jets.GenJet_data],
-            samples=["data", "data_E", "data_F", "data_G",],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1444,7 +1438,7 @@ def build_config(
         ["et", "mt", "tt"],
         ReplaceProducer(
             producers=[configuration.ES_ID_SCHEME.mc.producerGroupES, taus.TauEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1453,7 +1447,7 @@ def build_config(
             producers=[
                 scalefactors.TauID_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1462,7 +1456,7 @@ def build_config(
             producers=[
                 configuration.ES_ID_SCHEME.mc.producerID,
             ],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1532,7 +1526,6 @@ def build_config(
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
-                #producers=[electrons.BaseElectrons, electrons.BaseElectrons_Run2],
                 producers = [electrons.ElectronIDCut, electrons.ElectronIDCut_v9],
                 exclude_samples=["fake_era"],
             ),
@@ -1540,29 +1533,36 @@ def build_config(
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
-                producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_Run2],
-                exclude_samples=["data", "data_E", "data_F", "data_G"],
+                producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_v9],
+                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt],
-                samples=["data", "data_E", "data_F", "data_G"],
+                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            ),
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[event.DiLeptonVeto, event.DiLeptonVeto_v9],
+                exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection],
-                exclude_samples=["data", "data_E", "data_F", "data_G"],
+                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection_data],
-                samples=["data", "data_E", "data_F", "data_G"],
+                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1582,7 +1582,7 @@ def build_config(
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
-                producers=[jets.JetRho, jets.JetRho_Run2],
+                producers=[jets.JetRho, jets.JetRho_v9],
                 exclude_samples=["fake_era"],
             ),
         )
@@ -1603,44 +1603,49 @@ def build_config(
         configuration.add_modification_rule(
             scopes,
             ReplaceProducer(
-                #producers=[met.MetCorrections, met.MetCorrections_Run2],
-                producers=[met.ApplyRecoilCorrections, met.ApplyRecoilCorrections_Run2],
+                producers=[met.MetCorrections, met.MetCorrections_Run2],
                 exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             scopes,
             ReplaceProducer(
-                #producers=[met.MetCorrections, met.MetCorrections_Run2],
-                producers=[met.ApplyRecoilCorrectionsPFMet, met.ApplyRecoilCorrectionsPFMet_Run2],
+                producers=[met.PFMetCorrections, met.PFMetCorrections_Run2],
                 exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             ["mt", "et", "tt"],
             ReplaceProducer(
-                producers=[taus.BaseTaus, taus.BaseTaus_Run2],
+                producers=[taus.BaseTaus, taus.BaseTaus_v9],
+                exclude_samples=["fake_era"],
+            ),
+        )
+        configuration.add_modification_rule(
+            ["mt", "et", "tt"],
+            ReplaceProducer(
+                producers=[taus.GoodTaus, taus.GoodTaus_v9],
                 exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             ["tt"],
             ReplaceProducer(
-                producers=[pairquantities.TTDiTauPairQuantities, pairquantities.TTDiTauPairQuantities_Run2],
+                producers=[pairquantities.TTDiTauPairQuantities, pairquantities.TTDiTauPairQuantities_v9],
                 exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             ["mt"],
             ReplaceProducer(
-                producers=[pairquantities.MTDiTauPairQuantities, pairquantities.MTDiTauPairQuantities_Run2],
+                producers=[pairquantities.MTDiTauPairQuantities, pairquantities.MTDiTauPairQuantities_v9],
                 exclude_samples=["fake_era"],
             ),
         )
         configuration.add_modification_rule(
             ["et"],
             ReplaceProducer(
-                producers=[pairquantities.ETDiTauPairQuantities, pairquantities.ETDiTauPairQuantities_Run2],
+                producers=[pairquantities.ETDiTauPairQuantities, pairquantities.ETDiTauPairQuantities_v9],
                 exclude_samples=["fake_era"],
             ),
         )
@@ -1799,7 +1804,7 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionData],
-                samples=["data", "data_E", "data_F", "data_G"],
+                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
             ),
         )
 
@@ -1815,6 +1820,13 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[jets.JetID, jets.JetIDRun3NanoV12Corrected],
+                exclude_samples=["fake_era"],
+            ),
+        )
+        configuration.add_modification_rule(
+            scopes,
+            ReplaceProducer(
+                producers=[met.MetCorrections, met.MetCorrections_v12],
                 exclude_samples=["fake_era"],
             ),
         )
@@ -1945,7 +1957,6 @@ def build_config(
             triggers.ElElGenerateSingleElectronTriggerFlags.output_group,
             triggers.ElElGenerateDoubleMuonTriggerFlags.output_group,
             q.dimuon_veto,
-            q.dielectron_veto,
             q.extraelec_veto,
             ] + [p for p in pairquantities.ElElPairQuantities.get_outputs("ee")
             ] + [p for p in genparticles.ElElGenPairQuantities.get_outputs("ee")
@@ -1978,7 +1989,7 @@ def build_config(
             [
                 triggers.MTGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.MTDiTauPairQuantities_Run2.get_outputs("mt")
+                ] + [p for p in pairquantities.MTDiTauPairQuantities_v9.get_outputs("mt")
             ],
         )
         configuration.add_outputs(
@@ -1986,7 +1997,7 @@ def build_config(
             [
                 triggers.ETGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.ETDiTauPairQuantities_Run2.get_outputs("et")
+                ] + [p for p in pairquantities.ETDiTauPairQuantities_v9.get_outputs("et")
             ],
         )
         configuration.add_outputs(
@@ -2000,7 +2011,7 @@ def build_config(
             [
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.TTDiTauPairQuantities_Run2.get_outputs("tt")
+                ] + [p for p in pairquantities.TTDiTauPairQuantities_v9.get_outputs("tt")
             ],
         )
     else:
@@ -2123,7 +2134,7 @@ def build_config(
         with defaults(
             scopes="global",
             shift_key="ele_es_variation",
-            producers=[electrons.ElectronPtCorrectionMC_Run2],
+            producers=[electrons.ElectronPtCorrectionMC_v9],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
             add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})

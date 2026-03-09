@@ -25,6 +25,11 @@ with defaults(scopes=["global"]):
             output=[q.dilepton_veto],
             subproducers=[electrons.DiElectronVeto, muons.DiMuonVeto],
         )
+        DiLeptonVeto_v9 = ProducerGroup(
+            call='event::CombineFlags({df}, {output}, {input}, "any_of")',
+            output=[q.dilepton_veto],
+            subproducers=[electrons.DiElectronVeto_v9, muons.DiMuonVeto],
+        )
         # ---
         SampleFlags_ProducerCollection = [
             is_data := Producer(call="event::quantity::Define<bool>({df}, {output}, {is_data})", output=[q.is_data]),
@@ -94,7 +99,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     # Run 2
     ZPtMassReweighting = Producer(
-        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )

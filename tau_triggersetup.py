@@ -1405,8 +1405,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2022postEE": "2022Re-recoE+PromptFG",
                     "2023preBPix": "2023PromptC",
                     "2023postBPix": "2023PromptD",
-                    "2024": "2023PromptD",
-                    "2025": "2023PromptD",
+                    "2024": "2024Prompt",
+                    "2025": "2024Prompt",
                 }
             ),
             "singleelectron_trigger_sf": [
