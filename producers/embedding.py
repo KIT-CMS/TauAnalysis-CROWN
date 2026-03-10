@@ -1,8 +1,13 @@
+"""
+This module contains producers related to the tau embedding method. Values that are from the inital selected event are handled here.
+"""
+
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 from ..quantities import output as q
 from ..quantities import nanoAOD as nanoAOD
 
 
+# Transfer values for initial MET and Muon ID variables
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call="event::quantity::Rename<Float_t>({df}, {output}, {input})"):
         EmbeddingGenWeight = Producer(input=[nanoAOD.genWeight], output=[q.emb_genweight])
@@ -10,9 +15,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         TauEmbeddingInitialMETphi = Producer(input=[nanoAOD.TauEmbedding_initialMETphi], output=[q.emb_initialMETphi])
         TauEmbeddingInitialPuppiMETEt = Producer(input=[nanoAOD.TauEmbedding_initialPuppiMETEt], output=[q.emb_initialPuppiMETEt])
         TauEmbeddingInitialPuppiMETphi = Producer(input=[nanoAOD.TauEmbedding_initialPuppiMETphi], output=[q.emb_initialPuppiMETphi])
-        #TauEmbeddingnInitialPairCandidates = Producer(input=[nanoAOD.TauEmbedding_nInitialPairCandidates], output=[q.emb_InitialPairCandidates])
-        #TauEmbeddingSelectionOldMass = Producer(input=[nanoAOD.TauEmbedding_SelectionOldMass], output=[q.emb_SelectionOldMass])
-        #TauEmbeddingSelectionNewMass = Producer(input=[nanoAOD.TauEmbedding_SelectionNewMass], output=[q.emb_SelectionNewMass])
 
     with defaults(call="event::quantity::Rename<Bool_t>({df}, {output}, {input})"):
         TauEmbeddingIsMediumLeadingMuon = Producer(input=[nanoAOD.TauEmbedding_isMediumLeadingMuon], output=[q.emb_isMediumLeadingMuon])
@@ -50,9 +52,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 TauEmbeddingIsMediumTrailingMuon,
                 TauEmbeddingIsTightLeadingMuon,
                 TauEmbeddingIsTightTrailingMuon,
-                # TauEmbeddingnInitialPairCandidates,
-                # TauEmbeddingSelectionOldMass,
-                # TauEmbeddingSelectionNewMass,
             ],
         )
         TauEmbeddingSelectionSF = ProducerGroup(
@@ -122,10 +121,9 @@ ETGenerateSingleElectronTriggerSF = ExtendedVectorProducer(
 
 # Di-tau trigger SFs
 
-with defaults(scopes=["tt"]):
-    with defaults(call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{emb_ditau_trigger_file}", "tauTriggerSF", "{emb_ditau_trigger_type}", "{emb_ditau_trigger_wp}", "{emb_ditau_trigger_corrtype}", "{emb_ditau_trigger_syst}")'):
-        TTGenerateDoubleTauTriggerSF_1 = Producer(input=[q.pt_1, q.tau_decaymode_1], output=[q.emb_trg_wgt_1])
-        TTGenerateDoubleTauTriggerSF_2 = Producer(input=[q.pt_2, q.tau_decaymode_2], output=[q.emb_trg_wgt_2])
+with defaults(scopes=["tt"], call='physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{emb_ditau_trigger_file}", "tauTriggerSF", "{emb_ditau_trigger_type}", "{emb_ditau_trigger_wp}", "{emb_ditau_trigger_corrtype}", "{emb_ditau_trigger_syst}")'):
+    TTGenerateDoubleTauTriggerSF_1 = Producer(input=[q.pt_1, q.tau_decaymode_1], output=[q.emb_trg_wgt_1])
+    TTGenerateDoubleTauTriggerSF_2 = Producer(input=[q.pt_2, q.tau_decaymode_2], output=[q.emb_trg_wgt_2])
 
 ###############################
 # Tau ID/Iso/Trigger SFS
