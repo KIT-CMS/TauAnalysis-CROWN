@@ -48,6 +48,7 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
                     "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
                     "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
                 }
             ),
             "PU_reweighting_era": EraModifier(
@@ -56,6 +57,7 @@ def build_config(
                     "2016postVFP": "Collisions16_UltraLegacy_goldenJSON",
                     "2017": "Collisions17_UltraLegacy_goldenJSON",
                     "2018": "Collisions18_UltraLegacy_goldenJSON",
+                    "2024": "Collisions24_BCDEFGHI_goldenJSON",
                 }
             ),
             "PU_reweighting_variation": "nominal",
@@ -65,6 +67,7 @@ def build_config(
                     "2016postVFP": "data/golden_json/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt",
                     "2017": "data/golden_json/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt",
                     "2018": "data/golden_json/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+                    "2024": "data/golden_json/Cert_Collisions2024_378981_386951_Golden.json",
                 }
             ),
         },
@@ -92,8 +95,8 @@ def build_config(
             "muon_iso_cut": 1.00,
         },
     )
-    # add embedding selection scalefactors
-    configuration.add_config_parameters(
+    # add embedding selection scalefactors, für 2024 noch keine berechnet
+    """configuration.add_config_parameters(
         scopes,
         {
             "embedding_selection_sf_file": EraModifier(
@@ -102,12 +105,13 @@ def build_config(
                     "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
                     "2017": "data/embedding/embeddingselection__2017UL.json.gz",
                     "2018": "data/embedding/embeddingselection__2018UL.json.gz",
+                    "2024": "data/embedding/embeddingselection__2024UL.json.gz", #noch nicht berechnet
                 }
             ),
             "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
             "embedding_selection_id_sf": "EmbID_pt_eta_bins",
         },
-    )
+    )"""
     # Muon scale factors configuration
     configuration.add_config_parameters(
         ["mm"],
@@ -118,6 +122,7 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
                     "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
                     "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
                 }
             ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
@@ -128,6 +133,7 @@ def build_config(
                     "2016postVFP": "2016postVFP_UL",
                     "2017": "2017_UL",
                     "2018": "2018_UL",
+                    "2024": "2024",
                 }
             ),
             "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
@@ -137,7 +143,22 @@ def build_config(
         ["mm"],
         {
             "doublemuon_trigger": EraModifier(
-                {
+                {  
+                     "2024": [
+                        {
+                            "flagname": "trg_double_mu17_mu8",
+                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8",
+                            "p1_ptcut": 17,
+                            "p2_ptcut": 8,
+                            "p1_etacut": 2.5,
+                            "p2_etacut": 2.5,
+                            "p1_filterbit": 4,
+                            "p1_trigger_particle_id": 13,
+                            "p2_filterbit": 4,
+                            "p2_trigger_particle_id": 13,
+                            "max_deltaR_triggermatch": 0.4,
+                        },
+                     ],
                     "2018": [
                         {
                             "flagname": "trg_double_mu17_mu8",
@@ -325,7 +346,7 @@ def build_config(
         "global",
         AppendProducer(
             producers=[event.JSONFilter],
-            samples=["data,embedding"],
+            samples=["data", "embedding"],
         ),
     )
     configuration.add_modification_rule(
@@ -353,12 +374,13 @@ def build_config(
             samples=["data"],
         ),
     )
-    configuration.add_modification_rule(
+    # Haben wir noch nicht 
+    """configuration.add_modification_rule(
         scopes,
         AppendProducer(
             producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
         ),
-    )
+    )"""
 
     #########################
     # Finalize and validate the configuration

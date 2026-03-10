@@ -197,6 +197,11 @@ _ElectronIDCut = Quantity()
 _ElectronIsoCut = Quantity()
 base_electrons_mask = Quantity()
 
+#### Photons
+
+# BasePhotons
+base_photons_mask = Quantity()
+
 # ExtraElectronsVeto
 extraelec_veto = Quantity()
 
