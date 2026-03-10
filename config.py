@@ -165,7 +165,7 @@ def build_config(
                         "Flag_eeBadScFilter",
                         "Flag_ecalBadCalibFilter", 
                     ],
-                    "20223preBPix": [
+                    "2023preBPix": [
                         "Flag_goodVertices",
                         "Flag_globalSuperTightHalo2016Filter",
                         "Flag_EcalDeadCellTriggerPrimitiveFilter",
