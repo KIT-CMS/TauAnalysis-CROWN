@@ -140,14 +140,6 @@ with defaults(scopes=["ee"]):
 
     # Producers to writeout the id variables for the tag and probe pairs
 
-    # Run2 vs Run3 NanoAOD name differences
-    _ele_wp90 = getattr(nanoAOD, "Electron_mvaFall17V2noIso_WP90", None) or getattr(
-        nanoAOD, "Electron_mvaNoIso_WP90"
-    )
-    _ele_wp80 = getattr(nanoAOD, "Electron_mvaFall17V2noIso_WP80", None) or getattr(
-        nanoAOD, "Electron_mvaNoIso_WP80"
-    )
-
     with defaults(call="event::quantity::Get<bool>({df}, {output}, {input}, 0)"):
         ElectronID_WP90_1 = Producer(input=[nanoAOD.Electron_mvaNoIso_WP90, q.dileptonpair], output=[tp_q.id_wp90_1])
         ElectronID_WP80_1 = Producer(input=[nanoAOD.Electron_mvaNoIso_WP80, q.dileptonpair], output=[tp_q.id_wp80_1])
@@ -175,9 +167,7 @@ Photon_quantities = [
     nanoAOD.Photon_pt,
     nanoAOD.Photon_eta,
     nanoAOD.Photon_phi,
-    # Run2 has Photon_mass, Run3 (NanoAODv15) does not. Mass does not affect DeltaR,
-    # so fall back to a scalar photon quantity if needed.
-    getattr(nanoAOD, "Photon_mass", None) or nanoAOD.Photon_energyRaw,
+    0,
     q.base_photons_mask,
 ]
 

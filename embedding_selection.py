@@ -48,7 +48,12 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
                     "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
                     "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
+                    "2022preEE": "data/jsonpog-integration/POG/LUM/2022_Summer22/puWeights.json.gz",
+                    "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
+                    "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
+                    "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
                 }
             ),
             "PU_reweighting_era": EraModifier(
@@ -57,7 +62,12 @@ def build_config(
                     "2016postVFP": "Collisions16_UltraLegacy_goldenJSON",
                     "2017": "Collisions17_UltraLegacy_goldenJSON",
                     "2018": "Collisions18_UltraLegacy_goldenJSON",
+                    "2022preEE": "Collisions2022_355100_357900_eraBCD_GoldenJson",
+                    "2022postEE": "Collisions2022_359022_362760_eraEFG_GoldenJson",
+                    "2023preBPix": "Collisions2023_366403_369802_eraBC_GoldenJson",
+                    "2023postBPix": "Collisions2023_369803_370790_eraD_GoldenJson",
                     "2024": "Collisions24_BCDEFGHI_goldenJSON",
+                    "2025": "Collisions24_BCDEFGHI_goldenJSON",
                 }
             ),
             "PU_reweighting_variation": "nominal",
@@ -67,7 +77,12 @@ def build_config(
                     "2016postVFP": "data/golden_json/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt",
                     "2017": "data/golden_json/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt",
                     "2018": "data/golden_json/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+                    "2022preEE": "data/golden_json/Cert_Collisions2022_355100_362760_Golden.json",
+                    "2022postEE": "data/golden_json/Cert_Collisions2022_355100_362760_Golden.json",
+                    "2023preBPix": "data/golden_json/Cert_Collisions2023_366442_370790_Golden.json",
+                    "2023postBPix": "data/golden_json/Cert_Collisions2023_366442_370790_Golden.json",
                     "2024": "data/golden_json/Cert_Collisions2024_378981_386951_Golden.json",
+                    "2025": "data/golden_json/Cert_Collisions2025_391658_398860_Golden.json", # last Run2025G run is 398903, update golden json when available
                 }
             ),
         },
@@ -95,23 +110,24 @@ def build_config(
             "muon_iso_cut": 1.00,
         },
     )
-    # add embedding selection scalefactors, für 2024 noch keine berechnet
-    """configuration.add_config_parameters(
-        scopes,
-        {
-            "embedding_selection_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
-                    "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/embeddingselection__2017UL.json.gz",
-                    "2018": "data/embedding/embeddingselection__2018UL.json.gz",
-                    "2024": "data/embedding/embeddingselection__2024UL.json.gz", #noch nicht berechnet
-                }
-            ),
-            "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
-            "embedding_selection_id_sf": "EmbID_pt_eta_bins",
-        },
-    )"""
+    # NOT USED AT THE MOMENT
+    # # add embedding selection scalefactors used by TauEmbeddingTriggerSelectionSF and TauEmbeddingIDSelectionSF
+    # configuration.add_config_parameters(
+    #     scopes,
+    #     {
+    #         "embedding_selection_sf_file": EraModifier(
+    #             {
+    #                 "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
+    #                 "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
+    #                 "2017": "data/embedding/embeddingselection__2017UL.json.gz",
+    #                 "2018": "data/embedding/embeddingselection__2018UL.json.gz",
+    #             }
+    #         ),
+    #         "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
+    #         "embedding_selection_id_sf": "EmbID_pt_eta_bins",
+    #     },
+    # )
+    
     # Muon scale factors configuration
     configuration.add_config_parameters(
         ["mm"],
@@ -122,128 +138,70 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
                     "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
                     "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
+                    "2022preEE": "data/jsonpog-integration/POG/MUO/2022_Summer22/muon_Z.json.gz",
+                    "2022postEE": "data/jsonpog-integration/POG/MUO/2022_Summer22EE/muon_Z.json.gz",
+                    "2023preBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23/muon_Z.json.gz",
+                    "2023postBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23BPix/muon_Z.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
                 }
             ),
-            "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
-            "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
-            "muon_sf_year_id": EraModifier(
-                {
-                    "2016preVFP": "2016preVFP_UL",
-                    "2016postVFP": "2016postVFP_UL",
-                    "2017": "2017_UL",
-                    "2018": "2018_UL",
-                    "2024": "2024",
-                }
-            ),
+            "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",  # correction for mediumId WP
+            "muon_iso_sf_name": "NUM_TightPFIso_DEN_MediumID",  # correction for TightPFIso WP (PF isolation < 0.15)
             "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
         },
     )
+    
+    common_doublemuon_trigger_config = {
+        "double_mu17_mu8": {
+            "flagname": "trg_double_mu17_mu8",
+            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
+            "p1_ptcut": 17,
+            "p2_ptcut": 8,
+            "p1_etacut": 2.5,
+            "p2_etacut": 2.5,
+            "p1_filterbit": 4,
+            "p1_trigger_particle_id": 13,
+            "p2_filterbit": 4,
+            "p2_trigger_particle_id": 13,
+            "max_deltaR_triggermatch": 0.4,
+        },
+        "double_mu17_mu8_mass8": {
+            "flagname": "trg_double_mu17_mu8_mass8",
+            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
+            "p1_ptcut": 17,
+            "p2_ptcut": 8,
+            "p1_etacut": 2.5,
+            "p2_etacut": 2.5,
+            "p1_filterbit": 4,
+            "p1_trigger_particle_id": 13,
+            "p2_filterbit": 4,
+            "p2_trigger_particle_id": 13,
+            "max_deltaR_triggermatch": 0.4,
+        },
+    }
     configuration.add_config_parameters(
         ["mm"],
         {
             "doublemuon_trigger": EraModifier(
                 {  
-                     "2024": [
-                        {
-                            "flagname": "trg_double_mu17_mu8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                    "2024": [
+                        common_doublemuon_trigger_config["double_mu17_mu8"], # prescaled
+                        common_doublemuon_trigger_config["double_mu17_mu8_mass8"] # not prescaled
                      ],
                     "2018": [
-                        {
-                            "flagname": "trg_double_mu17_mu8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_mu17_mu8_mass8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                        common_doublemuon_trigger_config["double_mu17_mu8"], # prescaled
+                        common_doublemuon_trigger_config["double_mu17_mu8_mass8"] # not prescaled
                     ],
                     "2017": [
-                        {
-                            "flagname": "trg_double_mu17_mu8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_mu17_mu8_mass8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                        common_doublemuon_trigger_config["double_mu17_mu8"], # prescaled
+                        common_doublemuon_trigger_config["double_mu17_mu8_mass8"] # not prescaled
                     ],
                     "2016postVFP": [
-                        {
-                            "flagname": "trg_double_mu17_mu8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                        common_doublemuon_trigger_config["double_mu17_mu8"], # not prescaled
                     ],
                     "2016preVFP": [
-                        {
-                            "flagname": "trg_double_mu17_mu8",
-                            "hlt_path": "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ",
-                            "p1_ptcut": 17,
-                            "p2_ptcut": 8,
-                            "p1_etacut": 2.5,
-                            "p2_etacut": 2.5,
-                            "p1_filterbit": 4,
-                            "p1_trigger_particle_id": 13,
-                            "p2_filterbit": 4,
-                            "p2_trigger_particle_id": 13,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
+                        common_doublemuon_trigger_config["double_mu17_mu8"], # not prescaled
                     ],
                 }
             ),
@@ -374,13 +332,14 @@ def build_config(
             samples=["data"],
         ),
     )
-    # Haben wir noch nicht 
-    """configuration.add_modification_rule(
-        scopes,
-        AppendProducer(
-            producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
-        ),
-    )"""
+
+    # NOT USED AT THE MOMENT
+    # configuration.add_modification_rule(
+    #     scopes,
+    #     AppendProducer(
+    #         producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
+    #     ),
+    # )
 
     #########################
     # Finalize and validate the configuration
