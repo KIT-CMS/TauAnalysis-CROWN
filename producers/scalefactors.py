@@ -264,8 +264,8 @@ with defaults(scopes=["em", "ee", "et"], input=[q.pt_1, q.eta_1]):
 
 with defaults(scopes=["em", "ee", "et"], input=[q.pt_1, q.eta_1, q.phi_1]):
     Ele_1_IDWP90_SF = Producer(
-        call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',
-        output=[q.id_wgt_ele_wp90noiso_1],
+        call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90iso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',
+        output=[q.id_wgt_ele_wp90iso_1],
     )
     Ele_1_IDWP80_SF = Producer(
         call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp80iso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',
@@ -274,8 +274,8 @@ with defaults(scopes=["em", "ee", "et"], input=[q.pt_1, q.eta_1, q.phi_1]):
 
 with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2, q.phi_2]):
     Ele_2_IDWP90_SF = Producer(
-        call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',
-        output=[q.id_wgt_ele_wp90noiso_2],
+        call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp90iso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',
+        output=[q.id_wgt_ele_wp90iso_2],
     )
     Ele_2_IDWP80_SF = Producer(
         call='physicsobject::electron::scalefactor::Id({df}, correctionManager, {output}, {input}, "{ele_sf_year_id}", "wp80iso", "{ele_sf_file}", "{ele_id_sf_name}", "{ele_sf_variation}")',

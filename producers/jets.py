@@ -291,11 +291,13 @@ with defaults(scopes=["global"]):
             output=[q.good_jets_mask],
             subproducers=[JetPUIDCut],
         )
-        GoodBJets = ProducerGroup(
-            input=[q.Jet_id_cut],
-            output=[q.good_bjets_mask],
-            subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
-        )
+
+    GoodBJets = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[q.Jet_id_cut],
+        output=[q.good_bjets_mask],
+        subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
+    )
 
 ####################
 # Set of producers to apply a veto of jets overlapping with ditaupair candidates and ordering jets by their pt

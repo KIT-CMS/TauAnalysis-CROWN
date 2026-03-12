@@ -17,6 +17,7 @@ gen_jet_phi = Quantity ()
 met_p4_jetcorrected_pt = Quantity()
 met_p4_jetcorrected_pt_1 = Quantity()
 CorrT1METJet_pt_corrected = Quantity()
+EventCut_mask = Quantity()
 
 # run dependent denitions
 Tau_IDvsEle = Quantity()
