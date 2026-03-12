@@ -18,7 +18,7 @@ with defaults(scopes=["global"]):
     )
     with defaults(output=[q.Jet_pt_corrected]):
         JetPtCorrection = ProducerGroup(
-            call="physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift})",
+            call="physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, \"{era}\")",
             input=[
                 nanoAOD.Jet_pt,
                 nanoAOD.Jet_eta,

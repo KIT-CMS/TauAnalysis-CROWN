@@ -78,12 +78,12 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
 
 with defaults(input=[nanoAOD.GenJet_pt, nanoAOD.Jet_genJetIdx, nanoAOD.Tau_jetIdx, q.dileptonpair]):
     gen_taujet_pt_1 = Producer(
-        call="quantities::GenJetMatching({df}, {output}, {input}, 0)",
+        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 0)",
         output=[q.gen_taujet_pt_1],
         scopes=["tt"],
     )
     gen_taujet_pt_2 = Producer(
-        call="quantities::GenJetMatching({df}, {output}, {input}, 1)",
+        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 1)",
         output=[q.gen_taujet_pt_2],
         scopes=["mt", "et", "tt"],
     )

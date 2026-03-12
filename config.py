@@ -397,6 +397,7 @@ def build_config(
             ],
             "tau_sf_vsele_barrel": "nom",  # or "up"/"down" for up/down variation
             "tau_sf_vsele_endcap": "nom",  # or "up"/"down" for up/down variation
+            "tau_vsmu_vsjetWP": "Tight",
             "tau_sf_vsmu_wheel1": "nom",
             "tau_sf_vsmu_wheel2": "nom",
             "tau_sf_vsmu_wheel3": "nom",
@@ -435,12 +436,14 @@ def build_config(
         ["et"],
         {
             "tau_vsjet_vseleWP": "Tight",
+            "tau_vsmu_vseleWP": "Tight",
         },
     )
     configuration.add_config_parameters(
         ["mt"],
         {
             "tau_vsjet_vseleWP": "VVLoose",
+            "tau_vsmu_vseleWP": "VVLoose",
         },
     )
     # TT tau id sf variations
@@ -453,6 +456,7 @@ def build_config(
             "tau_sf_vsjet_tauDM11": "nom",
             "tau_vsjet_sf_dependence": "dm",  # or "dm"
             "tau_vsjet_vseleWP": "VVLoose",
+            "tau_vsmu_vseleWP": "VVLoose",
         },
     )
 
