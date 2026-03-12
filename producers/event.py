@@ -97,6 +97,11 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
+    EventCut = Producer(
+        call='event::quantity::EventMask({df}, {output}, {input})',
+        input=[nanoAOD.event],
+        output=[q.EventCut_mask],
+    )
     # Run 2
     ZPtMassReweighting = Producer(
         call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")',

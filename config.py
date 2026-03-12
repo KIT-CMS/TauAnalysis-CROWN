@@ -273,14 +273,14 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.25, 
+            "muon_iso_cut": 0.5, 
             
             # electron base selection
             "min_ele_pt": 10.0,
             "max_ele_eta": 2.5,
             "max_ele_dxy": 0.045,
             "max_ele_dz": 0.2,
-            "ele_iso_cut": 0.25,
+            "ele_iso_cut": 0.5,
             # electron energy scale
             "ele_es_name": "UL-EGM_ScaleUnc",
             "ele_es_master_seed": 44,
@@ -402,7 +402,7 @@ def build_config(
                     "2017": '""',
                     "2018": '""',
                     "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"',
-                    "2022postEE": '""',
+                    "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"', #value to be replace afterward for individual runs but need not to be empty now for initial loading
                     "2023preBPix": '"Summer23Prompt23_V2_DATA"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
                     "2024": '"Summer24Prompt24_V2_DATA"',
@@ -973,7 +973,7 @@ def build_config(
                         "data_F": '"Summer22EE_22Sep2023_RunF_V3_DATA"',
                         "data_G": '"Summer22EE_22Sep2023_RunG_V3_DATA"',
                     },
-                    default = '""',
+                    default = '"Summer22EE_22Sep2023_RunE_V3_DATA"', #also needs to be not empty
                 ),
             }
         )
@@ -1169,6 +1169,7 @@ def build_config(
             genparticles.CalculateVisGenBosonVector,
             met.MetBasics,
             met.MetMask,
+            event.EventCut,
         ],
     )
     configuration.add_producers(
@@ -1311,6 +1312,8 @@ def build_config(
             scalefactors.EleID_SF,
             triggers.EMGenerateSingleElectronTriggerFlags,
             triggers.EMGenerateSingleMuonTriggerFlags,
+            scalefactors.SingleEleTriggerSF,
+            scalefactors.SingleMuTriggerSF,
             #triggers.EMGenerateCrossTriggerFlags,
         ],
     )
@@ -1867,6 +1870,7 @@ def build_config(
             q.lumi,
             q.npartons,
             nanoAOD.event,
+            q.EventCut_mask,
             q.puweight,
             q.lhe_scale_weight,
             q.ps_weight,
@@ -1888,7 +1892,7 @@ def build_config(
         ],
     )
     # add genWeight for everything but data
-    if sample != "data":
+    if sample not in ["data", "data_E", "data_F", "data_G"]:
         configuration.add_outputs(
             scopes,
             nanoAOD.genWeight,
@@ -2050,6 +2054,15 @@ def build_config(
             [
                 p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")  
                 ] + [p for p in pairquantities.TTDiTauPairQuantities.get_outputs("tt")
+            ],
+        )
+        configuration.add_outputs(
+            "em",
+            [
+                scalefactors.SingleMuTriggerSF.output_group,
+                scalefactors.SingleEleTriggerSF.output_group,
+                ] + [p for p in scalefactors.EleID_SF.get_outputs("em")
+                ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("em")
             ],
         )
     

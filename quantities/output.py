@@ -4,19 +4,6 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
-# test
-Jet_pt_L1corrected = Quantity()
-Jet_rawPt = Quantity()
-Jet_seed = Quantity()
-puppimet_p4 = Quantity()
-puppimet = Quantity()
-puppimetphi = Quantity()
-gen_jet_pt = Quantity ()
-gen_jet_eta = Quantity ()
-gen_jet_phi = Quantity ()
-met_p4_jetcorrected_pt = Quantity()
-met_p4_jetcorrected_pt_1 = Quantity()
-CorrT1METJet_pt_corrected = Quantity()
 
 # run dependent denitions
 Tau_IDvsEle = Quantity()
@@ -32,6 +19,9 @@ gen_dyfilter = Quantity()
 
 #### Jet
 
+Jet_pt_L1corrected = Quantity()
+Jet_rawPt = Quantity()
+Jet_seed = Quantity()
 Jet_BTag = Quantity()
 fixedGridRho = Quantity()
 Jet_ID = Quantity()
@@ -74,6 +64,9 @@ bpt_2 = Quantity()
 beta_2 = Quantity()
 bphi_2 = Quantity()
 btag_value_2 = Quantity()
+gen_jet_pt = Quantity ()
+gen_jet_eta = Quantity ()
+gen_jet_phi = Quantity ()
 
 # working points
 
@@ -95,6 +88,8 @@ iso_wgt_ele_2 = Quantity()
 btag_weight = Quantity()
 
 #### event
+
+EventCut_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
@@ -182,6 +177,10 @@ pfmetphi_uncorrected = Quantity()
 pfmet_p4_leptoncorrected = Quantity()
 pfmet_p4_jetcorrected = Quantity()
 pfmet_p4_recoilcorrected = Quantity()
+puppimet_p4 = Quantity()
+puppimet = Quantity()
+puppimetphi = Quantity()
+CorrT1METJet_pt_corrected = Quantity()
 
 #### Electrons
 

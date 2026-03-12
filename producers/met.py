@@ -86,7 +86,7 @@ with defaults(scopes=["global"]):
     )
 
     MetMask = Producer(
-        call="physicsobject::CutMin<float>({df}, {output}, {input}, 0)",
+        call="physicsobject::CutMinSingle<float>({df}, {output}, {input}, 0)",
         input=[nanoAOD.PuppiMET_ptUnclusteredUp],
         output=[q.met_mask],
     )
