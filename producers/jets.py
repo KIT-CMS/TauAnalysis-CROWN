@@ -34,8 +34,16 @@ with defaults(scopes=["global"]):
             subproducers=[JetPtSmearingSeed],
         )
         JetPtCorrection_data = Producer(
-            call="physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag_data})",
-            input=[nanoAOD.Jet_pt, nanoAOD.Jet_eta, nanoAOD.Jet_area, nanoAOD.Jet_rawFactor, nanoAOD.fixedGridRhoFastjetAll],
+            call="physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag_data}, \"{era}\")",
+            input=[
+                nanoAOD.Jet_pt,
+                nanoAOD.Jet_eta,
+                nanoAOD.Jet_phi,
+                nanoAOD.Jet_area,
+                nanoAOD.Jet_rawFactor,
+                nanoAOD.fixedGridRhoFastjetAll,
+                nanoAOD.run,
+            ],
         )
         # in data and embdedded sample, we simply rename the nanoAOD jets to the jet_pt_corrected column
         RenameJetPt = Producer(
