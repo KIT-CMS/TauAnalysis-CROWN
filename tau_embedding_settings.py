@@ -781,7 +781,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
         {
             "tau_emb_sf_file": EraModifier(
                 {
-                    "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
+                    "2016preVFP": "data/embedding/TauID_2016preVFP_UL_mt_tauID_nTuples_MT_vvL_20_06_2025_SFs_ES_m8p8-16.json.gz",
                     "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                     "2017": "data/embedding/tau_2017UL.json.gz", # Does not exist yet !!!
                     "2018": "data/embedding/tau_2018UL.json.gz", # Wrong file ???
@@ -1146,8 +1146,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str]):
                 samples=["embedding"],
             ),
         )
-        aranged = np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist()
-        tauESvariations = [0.0 if x == 0.0 else x for x in aranged]
+        aranged = np.arange(8.0, -8.0 - 0.1, -0.1).round(2).tolist()
+        tauESvariations = [x for x in aranged if x != 0.0] # There is a nominal already, 0.0 would be double counting!
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
