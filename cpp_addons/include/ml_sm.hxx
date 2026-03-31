@@ -9,7 +9,6 @@
 #include <cstddef>
 
 namespace ml_sm {
-    // Runs an ONNX model and derives class index and max score from the output vector.
     template <std::size_t nParameters>
     inline ROOT::RDF::RNode Extracted_NN_Output(
         ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager,
@@ -59,7 +58,6 @@ namespace ml_sm {
         return df3;
     };
 
-    // Computes event parity as float (event % 2) and skips redefinition if present.
     inline ROOT::RDF::RNode
     EventParity(
         ROOT::RDF::RNode df,

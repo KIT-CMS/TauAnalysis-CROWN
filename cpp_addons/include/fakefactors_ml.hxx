@@ -51,7 +51,7 @@ namespace ml {
         correctionManager::CorrectionManager &correctionManager,
         OnnxSessionManager &onnxSessionManager,  // for now using own onnxSessionManager until the changes are merged
         const std::vector<std::string> &outputnames,
-        // dedicated event validity input
+        // ---
         const std::string &pt_2_input,
         // ---
         const std::string &model_ff_QCD_input,
