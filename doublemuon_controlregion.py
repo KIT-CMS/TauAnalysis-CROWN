@@ -12,7 +12,7 @@ from .producers import scalefactors as scalefactors
 from .producers import tagandprobe as tagandprobe
 from .producers import embedding as embedding
 from .producers import electrons as electrons
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv9 as nanoAOD
 from .quantities import output as q
 from .quantities import tagandprobe_output as qt
 from code_generation.configuration import Configuration
@@ -716,7 +716,7 @@ def build_config(
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
-            producers=embedding.PrivateSelectionSF, samples=["embedding"]
+            producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
         ),
     )
 
@@ -763,10 +763,10 @@ def build_config(
         ["mm"],
         AppendProducer(
             producers=[
-                embedding.PrivateMuonIDSF_1,
-                embedding.PrivateMuonIsoSF_1,
-                embedding.PrivateMuonIDSF_2,
-                embedding.PrivateMuonIsoSF_2,
+                embedding.TauEmbeddingMuonIDSF_1,
+                embedding.TauEmbeddingMuonIsoSF_1,
+                embedding.TauEmbeddingMuonIDSF_2,
+                embedding.TauEmbeddingMuonIsoSF_2,
                 embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],

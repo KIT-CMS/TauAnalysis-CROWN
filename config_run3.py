@@ -14,7 +14,7 @@ from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .producers import triggers as triggers
-from .quantities import nanoAOD, nanoAODv9
+from .quantities import nanoAODv15, nanoAODv9
 from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
@@ -66,9 +66,31 @@ def build_config(
             "era": era,
         }
     )
+    
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_3_2022_and_2023_data_and_MC
+    default_met_filters = [
+        "Flag_goodVertices",
+        "Flag_globalSuperTightHalo2016Filter",
+        "Flag_EcalDeadCellTriggerPrimitiveFilter",
+        "Flag_BadPFMuonFilter",
+        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
+        "Flag_eeBadScFilter",
+    ]
+    if int(era[:4]) < 2022:
+        default_met_filters.extend(["Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter"])
+        if sample in ["embedding", "embedding_mc"]:
+            default_met_filters.remove("Flag_BadPFMuonDzFilter") # not available in nanoAODv9 of embedding
+    if int(era[:4]) >= 2017:
+        default_met_filters.append("Flag_ecalBadCalibFilter")
+    if int(era[:4]) >= 2022:
+        default_met_filters.append("Flag_hfNoisyHitsFilter")
+        
     configuration.add_config_parameters(
         "global",
         {
+            # noise filters
+            "met_filters": default_met_filters,
+            
             # for LHE weights
             "muR": 1.0,
             "muF": 1.0,
@@ -95,116 +117,6 @@ def build_config(
                     "2023postBPix": "data/golden_json/Cert_Collisions2023_366442_370790_Golden.json",
                     "2024": "data/golden_json/Cert_Collisions2024_378981_386951_Golden.json",
                     "2025": "data/golden_json/Cert_Collisions2025_391658_398860_Golden.json", # last Run2025G run is 398903, update golden json when available
-                }
-            ),
-            
-            # noise filters
-            #https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_3_2022_and_2023_data_and_MC
-            "met_filters": EraModifier(
-                {
-                    "2016preVFP": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
-                        "Flag_eeBadScFilter",
-                    ],
-                    "2016postVFP": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
-                        "Flag_eeBadScFilter",
-                    ],
-                    "2017": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
-                    ],
-                    "2018": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_HBHENoiseFilter",
-                        "Flag_HBHENoiseIsoFilter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter",
-                    ],
-                    # reccomendations for run 3 https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_2_recommendations
-                    "2022preEE": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
-                    "2022postEE": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
-                    "2023preBPix": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
-                    "2023postBPix": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
-                    "2024": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
-                    "2025": [
-                        "Flag_goodVertices",
-                        "Flag_globalSuperTightHalo2016Filter",
-                        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-                        "Flag_BadPFMuonFilter",
-                        "Flag_BadPFMuonDzFilter",
-                        "Flag_hfNoisyHitsFilter",
-                        "Flag_eeBadScFilter",
-                        "Flag_ecalBadCalibFilter", 
-                    ],
                 }
             ),
             
@@ -273,14 +185,14 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.5, 
+            "max_muon_iso": 0.5, 
             
             # electron base selection
             "min_ele_pt": 10.0,
             "max_ele_eta": 2.5,
             "max_ele_dxy": 0.045,
             "max_ele_dz": 0.2,
-            "ele_iso_cut": 0.5,
+            "max_ele_iso": 0.5,
             # electron energy scale
             "ele_es_name": "UL-EGM_ScaleUnc",
             "ele_es_master_seed": 44,
@@ -381,32 +293,46 @@ def build_config(
             "jet_reapplyJES": True,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            "jet_jes_tag_mc": EraModifier(
+            # "jet_jes_tag_mc": EraModifier(
+            #     {
+            #         "2016preVFP": '"Summer19UL16APV_V7_MC"',
+            #         "2016postVFP": '"Summer19UL16_V7_MC"',
+            #         "2017": '"Summer19UL17_V5_MC"',
+            #         "2018": '"Summer19UL18_V5_MC"',
+            #         "2022preEE": '"Summer22_22Sep2023_V3_MC"',
+            #         "2022postEE": '"Summer22EE_22Sep2023_V3_MC"',
+            #         "2023preBPix": '"Summer23Prompt23_V2_MC"',
+            #         "2023postBPix": '"Summer23BPixPrompt23_V3_MC"',
+            #         "2024": '"Summer24Prompt24_V2_MC"',
+            #         "2025": '"Winter25Prompt25_V3_MC"',
+            #     }
+            # ),
+            # "jet_jes_tag_data": EraModifier(
+            #     {
+            #         "2016preVFP": '""',
+            #         "2016postVFP": '""',
+            #         "2017": '""',
+            #         "2018": '""',
+            #         "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"',
+            #         "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"', #value to be replace afterward for individual runs but need not to be empty now for initial loading
+            #         "2023preBPix": '"Summer23Prompt23_V2_DATA"',
+            #         "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
+            #         "2024": '"Summer24Prompt24_V2_DATA"',
+            #         "2025": '"Winter25Prompt25_V3_DATA"',
+            #     }
+            # ),
+            "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
-                    "2022preEE": '"Summer22_22Sep2023_V3_MC"',
-                    "2022postEE": '"Summer22EE_22Sep2023_V3_MC"',
-                    "2023preBPix": '"Summer23Prompt23_V2_MC"',
-                    "2023postBPix": '"Summer23BPixPrompt23_V3_MC"',
-                    "2024": '"Summer24Prompt24_V2_MC"',
-                    "2025": '"Winter25Prompt25_V3_MC"',
-                }
-            ),
-            "jet_jes_tag_data": EraModifier(
-                {
-                    "2016preVFP": '""',
-                    "2016postVFP": '""',
-                    "2017": '""',
-                    "2018": '""',
-                    "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"',
-                    "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"', #value to be replace afterward for individual runs but need not to be empty now for initial loading
-                    "2023preBPix": '"Summer23Prompt23_V2_DATA"',
-                    "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
-                    "2024": '"Summer24Prompt24_V2_DATA"',
-                    "2025": '"Winter25Prompt25_V3_DATA"',
+                    "2016preVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16APV_V7_MC"',
+                    "2016postVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16_V7_MC"',
+                    "2017": '""' if sample in ["embedding", "data"] else '"Summer19UL17_V5_MC"',
+                    "2018": '""' if sample in ["embedding", "data"] else '"Summer19UL18_V5_MC"',
+                    "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22_22Sep2023_V3_MC"',
+                    "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22EE_22Sep2023_V3_MC"',
+                    "2023preBPix": '"Summer23Prompt23_V2_DATA"' if sample in ["embedding", "data"] else '"Summer23Prompt23_V2_MC"',
+                    "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"' if sample in ["embedding", "data"] else '"Summer23BPixPrompt23_V3_MC"',
+                    "2024": '"Summer24Prompt24_V2_DATA"' if sample in ["embedding", "data"] else '"Summer24Prompt24_V2_MC"',
+                    "2025": '"Winter25Prompt25_V3_DATA"' if sample in ["embedding", "data"] else '"Winter25Prompt25_V3_MC"',
                 }
             ),
             # jet resolution correction
@@ -635,6 +561,7 @@ def build_config(
             "tau_id_algorithm": "DeepTau2018v2p5",
             "vsjet_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
                     "vsjet_tau_id_WP": "{wp}".format(wp=wp),
@@ -652,6 +579,7 @@ def build_config(
             ],
             "vsele_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSe",
                     "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
                     "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
                     "vsele_tau_id_WP": "{wp}".format(wp=wp),
@@ -671,6 +599,7 @@ def build_config(
             ],
             "vsmu_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSmu",
                     "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
@@ -847,7 +776,7 @@ def build_config(
             "muon_index_in_pair": 0,
             "min_muon_pt": 23.0,
             "max_muon_eta": 2.4,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "second_muon_index_in_pair": 1,
         },
     )
@@ -915,11 +844,11 @@ def build_config(
             "second_electron_index_in_pair": 0,
             "min_ele_pt": 25.0,
             "max_ele_eta": 2.5,
-            "ele_iso_cut": 0.15,
+            "max_ele_iso": 0.15,
             "muon_index_in_pair": 1,
             "min_muon_pt": 23.0,
             "max_muon_eta": 2.4,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
         },
     )
     configuration.add_config_parameters(
@@ -959,7 +888,7 @@ def build_config(
             "electron_index_in_pair": 0,
             "min_ele_pt": 25.0,
             "max_ele_eta": 2.5,
-            "ele_iso_cut": 0.15,
+            "max_ele_iso": 0.15,
         },
     )
 
@@ -982,7 +911,7 @@ def build_config(
         configuration.add_config_parameters(
             "global",
             {
-                "muon_iso_cut": 0.3,
+                "max_muon_iso": 0.3,
                 "max_ele_iso": 0.3,
                 "jet_reapplyJES": False,
             }
@@ -1013,6 +942,7 @@ def build_config(
                     ],
                 "vsjet_tau_id": [
                         {
+                            "tau_id_discriminator": "DeepTau2017v2p1VSjet",
                             "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
                             "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
                             "vsjet_tau_id_WP": "{wp}".format(wp=wp),
@@ -1029,6 +959,7 @@ def build_config(
                     ],
                 "vsele_tau_id": [
                     {
+                        "tau_id_discriminator": "DeepTau2017v2p1VSe",
                         "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
                         "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
                         "vsele_tau_id_WP": "{wp}".format(wp=wp),
@@ -1049,6 +980,7 @@ def build_config(
                 # remove dependency on vs ele wp for consistency since it's not needed in run2
                 "vsmu_tau_id": [
                     {
+                        "tau_id_discriminator": "DeepTau2017v2p1VSmu",
                         "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_1".format(wp=wp),
                         "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_2".format(wp=wp),
                         "vsmu_tau_id_WP": "{wp}".format(wp=wp),
@@ -1092,14 +1024,14 @@ def build_config(
             ["mt"],
             {
                 "max_muon_eta": 2.1,
-                "muon_iso_cut": 0.3,
+                "max_muon_iso": 0.3,
             }
         )
         configuration.add_config_parameters(
             ["em", "ee"],
             {
                 "max_ele_eta": 2.1,
-                "ele_iso_cut": 0.3,
+                "max_ele_iso": 0.3,
                 "max_muon_eta": 2.1,
             },
         )
@@ -1108,14 +1040,14 @@ def build_config(
             {
                 "min_muon_pt": 20.0,
                 "max_muon_eta": 2.1,
-                "muon_iso_cut": 0.15,
+                "max_muon_iso": 0.15,
             }
         )
         configuration.add_config_parameters(
             ["et"],
             {
                 "max_electron_eta": 2.1,
-                "ele_iso_cut": 0.5,
+                "max_ele_iso": 0.5,
             }
         )
         configuration.add_config_parameters(
@@ -1857,7 +1789,7 @@ def build_config(
     configuration.add_outputs(
         scopes,
         [
-            nanoAOD.PV_npvsGood,
+            nanoAODv15.PV_npvsGood,
             q.is_data,
             q.is_embedding,
             q.is_ttbar,
@@ -1866,19 +1798,19 @@ def build_config(
             q.is_ggh_htautau,
             q.is_vbf_htautau,
             q.is_diboson,
-            nanoAOD.run,
+            nanoAODv15.run,
             q.lumi,
             q.npartons,
-            nanoAOD.event,
-            q.EventCut_mask,
+            nanoAODv15.event,
+            q.eventCut_mask,
             q.puweight,
             q.lhe_scale_weight,
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
             q.met_mask,
-            q.Jet_ID,
-            q.Jet_vetomap,
+            q.jet_ID,
+            q.jet_vetomap,
             ] + [p for scope in scopes for p in genparticles.GenMatching.get_outputs(scope)] + [
             ] + [p for scope in scopes for p in jets.BasicJetQuantities.get_outputs(scope)] + [
             ] + [p for scope in scopes for p in jets.BasicBJetQuantities.get_outputs(scope)] + [
@@ -1895,7 +1827,7 @@ def build_config(
     if sample not in ["data", "data_E", "data_F", "data_G"]:
         configuration.add_outputs(
             scopes,
-            nanoAOD.genWeight,
+            nanoAODv15.genWeight,
         )
         if int(era[:4]) < 2018:
             configuration.add_outputs(
@@ -2071,21 +2003,21 @@ def build_config(
         configuration.add_outputs(
             scopes,
             [
-                nanoAOD.HTXS_Higgs_pt,
-                nanoAOD.HTXS_Higgs_y,
-                nanoAOD.HTXS_njets25,
-                nanoAOD.HTXS_njets30,
-                nanoAOD.HTXS_stage1_1_cat_pTjet25GeV,
-                nanoAOD.HTXS_stage1_1_cat_pTjet30GeV,
-                nanoAOD.HTXS_stage1_1_fine_cat_pTjet25GeV,
-                nanoAOD.HTXS_stage1_1_fine_cat_pTjet30GeV,
-                nanoAOD.HTXS_stage1_2_cat_pTjet25GeV,
-                nanoAOD.HTXS_stage1_2_cat_pTjet30GeV,
-                nanoAOD.HTXS_stage1_2_fine_cat_pTjet25GeV,
-                nanoAOD.HTXS_stage1_2_fine_cat_pTjet30GeV,
-                nanoAOD.HTXS_stage_0,
-                nanoAOD.HTXS_stage_1_pTjet25,
-                nanoAOD.HTXS_stage_1_pTjet30,
+                nanoAODv15.HTXS_Higgs_pt,
+                nanoAODv15.HTXS_Higgs_y,
+                nanoAODv15.HTXS_njets25,
+                nanoAODv15.HTXS_njets30,
+                nanoAODv15.HTXS_stage1_1_cat_pTjet25GeV,
+                nanoAODv15.HTXS_stage1_1_cat_pTjet30GeV,
+                nanoAODv15.HTXS_stage1_1_fine_cat_pTjet25GeV,
+                nanoAODv15.HTXS_stage1_1_fine_cat_pTjet30GeV,
+                nanoAODv15.HTXS_stage1_2_cat_pTjet25GeV,
+                nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV,
+                nanoAODv15.HTXS_stage1_2_fine_cat_pTjet25GeV,
+                nanoAODv15.HTXS_stage1_2_fine_cat_pTjet30GeV,
+                nanoAODv15.HTXS_stage_0,
+                nanoAODv15.HTXS_stage_1_pTjet25,
+                nanoAODv15.HTXS_stage_1_pTjet30,
             ],
         )
     
@@ -2198,8 +2130,8 @@ def build_config(
         SystematicShiftByQuantity(
             name="metUnclusteredEnUp",
             quantity_change={
-                nanoAOD.PuppiMET_pt: "PuppiMET_ptUnclusteredUp",
-                nanoAOD.PuppiMET_phi: "PuppiMET_phiUnclusteredUp",
+                nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredUp",
+                nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredUp",
             },
             scopes=["global"],
         ),
@@ -2209,8 +2141,8 @@ def build_config(
         SystematicShiftByQuantity(
             name="metUnclusteredEnDown",
             quantity_change={
-                nanoAOD.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
-                nanoAOD.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
+                nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
+                nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
             },
             scopes=["global"],
         ),

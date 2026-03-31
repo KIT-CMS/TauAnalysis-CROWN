@@ -1,6 +1,6 @@
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -10,9 +10,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         TauEmbeddingInitialMETphi = Producer(input=[nanoAOD.TauEmbedding_initialMETphi], output=[q.emb_initialMETphi])
         TauEmbeddingInitialPuppiMETEt = Producer(input=[nanoAOD.TauEmbedding_initialPuppiMETEt], output=[q.emb_initialPuppiMETEt])
         TauEmbeddingInitialPuppiMETphi = Producer(input=[nanoAOD.TauEmbedding_initialPuppiMETphi], output=[q.emb_initialPuppiMETphi])
-        TauEmbeddingnInitialPairCandidates = Producer(input=[nanoAOD.TauEmbedding_nInitialPairCandidates], output=[q.emb_InitialPairCandidates])
-        TauEmbeddingSelectionOldMass = Producer(input=[nanoAOD.TauEmbedding_SelectionOldMass], output=[q.emb_SelectionOldMass])
-        TauEmbeddingSelectionNewMass = Producer(input=[nanoAOD.TauEmbedding_SelectionNewMass], output=[q.emb_SelectionNewMass])
 
     with defaults(call="event::quantity::Rename<Bool_t>({df}, {output}, {input})"):
         TauEmbeddingIsMediumLeadingMuon = Producer(input=[nanoAOD.TauEmbedding_isMediumLeadingMuon], output=[q.emb_isMediumLeadingMuon])
@@ -50,9 +47,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 TauEmbeddingIsMediumTrailingMuon,
                 TauEmbeddingIsTightLeadingMuon,
                 TauEmbeddingIsTightTrailingMuon,
-                # TauEmbeddingnInitialPairCandidates,
-                # TauEmbeddingSelectionOldMass,
-                # TauEmbeddingSelectionNewMass,
             ],
         )
         TauEmbeddingSelectionSF = ProducerGroup(

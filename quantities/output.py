@@ -6,12 +6,12 @@ from ..scripts.CROWNWrapper import Quantity
 
 
 # run dependent denitions
-Tau_IDvsEle = Quantity()
-Tau_IDvsMu = Quantity()
-Tau_IDvsJet = Quantity()
-Tau_rawIDvsEle = Quantity()
-Tau_rawIDvsMu = Quantity()
-Tau_rawIDvsJet = Quantity()
+tau_IDvsEle = Quantity()
+tau_IDvsMu = Quantity()
+tau_IDvsJet = Quantity()
+tau_rawIDvsEle = Quantity()
+tau_rawIDvsMu = Quantity()
+tau_rawIDvsJet = Quantity()
 
 # DY flavor bug selection
 gen_dyflavor = Quantity()
@@ -19,15 +19,17 @@ gen_dyfilter = Quantity()
 
 #### Jet
 
-Jet_pt_L1corrected = Quantity()
-Jet_rawPt = Quantity()
-Jet_seed = Quantity()
-Jet_BTag = Quantity()
+jet_rawPt = Quantity()
+jet_seed = Quantity()
+jet_BTag = Quantity()
 fixedGridRho = Quantity()
-Jet_ID = Quantity()
-Jet_pt_corrected = Quantity()
-Jet_mass_corrected = Quantity()
-Jet_id_cut = Quantity()
+jet_ID = Quantity()
+jet_pt_L1_T1MET_corrected = Quantity()
+jet_pt_L1_corrected = Quantity()
+jet_pt_T1MET_corrected = Quantity()
+jet_pt_corrected = Quantity()
+jet_mass_corrected = Quantity()
+jet_id_mask = Quantity()
 jet_puid_mask = Quantity()
 good_jet_collection = Quantity()
 good_bjet_collection = Quantity()
@@ -37,9 +39,9 @@ loose_jets_mask_loweta = Quantity()
 loose_jets_mask_higheta = Quantity()
 good_jets_mask = Quantity()
 good_bjets_mask = Quantity()
-Jet_pt_cut_loose = Quantity()
-Jet_eta_max_cut = Quantity()
-Jet_vetomap = Quantity()
+jet_pt_mask_loose = Quantity()
+jet_eta_mask_max = Quantity()
+jet_vetomap = Quantity()
 jet_overlap_veto_mask = Quantity()
 njets = Quantity()
 nbtag = Quantity()
@@ -89,7 +91,7 @@ btag_weight = Quantity()
 
 #### event
 
-EventCut_mask = Quantity()
+eventCut_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
@@ -151,7 +153,7 @@ prefiring_wgt = Quantity()
 
 # MetBasics
 met_mask = Quantity()
-met_p4 = Quantity()
+rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()
 visgenboson_p4 = Quantity()
@@ -180,12 +182,12 @@ pfmet_p4_recoilcorrected = Quantity()
 puppimet_p4 = Quantity()
 puppimet = Quantity()
 puppimetphi = Quantity()
-CorrT1METJet_pt_corrected = Quantity()
+corrT1METJet_pt_corrected = Quantity()
 
 #### Electrons
 
 # RenameElectronPt
-Electron_pt_corrected = Quantity()
+electron_pt_corrected = Quantity()
 
 # BaseElectrons
 _ElectronEtaCut = Quantity()
@@ -212,6 +214,9 @@ nelectrons = Quantity()
 # VetoElectrons
 veto_electrons_mask = Quantity()
 veto_electrons_mask_2 = Quantity()
+
+#### Photons
+base_photons_mask = Quantity()
 
 #### Muons
 
@@ -247,10 +252,10 @@ good_taus_mask = Quantity()
 ntaus = Quantity()
 
 # TauPtCorrection_muFake
-Tau_pt_corrected = Quantity()
-Tau_mass_corrected = Quantity()
-Tau_pt_ele_corrected = Quantity()
-Tau_pt_ele_mu_corrected = Quantity()
+tau_pt_corrected = Quantity()
+tau_mass_corrected = Quantity()
+tau_pt_ele_corrected = Quantity()
+tau_pt_ele_mu_corrected = Quantity()
 
 #### pairselection
 

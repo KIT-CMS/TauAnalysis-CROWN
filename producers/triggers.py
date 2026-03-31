@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import (
     ExtendedVectorProducer as EVP,
     defaults,
@@ -36,8 +36,6 @@ with defaults(output="flagname"):
             ETGenerateSingleElectronTriggerFlags = EVP(scope=["et"], vec_config="singleelectron_trigger")
             EMGenerateSingleElectronTriggerFlags = EVP(scope=["em"], vec_config="singleelectron_trigger")
             ElElGenerateSingleElectronTriggerFlags = EVP(scope=["ee"], vec_config="singleelectron_trigger")
-        with defaults(input=[q.p4_2] + TrigObj_collection):
-            EMGenerateSingleMuonTriggerFlags = EVP(scope=["em"], vec_config="singlemuon_trigger")
             # ---
             GenerateSingleLeadingTauTriggerFlags = EVP(scope=["tt"], vec_config="singletau_trigger_leading")
         with defaults(input=[q.p4_2] + TrigObj_collection):
