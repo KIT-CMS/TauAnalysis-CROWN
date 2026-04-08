@@ -186,10 +186,10 @@ with defaults(scopes=["global"]):
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,
+                nanoAODv15.Jet_phi,
                 nanoAODv15.Jet_area,
                 nanoAODv15.Jet_rawFactor,
                 q.fixedGridRho, 
-                nanoAODv15.Jet_phi, 
                 nanoAODv15.run],
         )
         RenameJetPt = Producer(
