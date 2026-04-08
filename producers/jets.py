@@ -50,7 +50,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetIDRun3NanoV12Corrected = Producer(
-            call="physicsobject::jet::quantities::PatchedIDNanoV12({df}, {output}, {input})",
+            call="physicsobject::jet::quantity::PatchedIDNanoV12({df}, {output}, {input})",
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,
