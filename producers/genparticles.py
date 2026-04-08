@@ -164,35 +164,39 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         subproducers=[GenPairForGenMatching, GenMatchP1, GenMatchP2],
     )
 
-CalculateGenBosonVector = Producer(
-    call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
-    scopes=["global"],
-    input=[
-        nanoAOD.GenPart_pt,
-        nanoAOD.GenPart_eta,
-        nanoAOD.GenPart_phi,
-        nanoAOD.GenPart_mass,
-        nanoAOD.GenPart_pdgId,
-        nanoAOD.GenPart_status,
-        nanoAOD.GenPart_statusFlags,
-    ],
-    output=[q.genboson_p4],
-)
+with defaults(scopes=["global"]):
+    CalculateGenBosonVector = Producer(
+        call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
+        input=[
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
+        ],
+        output=[q.genboson_p4],
+    )
 
-CalculateVisGenBosonVector = Producer(
-    call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
-    scopes=["global"],
-    input=[
-        nanoAOD.GenPart_pt,
-        nanoAOD.GenPart_eta,
-        nanoAOD.GenPart_phi,
-        nanoAOD.GenPart_mass,
-        nanoAOD.GenPart_pdgId,
-        nanoAOD.GenPart_status,
-        nanoAOD.GenPart_statusFlags,
-    ],
-    output=[q.visgenboson_p4],
-)
+    CalculateVisGenBosonVector = Producer(
+        call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
+        input=[
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
+        ],
+        output=[q.visgenboson_p4],
+    )
+    GenBosonMass = Producer(
+        call="lorentzvector::GetMass({df}, {output}, {input})",
+        input=[q.genboson_p4],
+        output=[q.genbosonmass],
+    )
 
 ##############
 ## DY bug samples

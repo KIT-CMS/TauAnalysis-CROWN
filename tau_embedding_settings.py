@@ -1538,7 +1538,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "global",
                 ReplaceProducer(
                     producers=[
-                        electrons.ElectronPtCorrectionMC,
+                        electrons.ElectronPtCorrectionMC_v9,
                         electrons.ElectronPtCorrectionEmbedding,
                     ],
                     samples=["embedding"],

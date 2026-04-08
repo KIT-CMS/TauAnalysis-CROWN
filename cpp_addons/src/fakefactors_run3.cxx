@@ -709,7 +709,7 @@ namespace fakefactors_run3 {
                 ff_file,
                 ff_corr_file};
         
-            std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
+            std::string shifted_collection_identifier =  fakefactors_run3::joinAndReplace(strings, "_");
 
             auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, {pt_2, njets, mt_1, decaymode_2, mass_2, iso_1, met, m_vis, pt_tt});
             auto df2 = event::quantity::Unroll<float>(df1, outputname, shifted_collection_identifier);
@@ -1119,7 +1119,7 @@ namespace fakefactors_run3 {
                 ff_file,
                 ff_corr_file};
         
-            std::string shifted_collection_identifier =  fakefactors::joinAndReplace(strings, "_");
+            std::string shifted_collection_identifier =  fakefactors_run3::joinAndReplace(strings, "_");
 
             auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, 
                 {tau_pt_1, tau_pt_2, njets, m_vis, decaymode_1, decaymode_2, mass_1, mass_2, delta_r, met, pt_tt});

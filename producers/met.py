@@ -32,13 +32,11 @@ with defaults(scopes=["global"]):
         MetSumEt = Producer(input=[nanoAODv15.PuppiMET_sumEt], output=[q.metSumEt])
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
-        MetPt_uncorrected = Producer(input=[q.met_p4], output=[q.met_uncorrected])
-        PuppiMetPt = Producer(input=[q.puppimet_p4], output=[q.puppimet])
+        MetPt_uncorrected = Producer(input=[q.puppimet_p4], output=[q.puppimet_uncorrected])
         PFMetPt_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmet_uncorrected])
 
     with defaults(call="lorentzvector::GetPhi({df}, {output}, {input})"):
-        MetPhi_uncorrected = Producer(input=[q.met_p4], output=[q.metphi_uncorrected])
-        PuppiMetPhi = Producer(input=[q.puppimet_p4], output=[q.puppimetphi])
+        MetPhi_uncorrected = Producer(input=[q.puppimet_p4], output=[q.puppimetphi_uncorrected])
         PFMetPhi_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmetphi_uncorrected])
 
     MetBasics_v15 = ProducerGroup(
@@ -51,8 +49,6 @@ with defaults(scopes=["global"]):
             BuildPFMetVector_v15,
             MetPt_uncorrected,
             MetPhi_uncorrected,
-            PuppiMetPt,
-            PuppiMetPhi,
             PFMetPt_uncorrected,
             PFMetPhi_uncorrected,
             MetCov00_v15,
@@ -73,8 +69,6 @@ with defaults(scopes=["global"]):
             BuildPFMetVector,
             MetPt_uncorrected,
             MetPhi_uncorrected,
-            PuppiMetPt,
-            PuppiMetPhi,
             PFMetPt_uncorrected,
             PFMetPhi_uncorrected,
             MetCov00,
@@ -86,7 +80,7 @@ with defaults(scopes=["global"]):
     )
 
     MetMask = Producer(
-        call="event::quantity::CutMin<float>({df}, {output}, {input}, 0)",
+        call="event::quantity::MinFlag<float>({df}, {output}, {input}, 0)",
         input=[nanoAODv15.PuppiMET_ptUnclusteredUp],
         output=[q.met_mask],
     )
@@ -96,20 +90,20 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     # for run 3 v15
 
     METTypeI = Producer(
-        call='met::TypeIMETCorrections({df}, correctionManager, {output}, {input})',
+        call='met::Type1Correction({df}, correctionManager, {output}, {input})',
         input=[
             q.rawmet_p4,
-            q.jet_pt_L1corrected, 
-            q.corrT1METJet_pt_corrected,
-            nanoAODv15.Jet_eta,
-            nanoAODv15.CorrT1METJet_eta,
+            q.jet_pt_L1_T1MET_corrected,
+            q.jet_pt_T1MET_corrected,
             nanoAODv15.Jet_phi,
-            nanoAODv15.CorrT1METJet_phi,
+            nanoAODv15.Jet_muonSubtrDeltaPhi,
             nanoAODv15.Jet_chEmEF,
             nanoAODv15.Jet_neEmEF,
+            nanoAODv15.CorrT1METJet_phi,
+            nanoAODv15.CorrT1METJet_muonSubtrDeltaPhi,
             nanoAODv15.CorrT1METJet_EmEF,
-            ],
-        output = [q.met_p4_jetcorrected],
+        ],
+        output = [q.puppimet_p4_jetcorrected],
     )
     
     # for run 2 and run3 v12
@@ -125,8 +119,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             nanoAODv15.Jet_mass,
         ]
         PropagateJetsToMet = Producer(
-            input=[q.puppimet_p4] + PartialJetsToMetInput,
-            output=[q.met_p4_jetcorrected],
+            input=[q.puppimet_p4_leptoncorrected] + PartialJetsToMetInput,
+            output=[q.puppimet_p4_jetcorrected],
         )
         PropagateJetsToPFMet = Producer(
             input=[q.pfmet_p4] + PartialJetsToMetInput,
@@ -136,8 +130,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     # apply to both
     with defaults(call="lorentzvector::PropagateToMET({df}, {output}, {input}, {propagateLeptons})"):
         PropagateLeptonsToMet = Producer(
-            input=[q.met_p4_jetcorrected, q.p4_1_uncorrected, q.p4_2_uncorrected, q.p4_1, q.p4_2],
-            output=[q.met_p4_leptoncorrected],
+            input=[q.puppimet_p4, q.p4_1_uncorrected, q.p4_2_uncorrected, q.p4_1, q.p4_2],
+            output=[q.puppimet_p4_leptoncorrected],
         )
         PropagateLeptonsToPFMet = Producer(
             input=[q.pfmet_p4_jetcorrected, q.p4_1_uncorrected, q.p4_2_uncorrected, q.p4_1, q.p4_2],
@@ -146,8 +140,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
     with defaults(call='met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'):
         ApplyRecoilCorrections = Producer(
-            input=[q.met_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
-            output=[q.met_p4_recoilcorrected],
+            input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
+            output=[q.puppimet_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet = Producer(
             input=[q.pfmet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
@@ -156,8 +150,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
     with defaults(call='met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
         ApplyRecoilCorrections_Run2 = Producer(
-            input=[q.met_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
-            output=[q.met_p4_recoilcorrected],
+            input=[q.puppimet_p4_jetcorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
+            output=[q.puppimet_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet_Run2 = Producer(
             input=[q.pfmet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
@@ -165,11 +159,11 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
-        MetPt = Producer(input=[q.met_p4_recoilcorrected], output=[q.met])
+        MetPt = Producer(input=[q.puppimet_p4_recoilcorrected], output=[q.puppimet])
         PFMetPt = Producer(input=[q.pfmet_p4_recoilcorrected], output=[q.pfmet])
 
     with defaults(call="lorentzvector::GetPhi({df}, {output}, {input})"):
-        MetPhi = Producer(input=[q.met_p4_recoilcorrected], output=[q.metphi])
+        MetPhi = Producer(input=[q.puppimet_p4_recoilcorrected], output=[q.puppimetphi])
         PFMetPhi = Producer(input=[q.pfmet_p4_recoilcorrected], output=[q.pfmetphi])
 
     with defaults(call=None, input=None, output=None):
@@ -203,8 +197,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
         MetCorrections_Run2 = ProducerGroup(
             subproducers=[
-                PropagateJetsToMet,
                 PropagateLeptonsToMet,
+                PropagateJetsToMet,
                 ApplyRecoilCorrections_Run2,
                 MetPt,
                 MetPhi,

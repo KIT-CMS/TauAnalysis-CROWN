@@ -204,12 +204,12 @@ def build_config(
                     "2016postVFP": "data/electron_energy_scale/2016postVFP_UL/EGM_ScaleUnc.json.gz",
                     "2017": "data/electron_energy_scale/2017_UL/EGM_ScaleUnc.json.gz",
                     "2018": "data/electron_energy_scale/2018_UL/EGM_ScaleUnc.json.gz",
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz"',
-                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronSS_EtDependent.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronSS_EtDependent.json.gz"',
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-15/electronSS_EtDependent.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronSS_EtDependent.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronSS_EtDependent.json.gz",
                 }
             ),
             "ele_es_variation": "nom",
@@ -289,7 +289,21 @@ def build_config(
                 }
             ),
             "jet_collection_name":'"AK4PUPPI"', #only used for jet ID so not relevant for run 2
-            "jer_master_seed": 42,
+            "jet_jec_file": EraModifier(
+                {
+                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
+                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
+                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
+                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jet_jerc.json.gz"',
+                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
+                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
+                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
+                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
+                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
+                }
+            ),
+            "jet_jer_master_seed": 42,
             "jet_reapplyJES": True,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
@@ -337,20 +351,6 @@ def build_config(
             ),
             # jet resolution correction
             "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
-            "jet_jer_file": EraModifier(
-                {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jet_jerc.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
-                }
-            ),
             "jet_jer_tag": EraModifier(
                 {
                     "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
@@ -1099,9 +1099,11 @@ def build_config(
             event.DiLeptonVeto,
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
-            met.MetBasics,
+            met.MetBasics_v15,
             met.MetMask,
-            event.EventCut,
+            event.EvenOddIDFlag,
+            event.EvenIDFilter,
+            # event.OddIDFilter,
         ],
     )
     configuration.add_producers(
@@ -1770,7 +1772,7 @@ def build_config(
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
-                producers=[met.MetBasics, met.MetBasics_v12],
+                producers=[met.MetBasics_v15, met.MetBasics],
                 exclude_samples=["fake_era"],
             ),
         )
@@ -1917,7 +1919,7 @@ def build_config(
         configuration.add_outputs(
             "global",
             [
-                p for p in met.MetBasics_v12.get_outputs("global")
+                p for p in met.MetBasics.get_outputs("global")
             ],
         )
         configuration.add_outputs(
@@ -1955,14 +1957,14 @@ def build_config(
             configuration.add_outputs(
                 "global",
                 [
-                    p for p in met.MetBasics_v12.get_outputs("global")
+                    p for p in met.MetBasics.get_outputs("global")
                 ],
             )
         else:
             configuration.add_outputs(
                 "global",
                 [
-                    p for p in met.MetBasics.get_outputs("global")
+                    p for p in met.MetBasics_v15.get_outputs("global")
                 ],
             )
         configuration.add_outputs(

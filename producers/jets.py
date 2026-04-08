@@ -50,7 +50,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetIDRun3NanoV12Corrected = Producer(
-            call="physicsobject::jet::quantities::CorrectJetIDRun3NanoV12({df}, {output}, {input})",
+            call="physicsobject::jet::quantities::PatchedIDNanoV12({df}, {output}, {input})",
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,
@@ -63,11 +63,11 @@ with defaults(scopes=["global"]):
         )
         JetID_rename = Producer(
             call="event::quantity::Rename<ROOT::RVec<int>>({df}, {output}, {input})",
-            input=[nanoAODv12.Jet_jetId],
+            input=[nanoAODv9.Jet_jetId],
         )
 
     JetVetoMapVeto = Producer(
-        call="""physicsobject::jet::vetoes::jet_vetomap({df}, correctionManager, {output}, {input}, "{jet_veto_map_file}", "{jet_veto_map_name}", "{jet_veto_map_type}", {jet_veto_min_pt}, {jet_veto_id_wp}, {jet_veto_max_em_frac})""",
+        call="""physicsobject::jet::VetoMap({df}, correctionManager, {output}, {input}, "{jet_veto_map_file}", "{jet_veto_map_name}", "{jet_veto_map_type}", {jet_veto_min_pt}, {jet_veto_id_wp}, {jet_veto_max_em_frac})""",
         input=[
             q.jet_pt_corrected,
             nanoAODv15.Jet_eta,
@@ -81,7 +81,7 @@ with defaults(scopes=["global"]):
     )
 
     JetSmearingSeed = Producer(
-        call="event::quantity::GenerateSeed({df}, {output}, {input}, {jer_master_seed})",
+        call="event::quantity::GenerateSeed({df}, {output}, {input}, {jet_jer_master_seed})",
         input=[
             nanoAODv15.luminosityBlock,
             nanoAODv15.run,
@@ -126,7 +126,7 @@ with defaults(scopes=["global"]):
     )
 
     JetPtCorrection_L1 = Producer(
-        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
+        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
         input=[
             q.jet_rawPt,
             nanoAODv15.Jet_eta,
@@ -143,7 +143,7 @@ with defaults(scopes=["global"]):
         output=[q.jet_pt_L1_corrected, q.jet_pt_L1_T1MET_corrected],
     )
     JetPtCorrectionL2L3 = Producer(
-        call='physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_mc}, {jet_jes_tag_data}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}", {is_data}, {is_embedding})',
+        call='physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
         input=[
             q.jet_pt_L1_corrected,
             nanoAODv15.Jet_eta,
@@ -164,19 +164,9 @@ with defaults(scopes=["global"]):
         output=[q.jet_pt_corrected, q.jet_pt_T1MET_corrected],
     )
 
-    # resize jet pt corrected for masks to orginal puppi jet size collection
-    JetPtCorrection_Run3_cut = Producer(
-        call='physicsobject::TruncateToSize<float>({df}, {output}, {input})',
-        input=[
-            q.corrT1METJet_pt_corrected,
-            nanoAODv15.Jet_eta,
-        ],
-        output=[q.jet_pt_corrected],
-    )
-
     with defaults(output=[q.jet_pt_corrected]):
         JetPtCorrection = Producer(
-            call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_mc}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
+            call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,
@@ -192,12 +182,12 @@ with defaults(scopes=["global"]):
             ],
         )
         JetPtCorrection_data = Producer(
-            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag_data}, "{era}")',
+            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
             input=[
-                nanoAODv15.Jet_pt, 
-                nanoAODv15.Jet_eta, 
-                nanoAODv15.Jet_area, 
-                nanoAODv15.Jet_rawFactor, 
+                nanoAODv15.Jet_pt,
+                nanoAODv15.Jet_eta,
+                nanoAODv15.Jet_area,
+                nanoAODv15.Jet_rawFactor,
                 q.fixedGridRho, 
                 nanoAODv15.Jet_phi, 
                 nanoAODv15.run],
@@ -219,7 +209,7 @@ with defaults(scopes=["global"]):
 
     with defaults(call=None, input=None, output=None):
         RenameJetsData = ProducerGroup(subproducers=[RenameJetPt, RenameJetMass])
-        JetEnergyCorrection_Run3 = ProducerGroup(subproducers=[JetPtCorrection_L1, JetPtCorrection_Run3, JetPtCorrection_Run3_cut, JetMassCorrection])
+        JetEnergyCorrection_Run3 = ProducerGroup(subproducers=[RawJet, JetPtCorrection_L1, JetPtCorrectionL2L3, JetMassCorrection])
         JetEnergyCorrection = ProducerGroup(subproducers=[JetPtCorrection, JetMassCorrection])
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])
 
@@ -286,12 +276,13 @@ with defaults(scopes=["global"]):
             input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
             output=[q.good_jets_mask],
         )
-        # run 2 without horn selection, pt>30 and eta<4.7
-        GoodJets_Run2 = ProducerGroup(
-            input=[],
-            output=[q.good_jets_mask],
-            subproducers=[JetPtCut, JetEtaCut, JetIDCut, JetPUIDCut],
-        )
+    # run 2 without horn selection, pt>30 and eta<4.7
+    GoodJets_Run2 = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.good_jets_mask],
+        subproducers=[JetPtCut, JetEtaCut, JetIDCut, JetPUIDCut],
+    )
 
     GoodBJets = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',

@@ -97,14 +97,22 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
-    EventCut = Producer(
-        call="event::quantity::EvenOddIDFlag<ULong64_t>({df}, {output}, {input})",
+    EvenOddIDFlag = Producer(
+        call="event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})",
         input=[nanoAODv15.event],
         output=[q.eventCut_mask],
     )
+    EvenIDFilter = BaseFilter(
+        call="event::filter::Flag({df}, \"EvenIDFilter\", {input})",
+        input=[q.eventCut_mask],
+    )
+    OddIDFilter = BaseFilter(
+        call="event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})",
+        input=[q.eventCut_mask],
+    )
     # Run 2
     ZPtMassReweighting = Producer(
-        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )

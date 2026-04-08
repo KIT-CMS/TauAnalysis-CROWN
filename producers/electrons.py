@@ -76,7 +76,7 @@ with defaults(scopes=["global"]):
     )
 
     with defaults(output=[]):
-        DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.Electron_pt_corrected])
+        DiElectronVetoPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_dielectronveto_pt})", input=[q.electron_pt_corrected])
         DiElectronVetoIDCut = Producer(call='physicsobject::CutMin<UChar_t>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAODv15.Electron_cutBased])
         DiElectronVetoIDCut_v9 = Producer(call='physicsobject::CutMin<int>({df}, {output}, {input}, {dielectronveto_id_wp})', input=[nanoAODv9.Electron_cutBased])
         DiElectronVetoElectrons = ProducerGroup(
@@ -149,7 +149,7 @@ with defaults(scopes=["global"]):
 
 with defaults(scopes=["em", "et", "ee"]):
     with defaults(output=[]):
-        GoodElectronPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_ele_pt})", input=[q.Electron_pt_corrected])
+        GoodElectronPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_ele_pt})", input=[q.electron_pt_corrected])
         GoodElectronEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_ele_eta})", input=[nanoAODv15.Electron_eta])
         GoodElectronIsoCut = Producer(call="physicsobject::CutMax<float>({df}, {output}, {input}, {max_ele_iso})", input=[nanoAODv15.Electron_pfRelIso03_all])
 

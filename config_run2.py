@@ -1,7 +1,6 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 
 from typing import List
-from itertools import product
 
 from .producers import electrons as electrons
 from .producers import event as event
@@ -195,11 +194,6 @@ def build_config(
                 }
             ),
             "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
-            "jet_reapplyJES": False,
-            "jet_jes_sources": '{""}',
-            "jet_jes_shift": 0,
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
-            "jet_jer_master_seed": 42,
             "jet_jec_file": EraModifier(
                 {
                     "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
@@ -208,6 +202,11 @@ def build_config(
                     "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
                 }
             ),
+            "jet_reapplyJES": False,
+            "jet_jes_sources": '{""}',
+            "jet_jes_shift": 0,
+            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jer_master_seed": 42,
             "jet_jer_tag": EraModifier(
                 {
                     "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
@@ -216,13 +215,12 @@ def build_config(
                     "2018": '"Summer19UL18_JRV2_MC"',
                 }
             ),
-            "jet_jes_tag_data": '""',
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
+                    "2016preVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16APV_V7_MC"',
+                    "2016postVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16_V7_MC"',
+                    "2017": '""' if sample in ["embedding", "data"] else '"Summer19UL17_V5_MC"',
+                    "2018": '""' if sample in ["embedding", "data"] else '"Summer19UL18_V5_MC"',
                 }
             ),
             "jet_jec_algo": '"AK4PFchs"',
@@ -289,8 +287,8 @@ def build_config(
             "vsjet_tau_id_wp_bit": [
                 {
                     "vsjet_tau_id_WPbit": bit,
-                    "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                    "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                    "tau_1_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_2",
                 }
                 for wp, bit in dict(
                     VVLoose=2,
@@ -306,15 +304,11 @@ def build_config(
             "vsjet_tau_id": [
                 {
                     "tau_id_discriminator": "DeepTau2017v2p1VSjet",
-                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(
-                        wp=wp
-                    ),
-                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(
-                        wp=wp
-                    ),
-                    "vsjet_tau_id_WP": "{wp}".format(wp=wp),
-                    "tau_1_vsjet_id_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                    "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                    "tau_1_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_2",
+                    "vsjet_tau_id_WP": f"{wp}",
+                    "tau_1_vsjet_id_outputname": f"id_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_id_outputname": f"id_tau_vsJet_{wp}_2",
                     "vsjet_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
@@ -327,15 +321,11 @@ def build_config(
             "vsele_tau_id": [
                 {
                     "tau_id_discriminator": "DeepTau2017v2p1VSe",
-                    "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(
-                        wp=wp
-                    ),
-                    "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(
-                        wp=wp
-                    ),
-                    "vsele_tau_id_WP": "{wp}".format(wp=wp),
-                    "tau_1_vsele_id_outputname": "id_tau_vsEle_{wp}_1".format(wp=wp),
-                    "tau_2_vsele_id_outputname": "id_tau_vsEle_{wp}_2".format(wp=wp),
+                    "tau_1_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_1",
+                    "tau_2_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_2",
+                    "vsele_tau_id_WP": f"{wp}",
+                    "tau_1_vsele_id_outputname": f"id_tau_vsEle_{wp}_1",
+                    "tau_2_vsele_id_outputname": f"id_tau_vsEle_{wp}_2",
                     "vsele_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
@@ -351,23 +341,24 @@ def build_config(
             "vsmu_tau_id": [
                 {
                     "tau_id_discriminator": "DeepTau2017v2p1VSmu",
-                    "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_1".format(wp=wp),
-                    "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_2".format(wp=wp),
-                    "vsmu_tau_id_WP": "{wp}".format(wp=wp),
-                    "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_1".format(wp=wp),
-                    "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_2".format(wp=wp),
+                    "tau_1_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_1",
+                    "tau_2_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_2",
+                    "vsmu_tau_id_WP": f"{wp}",
+                    "vsjet_tau_id_WP": "Tight",
+                    "vsele_tau_id_WP": "VVLoose",
+                    "tau_1_vsmu_id_outputname": f"id_tau_vsMu_{wp}_1",
+                    "tau_2_vsmu_id_outputname": f"id_tau_vsMu_{wp}_2",
                     "vsmu_tau_id_WPbit": bit,
                 }
-                for wp, bit in {
-                    "VLoose": 1,
-                    "Loose": 2,
-                    "Medium": 3,
-                    "Tight": 4,
-                }.items()
+                for (wp, bit) in {
+                        "VLoose": 1,
+                        "Loose": 2,
+                        "Medium": 3,
+                        "Tight": 4,
+                    }.items()
             ],
             "tau_sf_vsele_barrel": "nom",  # or "up"/"down" for up/down variation
             "tau_sf_vsele_endcap": "nom",  # or "up"/"down" for up/down variation
-            "tau_vsmu_vsjetWP": "Tight",
             "tau_sf_vsmu_wheel1": "nom",
             "tau_sf_vsmu_wheel2": "nom",
             "tau_sf_vsmu_wheel3": "nom",
@@ -375,6 +366,31 @@ def build_config(
             "tau_sf_vsmu_wheel5": "nom",
         },
     )
+    configuration.add_config_parameters(
+        ["et"],
+        {
+            "vsmu_tau_id": [
+                {
+                    "tau_id_discriminator": "DeepTau2017v2p1VSmu",
+                    "tau_1_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_1",
+                    "tau_2_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_2",
+                    "vsmu_tau_id_WP": f"{wp}",
+                    "vsjet_tau_id_WP": "Tight",
+                    "vsele_tau_id_WP": "Tight",
+                    "tau_1_vsmu_id_outputname": f"id_tau_vsMu_{wp}_1",
+                    "tau_2_vsmu_id_outputname": f"id_tau_vsMu_{wp}_2",
+                    "vsmu_tau_id_WPbit": bit,
+                }
+                for (wp, bit) in {
+                        "VLoose": 1,
+                        "Loose": 2,
+                        "Medium": 3,
+                        "Tight": 4,
+                    }.items()
+            ],
+        },
+    )
+
     # MT / ET tau id sf variations
     configuration.add_config_parameters(
         ["mt", "et"],
@@ -437,9 +453,9 @@ def build_config(
             "min_tau_pt": 20.0,
             "max_tau_eta": 2.3,
             "max_tau_dz": 0.2,
-            "vsjet_tau_id_bit": 1,
-            "vsele_tau_id_bit": 1,
-            "vsmu_tau_id_bit": 1,
+            "vsjet_tau_wp_cut": 1,
+            "vsele_tau_wp_cut": 1,
+            "vsmu_tau_wp_cut": 1,
         },
     )
     # TT tau selection:
@@ -449,9 +465,9 @@ def build_config(
             "min_tau_pt": 35.0,
             "max_tau_eta": 2.3,
             "max_tau_dz": 0.2,
-            "vsjet_tau_id_bit": 4,
-            "vsele_tau_id_bit": 4,
-            "vsmu_tau_id_bit": 1,
+            "vsjet_tau_wp_cut": 4,
+            "vsele_tau_wp_cut": 4,
+            "vsmu_tau_wp_cut": 1,
         },
     )
 
@@ -664,132 +680,6 @@ def build_config(
             "mc_electron_iso_extrapolation": 1.0,  # for nominal case
         },
     )
-    # muon trigger SF settings from embedding measurements
-    # configuration.add_config_parameters(
-    #     ["mt", "mm"],
-    #     {
-    #         "singlemuon_trigger_sf_mc": EraModifier(
-    #             {
-    #                 "2018": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu24",
-    #                         "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu27",
-    #                         "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu24ormu27",
-    #                         "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #                 "2017": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu24",
-    #                         "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu27",
-    #                         "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu24ormu27",
-    #                         "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #                 "2016postVFP": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu22",
-    #                         "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #                 "2016preVFP": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_mu22",
-    #                         "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #             }
-    #         )
-    #     },
-    # )
-    # # electron trigger SF settings from embedding measurements
-    # configuration.add_config_parameters(
-    #     ["et", "ee"],
-    #     {
-    #         "singlelectron_trigger_sf_mc": EraModifier(
-    #             {
-    #                 "2018": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele32",
-    #                         "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele35",
-    #                         "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele32orele35",
-    #                         "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                         "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #                 "2017": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele32",
-    #                         "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele35",
-    #                         "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele32orele35",
-    #                         "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                         "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     },
-    #                 ],
-    #                 "2016postVFP": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele25",
-    #                         "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     }
-    #                 ],
-    #                 "2016preVFP": [
-    #                     {
-    #                         "flagname": "trg_wgt_single_ele25",
-    #                         "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                         "mc_trg_extrapolation": 1.0,  # for nominal case
-    #                     }
-    #                 ],
-    #             }
-    #         )
-    #     },
-    # )
 
     configuration.add_producers(
         "global",
@@ -807,11 +697,17 @@ def build_config(
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMC_v9,
             electrons.BaseElectrons_v9,
+            jets.JetSmearingSeed,
+            jets.JetID_rename,
             jets.JetEnergyCorrection,
-            jets.GoodJets,
-            jets.GoodBJets,
+            jets.GoodJets_Run2,
+            jets.JetBTagDeep,
+            jets.GoodBJets_Run2,
             jets.JetRho_v9,
             event.DiLeptonVeto_v9,
+            genparticles.CalculateGenBosonVector,
+            genparticles.CalculateVisGenBosonVector,
+            genparticles.GenBosonMass,
             met.MetBasics,
         ],
     )
@@ -832,8 +728,8 @@ def build_config(
             jets.BJetCollection,
             jets.BasicBJetQuantities,
             scalefactors.btagging_SF,
-            met.MetCorrections,
-            met.PFMetCorrections,
+            met.MetCorrections_Run2,
+            met.PFMetCorrections_Run2,
             pairquantities.DiTauPairMETQuantities,
             pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
@@ -887,7 +783,7 @@ def build_config(
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
             configuration.ES_ID_SCHEME.mc.producerGroupES,
-            # taus.BaseTaus,
+            taus.BaseTaus_v9,
             taus.GoodTaus_v9,
             taus.NumberOfGoodTaus,
             electrons.ExtraElectronsVeto,
@@ -906,9 +802,9 @@ def build_config(
             triggers.MTGenerateSingleMuonTriggerFlags,
             triggers.MTGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
-            pairquantities.VsJetTauIDFlagOnly_2,
-            # pairquantities.VsEleTauIDFlagOnly_2,
-            # pairquantities.VsMuTauIDFlagOnly_2,
+            # pairquantities.VsJetTauIDFlagOnly_2_v9,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9,
         ],
     )
     configuration.add_producers(
@@ -937,9 +833,9 @@ def build_config(
             triggers.ETGenerateSingleElectronTriggerFlags,
             triggers.ETGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
-            pairquantities.VsJetTauIDFlagOnly_2,
-            # pairquantities.VsEleTauIDFlagOnly_2,
-            # pairquantities.VsMuTauIDFlagOnly_2,
+            # pairquantities.VsJetTauIDFlagOnly_2_v9,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9,
         ],
     )
     configuration.add_producers(
@@ -963,12 +859,12 @@ def build_config(
             triggers.TTGenerateDoubleTauTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
             triggers.GenerateSingleLeadingTauTriggerFlags,
-            pairquantities.VsJetTauIDFlagOnly_1,
-            # pairquantities.VsEleTauIDFlagOnly_1,
-            # pairquantities.VsMuTauIDFlagOnly_1,
-            pairquantities.VsJetTauIDFlagOnly_2,
-            # pairquantities.VsEleTauIDFlagOnly_2,
-            # pairquantities.VsMuTauIDFlagOnly_2,
+            # pairquantities.VsJetTauIDFlagOnly_1_v9,
+            # pairquantities.VsEleTauIDFlagOnly_1_v9,
+            # pairquantities.VsMuTauIDFlagOnly_1_v9,
+            # pairquantities.VsJetTauIDFlagOnly_2_v9,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9,
         ],
     )
     configuration.add_producers(
@@ -1131,16 +1027,6 @@ def build_config(
             ),
         )
 
-    # changes needed for data
-    # global scope
-    # configuration.add_modification_rule(
-    #     "global",
-    #     AppendProducer(
-    #         producers=jets.RenameJetsData,
-    #         samples=["embedding", "embedding_mc"],
-    #         update_output=False,
-    #     ),
-    # )
     configuration.add_modification_rule(
         "global",
         AppendProducer(producers=event.JSONFilter, samples=["data", "embedding"]),
@@ -1341,12 +1227,12 @@ def build_config(
             q.gen_mass_2,
             q.gen_pdgid_2,
             q.gen_m_vis,
-            q.met,
-            q.metphi,
+            q.puppimet,
+            q.puppimetphi,
             q.pfmet,
             q.pfmetphi,
-            q.met_uncorrected,
-            q.metphi_uncorrected,
+            q.puppimet_uncorrected,
+            q.puppimetphi_uncorrected,
             q.pfmet_uncorrected,
             q.pfmetphi_uncorrected,
             q.metSumEt,
@@ -1424,12 +1310,12 @@ def build_config(
             configuration.ES_ID_SCHEME.mc.producerID.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            pairquantities.VsJetTauIDFlag_2.output_group,
-            pairquantities.VsEleTauIDFlag_2.output_group,
-            pairquantities.VsMuTauIDFlag_2.output_group,
-            pairquantities.VsJetTauIDFlagOnly_2.output_group,
-            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
-            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
+            pairquantities.VsJetTauIDFlag_2_v9.output_group,
+            pairquantities.VsEleTauIDFlag_2_v9.output_group,
+            pairquantities.VsMuTauIDFlag_2_v9.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             triggers.MTGenerateCrossTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
@@ -1452,12 +1338,12 @@ def build_config(
             configuration.ES_ID_SCHEME.mc.producerID.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            pairquantities.VsJetTauIDFlag_2.output_group,
-            pairquantities.VsEleTauIDFlag_2.output_group,
-            pairquantities.VsMuTauIDFlag_2.output_group,
-            pairquantities.VsJetTauIDFlagOnly_2.output_group,
-            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
-            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
+            pairquantities.VsJetTauIDFlag_2_v9.output_group,
+            pairquantities.VsEleTauIDFlag_2_v9.output_group,
+            pairquantities.VsMuTauIDFlag_2_v9.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9.output_group,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
             triggers.ETGenerateCrossTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
@@ -1482,21 +1368,21 @@ def build_config(
             scalefactors.Tau_2_VsJetTauID_tt_SF.output_group,
             scalefactors.Tau_2_VsEleTauID_SF.output_group,
             scalefactors.Tau_2_VsMuTauID_SF.output_group,
-            pairquantities.VsJetTauIDFlag_1.output_group,
-            pairquantities.VsEleTauIDFlag_1.output_group,
-            pairquantities.VsMuTauIDFlag_1.output_group,
-            pairquantities.VsJetTauIDFlag_2.output_group,
-            pairquantities.VsEleTauIDFlag_2.output_group,
-            pairquantities.VsMuTauIDFlag_2.output_group,
-            pairquantities.VsJetTauIDFlagOnly_1.output_group,
-            # pairquantities.VsEleTauIDFlagOnly_1.output_group,
-            # pairquantities.VsMuTauIDFlagOnly_1.output_group,
-            pairquantities.VsJetTauIDFlag_2.output_group,
-            pairquantities.VsEleTauIDFlag_2.output_group,
-            pairquantities.VsMuTauIDFlag_2.output_group,
-            pairquantities.VsJetTauIDFlagOnly_2.output_group,
-            # pairquantities.VsEleTauIDFlagOnly_2.output_group,
-            # pairquantities.VsMuTauIDFlagOnly_2.output_group,
+            pairquantities.VsJetTauIDFlag_1_v9.output_group,
+            pairquantities.VsEleTauIDFlag_1_v9.output_group,
+            pairquantities.VsMuTauIDFlag_1_v9.output_group,
+            pairquantities.VsJetTauIDFlag_2_v9.output_group,
+            pairquantities.VsEleTauIDFlag_2_v9.output_group,
+            pairquantities.VsMuTauIDFlag_2_v9.output_group,
+            pairquantities.VsJetTauIDFlagOnly_1_v9.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_1_v9.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_1_v9.output_group,
+            pairquantities.VsJetTauIDFlag_2_v9.output_group,
+            pairquantities.VsEleTauIDFlag_2_v9.output_group,
+            pairquantities.VsMuTauIDFlag_2_v9.output_group,
+            pairquantities.VsJetTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsEleTauIDFlagOnly_2_v9.output_group,
+            # pairquantities.VsMuTauIDFlagOnly_2_v9.output_group,
             triggers.TTGenerateDoubleTauTriggerFlags.output_group,
             triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
@@ -1700,282 +1586,6 @@ def build_config(
     )
 
     #########################
-    # Trigger shifts
-    #########################
-    # configuration.add_shift(
-    #     SystematicShift(
-    #         name="singleElectronTriggerSFUp",
-    #         shift_config={
-    #             ("et"): {
-    #                 "singlelectron_trigger_sf_mc": EraModifier(
-    #                     {
-    #                         "2018": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32orele35",
-    #                                 "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32",
-    #                                 "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele35",
-    #                                 "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                                 "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                         "2017": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32orele35",
-    #                                 "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32",
-    #                                 "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele35",
-    #                                 "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                                 "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                         "2016postVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele25",
-    #                                 "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             }
-    #                         ],
-    #                         "2016preVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele25",
-    #                                 "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             }
-    #                         ],
-    #                     }
-    #                 )
-    #             }
-    #         },
-    #         producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
-    #     ),
-    #     exclude_samples=["data", "embedding", "embedding_mc"],
-    # )
-    # configuration.add_shift(
-    #     SystematicShift(
-    #         name="singleElectronTriggerSFDown",
-    #         shift_config={
-    #             ("et"): {
-    #                 "singlelectron_trigger_sf_mc": EraModifier(
-    #                     {
-    #                         "2018": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32orele35",
-    #                                 "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32",
-    #                                 "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele35",
-    #                                 "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                                 "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                         "2017": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32orele35",
-    #                                 "mc_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele32",
-    #                                 "mc_trigger_sf": "Trg32_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele35",
-    #                                 "mc_trigger_sf": "Trg35_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele27orele32orele35",
-    #                                 "mc_trigger_sf": "Trg_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                         "2016postVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele25",
-    #                                 "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             }
-    #                         ],
-    #                         "2016preVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_ele25",
-    #                                 "mc_trigger_sf": "Trg25_Iso_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             }
-    #                         ],
-    #                     }
-    #                 )
-    #             }
-    #         },
-    #         producers={("et"): scalefactors.ETGenerateSingleElectronTriggerSF_MC},
-    #     ),
-    #     exclude_samples=["data", "embedding", "embedding_mc"],
-    # )
-
-    # configuration.add_shift(
-    #     SystematicShift(
-    #         name="singleMuonTriggerSFUp",
-    #         shift_config={
-    #             ("mt"): {
-    #                 "singlemuon_trigger_sf_mc": EraModifier(
-    #                     {
-    #                         "2018": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24",
-    #                                 "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24ormu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                         "2017": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24",
-    #                                 "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24ormu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                         "2016postVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu22",
-    #                                 "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                         "2016preVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu22",
-    #                                 "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 1.02,
-    #                             },
-    #                         ],
-    #                     }
-    #                 )
-    #             }
-    #         },
-    #         producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
-    #     ),
-    #     exclude_samples=["data", "embedding", "embedding_mc"],
-    # )
-    # configuration.add_shift(
-    #     SystematicShift(
-    #         name="singleMuonTriggerSFDown",
-    #         shift_config={
-    #             ("mt"): {
-    #                 "singlemuon_trigger_sf_mc": EraModifier(
-    #                     {
-    #                         "2018": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24",
-    #                                 "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24ormu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                         "2017": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24",
-    #                                 "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu24ormu27",
-    #                                 "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                         "2016postVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu22",
-    #                                 "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                         "2016preVFP": [
-    #                             {
-    #                                 "flagname": "trg_wgt_single_mu22",
-    #                                 "mc_trigger_sf": "Trg_pt_eta_bins",
-    #                                 "mc_trg_extrapolation": 0.98,
-    #                             },
-    #                         ],
-    #                     }
-    #                 )
-    #             }
-    #         },
-    #         producers={("mt"): scalefactors.MTGenerateSingleMuonTriggerSF_MC},
-    #     ),
-    #     exclude_samples=["data", "embedding", "embedding_mc"],
-    # )
-    #########################
     # TauID scale factor shifts, channel dependent # Tau energy scale shifts, dm dependent
     #########################
     configuration = add_tauVariations(configuration, sample)
@@ -1987,7 +1597,7 @@ def build_config(
     # Add additional producers and SFs related to embedded samples
     #########################
     if sample == "embedding" or sample == "embedding_mc":
-        configuration = setup_embedding(configuration, scopes)
+        configuration = setup_embedding(configuration, scopes, era)
 
     #########################
     # Jet energy resolution and jet energy scale

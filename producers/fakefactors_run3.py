@@ -15,7 +15,7 @@ class Inputs:
         q.mass_2,
         q.eta_2,
         q.pt_1,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]
@@ -26,7 +26,7 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_2,
         q.eta_2,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]
@@ -45,7 +45,7 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_1,
         q.mass_2,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]

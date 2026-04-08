@@ -437,7 +437,7 @@ with defaults(call=None, input=None, output=None):
 
 # advanced event quantities (can be caluculated when ditau pair and met and all jets are determined)
 # leptons: q.p4_1, q.p4_2
-# met: met_p4_recoilcorrected
+# met: puppimet_p4_recoilcorrected
 # jets: good_jet_collection (if only the leading two are needed: q.jet_p4_1, q.jet_p4_2
 # bjets: gen_bjet_collection
 
@@ -447,37 +447,37 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         LV_dijet_pair = Producer(input=[q.jet_p4_1, q.jet_p4_2], output=[q.p4_dijet])
     Pzetamissvis = Producer(
         call="quantities::PzetaMissVis({df}, {output}, {input})",
-        input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+        input=[q.p4_1, q.p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.pzetamissvis],
     )
     mTdileptonMET = Producer(
         call="quantities::TransverseMass({df}, {output}, {input})",
-        input=[q.p4_dilepton, q.met_p4_recoilcorrected],
+        input=[q.p4_dilepton, q.puppimet_p4_recoilcorrected],
         output=[q.mTdileptonMET],
     )
     mt_1 = Producer(
         call="quantities::TransverseMass({df}, {output}, {input})",
-        input=[q.p4_1, q.met_p4_recoilcorrected],
+        input=[q.p4_1, q.puppimet_p4_recoilcorrected],
         output=[q.mt_1],
     )
     mt_2 = Producer(
         call="quantities::TransverseMass({df}, {output}, {input})",
-        input=[q.p4_2, q.met_p4_recoilcorrected],
+        input=[q.p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.mt_2],
     )
     pt_tt = Producer(
         call="lorentzvector::GetPt({df}, {output}, {input})",
-        input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+        input=[q.p4_1, q.p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.pt_tt],
     )
     pt_ttjj = Producer(
         call="lorentzvector::GetPt({df}, {output}, {input})",
-        input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.met_p4_recoilcorrected],
+        input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.pt_ttjj],
     )
     mt_tot = Producer(
         call="quantities::TransverseMass({df}, {output}, {input})",
-        input=[q.p4_1, q.p4_2, q.met_p4_recoilcorrected],
+        input=[q.p4_1, q.p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.mt_tot],
     )
     Pzetamissvis_pf = Producer(
@@ -619,8 +619,8 @@ with defaults(
         q.phi_2,
         q.mass_1,
         q.mass_2,
-        q.met,
-        q.metphi,
+        q.puppimet,
+        q.puppimetphi,
         q.metcov00,
         q.metcov01,
         q.metcov11,

@@ -90,7 +90,7 @@ with defaults(scopes=["et"]):
         call="ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            q.Tau_rawIDvsJet,
+            q.tau_rawIDvsJet,
             *kinematic_vars.Electron_with_corrected_pt,
             nanoAOD.Electron_pfRelIso03_all,
             q.good_electrons_mask,
@@ -118,7 +118,7 @@ with defaults(scopes=["tt"]):
         call="ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            q.Tau_rawIDvsJet,
+            q.tau_rawIDvsJet,
             q.good_taus_mask,
         ],
         output=[q.dileptonpair],
