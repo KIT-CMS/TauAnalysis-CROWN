@@ -20,7 +20,6 @@ from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
 from .tau_embedding_settings import setup_embedding
-from .jec_data import add_jetCorrectionData
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
@@ -291,92 +290,68 @@ def build_config(
             "jet_collection_name":'"AK4PUPPI"', #only used for jet ID so not relevant for run 2
             "jet_jec_file": EraModifier(
                 {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jet_jerc.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
-                    "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
+                    "2016preVFP": "data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
+                    "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
+                    "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
+                    # "2016preVFP": "data/tmp_jet_energy_corrections/Run2-2016preVFP-UL-NanoAODv15/jet_jerc.json.gz",
+                    # "2016postVFP": "data/tmp_jet_energy_corrections/Run2-2016postVFP-UL-NanoAODv15/jet_jerc.json.gz",
+                    # "2017": "data/tmp_jet_energy_corrections/Run2-2017-UL-NanoAODv15/jet_jerc.json.gz",
+                    # "2018": "data/tmp_jet_energy_corrections/Run2-2018-UL-NanoAODv15/jet_jerc.json.gz",
+                    "2022preEE": "data/tmp_jet_energy_corrections/Run3-22CDSep23-Summer22-NanoAODv12/jet_jerc.json.gz",
+                    "2022postEE": "data/tmp_jet_energy_corrections/Run3-22EFGSep23-Summer22EE-NanoAODv12/jet_jerc.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz",
                 }
             ),
             "jet_jer_master_seed": 42,
             "jet_reapplyJES": True,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            # "jet_jes_tag_mc": EraModifier(
-            #     {
-            #         "2016preVFP": '"Summer19UL16APV_V7_MC"',
-            #         "2016postVFP": '"Summer19UL16_V7_MC"',
-            #         "2017": '"Summer19UL17_V5_MC"',
-            #         "2018": '"Summer19UL18_V5_MC"',
-            #         "2022preEE": '"Summer22_22Sep2023_V3_MC"',
-            #         "2022postEE": '"Summer22EE_22Sep2023_V3_MC"',
-            #         "2023preBPix": '"Summer23Prompt23_V2_MC"',
-            #         "2023postBPix": '"Summer23BPixPrompt23_V3_MC"',
-            #         "2024": '"Summer24Prompt24_V2_MC"',
-            #         "2025": '"Winter25Prompt25_V3_MC"',
-            #     }
-            # ),
-            # "jet_jes_tag_data": EraModifier(
-            #     {
-            #         "2016preVFP": '""',
-            #         "2016postVFP": '""',
-            #         "2017": '""',
-            #         "2018": '""',
-            #         "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"',
-            #         "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"', #value to be replace afterward for individual runs but need not to be empty now for initial loading
-            #         "2023preBPix": '"Summer23Prompt23_V2_DATA"',
-            #         "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"',
-            #         "2024": '"Summer24Prompt24_V2_DATA"',
-            #         "2025": '"Winter25Prompt25_V3_DATA"',
-            #     }
-            # ),
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16_V7_MC"',
-                    "2017": '""' if sample in ["embedding", "data"] else '"Summer19UL17_V5_MC"',
-                    "2018": '""' if sample in ["embedding", "data"] else '"Summer19UL18_V5_MC"',
-                    "2022preEE": '"Summer22_22Sep2023_RunCD_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22_22Sep2023_V3_MC"',
-                    "2022postEE": '"Summer22EE_22Sep2023_RunE_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22EE_22Sep2023_V3_MC"',
-                    "2023preBPix": '"Summer23Prompt23_V2_DATA"' if sample in ["embedding", "data"] else '"Summer23Prompt23_V2_MC"',
-                    "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"' if sample in ["embedding", "data"] else '"Summer23BPixPrompt23_V3_MC"',
-                    "2024": '"Summer24Prompt24_V2_DATA"' if sample in ["embedding", "data"] else '"Summer24Prompt24_V2_MC"',
-                    "2025": '"Winter25Prompt25_V3_DATA"' if sample in ["embedding", "data"] else '"Winter25Prompt25_V3_MC"',
+                    "2016preVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16APV_V7_MC",
+                    "2016postVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16_V7_MC",
+                    "2017": "NONE" if sample in ["embedding", "data"] else "Summer19UL17_V5_MC",
+                    "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
+                    "2022preEE": "Summer22_22Sep2023_V3_DATA" if sample in ["embedding", "data"] else "Summer22_22Sep2023_V3_MC",
+                    "2022postEE": "Summer22EE_22Sep2023_V3_DATA" if sample in ["embedding", "data"] else "Summer22EE_22Sep2023_V3_MC",
+                    "2023preBPix": "Summer23Prompt23_V2_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V2_MC",
+                    "2023postBPix": "Summer23BPixPrompt23_V3_DATA" if sample in ["embedding", "data"] else "Summer23BPixPrompt23_V3_MC",
+                    "2024": "Summer24Prompt24_V2_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V2_MC",
+                    "2025": "Winter25Prompt25_V3_DATA" if sample in ["embedding", "data"] else "Winter25Prompt25_V3_MC",
                 }
             ),
             # jet resolution correction
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jer_shift": "nom",  # or "up", "down"
             "jet_jer_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
-                    "2022preEE": '"Summer22_22Sep2023_JRV1_MC"',
-                    "2022postEE": '"Summer22EE_22Sep2023_JRV1_MC"',
-                    "2023preBPix": '"Summer23Prompt23_RunCv1234_JRV1_MC"',
-                    "2023postBPix": '"Summer23BPixPrompt23_RunD_JRV1_MC"',
-                    "2024": '"Summer23BPixPrompt23_RunD_JRV1_MC"',
-                    "2025": '"Summer23BPixPrompt23_RunD_JRV1_MC"',
+                    "2016preVFP": "Summer20UL16APV_JRV3_MC",
+                    "2016postVFP": "Summer20UL16_JRV3_MC",
+                    "2017": "Summer19UL17_JRV2_MC",
+                    "2018": "Summer19UL18_JRV2_MC",
+                    "2022preEE": "Summer22_22Sep2023_JRV1_MC",
+                    "2022postEE": "Summer22EE_22Sep2023_JRV1_MC",
+                    "2023preBPix": "Summer23Prompt23_RunCv1234_JRV1_MC",
+                    "2023postBPix": "Summer23BPixPrompt23_RunD_JRV1_MC",
+                    "2024": "Summer23BPixPrompt23_RunD_JRV1_MC",
+                    "2025": "Summer23BPixPrompt23_RunD_JRV1_MC",
                 }
             ),
             "jet_jec_algo": EraModifier(
                 {
-                    "2016preVFP": '"AK4PFchs"',
-                    "2016postVFP": '"AK4PFchs"',
-                    "2017": '"AK4PFchs"',
-                    "2018": '"AK4PFchs"',
-                    "2022preEE": '"AK4PFPuppi"',
-                    "2022postEE": '"AK4PFPuppi"',
-                    "2023preBPix": '"AK4PFPuppi"',
-                    "2023postBPix": '"AK4PFPuppi"',
-                    "2024": '"AK4PFPuppi"',
-                    "2025": '"AK4PFPuppi"',
+                    "2016preVFP": "AK4PFchs",
+                    "2016postVFP": "AK4PFchs",
+                    "2017": "AK4PFchs",
+                    "2018": "AK4PFchs",
+                    "2022preEE": "AK4PFPuppi",
+                    "2022postEE": "AK4PFPuppi",
+                    "2023preBPix": "AK4PFPuppi",
+                    "2023postBPix": "AK4PFPuppi",
+                    "2024": "AK4PFPuppi",
+                    "2025": "AK4PFPuppi",
                 }
             ),
             # jet veto configuration
@@ -462,10 +437,7 @@ def build_config(
             "pairselection_min_dR": 0.5,
             # propagate jet and lepton sf correction to the met
             "propagateLeptons": SampleModifier(
-                {"data": False,
-                "data_E": False,
-                "data_F": False,
-                "data_G": False},
+                {"data": False},
                 default=True,
             ),
             "propagateJets": True,
@@ -891,21 +863,6 @@ def build_config(
             "max_ele_iso": 0.15,
         },
     )
-
-    if era == "2022postEE":
-        configuration.add_config_parameters(
-            "global",
-            {
-                "jet_jes_tag_data": SampleModifier(
-                    {
-                        "data_E": '"Summer22EE_22Sep2023_RunE_V3_DATA"',
-                        "data_F": '"Summer22EE_22Sep2023_RunF_V3_DATA"',
-                        "data_G": '"Summer22EE_22Sep2023_RunG_V3_DATA"',
-                    },
-                    default = '"Summer22EE_22Sep2023_RunE_V3_DATA"', #also needs to be not empty
-                ),
-            }
-        )
     
     if int(era[:4]) < 2022:
         configuration.add_config_parameters(
@@ -1294,7 +1251,7 @@ def build_config(
                 event.PUweights,
                 event.PS_weight,
                 ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1305,14 +1262,14 @@ def build_config(
                 event.LHE_PDF_weight,
                 event.LHE_alphaS_weight,
                 ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc", "diboson"],
+            samples=["data", "embedding", "embedding_mc", "diboson"],
         ),
     )
     configuration.add_modification_rule(
         "global",
         AppendProducer(
             producers=event.JSONFilter, 
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"]),
+            samples=["data", "embedding", "embedding_mc"]),
     )
     ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
     configuration.add_modification_rule(
@@ -1326,21 +1283,21 @@ def build_config(
         scopes,
         RemoveProducer(
             producers=[genparticles.GenMatching],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
             producers=[jets.GenJet, jets.GenJet_data],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         scopes,
         RemoveProducer(
             producers=[scalefactors.btaggingWP_SF],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1375,7 +1332,7 @@ def build_config(
         ["et", "mt", "tt"],
         ReplaceProducer(
             producers=[configuration.ES_ID_SCHEME.mc.producerGroupES, taus.TauEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1384,7 +1341,7 @@ def build_config(
             producers=[
                 scalefactors.TauID_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1393,7 +1350,7 @@ def build_config(
             producers=[
                 configuration.ES_ID_SCHEME.mc.producerID,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1402,7 +1359,7 @@ def build_config(
             producers=[
                 scalefactors.MuonIDIso_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1411,42 +1368,42 @@ def build_config(
             producers=[
                 scalefactors.EleID_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         ["mt"],
         RemoveProducer(
             producers=[genparticles.MTGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["mm"],
         RemoveProducer(
             producers=[genparticles.MuMuGenPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["et"],
         RemoveProducer(
             producers=[genparticles.ETGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["em"],
         RemoveProducer(
             producers=[genparticles.EMGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["ee"],
         RemoveProducer(
             producers=[genparticles.ElElGenPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
@@ -1455,7 +1412,7 @@ def build_config(
             producers=[
                 genparticles.TTGenDiTauPairQuantities
             ],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     ) 
 
@@ -1471,14 +1428,14 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_v9],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1492,14 +1449,14 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection_data],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1592,7 +1549,7 @@ def build_config(
                 producers=[
                     scalefactors.MuonIDIso_SF,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
         configuration.add_modification_rule(
@@ -1601,7 +1558,7 @@ def build_config(
                 producers=[
                     scalefactors.EleID_SF,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
         configuration.add_modification_rule(
@@ -1622,7 +1579,7 @@ def build_config(
                     scalefactors.PrivateMuonIDSF_1_MC,
                     scalefactors.PrivateMuonIsoSF_1_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1651,7 +1608,7 @@ def build_config(
                     scalefactors.PrivateElectronIDSF_1_MC,
                     scalefactors.PrivateElectronIsoSF_1_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1691,7 +1648,7 @@ def build_config(
                     scalefactors.PrivateMuonIDSF_2_MC,
                     scalefactors.PrivateMuonIsoSF_2_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1704,7 +1661,7 @@ def build_config(
                     scalefactors.PrivateMuonIsoSF_2_MC,
                     scalefactors.MTGenerateSingleMuonTriggerSF_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1717,7 +1674,7 @@ def build_config(
                     scalefactors.PrivateElectronIsoSF_2_MC,
                     scalefactors.ETGenerateSingleElectronTriggerSF_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         if era != "2018":
@@ -1741,7 +1698,7 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionData],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
 
@@ -1780,7 +1737,7 @@ def build_config(
             scopes,
             ReplaceProducer(
                 producers=[scalefactors.btaggingWP_SF,scalefactors.btagging_SF],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
 
@@ -1826,7 +1783,7 @@ def build_config(
         ],
     )
     # add genWeight for everything but data
-    if sample not in ["data", "data_E", "data_F", "data_G"]:
+    if sample not in ["data"]:
         configuration.add_outputs(
             scopes,
             nanoAODv15.genWeight,
@@ -2091,7 +2048,7 @@ def build_config(
             scopes="global",
             shift_key="ele_es_variation",
             producers=[electrons.ElectronPtCorrectionMC],
-            exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            exclude_samples=["data", "embedding", "embedding_mc"],
         ):
             add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
             add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
@@ -2137,7 +2094,7 @@ def build_config(
             },
             scopes=["global"],
         ),
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShiftByQuantity(
@@ -2148,7 +2105,7 @@ def build_config(
             },
             scopes=["global"],
         ),
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     #########################
@@ -2184,7 +2141,7 @@ def build_config(
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[met.ApplyRecoilCorrections],
-            exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            exclude_samples=["data", "embedding", "embedding_mc"],
             shift_key=["recoil_method", "recoil_variation"]
         ):
             add_shift(
@@ -2205,7 +2162,7 @@ def build_config(
         shift_map={"Up": "up", "Down": "down"},
         scopes="global",
         producers=[event.PUweights],
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     #########################
@@ -2263,11 +2220,6 @@ def build_config(
     # Jet energy resolution and jet energy scale and btag uncertainties
     #########################
     configuration = add_jetVariations(configuration, era)
-
-    #########################
-    # Jet energy correction for data for run 2
-    #########################
-    configuration = add_jetCorrectionData(configuration, era)
 
     #########################
     # Finalize and validate the configuration

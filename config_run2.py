@@ -19,7 +19,6 @@ from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
 from .tau_embedding_settings import setup_embedding
-from .jec_data import add_jetCorrectionData
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
@@ -196,34 +195,34 @@ def build_config(
             "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
             "jet_jec_file": EraModifier(
                 {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                    "2016preVFP": "data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
+                    "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
+                    "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
                 }
             ),
             "jet_reapplyJES": False,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jer_shift": "nom",  # or '"up"', '"down"'
             "jet_jer_master_seed": 42,
             "jet_jer_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
+                    "2016preVFP": "Summer20UL16APV_JRV3_MC",
+                    "2016postVFP": "Summer20UL16_JRV3_MC",
+                    "2017": "Summer19UL17_JRV2_MC",
+                    "2018": "Summer19UL18_JRV2_MC",
                 }
             ),
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '""' if sample in ["embedding", "data"] else '"Summer19UL16_V7_MC"',
-                    "2017": '""' if sample in ["embedding", "data"] else '"Summer19UL17_V5_MC"',
-                    "2018": '""' if sample in ["embedding", "data"] else '"Summer19UL18_V5_MC"',
+                    "2016preVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16APV_V7_MC",
+                    "2016postVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16_V7_MC",
+                    "2017": "NONE" if sample in ["embedding", "data"] else "Summer19UL17_V5_MC",
+                    "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
                 }
             ),
-            "jet_jec_algo": '"AK4PFchs"',
+            "jet_jec_algo": "AK4PFchs",
         },
     )
     # bjet base selection:
@@ -1603,11 +1602,6 @@ def build_config(
     # Jet energy resolution and jet energy scale
     #########################
     configuration = add_jetVariations(configuration, era)
-
-    #########################
-    # Jet energy correction for data
-    #########################
-    configuration = add_jetCorrectionData(configuration, era)
 
     #########################
     # Finalize and validate the configuration

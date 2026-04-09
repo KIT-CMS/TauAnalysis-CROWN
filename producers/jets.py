@@ -126,7 +126,7 @@ with defaults(scopes=["global"]):
     )
 
     JetPtCorrection_L1 = Producer(
-        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
+        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, "{jet_jec_file}", "{jet_jec_algo}", "{jet_jes_tag}")',
         input=[
             q.jet_rawPt,
             nanoAODv15.Jet_eta,
@@ -143,7 +143,7 @@ with defaults(scopes=["global"]):
         output=[q.jet_pt_L1_corrected, q.jet_pt_L1_T1MET_corrected],
     )
     JetPtCorrectionL2L3 = Producer(
-        call='physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
+        call='physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, "{jet_jec_file}", "{jet_jec_algo}", "{jet_jes_tag}", {jet_jes_sources}, "{jet_jer_tag}", {jet_jes_shift}, "{jet_jer_shift}", "{era}")',
         input=[
             q.jet_pt_L1_corrected,
             nanoAODv15.Jet_eta,
@@ -166,7 +166,7 @@ with defaults(scopes=["global"]):
 
     with defaults(output=[q.jet_pt_corrected]):
         JetPtCorrection = Producer(
-            call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
+            call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{jet_jec_file}", "{jet_jec_algo}", "{jet_jes_tag}", {jet_jes_sources}, "{jet_jer_tag}", {jet_reapplyJES}, {jet_jes_shift}, "{jet_jer_shift}", "{era}")',
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,
@@ -182,7 +182,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetPtCorrection_data = Producer(
-            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jec_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
+            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, "{jet_jec_file}", "{jet_jec_algo}", "{jet_jes_tag}", "{era}")',
             input=[
                 nanoAODv15.Jet_pt,
                 nanoAODv15.Jet_eta,

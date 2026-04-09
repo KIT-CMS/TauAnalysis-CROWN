@@ -26,9 +26,6 @@ def run(args):
         "wjets",
         "wjets_amcatnlo",
         "data",
-        "data_E",
-        "data_F",
-        "data_G",
         "electroweak_boson",
         "fake_era",
     ]

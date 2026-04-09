@@ -68,7 +68,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 add_shift(name="btagUnctune", shift_map={"Up": "up_tune", "Down": "down_tune"})
 
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
-            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
+            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
                     name="jesUncHEMIssue",
