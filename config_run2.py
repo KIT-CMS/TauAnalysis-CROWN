@@ -1189,10 +1189,10 @@ def build_config(
             q.jtag_value_2,
             q.mjj,
             q.m_vis,
-            # q.m_fastmtt,
-            # q.pt_fastmtt,
-            # q.eta_fastmtt,
-            # q.phi_fastmtt,
+            # q.m_fastmtt,  # friend production
+            # q.pt_fastmtt,  # friend production
+            # q.eta_fastmtt,  # friend production
+            # q.phi_fastmtt,  # friend production
             q.deltaR_ditaupair,
             q.pt_vis,
             q.nbtag,
@@ -1288,13 +1288,46 @@ def build_config(
             q.deltaEta_12j1,
             q.deltaEta_12j2,
             q.deltaEta_12jj,
+            # ---
+            q.p4_1,
+            q.p4_2,
+            q.p4_1_uncorrected,
+            q.p4_2_uncorrected,
+            q.p4_dilepton,
+            q.p4_dijet,
+            q.jet_p4_1,
+            q.jet_p4_2,
+            q.bjet_p4_1,
+            q.bjet_p4_2,
+            q.met_p4,
+            q.pfmet_p4,
+            q.met_p4_recoilcorrected,
+            q.pfmet_p4_recoilcorrected,
         ],
     )
+
+    if "embedding" in sample:
+        configuration.add_outputs(
+            scopes,
+            [
+                q.emb_genweight,
+                q.emb_triggersel_wgt,
+                q.emb_idsel_wgt_1,
+                q.emb_idsel_wgt_2,
+            ],
+        )
+
     # add genWeight for everything but data
     if sample != "data":
         configuration.add_outputs(
             scopes,
-            nanoAOD.genWeight,
+            [
+                nanoAOD.genWeight,
+                q.gen_p4_1,
+                q.gen_p4_2,
+                q.recoil_genboson_p4,
+                q.recoil_vis_genboson_p4,
+            ],
         )
         if era != "2018":
             configuration.add_outputs(

@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults, ProducerGroup
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -22,9 +22,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
 
-nn_inputs = [
-    q.event_parity_float,
-    # ---
+inputs_with_additional_angular_quantities = [
     q.pt_1,
     q.pt_2,
     q.eta_1,
@@ -64,14 +62,17 @@ nn_inputs = [
     q.deltaEta_12j2,
 ]  # 37
 
-Evaluate_DNN = Producer(
-    call='''ml_sm::Extracted_NN_Output<38>(
-        {df},
-        onnxSessionManager,
-        {output},
-        "{model_file_path}",
-        {input_vec})''',
-    input=nn_inputs,
+with defaults(
     output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
     scopes=["mt"],
-)
+    # subproducers=FloatConvertedVariablesProducers,
+):
+    Evaluate_DNN = Producer(
+        call='''ml_sm::Extracted_NN_Output<38>(
+            {df},
+            onnxSessionManager,
+            {output},
+            "{model_file_path}",
+            {input_vec})''',
+        input=[q.event_parity_float] + inputs_with_additional_angular_quantities,
+    )

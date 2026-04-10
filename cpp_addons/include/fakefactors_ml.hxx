@@ -13,12 +13,11 @@
 
 namespace fakefactors {
 namespace ml {
-    // propagate SetGraphOptimizationLevel to CROWN, remove this local copy of the OnnxSessionManager once the changes are merged
     class FakeFactorsOnnxSessionManager {
       public:
         FakeFactorsOnnxSessionManager() {
             OrtLoggingLevel logging_level =
-                ORT_LOGGING_LEVEL_WARNING;
+                ORT_LOGGING_LEVEL_WARNING; // ORT_LOGGING_LEVEL_VERBOSE
 
             env = Ort::Env(logging_level, "FakeFactorsML");
             session_options.SetInterOpNumThreads(1);
@@ -46,12 +45,15 @@ namespace ml {
         Ort::SessionOptions session_options;
     };
 
+    // Evaluates ML-based fake factors using ONNX for raw terms and correctionlib for
+    // non-closure compound corrections. The first scalar input is a dedicated event
+    // validity guard (pt_2_input), followed by pre-built vector inputs.
     ROOT::RDF::RNode fakefactor_lt(
         ROOT::RDF::RNode df,
         correctionManager::CorrectionManager &correctionManager,
         OnnxSessionManager &onnxSessionManager,  // for now using own onnxSessionManager until the changes are merged
         const std::vector<std::string> &outputnames,
-        // ---
+        // dedicated event validity input
         const std::string &pt_2_input,
         // ---
         const std::string &model_ff_QCD_input,

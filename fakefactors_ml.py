@@ -57,7 +57,7 @@ def build_config(
         return non_closure_granularity.check(name)
 
     if "mt" in scopes:
-        base_ml = "payloads/fake_factors_ml/mt"
+        base_ml = "payloads/fake_factors_ml/models"
         base_ff_path = "2018/onnx_model/ff/model.onnx"
         base_nn_output_path = "2018/onnx_model/nn_output/model.onnx"
 
@@ -120,7 +120,7 @@ def build_config(
                 "ttbar_non_closure_correction": "nominal",
                 # ---
                 "corr_file": EraModifier({
-                    "2018": "payloads/fake_factors_ml/sm/2018/with_embedding/FF_corrections_mt.json.gz",
+                    "2018": "payloads/fake_factors_ml/classic_corrections/2018/with_embedding/FF_corrections_mt.json.gz",
                 }),
             },
         )
@@ -233,7 +233,7 @@ def build_config(
                         SystematicShift(
                             name=f"{_name}{_shift}",
                             shift_config={("mt",): {_key: f"{_name}{_shift}"}},
-                            producers={("mt",): (active_ff_producer,)},
+                            producers={("mt",): active_ff_producer},
                         ),
                     )
 
