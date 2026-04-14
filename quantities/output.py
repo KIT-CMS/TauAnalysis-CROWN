@@ -4,27 +4,14 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
-# test
-Jet_pt_L1corrected = Quantity()
-Jet_rawPt = Quantity()
-Jet_seed = Quantity()
-puppimet_p4 = Quantity()
-puppimet = Quantity()
-puppimetphi = Quantity()
-gen_jet_pt = Quantity ()
-gen_jet_eta = Quantity ()
-gen_jet_phi = Quantity ()
-met_p4_jetcorrected_pt = Quantity()
-met_p4_jetcorrected_pt_1 = Quantity()
-CorrT1METJet_pt_corrected = Quantity()
 
 # run dependent denitions
-Tau_IDvsEle = Quantity()
-Tau_IDvsMu = Quantity()
-Tau_IDvsJet = Quantity()
-Tau_rawIDvsEle = Quantity()
-Tau_rawIDvsMu = Quantity()
-Tau_rawIDvsJet = Quantity()
+tau_IDvsEle = Quantity()
+tau_IDvsMu = Quantity()
+tau_IDvsJet = Quantity()
+tau_rawIDvsEle = Quantity()
+tau_rawIDvsMu = Quantity()
+tau_rawIDvsJet = Quantity()
 
 # DY flavor bug selection
 gen_dyflavor = Quantity()
@@ -32,12 +19,17 @@ gen_dyfilter = Quantity()
 
 #### Jet
 
-Jet_BTag = Quantity()
+jet_rawPt = Quantity()
+jet_seed = Quantity()
+jet_BTag = Quantity()
 fixedGridRho = Quantity()
-Jet_ID = Quantity()
-Jet_pt_corrected = Quantity()
-Jet_mass_corrected = Quantity()
-Jet_id_cut = Quantity()
+jet_ID = Quantity()
+jet_pt_L1_T1MET_corrected = Quantity()
+jet_pt_L1_corrected = Quantity()
+jet_pt_T1MET_corrected = Quantity()
+jet_pt_corrected = Quantity()
+jet_mass_corrected = Quantity()
+jet_id_mask = Quantity()
 jet_puid_mask = Quantity()
 good_jet_collection = Quantity()
 good_bjet_collection = Quantity()
@@ -47,9 +39,9 @@ loose_jets_mask_loweta = Quantity()
 loose_jets_mask_higheta = Quantity()
 good_jets_mask = Quantity()
 good_bjets_mask = Quantity()
-Jet_pt_cut_loose = Quantity()
-Jet_eta_max_cut = Quantity()
-Jet_vetomap = Quantity()
+jet_pt_mask_loose = Quantity()
+jet_eta_mask_max = Quantity()
+jet_vetomap = Quantity()
 jet_overlap_veto_mask = Quantity()
 njets = Quantity()
 nbtag = Quantity()
@@ -74,6 +66,9 @@ bpt_2 = Quantity()
 beta_2 = Quantity()
 bphi_2 = Quantity()
 btag_value_2 = Quantity()
+gen_jet_pt = Quantity ()
+gen_jet_eta = Quantity ()
+gen_jet_phi = Quantity ()
 
 # working points
 
@@ -95,6 +90,8 @@ iso_wgt_ele_2 = Quantity()
 btag_weight = Quantity()
 
 #### event
+
+eventCut_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
@@ -121,9 +118,6 @@ THU_qqH_JET01 = Quantity()
 # SampleFlags
 is_data = Quantity()
 is_data_all = Quantity()
-is_data_E = Quantity()
-is_data_F = Quantity()
-is_data_G = Quantity()
 is_ttbar = Quantity()
 is_dyjets = Quantity()
 is_dyjets_powheg = Quantity()
@@ -156,24 +150,25 @@ prefiring_wgt = Quantity()
 
 # MetBasics
 met_mask = Quantity()
-met_p4 = Quantity()
+rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()
 visgenboson_p4 = Quantity()
 genbosonmass = Quantity()
-met_p4_leptoncorrected = Quantity()
-met_p4_jetcorrected = Quantity()
-met_p4_jetcorrected_1 = Quantity()
-met_p4_recoilcorrected = Quantity()
-met = Quantity()
-metphi = Quantity()
+puppimet_p4 = Quantity()
+puppimet_p4_leptoncorrected = Quantity()
+puppimet_p4_jetcorrected = Quantity()
+puppimet_p4_jetcorrected_1 = Quantity()
+puppimet_p4_recoilcorrected = Quantity()
+puppimet = Quantity()
+puppimetphi = Quantity()
 metSumEt = Quantity()
 metcov00 = Quantity()
 metcov01 = Quantity()
 metcov10 = Quantity()
 metcov11 = Quantity()
-met_uncorrected = Quantity()
-metphi_uncorrected = Quantity()
+puppimet_uncorrected = Quantity()
+puppimetphi_uncorrected = Quantity()
 pfmet = Quantity()
 pfmet_p4 = Quantity()
 pfmetphi = Quantity()
@@ -182,11 +177,12 @@ pfmetphi_uncorrected = Quantity()
 pfmet_p4_leptoncorrected = Quantity()
 pfmet_p4_jetcorrected = Quantity()
 pfmet_p4_recoilcorrected = Quantity()
+corrT1METJet_pt_corrected = Quantity()
 
 #### Electrons
 
 # RenameElectronPt
-Electron_pt_corrected = Quantity()
+electron_pt_corrected = Quantity()
 
 # BaseElectrons
 _ElectronEtaCut = Quantity()
@@ -218,6 +214,9 @@ nelectrons = Quantity()
 # VetoElectrons
 veto_electrons_mask = Quantity()
 veto_electrons_mask_2 = Quantity()
+
+#### Photons
+base_photons_mask = Quantity()
 
 #### Muons
 
@@ -253,10 +252,10 @@ good_taus_mask = Quantity()
 ntaus = Quantity()
 
 # TauPtCorrection_muFake
-Tau_pt_corrected = Quantity()
-Tau_mass_corrected = Quantity()
-Tau_pt_ele_corrected = Quantity()
-Tau_pt_ele_mu_corrected = Quantity()
+tau_pt_corrected = Quantity()
+tau_mass_corrected = Quantity()
+tau_pt_ele_corrected = Quantity()
+tau_pt_ele_mu_corrected = Quantity()
 
 #### pairselection
 

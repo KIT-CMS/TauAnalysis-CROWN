@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD, nanoAODv9
+from ..quantities import nanoAODv15, nanoAODv9
 from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
 from ..producers import electrons as electrons
 from ..producers import muons as muons
@@ -53,7 +53,7 @@ with defaults(scopes=["global"]):
 
     JSONFilter = BaseFilter(
         call='event::filter::GoldenJSON({df}, correctionManager, "GoldenJSONFilter",  {input}, "{golden_json_file}")',
-        input=[nanoAOD.run, nanoAOD.luminosityBlock],
+        input=[nanoAODv15.run, nanoAODv15.luminosityBlock],
     )
     PrefireWeight = Producer(
        call="event::quantity::Rename<float>({df}, {output}, {input})",
@@ -69,23 +69,23 @@ with defaults(scopes=["global"]):
     )
     Lumi = Producer(
         call="event::quantity::Rename<UInt_t>({df}, {output}, {input})",
-        input=[nanoAOD.luminosityBlock],
+        input=[nanoAODv15.luminosityBlock],
         output=[q.lumi],
     )
 
     npartons = Producer(
         call="event::quantity::Rename<UChar_t>({df}, {output}, {input})",
-        input=[nanoAOD.LHE_Njets],
+        input=[nanoAODv15.LHE_Njets],
         output=[q.npartons],
     )
     PUweights = Producer(
         call='event::reweighting::Pileup({df}, correctionManager, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_era}", "{PU_reweighting_variation}")',
-        input=[nanoAOD.Pileup_nTrueInt],
+        input=[nanoAODv15.Pileup_nTrueInt],
         output=[q.puweight],
     )
     PUweights_root = Producer(
         call='event::reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
-        input=[nanoAOD.Pileup_nTrueInt],
+        input=[nanoAODv15.Pileup_nTrueInt],
         output=[q.puweight],
     )
 
@@ -97,32 +97,45 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
+    EvenOddIDFlag = Producer(
+        call="event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})",
+        input=[nanoAODv15.event],
+        output=[q.eventCut_mask],
+    )
+    EvenIDFilter = BaseFilter(
+        call="event::filter::Flag({df}, \"EvenIDFilter\", {input})",
+        input=[q.eventCut_mask],
+    )
+    OddIDFilter = BaseFilter(
+        call="event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})",
+        input=[q.eventCut_mask],
+    )
     # Run 2
     ZPtMassReweighting = Producer(
-        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(
         call="event::reweighting::TopPt({df}, {output}, {input})",
         input=[
-            nanoAOD.GenPart_pdgId,
-            nanoAOD.GenPart_statusFlags,
-            nanoAOD.GenPart_pt,
+            nanoAODv15.GenPart_pdgId,
+            nanoAODv15.GenPart_statusFlags,
+            nanoAODv15.GenPart_pt,
         ],
         output=[q.topPtReweightWeight],
     )
     GGH_NNLO_Reweighting = Producer(
         call='htxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})',
-        input=[nanoAOD.HTXS_Higgs_pt, nanoAOD.HTXS_njets30],
+        input=[nanoAODv15.HTXS_Higgs_pt, nanoAODv15.HTXS_njets30],
         output=[q.ggh_NNLO_weight],
     )
     GGH_WG1_Uncertainties = Producer(
         call="htxs::ggH_WG1_uncertainties({df}, {output_vec}, {input})",
         input=[
-            nanoAOD.HTXS_stage_1_pTjet30,
-            nanoAOD.HTXS_Higgs_pt,
-            nanoAOD.HTXS_njets30,
+            nanoAODv15.HTXS_stage_1_pTjet30,
+            nanoAODv15.HTXS_Higgs_pt,
+            nanoAODv15.HTXS_njets30,
         ],  # using non-updated stage1 flag required by the used macro
         output=[
             q.THU_ggH_Mu,
@@ -138,7 +151,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     QQH_WG1_Uncertainties = Producer(
         call="htxs::qqH_WG1_uncertainties({df}, {output_vec}, {input})",
-        input=[nanoAOD.HTXS_stage1_1_fine_cat_pTjet30GeV],  # using fine stage1.1 flag required by the used macro
+        input=[nanoAODv15.HTXS_stage1_1_fine_cat_pTjet30GeV],  # using fine stage1.1 flag required by the used macro
         output=[
             q.THU_qqH_TOT,
             q.THU_qqH_PTH200,
@@ -154,21 +167,21 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     PS_weight = Producer(
         call="event::reweighting::PartonShower({df}, {output}, {input}, {isr}, {fsr})",
-        input=[nanoAOD.PSWeight],
+        input=[nanoAODv15.PSWeight],
         output=[q.ps_weight],
     )
     LHE_Scale_weight = Producer(
         call="event::reweighting::LHEscale({df}, {output}, {input}, {muR}, {muF})",
-        input=[nanoAOD.LHEScaleWeight],
+        input=[nanoAODv15.LHEScaleWeight],
         output=[q.lhe_scale_weight],
     )
     LHE_PDF_weight = Producer(
         call='event::reweighting::LHEpdf({df}, {output}, {input}, "{pdf_variation}")',
-        input=[nanoAOD.LHEPdfWeight],
+        input=[nanoAODv15.LHEPdfWeight],
         output=[q.lhe_pdf_weight],
     )
     LHE_alphaS_weight = Producer(
         call='event::reweighting::LHEalphaS({df}, {output}, {input}, "{pdf_alphaS_variation}")',
-        input=[nanoAOD.LHEPdfWeight],
+        input=[nanoAODv15.LHEPdfWeight],
         output=[q.lhe_alphaS_weight],
     )

@@ -10,7 +10,7 @@ from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
-from .producers import fakefactors as fakefactors
+from .producers import fakefactors_run3 as fakefactors
 from .quantities import output as q
 
 @dataclass
@@ -138,28 +138,28 @@ def build_config(
             q.raw_fake_factor_2,
             q.fake_factor_2,
             # ----------------------
-            # q.raw_qcd_fake_factor_2,
-            # q.raw_wjets_fake_factor_2,
-            # q.raw_ttbar_fake_factor_2,
-            # # ---
-            # q.qcd_fake_factor_fraction_2,
-            # q.wjets_fake_factor_fraction_2,
-            # q.ttbar_fake_factor_fraction_2,
-            # # ---
-            # q.qcd_DR_SR_correction_2, 
-            # q.wjets_DR_SR_correction_2, 
-            # # ---
-            # q.qcd_correction_wo_DR_SR_2,
-            # q.wjets_correction_wo_DR_SR_2,
-            # q.ttbar_correction_wo_DR_SR_2,
-            # # ---
-            # q.qcd_fake_factor_correction_2,
-            # q.wjets_fake_factor_correction_2,
-            # q.ttbar_fake_factor_correction_2,
-            # # ---
-            # q.qcd_fake_factor_2,
-            # q.wjets_fake_factor_2,
-            # q.ttbar_fake_factor_2,
+            q.raw_qcd_fake_factor_2,
+            q.raw_wjets_fake_factor_2,
+            q.raw_ttbar_fake_factor_2,
+            # ---
+            q.qcd_fake_factor_fraction_2,
+            q.wjets_fake_factor_fraction_2,
+            q.ttbar_fake_factor_fraction_2,
+            # ---
+            q.qcd_DR_SR_correction_2, 
+            q.wjets_DR_SR_correction_2, 
+            # ---
+            q.qcd_correction_wo_DR_SR_2,
+            q.wjets_correction_wo_DR_SR_2,
+            q.ttbar_correction_wo_DR_SR_2,
+            # ---
+            q.qcd_fake_factor_correction_2,
+            q.wjets_fake_factor_correction_2,
+            q.ttbar_fake_factor_correction_2,
+            # ---
+            q.qcd_fake_factor_2,
+            q.wjets_fake_factor_2,
+            q.ttbar_fake_factor_2,
         ],
     )
 
@@ -254,28 +254,28 @@ def build_config(
             q.raw_fake_factor_2,
             q.fake_factor_2,
             # ----------------------
-            # q.raw_qcd_fake_factor_2,
-            # q.raw_wjets_fake_factor_2,
-            # q.raw_ttbar_fake_factor_2,
-            # # ---
-            # q.qcd_fake_factor_fraction_2,
-            # q.wjets_fake_factor_fraction_2,
-            # q.ttbar_fake_factor_fraction_2,
-            # # ---
-            # q.qcd_DR_SR_correction_2, 
-            # q.wjets_DR_SR_correction_2,
-            # # ---
-            # q.qcd_correction_wo_DR_SR_2,
-            # q.wjets_correction_wo_DR_SR_2,
-            # q.ttbar_correction_wo_DR_SR_2,
-            # # ---
-            # q.qcd_fake_factor_correction_2,
-            # q.wjets_fake_factor_correction_2,
-            # q.ttbar_fake_factor_correction_2,
-            # # ---
-            # q.qcd_fake_factor_2,
-            # q.wjets_fake_factor_2,
-            # q.ttbar_fake_factor_2,
+            q.raw_qcd_fake_factor_2,
+            q.raw_wjets_fake_factor_2,
+            q.raw_ttbar_fake_factor_2,
+            # ---
+            q.qcd_fake_factor_fraction_2,
+            q.wjets_fake_factor_fraction_2,
+            q.ttbar_fake_factor_fraction_2,
+            # ---
+            q.qcd_DR_SR_correction_2,
+            q.wjets_DR_SR_correction_2,
+            # ---
+            q.qcd_correction_wo_DR_SR_2,
+            q.wjets_correction_wo_DR_SR_2,
+            q.ttbar_correction_wo_DR_SR_2,
+            # ---
+            q.qcd_fake_factor_correction_2,
+            q.wjets_fake_factor_correction_2,
+            q.ttbar_fake_factor_correction_2,
+            # ---
+            q.qcd_fake_factor_2,
+            q.wjets_fake_factor_2,
+            q.ttbar_fake_factor_2,
         ],
     )
 

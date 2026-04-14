@@ -1,7 +1,6 @@
 from code_generation.configuration import Configuration
-from code_generation.modifiers import EraModifier, SampleModifier
-from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from code_generation.modifiers import EraModifier
+from code_generation.systematics import SystematicShift
 from .producers import scalefactors as scalefactors
 
 
@@ -662,8 +661,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 25,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": -1,  # TODO check if the filter bit is correct
-                            "p2_filterbit": 4,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             "p1_filterbit": -1,  # TODO check if the filter bit is correct
                             "p2_filterbit": 4,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             **electron_tau_cross_trigger_defaults,

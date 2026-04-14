@@ -151,13 +151,13 @@ def build_config(
 
     RecoEmbeddingDeltaRFilter1 = BaseFilter(
         scopes=["ee"],
-        call='event::filter::Quantity<int>({df}, "RecoEmbeddingDeltaRFilter1", {input}, {vec_open}1{vec_close})',
+        call='event::filter::Quantity<bool>({df}, "RecoEmbeddingDeltaRFilter1", {input}, {vec_open}true{vec_close})',
         input=[q.reco_emb_match_1],
     )
 
     RecoEmbeddingDeltaRFilter2 = BaseFilter(
         scopes=["ee"],
-        call='event::filter::Quantity<int>({df}, "RecoEmbeddingDeltaRFilter2", {input}, {vec_open}1{vec_close})',
+        call='event::filter::Quantity<bool>({df}, "RecoEmbeddingDeltaRFilter2", {input}, {vec_open}true{vec_close})',
         input=[q.reco_emb_match_2],
     )
 
@@ -330,27 +330,7 @@ def build_config(
 
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     """
     SingleElectronTriggerFilter = Filter(

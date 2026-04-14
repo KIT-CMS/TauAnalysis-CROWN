@@ -20,7 +20,7 @@ measure_eleES = False
 measure_tauID = False
 
 
-def setup_embedding(configuration: Configuration, scopes: List[str], era: string) -> Configuration:
+def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -> Configuration:
     #####################
     # gen parameters #
     #####################
@@ -755,12 +755,12 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "data/embedding/tau_trigger2018_UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": '""',
-                    "2025": '""',
+                    "2022preEE": "",
+                    "2022postEE": "",
+                    "2023preBPix": "",
+                    "2023postBPix": "",
+                    "2024": "",
+                    "2025": "",
                 }
             ),
         },
@@ -846,43 +846,43 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         {
                             "2025": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2024": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023postBPix": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023preBPix": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022postEE": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022preEE": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
@@ -954,43 +954,43 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         {
                             "2025": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2024": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023postBPix": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023preBPix": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022postEE": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022preEE": [ # TODO: not implemented yet
                                 {
-                                    "flagname": '""',
-                                    "embedding_trigger_sf": '""',
+                                    "flagname": "",
+                                    "embedding_trigger_sf": "",
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
@@ -1061,10 +1061,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
-            producers=[
-                embedding.EmbeddingQuantities,
-                #embedding.TauEmbeddingSelectionSF,
-                ],
+            producers=[embedding.EmbeddingQuantities],
             samples=["embedding", "embedding_mc"],
         ),
     )
@@ -1129,21 +1126,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
         configuration.add_modification_rule(
             scopes,
             AppendProducer(
-                producers=[
-                    #embedding.EmbeddingQuantities,
-                    embedding.TauEmbeddingSelectionSF,
-                    ],
+                producers=[embedding.TauEmbeddingSelectionSF],
                 samples=["embedding", "embedding_mc"],
-            ),
-        )
-        configuration.add_modification_rule(
-            "tt",
-            ReplaceProducer(
-                producers=[
-                    triggers.TTGenerateDoubleTauTriggerFlags,
-                    triggers.TTGenerateDoubleTauTriggerFlagsEmbedding,
-                ],
-                samples="embedding",
             ),
         )
         configuration.add_modification_rule(
@@ -1216,9 +1200,30 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                 samples=["embedding"],
             ),
         )
-        
+        # use other trigger flags for embedding samples
+        configuration.add_modification_rule(
+            "tt",
+            ReplaceProducer(
+                producers=[
+                    triggers.TTGenerateDoubleTauTriggerFlags,
+                    triggers.TTGenerateDoubleTauTriggerFlagsEmbedding,
+                ],
+                samples=["embedding"],
+            ),
+        )
         configuration.add_outputs(
             "tt", triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group
+        )
+        # use other trigger flags for embedding samples
+        configuration.add_modification_rule(
+            "mt",
+            ReplaceProducer(
+                producers=[
+                    triggers.MTGenerateCrossTriggerFlags,
+                    triggers.MTGenerateCrossTriggerFlagsEmbedding,
+                ],
+                samples=["embedding"],
+            ),
         )
         configuration.add_outputs(
             "mt", triggers.MTGenerateCrossTriggerFlagsEmbedding.output_group
@@ -1236,16 +1241,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
             {
                 "tau_emb_sf_file": EraModifier(
                     {
-                        "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                        "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/embedding/tau_emb_2018UL.json.gz",
-                        "2022preEE": '""',
-                        "2022postEE": '""',
-                        "2023preBPix": '""',
-                        "2023postBPix": '""',
-                        "2024": '""',
-                        "2025": '""',
+                        "2016preVFP": "data/embedding/tau_id_es_embedding2016preVFPUL.json.gz",
+                        "2016postVFP": "data/embedding/tau_id_es_embedding2016postVFPUL.json.gz",
+                        "2017": "data/embedding/tau_id_es_embedding2017UL.json.gz",
+                        "2018": "data/embedding/tau_id_es_embedding2018UL.json.gz",
+                        "2022preEE": "",
+                        "2022postEE": "",
+                        "2023preBPix": "",
+                        "2023postBPix": "",
+                        "2024": "",
+                        "2025": "",
                     }
                 ),
                 "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
@@ -1352,7 +1357,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         configuration.ES_ID_SCHEME.mc.producerID,
                         configuration.ES_ID_SCHEME.embedding.producerID,
                     ],
-                    samples="embedding",
+                    samples=["embedding"],
                 ),
             )
             configuration.add_modification_rule(
@@ -1362,7 +1367,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         scalefactors.Tau_1_VsJetTauID_SF,
                         embedding.Tau_1_VsJetTauID_tt_SF,
                     ],
-                    samples="embedding",
+                    samples=["embedding"],
                 ),
             )
             configuration.add_modification_rule(
@@ -1372,7 +1377,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         scalefactors.Tau_2_VsJetTauID_tt_SF,
                         embedding.Tau_2_VsJetTauID_tt_SF,
                     ],
-                    samples="embedding",
+                    samples=["embedding"],
                 ),
             )
             configuration.add_outputs(
@@ -1514,12 +1519,12 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                         "2016postVFP": "data/embedding/eleES_2016postVFPUL.json.gz",
                         "2017": "data/embedding/eleES_2017UL.json.gz",
                         "2018": "data/embedding/eleES_2018UL.json.gz",
-                        "2022preEE": '""',
-                        "2022postEE": '""',
-                        "2023preBPix": '""',
-                        "2023postBPix": '""',
-                        "2024": '""',
-                        "2025": '""',
+                        "2022preEE": "",
+                        "2022postEE": "",
+                        "2023preBPix": "",
+                        "2023postBPix": "",
+                        "2024": "",
+                        "2025": "",
                     }
                 ),
                 "ele_ES_json_name": "eleES",
@@ -1533,7 +1538,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                 "global",
                 ReplaceProducer(
                     producers=[
-                        electrons.ElectronPtCorrectionMC,
+                        electrons.ElectronPtCorrectionMC_v9,
                         electrons.ElectronPtCorrectionEmbedding,
                     ],
                     samples=["embedding"],

@@ -1,5 +1,4 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults
 
 class Inputs:
@@ -16,7 +15,7 @@ class Inputs:
         q.mass_2,
         q.eta_2,
         q.pt_1,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]
@@ -27,7 +26,7 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_2,
         q.eta_2,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]
@@ -46,14 +45,14 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_1,
         q.mass_2,
-        q.met,
+        q.puppimet,
         q.m_vis,
         q.pt_tt,
     ]
 
 with defaults(scopes=["mt"]):
     RawFakeFactors_sm_mt = Producer(
-        call='''fakefactors::sm::raw_fakefactor_lt(
+        call='''fakefactors_run3::sm::raw_fakefactor_lt(
             {df},
             correctionManager,
             {output},
@@ -67,7 +66,7 @@ with defaults(scopes=["mt"]):
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_mt = Producer(
-        call='''fakefactors::sm::fakefactor_mt(
+        call='''fakefactors_run3::sm::fakefactor_mt(
             {df},
             correctionManager,
             {output},
@@ -87,7 +86,7 @@ with defaults(scopes=["mt"]):
         output=[q.fake_factor_2],
     )
     # FakeFactors_sm_mt_split_info = Producer(
-    #     call='''fakefactors::sm::fakefactor_lt_split_info(
+    #     call='''fakefactors_run3::sm::fakefactor_lt_split_info(
     #         {df},
     #         correctionManager,
     #         {output_vec},
@@ -127,7 +126,7 @@ with defaults(scopes=["mt"]):
 
 with defaults(scopes=["et"]):
     RawFakeFactors_sm_et = Producer(
-        call='''fakefactors::sm::raw_fakefactor_lt(
+        call='''fakefactors_run3::sm::raw_fakefactor_lt(
             {df},
             correctionManager,
             {output},
@@ -141,7 +140,7 @@ with defaults(scopes=["et"]):
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_et = Producer(
-        call='''fakefactors::sm::fakefactor_et(
+        call='''fakefactors_run3::sm::fakefactor_et(
             {df},
             correctionManager,
             {output},
@@ -161,7 +160,7 @@ with defaults(scopes=["et"]):
         output=[q.fake_factor_2],
     )
     # FakeFactors_sm_et_split_info = Producer(
-    #     call='''fakefactors::sm::fakefactor_lt_split_info(
+    #     call='''fakefactors_run3::sm::fakefactor_lt_split_info(
     #         {df},
     #         correctionManager,
     #         {output_vec},
@@ -201,29 +200,29 @@ with defaults(scopes=["et"]):
 
 with defaults(scopes=["tt"]):
     RawFakeFactors_sm_tt_1 = Producer(
-        call='fakefactors::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{file}")',
+        call='fakefactors_run3::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{file}")',
         input=Inputs.raw_fakefactor_tt,
         output=[q.raw_fake_factor_1],
     )
     RawFakeFactors_sm_tt_2 = Producer(
-        call='fakefactors::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{file}")',
+        call='fakefactors_run3::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{file}")',
         input=Inputs.raw_fakefactor_tt,
         output=[q.raw_fake_factor_2],
     )
 
     FakeFactors_sm_tt_1 = Producer(
-        call='fakefactors::sm::fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")',
+        call='fakefactors_run3::sm::fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")',
         input=Inputs.fakefactor_tt,
         output=[q.fake_factor_1],
     )
     FakeFactors_sm_tt_2 = Producer(
-        call='fakefactors::sm::fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")',
+        call='fakefactors_run3::sm::fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")',
         input=Inputs.fakefactor_tt,
         output=[q.fake_factor_2],
     )
 
     FakeFactors_sm_tt_split_info_1 = Producer(
-        call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")''',
+        call='''fakefactors_run3::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")''',
         input=Inputs.fakefactor_tt,
         output=[
             q.raw_qcd_fake_factor_1,
@@ -235,7 +234,7 @@ with defaults(scopes=["tt"]):
         ],
     )
     FakeFactors_sm_tt_split_info_2 = Producer(
-        call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")''',
+        call='''fakefactors_run3::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")''',
         input=Inputs.fakefactor_tt,
         output=[
             q.raw_qcd_fake_factor_2,

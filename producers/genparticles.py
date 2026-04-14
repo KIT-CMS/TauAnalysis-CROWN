@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 ####################
@@ -78,12 +78,12 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
 
 with defaults(input=[nanoAOD.GenJet_pt, nanoAOD.Jet_genJetIdx, nanoAOD.Tau_jetIdx, q.dileptonpair]):
     gen_taujet_pt_1 = Producer(
-        call="quantities::GenJetMatching({df}, {output}, {input}, 0)",
+        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 0)",
         output=[q.gen_taujet_pt_1],
         scopes=["tt"],
     )
     gen_taujet_pt_2 = Producer(
-        call="quantities::GenJetMatching({df}, {output}, {input}, 1)",
+        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 1)",
         output=[q.gen_taujet_pt_2],
         scopes=["mt", "et", "tt"],
     )
@@ -164,35 +164,39 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         subproducers=[GenPairForGenMatching, GenMatchP1, GenMatchP2],
     )
 
-CalculateGenBosonVector = Producer(
-    call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
-    scopes=['global'],
-    input=[
-        nanoAOD.GenPart_pt,
-        nanoAOD.GenPart_eta,
-        nanoAOD.GenPart_phi,
-        nanoAOD.GenPart_mass,
-        nanoAOD.GenPart_pdgId,
-        nanoAOD.GenPart_status,
-        nanoAOD.GenPart_statusFlags,
-    ],
-    output=[q.genboson_p4],
-)
+with defaults(scopes=["global"]):
+    CalculateGenBosonVector = Producer(
+        call='genparticles::GetBoson({df}, {output}, {input}, {is_data})',
+        input=[
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
+        ],
+        output=[q.genboson_p4],
+    )
 
-CalculateVisGenBosonVector = Producer(
-    call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
-    scopes=['global'],
-    input=[
-        nanoAOD.GenPart_pt,
-        nanoAOD.GenPart_eta,
-        nanoAOD.GenPart_phi,
-        nanoAOD.GenPart_mass,
-        nanoAOD.GenPart_pdgId,
-        nanoAOD.GenPart_status,
-        nanoAOD.GenPart_statusFlags,
-    ],
-    output=[q.visgenboson_p4],
-)
+    CalculateVisGenBosonVector = Producer(
+        call='genparticles::GetVisibleBoson({df}, {output}, {input}, {is_data})',
+        input=[
+            nanoAOD.GenPart_pt,
+            nanoAOD.GenPart_eta,
+            nanoAOD.GenPart_phi,
+            nanoAOD.GenPart_mass,
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_status,
+            nanoAOD.GenPart_statusFlags,
+        ],
+        output=[q.visgenboson_p4],
+    )
+    GenBosonMass = Producer(
+        call="lorentzvector::GetMass({df}, {output}, {input})",
+        input=[q.genboson_p4],
+        output=[q.genbosonmass],
+    )
 
 ##############
 ## DY bug samples
