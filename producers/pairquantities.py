@@ -105,7 +105,8 @@ with defaults(scopes=["et", "ee", "em"]):
         electron_dz_1 = Producer(input=[nanoAOD.Electron_dz, q.dileptonpair], output=[q.dz_1])
         electron_dxy_1 = Producer(input=[nanoAOD.Electron_dxy, q.dileptonpair], output=[q.dxy_1])
         electron_iso_1 = Producer(input=[nanoAOD.Electron_pfRelIso03_all, q.dileptonpair], output=[q.iso_1])
-
+        electron_mass_nano_1 = Producer(input=[nanoAOD.Electron_mass, q.dileptonpair], output=[q.electron_mass_nano_1])
+    
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 0)"):
         electron_q_1 = Producer(input=[nanoAOD.Electron_charge, q.dileptonpair], output=[q.q_1])
 
@@ -116,6 +117,7 @@ with defaults(scopes=["et", "ee", "em"]):
                 eta_1,
                 phi_1,
                 mass_1,
+                electron_mass_nano_1,
                 electron_dxy_1,
                 electron_dz_1,
                 electron_q_1,
@@ -128,6 +130,7 @@ with defaults(scopes=["ee"]):
         electron_dz_2 = Producer(input=[nanoAOD.Electron_dz, q.dileptonpair], output=[q.dz_2])
         electron_iso_2 = Producer(input=[nanoAOD.Electron_pfRelIso03_all, q.dileptonpair], output=[q.iso_2])
         electron_dxy_2 = Producer(input=[nanoAOD.Electron_dxy, q.dileptonpair], output=[q.dxy_2])
+        electron_mass_nano_2 = Producer(input=[nanoAOD.Electron_mass, q.dileptonpair], output=[q.electron_mass_nano_2])
 
     with defaults(call="event::quantity::Get<int>({df}, {output}, {input}, 1)"):
         electron_q_2 = Producer(input=[nanoAOD.Electron_charge, q.dileptonpair], output=[q.q_2])
@@ -139,6 +142,7 @@ with defaults(scopes=["ee"]):
                 eta_2,
                 phi_2,
                 mass_2,
+                electron_mass_nano_2,
                 electron_dxy_2,
                 electron_dz_2,
                 electron_q_2,

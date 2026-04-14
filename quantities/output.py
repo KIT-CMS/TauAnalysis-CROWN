@@ -268,6 +268,18 @@ p4_1 = Quantity()
 p4_1_uncorrected = Quantity()
 p4_2 = Quantity()
 p4_2_uncorrected = Quantity()
+# Internal quantities for reco-electron to embedding-muon direction matching.
+emb_muon_p4_1 = Quantity()
+emb_muon_p4_2 = Quantity()
+matched_emb_muon_p4_1 = Quantity()
+matched_emb_muon_p4_2 = Quantity()
+reco_emb_deltaR_1 = Quantity()
+reco_emb_deltaR_2 = Quantity()
+reco_emb_found_match_1 = Quantity()
+reco_emb_found_match_2 = Quantity()
+reco_emb_match_1 = Quantity()
+reco_emb_match_2 = Quantity()
+
 
 #### pairquantities
 
@@ -295,6 +307,8 @@ is_global_1 = Quantity()
 is_global_2 = Quantity()
 tau_decaymode_1 = Quantity()
 tau_decaymode_2 = Quantity()
+electron_mass_nano_1 = Quantity()
+electron_mass_nano_2 = Quantity()
 
 # DiTauPairMETQuantities
 pzetamissvis = Quantity()
@@ -437,6 +451,31 @@ emb_idsel_wgt_1 = Quantity()
 emb_idsel_wgt_2 = Quantity()
 emb_trg_wgt_1 = Quantity()
 emb_trg_wgt_2 = Quantity()
+
+emb_muon_pt_1 = Quantity()
+emb_muon_eta_1 = Quantity()
+emb_muon_phi_1 = Quantity()
+emb_muon_mass_1 = Quantity()
+emb_muon_q_1 = Quantity()
+emb_muon_db_1 = Quantity()
+emb_muon_vtxX_1 = Quantity()
+emb_muon_vtxY_1 = Quantity()
+emb_muon_vtxZ_1 = Quantity()
+
+emb_muon_pt_2 = Quantity()
+emb_muon_eta_2 = Quantity()
+emb_muon_phi_2 = Quantity()
+emb_muon_mass_2 = Quantity()
+emb_muon_q_2 = Quantity()
+emb_muon_db_2 = Quantity()
+emb_muon_vtxX_2 = Quantity()
+emb_muon_vtxY_2 = Quantity()
+emb_muon_vtxZ_2 = Quantity()
+
+#for test if reco particles are electrons
+electron_id_wp90_1 = Quantity()
+electron_id_wp90_2 = Quantity()
+
 
 ## training quantities
 deltaPhi_ditaupair = Quantity()

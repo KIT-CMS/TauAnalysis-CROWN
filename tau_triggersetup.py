@@ -347,7 +347,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
 
     # single electron
     singleelectron_trigger_defaults = {
-        "filterbit": 1, 
+        "filterbit": -1, 
         "trigger_particle_id": 11,
         "max_deltaR_triggermatch": 0.4,
     }
@@ -1297,20 +1297,20 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         },
     )
 
-    # doubleelectron trigger  # applying the same defaults as for the singleelectron trigger
-    doubleelectron_trigger_defaults = {  # TODO check if (even?) this is (still) correct
+    doubleelectron_trigger_leg_defaults = {
+        "ptcut": 24,
+        "etacut": 2.1,
+        "filterbit": 4,
+        "trigger_particle_id": 11,
+    }
+    doubleelectron_trigger_defaults = {
         "flagname": "trg_double_ele24",
         "hlt_path": "HLT_DoubleEle24_eta2p1_WPTight_Gsf",
-        "p1_ptcut": 24,
-        "p2_ptcut": 24,
-        "p1_ptcut": 24,
-        "p2_ptcut": 24,
-        "p1_etacut": 2.1,
-        "p1_filterbit": 4,
-        "p1_trigger_particle_id": 11,
-        "p2_etacut": 2.1,
-        "p2_filterbit": 4,
-        "p2_trigger_particle_id": 11,
+        **{
+            f"p{leg_index}_{parameter}": value
+            for leg_index in (1, 2)
+            for parameter, value in doubleelectron_trigger_leg_defaults.items()
+        },
         "max_deltaR_triggermatch": 0.4,
     }
     configuration.add_config_parameters(

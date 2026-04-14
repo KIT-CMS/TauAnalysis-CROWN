@@ -13,6 +13,79 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         #TauEmbeddingnInitialPairCandidates = Producer(input=[nanoAOD.TauEmbedding_nInitialPairCandidates], output=[q.emb_InitialPairCandidates])
         #TauEmbeddingSelectionOldMass = Producer(input=[nanoAOD.TauEmbedding_SelectionOldMass], output=[q.emb_SelectionOldMass])
         #TauEmbeddingSelectionNewMass = Producer(input=[nanoAOD.TauEmbedding_SelectionNewMass], output=[q.emb_SelectionNewMass])
+        TauEmbeddingPtLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_ptLeadingMuon],
+            output=[q.emb_muon_pt_1],
+        )
+        TauEmbeddingEtaLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_etaLeadingMuon],
+            output=[q.emb_muon_eta_1],
+        )
+        TauEmbeddingPhiLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_phiLeadingMuon],
+            output=[q.emb_muon_phi_1],
+        )
+        TauEmbeddingMassLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_massLeadingMuon],
+            output=[q.emb_muon_mass_1],
+        )
+        TauEmbeddingChargeLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_chargeLeadingMuon],
+            output=[q.emb_muon_q_1],
+        )
+        TauEmbeddingDBLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_dbLeadingMuon],
+            output=[q.emb_muon_db_1],
+        )
+        TauEmbeddingVtxXLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxXLeadingMuon],
+            output=[q.emb_muon_vtxX_1],
+        )
+        TauEmbeddingVtxYLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxYLeadingMuon],
+            output=[q.emb_muon_vtxY_1],
+        )
+        TauEmbeddingVtxZLeadingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxZLeadingMuon],
+            output=[q.emb_muon_vtxZ_1],
+        )
+
+        TauEmbeddingPtTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_ptTrailingMuon],
+            output=[q.emb_muon_pt_2],
+        )
+        TauEmbeddingEtaTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_etaTrailingMuon],
+            output=[q.emb_muon_eta_2],
+        )
+        TauEmbeddingPhiTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_phiTrailingMuon],
+            output=[q.emb_muon_phi_2],
+        )
+        TauEmbeddingMassTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_massTrailingMuon],
+            output=[q.emb_muon_mass_2],
+        )
+        TauEmbeddingChargeTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_chargeTrailingMuon],
+            output=[q.emb_muon_q_2],
+        )
+        TauEmbeddingDBTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_dbTrailingMuon],
+            output=[q.emb_muon_db_2],
+        )
+        TauEmbeddingVtxXTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxXTrailingMuon],
+            output=[q.emb_muon_vtxX_2],
+        )
+        TauEmbeddingVtxYTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxYTrailingMuon],
+            output=[q.emb_muon_vtxY_2],
+        )
+        TauEmbeddingVtxZTrailingMuon = Producer(
+            input=[nanoAOD.TauEmbedding_vtxZTrailingMuon],
+            output=[q.emb_muon_vtxZ_2],
+        )
 
     with defaults(call="event::quantity::Rename<Bool_t>({df}, {output}, {input})"):
         TauEmbeddingIsMediumLeadingMuon = Producer(input=[nanoAOD.TauEmbedding_isMediumLeadingMuon], output=[q.emb_isMediumLeadingMuon])
@@ -53,6 +126,25 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 # TauEmbeddingnInitialPairCandidates,
                 # TauEmbeddingSelectionOldMass,
                 # TauEmbeddingSelectionNewMass,
+                TauEmbeddingPtLeadingMuon,
+                TauEmbeddingEtaLeadingMuon,
+                TauEmbeddingPhiLeadingMuon,
+                TauEmbeddingMassLeadingMuon,
+                TauEmbeddingChargeLeadingMuon,
+                TauEmbeddingDBLeadingMuon,
+                TauEmbeddingVtxXLeadingMuon,
+                TauEmbeddingVtxYLeadingMuon,
+                TauEmbeddingVtxZLeadingMuon,
+                TauEmbeddingPtTrailingMuon,
+                TauEmbeddingEtaTrailingMuon,
+                TauEmbeddingPhiTrailingMuon,
+                TauEmbeddingMassTrailingMuon,
+                TauEmbeddingChargeTrailingMuon,
+                TauEmbeddingDBTrailingMuon,
+                TauEmbeddingVtxXTrailingMuon,
+                TauEmbeddingVtxYTrailingMuon,
+                TauEmbeddingVtxZTrailingMuon,
+
             ],
         )
         TauEmbeddingSelectionSF = ProducerGroup(
