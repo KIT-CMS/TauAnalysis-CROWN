@@ -8,7 +8,7 @@ from .producers import pairselection as pairselection
 from .producers import event as event
 from .producers import electrons as electrons
 from .producers import embedding as embedding
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv15 as nanoAOD
 from .quantities import output as q
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier
@@ -89,7 +89,7 @@ def build_config(
             "max_ele_eta": 2.4,
             "max_ele_dxy": 0.045,
             "max_ele_dz": 0.2,
-            "ele_iso_cut": 0.15,
+            "max_ele_iso": 0.15,
         },
     )
 
