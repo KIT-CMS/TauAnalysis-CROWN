@@ -279,10 +279,10 @@ def build_config(
                     "2016postVFP": '""',
                     "2017": '""',
                     "2018": '""',
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jetid.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jetid.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07jetid.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetid.json.gz"',
+                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jetid.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                     "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                 }
@@ -294,14 +294,14 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
                     "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
                     "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
-                    # "2016preVFP": "data/tmp_jet_energy_corrections/Run2-2016preVFP-UL-NanoAODv15/jet_jerc.json.gz",
-                    # "2016postVFP": "data/tmp_jet_energy_corrections/Run2-2016postVFP-UL-NanoAODv15/jet_jerc.json.gz",
-                    # "2017": "data/tmp_jet_energy_corrections/Run2-2017-UL-NanoAODv15/jet_jerc.json.gz",
-                    # "2018": "data/tmp_jet_energy_corrections/Run2-2018-UL-NanoAODv15/jet_jerc.json.gz",
-                    "2022preEE": "data/tmp_jet_energy_corrections/Run3-22CDSep23-Summer22-NanoAODv12/jet_jerc.json.gz",
-                    "2022postEE": "data/tmp_jet_energy_corrections/Run3-22EFGSep23-Summer22EE-NanoAODv12/jet_jerc.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz",
+                    # "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-04-13/jet_jerc.json.gz",
+                    # "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-04-13/jet_jerc.json.gz",
+                    # "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-04-13/jet_jerc.json.gz",
+                    # "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-04-13/jet_jerc.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jet_jerc.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jet_jerc.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jet_jerc.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jet_jerc.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz",
                 }
@@ -361,12 +361,12 @@ def build_config(
                     "2016postVFP": '""',
                     "2017": '""',
                     "2018": '""',
-                    "2022preEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jetvetomaps.json.gz",
-                    "2022postEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
-                    "2023preBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
-                    "2023postBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
-                    "2024":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
-                    "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jetvetomaps.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jetvetomaps.json.gz",
                 }
             ),
             "jet_veto_map_name": EraModifier(
@@ -1059,8 +1059,6 @@ def build_config(
             met.MetBasics_v15,
             met.MetMask,
             event.EvenOddIDFlag,
-            event.EvenIDFilter,
-            # event.OddIDFilter,
         ],
     )
     configuration.add_producers(
@@ -1236,6 +1234,25 @@ def build_config(
     ################################
     ######### Modifications ########
     ################################
+    
+    if era == "2024":
+        # separate MC for 2024 and 2025 by even/odd event number
+        configuration.add_modification_rule(
+            "global",
+            AppendProducer(
+                producers=[event.EvenIDFilter],
+                exclude_samples=["data", "embedding"],
+            ),
+        )
+    if era == "2025":
+        # separate MC for 2024 and 2025 by even/odd event number
+        configuration.add_modification_rule(
+            "global",
+            AppendProducer(
+                producers=[event.OddIDFilter],
+                exclude_samples=["data", "embedding"],
+            ),
+        )
 
     configuration.add_modification_rule(
         "global",
