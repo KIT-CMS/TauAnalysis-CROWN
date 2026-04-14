@@ -1,5 +1,5 @@
-#ifndef GUARDFAKEFACTORS_RUN3_H
-#define GUARDFAKEFACTORS_RUN3_H
+#ifndef GUARD_FAKEFACTORS_RUN3_H
+#define GUARD_FAKEFACTORS_RUN3_H
 /// The namespace that contains the fake factor function.
 #include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
@@ -1130,4 +1130,4 @@ namespace fakefactors_run3 {
 
 } // namespace sm
 } // namespace fakefactors_run3
-#endif /* GUARDFAKEFACTORS_RUN3_H */
+#endif /* GUARD_FAKEFACTORS_RUN3_H */

@@ -1,5 +1,5 @@
-#ifndef GUARDFAKEFACTORS_RUN3_H
-#define GUARDFAKEFACTORS_RUN3_H
+#ifndef GUARD_FAKEFACTORS_RUN3_H
+#define GUARD_FAKEFACTORS_RUN3_H
 
 namespace fakefactors_run3 {
 namespace sm{
@@ -159,4 +159,4 @@ namespace sm{
         const std::string &ff_corr_file);
 }  // namespace sm
 } // namespace fakefactors_run3
-#endif /* GUARDFAKEFACTORS_RUN3_H */
+#endif /* GUARD_FAKEFACTORS_RUN3_H */
