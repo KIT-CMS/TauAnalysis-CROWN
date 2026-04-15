@@ -1,4 +1,3 @@
-from ..quantities import nanoAOD as nanoAOD
 from ..quantities import output as q
 from ..scripts.CROWNWrapper import Producer, defaults
 
@@ -25,7 +24,7 @@ class Inputs:
         q.jeta_1,
         q.jpt_2,
         q.jeta_2,
-        q.met,
+        q.puppimet,
         q.deltaEta_ditaupair,
         q.pt_tt,
         q.pt_ttjj,

@@ -12,7 +12,7 @@ from .producers import scalefactors as scalefactors
 from .producers import tagandprobe as tagandprobe
 from .producers import embedding as embedding
 from .producers import electrons as electrons
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv9 as nanoAOD
 from .quantities import output as q
 from .quantities import tagandprobe_output as qt
 from code_generation.configuration import Configuration
@@ -188,13 +188,13 @@ def build_config(
             "jet_reapplyJES": False,
             "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jer_shift": "nom",  # or "up", "down"
             "jet_jec_file": EraModifier(
                 {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                    "2016preVFP": "data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
+                    "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
+                    "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
                 }
             ),
             "jet_jer_tag": EraModifier(
@@ -205,16 +205,15 @@ def build_config(
                     "2018": '"Summer19UL18_JRV2_MC"',
                 }
             ),
-            "jet_jes_tag_data": '""',
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
+                    "2016preVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16APV_V7_MC",
+                    "2016postVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16_V7_MC",
+                    "2017": "NONE" if sample in ["embedding", "data"] else "Summer19UL17_V5_MC",
+                    "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
                 }
             ),
-            "jet_jec_algo": '"AK4PFchs"',
+            "jet_jec_algo": "AK4PFchs",
         },
     )
 
@@ -287,48 +286,48 @@ def build_config(
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2017": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "mc_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "mc_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "mc_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016postVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "mc_trigger_sf": "Trg_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016preVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "mc_trigger_sf": "Trg_pt_eta_bins",
-                            "mc_muon_trg_extrapolation": 1.0,  # for nominal case
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                 }
@@ -345,48 +344,48 @@ def build_config(
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2017": [
                         {
                             "flagname": "trg_wgt_single_mu24",
                             "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                         {
                             "flagname": "trg_wgt_single_mu24ormu27",
                             "embedding_trigger_sf": "Trg_IsoMu27_or_IsoMu24_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016postVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "embedding_trigger_sf": "Trg_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2016preVFP": [
                         {
                             "flagname": "trg_wgt_single_mu22",
                             "embedding_trigger_sf": "Trg_pt_eta_bins",
-                            "muon_trg_extrapolation": 1.0,  # for nominal case
+                            "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                 }
@@ -749,10 +748,10 @@ def build_config(
         ["mm"],
         AppendProducer(
             producers=[
-                scalefactors.TauEmbeddingMuonIDSF_1_MC,
-                scalefactors.TauEmbeddingMuonIsoSF_1_MC,
-                scalefactors.TauEmbeddingMuonIDSF_2_MC,
-                scalefactors.TauEmbeddingMuonIsoSF_2_MC,
+                scalefactors.PrivateMuonIDSF_1_MC,
+                scalefactors.PrivateMuonIsoSF_1_MC,
+                scalefactors.PrivateMuonIDSF_2_MC,
+                scalefactors.PrivateMuonIsoSF_2_MC,
                 scalefactors.MTGenerateSingleMuonTriggerSF_MC,
             ],
             exclude_samples=["data", "embedding", "embedding_mc"],
