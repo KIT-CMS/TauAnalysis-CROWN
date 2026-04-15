@@ -1244,6 +1244,14 @@ def build_config(
             ),
         )
     if era == "2025":
+        # temporary root pileup for data 2025 by tau fw group, 23/03/2026
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[event.PUweights, event.PUweights_root],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
         # separate MC for 2024 and 2025 by even/odd event number
         configuration.add_modification_rule(
             "global",
