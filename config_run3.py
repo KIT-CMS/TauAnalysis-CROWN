@@ -115,7 +115,7 @@ def build_config(
                     "2023preBPix": "data/golden_json/Cert_Collisions2023_366442_370790_Golden.json",
                     "2023postBPix": "data/golden_json/Cert_Collisions2023_366442_370790_Golden.json",
                     "2024": "data/golden_json/Cert_Collisions2024_378981_386951_Golden.json",
-                    "2025": "data/golden_json/Cert_Collisions2025_391658_398860_Golden.json", # last Run2025G run is 398903, update golden json when available
+                    "2025": "data/golden_json/Cert_Collisions2025_391658_398903_Golden.json", 
                 }
             ),
             
@@ -437,10 +437,7 @@ def build_config(
             "pairselection_min_dR": 0.5,
             # propagate jet and lepton sf correction to the met
             "propagateLeptons": SampleModifier(
-                {"data": False,
-                "data_E": False,
-                "data_F": False,
-                "data_G": False},
+                {"data": False},
                 default=True,
             ),
             "propagateJets": True,
@@ -536,6 +533,7 @@ def build_config(
             "tau_id_algorithm": "DeepTau2018v2p5",
             "vsjet_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
                     "vsjet_tau_id_WP": "{wp}".format(wp=wp),
@@ -553,6 +551,7 @@ def build_config(
             ],
             "vsele_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSe",
                     "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
                     "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
                     "vsele_tau_id_WP": "{wp}".format(wp=wp),
@@ -572,6 +571,7 @@ def build_config(
             ],
             "vsmu_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSmu",
                     "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
@@ -601,6 +601,7 @@ def build_config(
             # for Run 3 new TAU corrections, only the Medium wp sf are provided
             "vsjet_tau_id_wp_bit": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "vsjet_tau_id_WPbit": bit,
                     "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
@@ -890,6 +891,7 @@ def build_config(
                 "tau_id_algorithm": "DeepTau2017v2p1",
                 "vsjet_tau_id_wp_bit": [
                         {
+                            "tau_id_discriminator": "DeepTau2017v2p1VSjet",
                             "vsjet_tau_id_WPbit": bit,
                             "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                             "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
@@ -901,6 +903,7 @@ def build_config(
                     ],
                 "vsjet_tau_id": [
                         {
+                            "tau_id_discriminator": "DeepTau2017v2p1VSjet",
                             "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
                             "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
                             "vsjet_tau_id_WP": "{wp}".format(wp=wp),
@@ -917,6 +920,7 @@ def build_config(
                     ],
                 "vsele_tau_id": [
                     {
+                        "tau_id_discriminator": "DeepTau2017v2p1VSe",
                         "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
                         "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
                         "vsele_tau_id_WP": "{wp}".format(wp=wp),
@@ -937,6 +941,7 @@ def build_config(
                 # remove dependency on vs ele wp for consistency since it's not needed in run2
                 "vsmu_tau_id": [
                     {
+                        "tau_id_discriminator": "DeepTau2017v2p1VSmu",
                         "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_1".format(wp=wp),
                         "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_2".format(wp=wp),
                         "vsmu_tau_id_WP": "{wp}".format(wp=wp),
