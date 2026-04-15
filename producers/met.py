@@ -96,19 +96,19 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     # for run 3 v15
 
     METTypeI = Producer(
-        call='met::TypeIMETCorrections({df}, correctionManager, {output}, {input})',
+        call='met::Type1Correction({df}, {output}, {input})',
         input=[
             q.met_p4,
-            q.Jet_pt_L1corrected, 
-            q.CorrT1METJet_pt_corrected,
-            nanoAOD.Jet_eta,
-            nanoAOD.CorrT1METJet_eta,
+            q.CombJet_pt_L1corrected,
+            q.CombJet_pt_corrected,
             nanoAOD.Jet_phi,
-            nanoAOD.CorrT1METJet_phi,
+            nanoAOD.Jet_muonSubtrDeltaPhi,
             nanoAOD.Jet_chEmEF,
             nanoAOD.Jet_neEmEF,
+            nanoAOD.CorrT1METJet_phi,
+            nanoAOD.CorrT1METJet_muonSubtrDeltaPhi,
             nanoAOD.CorrT1METJet_EmEF,
-            ],
+        ],
         output = [q.met_p4_jetcorrected],
     )
     

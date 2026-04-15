@@ -8,7 +8,7 @@ class Inputs:
         q.njets, 
         q.mt_1,
     ]
-    fakefactor_mt = [
+    fakefactor_lt = [
         q.pt_2,
         q.njets,
         q.mt_1,
@@ -16,6 +16,9 @@ class Inputs:
         q.mass_2,
         q.eta_2,
         q.pt_1,
+        # q.jpt_1,
+        # q.jpt_2,
+        q.deltaR_ditaupair,
         q.met,
         q.m_vis,
         q.pt_tt,
@@ -28,7 +31,6 @@ class Inputs:
         q.mass_2,
         q.eta_2,
         q.met,
-        q.m_vis,
         q.pt_tt,
     ]
     raw_fakefactor_tt = [
@@ -46,8 +48,12 @@ class Inputs:
         q.tau_decaymode_2,
         q.mass_1,
         q.mass_2,
+        q.eta_1,
+        q.eta_2,
+        # q.jpt_1,
+        # q.jpt_2,
+        q.deltaR_ditaupair,
         q.met,
-        q.m_vis,
         q.pt_tt,
     ]
 
@@ -67,7 +73,7 @@ with defaults(scopes=["mt"]):
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_mt = Producer(
-        call='''fakefactors::sm::fakefactor_mt(
+        call='''fakefactors::sm::fakefactor_lt(
             {df},
             correctionManager,
             {output},
@@ -83,7 +89,7 @@ with defaults(scopes=["mt"]):
             "{ttbar_non_closure_correction}",
             "{file}",
             "{corr_file}")''',
-        input=Inputs.fakefactor_mt,
+        input=Inputs.fakefactor_lt,
         output=[q.fake_factor_2],
     )
     # FakeFactors_sm_mt_split_info = Producer(
@@ -141,7 +147,7 @@ with defaults(scopes=["et"]):
         output=[q.raw_fake_factor_2],
     )
     FakeFactors_sm_et = Producer(
-        call='''fakefactors::sm::fakefactor_et(
+        call='''fakefactors::sm::fakefactor_lt(
             {df},
             correctionManager,
             {output},
@@ -157,7 +163,7 @@ with defaults(scopes=["et"]):
             "{ttbar_non_closure_correction}",
             "{file}",
             "{corr_file}")''',
-        input=Inputs.fakefactor_et,
+        input=Inputs.fakefactor_lt,
         output=[q.fake_factor_2],
     )
     # FakeFactors_sm_et_split_info = Producer(
@@ -222,27 +228,27 @@ with defaults(scopes=["tt"]):
         output=[q.fake_factor_2],
     )
 
-    FakeFactors_sm_tt_split_info_1 = Producer(
-        call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")''',
-        input=Inputs.fakefactor_tt,
-        output=[
-            q.raw_qcd_fake_factor_1,
-            q.qcd_fake_factor_fraction_1,
-            q.qcd_DR_SR_correction_1,
-            q.qcd_correction_wo_DR_SR_1,
-            q.qcd_fake_factor_correction_1,
-            q.qcd_fake_factor_1,
-        ],
-    )
-    FakeFactors_sm_tt_split_info_2 = Producer(
-        call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")''',
-        input=Inputs.fakefactor_tt,
-        output=[
-            q.raw_qcd_fake_factor_2,
-            q.qcd_fake_factor_fraction_2,
-            q.qcd_DR_SR_correction_2,
-            q.qcd_correction_wo_DR_SR_2,
-            q.qcd_fake_factor_correction_2,
-            q.qcd_fake_factor_2,
-        ],
-    )
+    # FakeFactors_sm_tt_split_info_1 = Producer(
+    #     call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{QCD_non_closure_correction}", "{QCD_DR_SR_correction}", "{file}", "{corr_file}")''',
+    #     input=Inputs.fakefactor_tt,
+    #     output=[
+    #         q.raw_qcd_fake_factor_1,
+    #         q.qcd_fake_factor_fraction_1,
+    #         q.qcd_DR_SR_correction_1,
+    #         q.qcd_correction_wo_DR_SR_1,
+    #         q.qcd_fake_factor_correction_1,
+    #         q.qcd_fake_factor_1,
+    #     ],
+    # )
+    # FakeFactors_sm_tt_split_info_2 = Producer(
+    #     call='''fakefactors::sm::fakefactor_tt_split_info({df}, correctionManager, {output_vec}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{QCD_subleading_non_closure_correction}", "{QCD_subleading_DR_SR_correction}", "{file}", "{corr_file}")''',
+    #     input=Inputs.fakefactor_tt,
+    #     output=[
+    #         q.raw_qcd_fake_factor_2,
+    #         q.qcd_fake_factor_fraction_2,
+    #         q.qcd_DR_SR_correction_2,
+    #         q.qcd_correction_wo_DR_SR_2,
+    #         q.qcd_fake_factor_correction_2,
+    #         q.qcd_fake_factor_2,
+    #     ],
+    # )

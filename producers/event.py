@@ -84,7 +84,7 @@ with defaults(scopes=["global"]):
         output=[q.puweight],
     )
     PUweights_root = Producer(
-        call='event::reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
+        call='event::reweighting::PUWeightROOT({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
         input=[nanoAOD.Pileup_nTrueInt],
         output=[q.puweight],
     )
@@ -97,10 +97,18 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
-    EventCut = Producer(
-        call='event::quantity::EventMask({df}, {output}, {input})',
+    EvenOddIDFlag = Producer(
+        call="event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})",
         input=[nanoAOD.event],
-        output=[q.EventCut_mask],
+        output=[q.eventCut_mask],
+    )
+    EvenIDFilter = BaseFilter(
+        call="event::filter::Flag({df}, \"EvenIDFilter\", {input})",
+        input=[q.eventCut_mask],
+    )
+    OddIDFilter = BaseFilter(
+        call="event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})",
+        input=[q.eventCut_mask],
     )
     # Run 2
     ZPtMassReweighting = Producer(

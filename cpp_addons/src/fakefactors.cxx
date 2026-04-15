@@ -160,7 +160,7 @@ namespace fakefactors {
          * @returns a dataframe with the fake factors
          */
         ROOT::RDF::RNode
-        fakefactor_mt(
+        fakefactor_lt(
             ROOT::RDF::RNode df, 
             correctionManager::CorrectionManager &correctionManager,
             const std::string &outputname,
@@ -169,8 +169,11 @@ namespace fakefactors {
             const std::string &mt_1,
             const std::string &decaymode_2,
             const std::string &mass_2,
-            const std::string &iso_1,
+            const std::string &eta_2,
             const std::string &pt_1,
+            // const std::string &jpt_1,
+            // const std::string &jpt_2,
+            const std::string &deltar,
             const std::string &met,
             const std::string &m_vis,
             const std::string &pt_tt,
@@ -219,8 +222,11 @@ namespace fakefactors {
                 const float &mt_1,
                 const int &decaymode_2,
                 const float &mass_2,
-                const float &iso_1,
+                const float &eta_2,
                 const float &pt_1,
+                // const float &jpt_1,
+                // const float &jpt_2,
+                const float &deltar,
                 const float &met,                
                 const float &m_vis,
                 const float &pt_tt) {
@@ -256,8 +262,11 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             pt_1,
+                            // jpt_1,
+                            // jpt_2,
+                            deltar,
                             met,
                             m_vis,
                             (float)njets,
@@ -273,8 +282,11 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             pt_1,
+                            // jpt_1,
+                            // jpt_2,
+                            deltar,
                             met,
                             m_vis,
                             (float)njets,
@@ -288,8 +300,11 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             pt_1,
+                            // jpt_1,
+                            // jpt_2,
+                            deltar,
                             met,
                             m_vis,
                             (float)njets,
@@ -314,7 +329,7 @@ namespace fakefactors {
                 return ff;
             };
 
-            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, mt_1, decaymode_2, mass_2, iso_1, pt_1, met, m_vis, pt_tt});
+            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, mt_1, decaymode_2, mass_2, eta_2, pt_1, deltar, met, m_vis, pt_tt});
 
             return df1;
         }
@@ -362,9 +377,8 @@ namespace fakefactors {
             const std::string &mt_1,
             const std::string &decaymode_2,
             const std::string &mass_2,
-            const std::string &iso_1,
+            const std::string &eta_2,
             const std::string &met,
-            const std::string &m_vis,
             const std::string &pt_tt,
             const std::string &fraction_variation,
             const std::string &QCD_variation,
@@ -411,9 +425,8 @@ namespace fakefactors {
                 const float &mt_1,
                 const int &decaymode_2,
                 const float &mass_2,
-                const float &iso_1,
-                const float &met,                
-                const float &m_vis,
+                const float &eta_2,
+                const float &met,   
                 const float &pt_tt) {
 
                 float ff = 0.0;
@@ -447,9 +460,8 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             met,
-                            m_vis,
                             (float)njets,
                             QCD_non_closure_correction_variation
                         }
@@ -463,9 +475,8 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             met,
-                            m_vis,
                             (float)njets,
                             Wjets_non_closure_correction_variation
                         }
@@ -477,9 +488,8 @@ namespace fakefactors {
                         {
                             (float)decaymode_2,
                             mass_2,
-                            iso_1,
+                            eta_2,
                             met,
-                            m_vis,
                             (float)njets,
                             ttbar_non_closure_correction_variation
                         }
@@ -502,7 +512,7 @@ namespace fakefactors {
                 return ff;
             };
 
-            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, mt_1, decaymode_2, mass_2, iso_1, met, m_vis, pt_tt});
+            auto df1 = df.Define(outputname, calc_fake_factor, {pt_2, njets, mt_1, decaymode_2, mass_2, eta_2, met, pt_tt});
 
             return df1;
         }
@@ -837,7 +847,11 @@ namespace fakefactors {
             const std::string &decaymode_2,
             const std::string &mass_1,
             const std::string &mass_2,
-            const std::string &delta_r,
+            const std::string &eta_1,
+            const std::string &eta_2,
+            // const std::string &jpt_1,
+            // const std::string &jpt_2,
+            const std::string &deltar,
             const std::string &met,
             const std::string &pt_tt,
             const std::string &qcd_variation, 
@@ -877,7 +891,11 @@ namespace fakefactors {
                 const int &decaymode_2,
                 const float &mass_1, 
                 const float &mass_2,
-                const float &delta_r,
+                const float &eta_1,
+                const float &eta_2,
+                // const float &jpt_1,
+                // const float &jpt_2,
+                const float &deltar,
                 const float &met,
                 const float &pt_tt) {
                 
@@ -904,9 +922,13 @@ namespace fakefactors {
                         qcd_non_closure_corr = qcd_non_closure->evaluate({
                             (float)decaymode_1,
                             mass_1,
+                            eta_1,
                             pt_1,
-                            delta_r,
+                            // jpt_1,
+                            // jpt_2,
+                            deltar,
                             met,
+                            m_vis,
                             (float)njets, 
                             qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
@@ -927,9 +949,13 @@ namespace fakefactors {
                         qcd_non_closure_corr = qcd_subleading_non_closure->evaluate({
                             (float)decaymode_2,
                             mass_2,
+                            eta_2,
                             pt_2,
-                            delta_r,
-                            met,  
+                            // jpt_1,
+                            // jpt_2,
+                            deltar,
+                            met,
+                            m_vis,
                             (float)njets,
                             qcd_non_closure_correction_variation});
                         Logger::get("FakeFactor")->debug("QCD - lep pt correction {}", qcd_non_closure_correction_variation);
@@ -947,7 +973,7 @@ namespace fakefactors {
                 return ff;
             };
             auto df1 = df.Define(outputname, calc_fake_factor,
-                {tau_pt_1, tau_pt_2, njets, m_vis, decaymode_1, decaymode_2, mass_1, mass_2, delta_r, met, pt_tt});
+                {tau_pt_1, tau_pt_2, njets, m_vis, decaymode_1, decaymode_2, mass_1, mass_2, eta_1, eta_2, deltar, met, pt_tt});
             return df1;
         }
 

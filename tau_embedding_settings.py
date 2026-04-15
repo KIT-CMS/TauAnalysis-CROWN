@@ -141,8 +141,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2025": [
                         {
                             "flagname": "trg_double_tau30_mediumiso_pnet",
-                            "p1_ptcut": 30,
-                            "p2_ptcut": 30,
+                            "p1_ptcut": 35,
+                            "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
                             "p1_filterbit": 20,
@@ -155,8 +155,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2024": [
                         {
                             "flagname": "trg_double_tau30_mediumiso_pnet",
-                            "p1_ptcut": 30,
-                            "p2_ptcut": 30,
+                            "p1_ptcut": 35,
+                            "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
                             "p1_filterbit": 20,
@@ -169,8 +169,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2023postBPix": [
                         {
                             "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
                             "p1_filterbit": 20,
@@ -183,8 +183,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2023preBPix": [
                         {
                             "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
                             "p1_filterbit": 20,
@@ -197,8 +197,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2022postEE": [
                         {
                             "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
                             "p1_filterbit": 20,
@@ -211,8 +211,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
                     "2022preEE": [
                         {
                             "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
+                            "p1_ptcut": 40,
+                            "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
                             "p1_filterbit": 20,
@@ -1063,7 +1063,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
         AppendProducer(
             producers=[
                 embedding.EmbeddingQuantities,
-                #embedding.TauEmbeddingSelectionSF,
+                # embedding.TauEmbeddingSelectionSF,
                 ],
             samples=["embedding", "embedding_mc"],
         ),
@@ -1124,26 +1124,29 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
             samples=["embedding", "embedding_mc"],
         ),
     )
+    configuration.add_modification_rule(
+        "tt",
+        ReplaceProducer(
+            producers=[
+                triggers.TTGenerateDoubleTauTriggerFlags,
+                triggers.TTGenerateDoubleTauTriggerFlagsEmbedding,
+            ],
+            samples="embedding",
+        ),
+    )
+    configuration.add_outputs(
+        "tt", triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group
+    )
 
     if int(era[:4]) < 2022:
         configuration.add_modification_rule(
             scopes,
             AppendProducer(
                 producers=[
-                    #embedding.EmbeddingQuantities,
+                    # embedding.EmbeddingQuantities,
                     embedding.TauEmbeddingSelectionSF,
                     ],
                 samples=["embedding", "embedding_mc"],
-            ),
-        )
-        configuration.add_modification_rule(
-            "tt",
-            ReplaceProducer(
-                producers=[
-                    triggers.TTGenerateDoubleTauTriggerFlags,
-                    triggers.TTGenerateDoubleTauTriggerFlagsEmbedding,
-                ],
-                samples="embedding",
             ),
         )
         configuration.add_modification_rule(
@@ -1217,9 +1220,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: string
             ),
         )
         
-        configuration.add_outputs(
-            "tt", triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group
-        )
         configuration.add_outputs(
             "mt", triggers.MTGenerateCrossTriggerFlagsEmbedding.output_group
         )
