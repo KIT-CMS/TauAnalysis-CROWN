@@ -144,8 +144,8 @@ def build_config(
                     "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
                     "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
-                    "2024": "data/Data_PileUp_2024_69p2.root",
-                    "2025": "data/Data_PileUp_2025_69p2.root",
+                    "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
+                    "2025": "data/root/pileup/Data_PileUp_2025_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -158,8 +158,8 @@ def build_config(
                     "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
                     "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
-                    "2024": "data/MC_PileUp_2024.root",
-                    "2025": "data/MC_PileUp_2024.root",
+                    "2024": "data/root_pileup/MC_PileUp_2024.root",
+                    "2025": "data/root_pileup/MC_PileUp_2024.root",
                 }
             ),
             "PU_reweighting_era": EraModifier(
