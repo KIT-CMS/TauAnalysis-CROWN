@@ -233,8 +233,8 @@ def build_config(
                     "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
                     "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
-                    "2024": "data/Data_PileUp_2024_69p2.root",
-                    "2025": "data/Data_PileUp_2025_69p2.root",
+                    "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
+                    "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -247,8 +247,8 @@ def build_config(
                     "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
                     "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
-                    "2024": "data/MC_PileUp_2024.root",
-                    "2025": "data/MC_PileUp_2024.root",
+                    "2024": "data/root_pileup/MC_PileUp_2024.root",
+                    "2025": "data/root_pileup/MC_PileUp_2024.root",
                 }
             ),
             "PU_reweighting_era": EraModifier(
@@ -368,10 +368,10 @@ def build_config(
                     "2016postVFP": '""',
                     "2017": '""',
                     "2018": '""',
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jetid.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jetid.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07jetid.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetid.json.gz"',
+                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jetid.json.gz"',
+                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jetid.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                     "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                 }
@@ -403,10 +403,10 @@ def build_config(
                     "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
                     "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
                     "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
-                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jet_jerc.json.gz"',
-                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
-                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jet_jerc.json.gz"',
+                    "2022preEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jet_jerc.json.gz"',
+                    "2022postEE": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jet_jerc.json.gz"',
+                    "2023preBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jet_jerc.json.gz"',
+                    "2023postBPix": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jet_jerc.json.gz"',
                     "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"',
                     "2025": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jet_jerc.json.gz"',
                 }
@@ -446,10 +446,10 @@ def build_config(
                     "2016postVFP": '""',
                     "2017": '""',
                     "2018": '""',
-                    "2022preEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jetvetomaps.json.gz",
-                    "2022postEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
-                    "2023preBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
-                    "2023postBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-10-07/jetvetomaps.json.gz",
+                    "2022preEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2022postEE":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2023preBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
+                    "2023postBPix":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13/jetvetomaps.json.gz",
                     "2024":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
                     "2025":"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Winter25-NanoAODv15/2026-02-09/jetvetomaps.json.gz",
                 }
@@ -952,21 +952,6 @@ def build_config(
         },
     )
 
-    if era == "2022postEE":
-        configuration.add_config_parameters(
-            "global",
-            {
-                "jet_jes_tag_data": SampleModifier(
-                    {
-                        "data_E": '"Summer22EE_22Sep2023_RunE_V3_DATA"',
-                        "data_F": '"Summer22EE_22Sep2023_RunF_V3_DATA"',
-                        "data_G": '"Summer22EE_22Sep2023_RunG_V3_DATA"',
-                    },
-                    default = '"Summer22EE_22Sep2023_RunE_V3_DATA"', #also needs to be not empty
-                ),
-            }
-        )
-    
     if int(era[:4]) < 2022:
         configuration.add_config_parameters(
             "global",
@@ -1352,7 +1337,7 @@ def build_config(
                 event.PUweights,
                 event.PS_weight,
                 ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1363,14 +1348,14 @@ def build_config(
                 event.LHE_PDF_weight,
                 event.LHE_alphaS_weight,
                 ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc", "diboson"],
+            samples=["data", "embedding", "embedding_mc", "diboson"],
         ),
     )
     configuration.add_modification_rule(
         "global",
         AppendProducer(
             producers=event.JSONFilter, 
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"]),
+            samples=["data", "embedding", "embedding_mc"]),
     )
     ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
     configuration.add_modification_rule(
@@ -1384,21 +1369,21 @@ def build_config(
         scopes,
         RemoveProducer(
             producers=[genparticles.GenMatching],
-            samples=["data", "data_E", "data_F", "data_G"], #, "embedding", "embedding_mc"],
+            samples=["data"], #, "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
             producers=[jets.GenJet, jets.GenJet_data],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         scopes,
         RemoveProducer(
             producers=[scalefactors.btaggingWP_SF],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1433,7 +1418,7 @@ def build_config(
         ["et", "mt", "tt"],
         ReplaceProducer(
             producers=[configuration.ES_ID_SCHEME.mc.producerGroupES, taus.TauEnergyCorrection_data],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1442,7 +1427,7 @@ def build_config(
             producers=[
                 scalefactors.TauID_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1451,7 +1436,7 @@ def build_config(
             producers=[
                 configuration.ES_ID_SCHEME.mc.producerID,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1460,7 +1445,7 @@ def build_config(
             producers=[
                 scalefactors.MuonIDIso_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
@@ -1469,42 +1454,42 @@ def build_config(
             producers=[
                 scalefactors.EleID_SF,
             ],
-            samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            samples=["data", "embedding", "embedding_mc"],
         ),
     )
     configuration.add_modification_rule(
         ["mt"],
         RemoveProducer(
             producers=[genparticles.MTGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["mm"],
         RemoveProducer(
             producers=[genparticles.MuMuGenPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["et"],
         RemoveProducer(
             producers=[genparticles.ETGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["em"],
         RemoveProducer(
             producers=[genparticles.EMGenDiTauPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
         ["ee"],
         RemoveProducer(
             producers=[genparticles.ElElGenPairQuantities],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     )
     configuration.add_modification_rule(
@@ -1513,7 +1498,7 @@ def build_config(
             producers=[
                 genparticles.TTGenDiTauPairQuantities
             ],
-            samples=["data", "data_E", "data_F", "data_G"],
+            samples=["data"],
         ),
     ) 
 
@@ -1529,14 +1514,14 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_v9],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1550,14 +1535,14 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
             "global",
             ReplaceProducer(
                 producers=[jets.JetEnergyCorrection_Run3, jets.JetEnergyCorrection_data],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1650,7 +1635,7 @@ def build_config(
                 producers=[
                     scalefactors.MuonIDIso_SF,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
         configuration.add_modification_rule(
@@ -1659,7 +1644,7 @@ def build_config(
                 producers=[
                     scalefactors.EleID_SF,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
         configuration.add_modification_rule(
@@ -1680,7 +1665,7 @@ def build_config(
                     scalefactors.PrivateMuonIDSF_1_MC,
                     scalefactors.PrivateMuonIsoSF_1_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1709,7 +1694,7 @@ def build_config(
                     scalefactors.PrivateElectronIDSF_1_MC,
                     scalefactors.PrivateElectronIsoSF_1_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1749,7 +1734,7 @@ def build_config(
                     scalefactors.PrivateMuonIDSF_2_MC,
                     scalefactors.PrivateMuonIsoSF_2_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1762,7 +1747,7 @@ def build_config(
                     scalefactors.PrivateMuonIsoSF_2_MC,
                     scalefactors.MTGenerateSingleMuonTriggerSF_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1775,7 +1760,7 @@ def build_config(
                     scalefactors.PrivateElectronIsoSF_2_MC,
                     scalefactors.ETGenerateSingleElectronTriggerSF_MC,
                 ],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         if era != "2018":
@@ -1799,7 +1784,7 @@ def build_config(
             "global",
             ReplaceProducer(
                 producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionData],
-                samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                samples=["data", "embedding", "embedding_mc"],
             ),
         )
 
@@ -1838,7 +1823,7 @@ def build_config(
             scopes,
             ReplaceProducer(
                 producers=[scalefactors.btaggingWP_SF,scalefactors.btagging_SF],
-                exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"], 
+                exclude_samples=["data", "embedding", "embedding_mc"], 
             ),
         )
     else:
@@ -1848,7 +1833,7 @@ def build_config(
                 "global",
                 AppendProducer(
                     producers=[event.EvenIDFilter],
-                    exclude_samples=["data", "data_E", "data_F", "data_G"],
+                    exclude_samples=["data"],
                 ),
             )
         if era == "2025":
@@ -1857,7 +1842,7 @@ def build_config(
                 "global",
                 AppendProducer(
                     producers=[event.OddIDFilter],
-                    exclude_samples=["data", "data_E", "data_F", "data_G"],
+                    exclude_samples=["data"],
                 ),
             )
             # temporary root pileup for data 2025 by tau fw group, 23/03/2026
@@ -1865,7 +1850,7 @@ def build_config(
                 "global",
                 ReplaceProducer(
                     producers=[event.PUweights, event.PUweights_root],
-                    exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+                    exclude_samples=["data", "embedding", "embedding_mc"],
                 ),
             )
 
@@ -1911,7 +1896,7 @@ def build_config(
         ],
     )
     # add genWeight for everything but data
-    if sample not in ["data", "data_E", "data_F", "data_G"]:
+    if sample not in ["data"]:
         configuration.add_outputs(
             scopes,
             nanoAOD.genWeight,
@@ -2180,7 +2165,7 @@ def build_config(
             scopes="global",
             shift_key="ele_es_variation",
             producers=[electrons.ElectronPtCorrectionMC],
-            exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            exclude_samples=["data", "embedding", "embedding_mc"],
         ):
             add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
             add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
@@ -2226,7 +2211,7 @@ def build_config(
             },
             scopes=["global"],
         ),
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
     configuration.add_shift(
         SystematicShiftByQuantity(
@@ -2237,7 +2222,7 @@ def build_config(
             },
             scopes=["global"],
         ),
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     #########################
@@ -2273,7 +2258,7 @@ def build_config(
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[met.ApplyRecoilCorrections],
-            exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+            exclude_samples=["data", "embedding", "embedding_mc"],
             shift_key=["recoil_method", "recoil_variation"]
         ):
             add_shift(
@@ -2294,7 +2279,7 @@ def build_config(
         shift_map={"Up": "up", "Down": "down"},
         scopes="global",
         producers=[event.PUweights],
-        exclude_samples=["data", "data_E", "data_F", "data_G", "embedding", "embedding_mc"],
+        exclude_samples=["data", "embedding", "embedding_mc"],
     )
 
     #########################
