@@ -389,7 +389,7 @@ def build_config(
                     "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
                     "2022preEE": '"Summer22_22Sep2023_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22_22Sep2023_V3_MC"',
                     "2022postEE": '"Summer22EE_22Sep2023_V3_DATA"' if sample in ["embedding", "data"] else '"Summer22EE_22Sep2023_V3_MC"',
-                    "2023preBPix": '"Summer23Prompt23_V2_DATA"' if sample in ["embedding", "data"] else '"Summer23Prompt23_V2_MC"',
+                    "2023preBPix": '"Summer23Prompt23_V3_DATA"' if sample in ["embedding", "data"] else '"Summer23Prompt23_V3_MC"',
                     "2023postBPix": '"Summer23BPixPrompt23_V3_DATA"' if sample in ["embedding", "data"] else '"Summer23BPixPrompt23_V3_MC"',
                     "2024": '"Summer24Prompt24_V2_DATA"' if sample in ["embedding", "data"] else '"Summer24Prompt24_V2_MC"',
                     "2025": '"Winter25Prompt25_V3_DATA"' if sample in ["embedding", "data"] else '"Winter25Prompt25_V3_MC"',
@@ -835,7 +835,7 @@ def build_config(
             "muon_index_in_pair": 0,
             "min_muon_pt": 15.0,
             "max_muon_eta": 2.4,
-            "muon_iso_cut": 0.15,
+            "muon_iso_cut": 0.5, # selection for FF
             "second_muon_index_in_pair": 1,
         },
     )
@@ -904,11 +904,11 @@ def build_config(
             "second_electron_index_in_pair": 0,
             "min_ele_pt": 15.0,
             "max_ele_eta": 2.5,
-            "ele_iso_cut": 0.15,
+            "ele_iso_cut": 0.5,
             "muon_index_in_pair": 1,
             "min_muon_pt": 15.0,
             "max_muon_eta": 2.4,
-            "muon_iso_cut": 0.15,
+            "muon_iso_cut": 0.5,
         },
     )
     configuration.add_config_parameters(
@@ -948,7 +948,7 @@ def build_config(
             "electron_index_in_pair": 0,
             "min_ele_pt": 15.0,
             "max_ele_eta": 2.5,
-            "ele_iso_cut": 0.15,
+            "ele_iso_cut": 0.5,
         },
     )
 
