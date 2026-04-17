@@ -318,7 +318,7 @@ def build_config(
                     "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
                     "2022preEE": "Summer22_22Sep2023_V3_DATA" if sample in ["embedding", "data"] else "Summer22_22Sep2023_V3_MC",
                     "2022postEE": "Summer22EE_22Sep2023_V3_DATA" if sample in ["embedding", "data"] else "Summer22EE_22Sep2023_V3_MC",
-                    "2023preBPix": "Summer23Prompt23_V2_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V2_MC",
+                    "2023preBPix": "Summer23Prompt23_V3_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V3_MC",
                     "2023postBPix": "Summer23BPixPrompt23_V3_DATA" if sample in ["embedding", "data"] else "Summer23BPixPrompt23_V3_MC",
                     "2024": "Summer24Prompt24_V2_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V2_MC",
                     "2025": "Winter25Prompt25_V3_DATA" if sample in ["embedding", "data"] else "Winter25Prompt25_V3_MC",
