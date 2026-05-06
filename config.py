@@ -625,8 +625,10 @@ def build_config(
             # zptmass not used in 2016 atm due to broken file.
             "zptmass_file": EraModifier(
                 {
-                    "2016preVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
-                    "2016postVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
+                    # "2016preVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
+                    # "2016postVFP": "data/zpt/htt_scalefactors_legacy_2016.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
+                    "2016preVFP": "data/zpt/htt_scalefactors_legacy_2017.root",
+                    "2016postVFP":"data/zpt/htt_scalefactors_legacy_2017.root",
                     "2017": "data/zpt/htt_scalefactors_legacy_2017.root",
                     "2018": "data/zpt/htt_scalefactors_legacy_2018.root",
                 }
@@ -1130,6 +1132,13 @@ def build_config(
                 producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
             ),
         )
+    else: # use the 2017 file for 2016 as well for now, BAD workaround !!!
+        configuration.add_modification_rule(
+            scopes,
+            AppendProducer(
+                producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
+            ),
+        )
     
     # changes needed for data
     # global scope
@@ -1370,6 +1379,7 @@ def build_config(
             q.mt_tot_pf,
             q.pt_dijet,
             q.jet_hemisphere,
+            # q.ZPtMassReweightWeight
         ],
     )
     # add genWeight for everything but data
