@@ -1036,6 +1036,7 @@ def build_config(
             pairquantities.DiTauPairMETQuantities,
             genparticles.GenMatching,
             # genparticles.GenMatchingBoosted,
+            pairquantities.FastMTTQuantities,
         ],
     )
     configuration.add_producers(
@@ -1748,6 +1749,10 @@ def build_config(
             q.mt_tot_pf,
             q.pt_dijet,
             q.jet_hemisphere,
+            q.m_fastmtt,
+            q.pt_fastmtt,
+            q.eta_fastmtt,
+            q.phi_fastmtt,
         ],
     )
     # add genWeight for everything but data

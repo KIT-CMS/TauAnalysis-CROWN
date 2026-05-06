@@ -5,7 +5,35 @@ puweight = Quantity("puweight")
 prefireweight = Quantity("prefiring_wgt")
 lhe_scale_weight = Quantity("lhe_scale_weight")
 
+# Floats
+njets_float = Quantity("njets_float")
+nbtag_float = Quantity("nbtag_float")
+event_parity_float = Quantity("event_parity_float")
+tau_decaymode_2_float = Quantity("tau_decaymode_2_float")
+tau_decaymode_1_float = Quantity("tau_decaymode_1_float")
+pzetamissvis_float = Quantity("pzetamissvis_float")
 # fake factors
+
+ff_sm_qcd_model_input_2 = Quantity("ff_sm_qcd_model_input_2")
+ff_sm_wjets_model_input_2 = Quantity("ff_sm_wjets_model_input_2")
+ff_sm_ttbar_model_input_2 = Quantity("ff_sm_ttbar_model_input_2")
+
+ff_sm_fractions_model_input_2 = Quantity("ff_sm_fractions_model_input_2")
+
+ff_sm_dr_qcd_model_input_2 = Quantity("ff_sm_dr_qcd_model_input_2")
+ff_sm_dr_wjets_model_input_2 = Quantity("ff_sm_dr_wjets_model_input_2")
+
+ff_sm_nc_qcd_model_input_2 = Quantity("ff_sm_nc_qcd_model_input_2")
+ff_sm_nc_wjets_model_input_2 = Quantity("ff_sm_nc_wjets_model_input_2")
+ff_sm_nc_ttbar_model_input_2 = Quantity("ff_sm_nc_ttbar_model_input_2")
+
+ff_sm_nc_qcd_model_input_2_et = Quantity("ff_sm_nc_qcd_model_input_2_et")
+ff_sm_nc_wjets_model_input_2_et = Quantity("ff_sm_nc_wjets_model_input_2_et")
+ff_sm_nc_ttbar_model_input_2_et = Quantity("ff_sm_nc_ttbar_model_input_2_et")
+ff_sm_nc_qcd_model_input_2_mt = Quantity("ff_sm_nc_qcd_model_input_2_mt")
+ff_sm_nc_wjets_model_input_2_mt = Quantity("ff_sm_nc_wjets_model_input_2_mt")
+ff_sm_nc_ttbar_model_input_2_mt = Quantity("ff_sm_nc_ttbar_model_input_2_mt")
+
 raw_fake_factor = Quantity("raw_fake_factor")
 raw_qcd_fake_factor = Quantity("raw_qcd_fake_factor")
 raw_wjets_fake_factor = Quantity("raw_wjets_fake_factor")
@@ -24,6 +52,48 @@ raw_fake_factor_boosted_1 = Quantity("raw_fake_boosted_factor_1")
 raw_fake_factor_boosted_2 = Quantity("raw_fake_boosted_factor_2")
 fake_factor_boosted_1 = Quantity("fake_factor_boosted_1")
 fake_factor_boosted_2 = Quantity("fake_factor_boosted_2")
+
+raw_qcd_fake_factor_1 = Quantity("raw_qcd_fake_factor_1")
+raw_qcd_fake_factor_2 = Quantity("raw_qcd_fake_factor_2")
+raw_wjets_fake_factor_1 = Quantity("raw_wjets_fake_factor_1")
+raw_wjets_fake_factor_2 = Quantity("raw_wjets_fake_factor_2")
+raw_ttbar_fake_factor_1 = Quantity("raw_ttbar_fake_factor_1")
+raw_ttbar_fake_factor_2 = Quantity("raw_ttbar_fake_factor_2")
+
+qcd_fake_factor_1 = Quantity("qcd_fake_factor_1")
+qcd_fake_factor_2 = Quantity("qcd_fake_factor_2")
+wjets_fake_factor_1 = Quantity("wjets_fake_factor_1")
+wjets_fake_factor_2 = Quantity("wjets_fake_factor_2")
+ttbar_fake_factor_1 = Quantity("ttbar_fake_factor_1")
+ttbar_fake_factor_2 = Quantity("ttbar_fake_factor_2")
+
+qcd_fake_factor_fraction_1 = Quantity("qcd_fake_factor_fraction_1")
+qcd_fake_factor_fraction_2 = Quantity("qcd_fake_factor_fraction_2")
+wjets_fake_factor_fraction_1 = Quantity("wjets_fake_factor_fraction_1")
+wjets_fake_factor_fraction_2 = Quantity("wjets_fake_factor_fraction_2")
+ttbar_fake_factor_fraction_1 = Quantity("ttbar_fake_factor_fraction_1")
+ttbar_fake_factor_fraction_2 = Quantity("ttbar_fake_factor_fraction_2")
+
+qcd_fake_factor_correction_1 = Quantity("qcd_fake_factor_correction_1")
+qcd_fake_factor_correction_2 = Quantity("qcd_fake_factor_correction_2")
+wjets_fake_factor_correction_1 = Quantity("wjets_fake_factor_correction_1")
+wjets_fake_factor_correction_2 = Quantity("wjets_fake_factor_correction_2")
+ttbar_fake_factor_correction_1 = Quantity("ttbar_fake_factor_correction_1")
+ttbar_fake_factor_correction_2 = Quantity("ttbar_fake_factor_correction_2")
+
+qcd_DR_SR_correction_1 = Quantity("qcd_DR_SR_correction_1")
+qcd_DR_SR_correction_2 = Quantity("qcd_DR_SR_correction_2")
+wjets_DR_SR_correction_1 = Quantity("wjets_DR_SR_correction_1")
+wjets_DR_SR_correction_2 = Quantity("wjets_DR_SR_correction_2")
+ttbar_DR_SR_correction_1 = Quantity("ttbar_DR_SR_correction_1")
+ttbar_DR_SR_correction_2 = Quantity("ttbar_DR_SR_correction_2")
+
+qcd_correction_wo_DR_SR_1 = Quantity("qcd_correction_wo_DR_SR_1")
+qcd_correction_wo_DR_SR_2 = Quantity("qcd_correction_wo_DR_SR_2")
+wjets_correction_wo_DR_SR_1 = Quantity("wjets_correction_wo_DR_SR_1")
+wjets_correction_wo_DR_SR_2 = Quantity("wjets_correction_wo_DR_SR_2")
+ttbar_correction_wo_DR_SR_1 = Quantity("ttbar_correction_wo_DR_SR_1")
+ttbar_correction_wo_DR_SR_2 = Quantity("ttbar_correction_wo_DR_SR_2")
 
 # kinematic fit
 kinfit_convergence_YToBB = Quantity("kinfit_convergence_YToBB")
