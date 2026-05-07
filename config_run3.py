@@ -397,6 +397,26 @@ def build_config(
             "dileptonveto_dR": 0.15,
         },
     )
+    for ch in ["tt", "mt", "et"]:
+        configuration.add_config_parameters(
+            ch,
+            {
+                "btag_eff_file": EraModifier(
+                    {
+                        "2016preVFP": "TO_ADD",
+                        "2016postVFP": "TO_ADD",
+                        "2017": "TO_ADD",
+                        "2018": "TO_ADD",
+                        "2022preEE": f"payloads/btag_efficiencies/2022preEE/{ch}/btag_efficiency.json.gz",
+                        "2022postEE": f"payloads/btag_efficiencies/2022postEE/{ch}/btag_efficiency.json.gz",
+                        "2023preBPix": f"payloads/btag_efficiencies/2023preBPix/{ch}/btag_efficiency.json.gz",
+                        "2023postBPix": f"payloads/btag_efficiencies/2023postBPix/{ch}/btag_efficiency.json.gz",
+                        "2024": f"payloads/btag_efficiencies/2024/{ch}/btag_efficiency.json.gz",
+                        "2025": f"payloads/btag_efficiencies/2025/{ch}/btag_efficiency.json.gz",
+                    }
+                ),
+            }
+        )
     configuration.add_config_parameters(
         scopes,
         {
@@ -416,6 +436,7 @@ def build_config(
                 }
             ),
             "btag_sf_variation": "central",
+            "btag_wp":"M",
             "btag_corr_algo": EraModifier(
                 {
                     "2016preVFP": "deepJet_shape",
@@ -430,7 +451,94 @@ def build_config(
                     "2025": "UParTAK4_comb",
                 }
             ),
-            "btag_wp":"M",
+            "btag_corr_algo_lf": EraModifier(
+                {
+                    "2016preVFP": "deepJet_shape",
+                    "2016postVFP": "deepJet_shape",
+                    "2017": "deepJet_shape",
+                    "2018": "deepJet_shape",
+                    "2022preEE": "particleNet_shape", 
+                    "2022postEE": "particleNet_shape",
+                    "2023preBPix": "particleNet_shape",
+                    "2023postBPix": "particleNet_shape",
+                    "2024": "UParTAK4_light",
+                    "2025": "UParTAK4_light",
+                }
+            ),
+            "btag_sf_wp_name": EraModifier(
+                {
+                    "2016preVFP": "TO_ADD",
+                    "2016postVFP": "TO_ADD",
+                    "2017": "TO_ADD",
+                    "2018": "TO_ADD",
+                    "2022preEE": "particleNet_wp_values",
+                    "2022postEE": "particleNet_wp_values",
+                    "2023preBPix": "particleNet_wp_values",
+                    "2023postBPix": "particleNet_wp_values",
+                    "2024": "UParTAK4_wp_values",
+                },
+            ),
+            "btag_eff_name": "btag_efficiency",
+            "btag_eff_sample_type": SampleModifier(
+                {
+                    **{
+                        sample_type: sample_type
+                        for sample_type in available_sample_types
+                    },
+                    **{
+                        sample_type: "dyjets"
+                        for sample_type in [
+                            "dyjets",
+                            "dyjets_madgraph",
+                            "dyjets_amcatnlo",
+                            "dyjets_amcatnlo_ll",
+                            "dyjets_amcatnlo_tt",
+                            "dyjets_powheg",
+                            "electroweak_boson",
+                        ]
+                    },
+                    **{
+                        sample_type: "dyjets"
+                        for sample_type in [
+                            "ggh_htautau",
+                            "ggh_hbb",
+                            "vbf_htautau",
+                            "vbf_hbb",
+                            "rem_htautau",
+                            "rem_hbb",
+                            "rem_hww",
+                            "rem_hzz",
+                            "rem_higgs",
+                            "hh4b",
+                            "hh2b2tau",
+                            "hh4v",
+                            "nmssm_Ybb",
+                            "nmssm_Ytautau",
+                        ]
+                    },
+                    **{
+                        sample_type: "ttbar"
+                        for sample_type in [
+                            "ttbar",
+                            "rem_ttbar",
+                        ]
+                    },
+                    **{
+                        sample_type: "diboson"
+                        for sample_type in [
+                            "diboson",
+                        ]
+                    },
+                    **{
+                        sample_type: "wjets"
+                        for sample_type in [
+                            "wjets",
+                            "wjets_madgraph",
+                            "wjets_amcatnlo",
+                        ]
+                    },
+                }
+            ),
             # jet selection
             "deltaR_jet_veto": 0.5,
             # pair selection
@@ -2008,7 +2116,7 @@ def build_config(
                 nanoAODv15.HTXS_stage_1_pTjet30,
             ],
         )
-    
+
     measure_btag_efficiency = False
     if measure_btag_efficiency:
         if sample not in ["data", "embedding", "embedding_mc"]:
