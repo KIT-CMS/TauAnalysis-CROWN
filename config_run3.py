@@ -2009,6 +2009,29 @@ def build_config(
             ],
         )
     
+    measure_btag_efficiency = False
+    if measure_btag_efficiency:
+        if sample not in ["data", "embedding", "embedding_mc"]:
+            configuration.add_producers(
+                scopes,
+                [
+                    jets.CombinedJetCollection,
+                    jets.JetPtVec,
+                    jets.JetEtaVec,
+                    jets.JetHadFlavVec,
+                    jets.JetBTagVec,
+                ],
+            )
+            configuration.add_outputs(
+                scopes,
+                [
+                    q.jet_pt_vec,
+                    q.jet_eta_vec,
+                    q.jet_hadronflavour_vec,
+                    q.jet_btag_value_vec,
+                ],
+            )
+
     #########################
     # LHE Scale Weight variations
     #########################

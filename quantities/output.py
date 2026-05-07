@@ -66,9 +66,15 @@ bpt_2 = Quantity()
 beta_2 = Quantity()
 bphi_2 = Quantity()
 btag_value_2 = Quantity()
-gen_jet_pt = Quantity ()
-gen_jet_eta = Quantity ()
-gen_jet_phi = Quantity ()
+gen_jet_pt = Quantity()
+gen_jet_eta = Quantity()
+gen_jet_phi = Quantity()
+
+good_jet_combined_collection = Quantity()
+jet_pt_vec = Quantity()
+jet_eta_vec = Quantity()
+jet_hadronflavour_vec = Quantity()
+jet_btag_value_vec = Quantity()
 
 # working points
 
