@@ -427,10 +427,10 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/BTV/2016postVFP_UL/btagging.json.gz",
                     "2017": "data/jsonpog-integration/POG/BTV/2017_UL/btagging.json.gz",
                     "2018": "data/jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz",
-                    "2022preEE": "data/jsonpog-integration/POG/BTV/2022_Summer22/btagging.json.gz",
-                    "2022postEE": "data/jsonpog-integration/POG/BTV/2022_Summer22EE/btagging.json.gz",
-                    "2023preBPix": "data/jsonpog-integration/POG/BTV/2023_Summer23/btagging.json.gz",
-                    "2023postBPix": "data/jsonpog-integration/POG/BTV/2023_Summer23BPix/btagging.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22CDSep23-Summer22-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
                 }
@@ -443,10 +443,10 @@ def build_config(
                     "2016postVFP": "deepJet_shape",
                     "2017": "deepJet_shape",
                     "2018": "deepJet_shape",
-                    "2022preEE": "particleNet_shape", 
-                    "2022postEE": "particleNet_shape",
-                    "2023preBPix": "particleNet_shape",
-                    "2023postBPix": "particleNet_shape",
+                    "2022preEE": "particleNet_comb",
+                    "2022postEE": "particleNet_comb",
+                    "2023preBPix": "particleNet_comb",
+                    "2023postBPix": "particleNet_comb",
                     "2024": "UParTAK4_comb",
                     "2025": "UParTAK4_comb",
                 }
@@ -457,10 +457,10 @@ def build_config(
                     "2016postVFP": "deepJet_shape",
                     "2017": "deepJet_shape",
                     "2018": "deepJet_shape",
-                    "2022preEE": "particleNet_shape", 
-                    "2022postEE": "particleNet_shape",
-                    "2023preBPix": "particleNet_shape",
-                    "2023postBPix": "particleNet_shape",
+                    "2022preEE": "particleNet_light",
+                    "2022postEE": "particleNet_light",
+                    "2023preBPix": "particleNet_light",
+                    "2023postBPix": "particleNet_light",
                     "2024": "UParTAK4_light",
                     "2025": "UParTAK4_light",
                 }
@@ -498,17 +498,10 @@ def build_config(
                         ]
                     },
                     **{
-                        sample_type: "dyjets"
+                        sample_type: "ggh_htautau"
                         for sample_type in [
                             "ggh_htautau",
                             "ggh_hbb",
-                            "vbf_htautau",
-                            "vbf_hbb",
-                            "rem_htautau",
-                            "rem_hbb",
-                            "rem_hww",
-                            "rem_hzz",
-                            "rem_higgs",
                             "hh4b",
                             "hh2b2tau",
                             "hh4v",
@@ -517,16 +510,27 @@ def build_config(
                         ]
                     },
                     **{
+                        sample_type: "vbf_htautau"
+                        for sample_type in [
+                            "vbf_htautau",
+                            "vbf_hbb",
+                        ]
+                    },
+                    **{
+                        sample_type: "rem_htautau"
+                        for sample_type in [
+                            "rem_htautau",
+                            "rem_hbb",
+                            "rem_hww",
+                            "rem_hzz",
+                            "rem_higgs",
+                        ]
+                    },
+                    **{
                         sample_type: "ttbar"
                         for sample_type in [
                             "ttbar",
                             "rem_ttbar",
-                        ]
-                    },
-                    **{
-                        sample_type: "diboson"
-                        for sample_type in [
-                            "diboson",
                         ]
                     },
                     **{
@@ -1870,6 +1874,7 @@ def build_config(
                 exclude_samples=["fake_era"],
             ),
         )
+    if int(era[:4]) < 2022:
         configuration.add_modification_rule(
             scopes,
             ReplaceProducer(
@@ -2119,11 +2124,16 @@ def build_config(
 
     measure_btag_efficiency = False
     if measure_btag_efficiency:
+        configuration.add_config_parameters(
+            "global",
+            {
+                "min_jet_pt_loose": 20,
+            },
+        )
         if sample not in ["data", "embedding", "embedding_mc"]:
             configuration.add_producers(
                 scopes,
                 [
-                    jets.CombinedJetCollection,
                     jets.JetPtVec,
                     jets.JetEtaVec,
                     jets.JetHadFlavVec,

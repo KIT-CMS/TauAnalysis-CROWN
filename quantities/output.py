@@ -70,7 +70,6 @@ gen_jet_pt = Quantity()
 gen_jet_eta = Quantity()
 gen_jet_phi = Quantity()
 
-good_jet_combined_collection = Quantity()
 jet_pt_vec = Quantity()
 jet_eta_vec = Quantity()
 jet_hadronflavour_vec = Quantity()
