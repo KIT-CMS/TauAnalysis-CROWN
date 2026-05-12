@@ -37,7 +37,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
         jet_pt_correction_producer = jets.JetEnergyCorrection if int(era[:4])<2022 else jets.JetEnergyCorrection_Run3
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
-        if era not in ["2024", "2025"]:
+        if int(era[:4]) < 2022:
             with defaults(
                 scopes=("mt", "et", "tt"),
                 shift_key="btag_sf_variation",
@@ -78,7 +78,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 scopes="global",
                 producers=[JES_CONFIG.jet_pt_correction_producer]
             )
-            if era not in ["2024", "2025"]:
+            if int(era[:4]) < 2022:
                 add_shift(
                     shift_key="btag_sf_variation",
                     shift_map={"Up": "up_jes", "Down": "down_jes"},
@@ -167,7 +167,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         producers=[JES_CONFIG.jet_pt_correction_producer],
                     )
 
-                    if era not in ["2024", "2025"]:
+                    if int(era[:4]) < 2022:
                         btag_variation_source = f"{name}_{era}" if is_yearly else name
                         add_shift(
                             shift_key="btag_sf_variation",
