@@ -127,9 +127,8 @@ def build_config(
     configuration.add_producers(
         ["et"],
         [
-            fakefactors.RawFakeFactors_sm_et,
-            fakefactors.FakeFactors_sm_et,
-            # fakefactors.FakeFactors_sm_et_split_info,
+            fakefactors.RawFakeFactors_sm_lt,
+            fakefactors.FakeFactors_sm_lt,
         ],
     )
     configuration.add_outputs(
@@ -137,29 +136,6 @@ def build_config(
         [
             q.raw_fake_factor_2,
             q.fake_factor_2,
-            # ----------------------
-            # q.raw_qcd_fake_factor_2,
-            # q.raw_wjets_fake_factor_2,
-            # q.raw_ttbar_fake_factor_2,
-            # # ---
-            # q.qcd_fake_factor_fraction_2,
-            # q.wjets_fake_factor_fraction_2,
-            # q.ttbar_fake_factor_fraction_2,
-            # # ---
-            # q.qcd_DR_SR_correction_2, 
-            # q.wjets_DR_SR_correction_2, 
-            # # ---
-            # q.qcd_correction_wo_DR_SR_2,
-            # q.wjets_correction_wo_DR_SR_2,
-            # q.ttbar_correction_wo_DR_SR_2,
-            # # ---
-            # q.qcd_fake_factor_correction_2,
-            # q.wjets_fake_factor_correction_2,
-            # q.ttbar_fake_factor_correction_2,
-            # # ---
-            # q.qcd_fake_factor_2,
-            # q.wjets_fake_factor_2,
-            # q.ttbar_fake_factor_2,
         ],
     )
 
@@ -180,9 +156,9 @@ def build_config(
             continue
         for _shift in ["Up", "Down"]:
 
-            variables = (fakefactors.FakeFactors_sm_mt, fakefactors.RawFakeFactors_sm_mt)
+            variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
             if "_correction" in _key:
-                variables = (fakefactors.FakeFactors_sm_mt,)
+                variables = (fakefactors.FakeFactors_sm_lt,)
 
             configuration.add_shift(
                 SystematicShift(
@@ -243,9 +219,8 @@ def build_config(
     configuration.add_producers(
         ["mt"],
         [
-            fakefactors.RawFakeFactors_sm_mt,
-            fakefactors.FakeFactors_sm_mt,
-            # fakefactors.FakeFactors_sm_mt_split_info,
+            fakefactors.RawFakeFactors_sm_lt,
+            fakefactors.FakeFactors_sm_lt,
         ],
     )
     configuration.add_outputs(
@@ -253,29 +228,6 @@ def build_config(
         [
             q.raw_fake_factor_2,
             q.fake_factor_2,
-            # ----------------------
-            # q.raw_qcd_fake_factor_2,
-            # q.raw_wjets_fake_factor_2,
-            # q.raw_ttbar_fake_factor_2,
-            # # ---
-            # q.qcd_fake_factor_fraction_2,
-            # q.wjets_fake_factor_fraction_2,
-            # q.ttbar_fake_factor_fraction_2,
-            # # ---
-            # q.qcd_DR_SR_correction_2, 
-            # q.wjets_DR_SR_correction_2,
-            # # ---
-            # q.qcd_correction_wo_DR_SR_2,
-            # q.wjets_correction_wo_DR_SR_2,
-            # q.ttbar_correction_wo_DR_SR_2,
-            # # ---
-            # q.qcd_fake_factor_correction_2,
-            # q.wjets_fake_factor_correction_2,
-            # q.ttbar_fake_factor_correction_2,
-            # # ---
-            # q.qcd_fake_factor_2,
-            # q.wjets_fake_factor_2,
-            # q.ttbar_fake_factor_2,
         ],
     )
 
@@ -296,9 +248,9 @@ def build_config(
             continue
         for _shift in ["Up", "Down"]:
 
-            variables = (fakefactors.FakeFactors_sm_mt, fakefactors.RawFakeFactors_sm_mt)
+            variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
             if "_correction" in _key:
-                variables = (fakefactors.FakeFactors_sm_mt,)
+                variables = (fakefactors.FakeFactors_sm_lt,)
 
             configuration.add_shift(
                 SystematicShift(
@@ -356,10 +308,8 @@ def build_config(
         [
             fakefactors.RawFakeFactors_sm_tt_1,
             fakefactors.FakeFactors_sm_tt_1,
-            # fakefactors.FakeFactors_sm_tt_split_info_1,
             fakefactors.RawFakeFactors_sm_tt_2,
             fakefactors.FakeFactors_sm_tt_2,
-            # fakefactors.FakeFactors_sm_tt_split_info_2,
         ],
     )
     configuration.add_outputs(
@@ -369,24 +319,6 @@ def build_config(
             q.fake_factor_1,
             q.raw_fake_factor_2,
             q.fake_factor_2,
-            # ----------------------
-            # q.raw_qcd_fake_factor_1,
-            # q.raw_qcd_fake_factor_2,
-            # # ---
-            # q.qcd_fake_factor_fraction_1,
-            # q.qcd_fake_factor_fraction_2,
-            # # ---
-            # q.qcd_DR_SR_correction_1, 
-            # q.qcd_DR_SR_correction_2,
-            # # ---
-            # q.qcd_correction_wo_DR_SR_1,
-            # q.qcd_correction_wo_DR_SR_2,
-            # # ---
-            # q.qcd_fake_factor_correction_1,
-            # q.qcd_fake_factor_correction_2,
-            # # ---
-            # q.qcd_fake_factor_1,
-            # q.qcd_fake_factor_2,
         ],
     )
 
