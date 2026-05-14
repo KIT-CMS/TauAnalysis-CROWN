@@ -320,6 +320,28 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         JetCollection = ProducerGroup(output=[q.good_jet_collection], subproducers=[GoodJetsWithVeto])
         BJetCollection = ProducerGroup(output=[q.good_bjet_collection], subproducers=[GoodBJetsWithVeto])
 
+    JetPtVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[q.jet_pt_corrected, q.good_jet_collection],
+        output=[q.jet_pt_vec],
+    )
+    JetEtaVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[nanoAODv15.Jet_eta, q.good_jet_collection],
+        output=[q.jet_eta_vec],
+    )
+    JetHadFlavVec = Producer(
+        call="event::quantity::Take<UChar_t>({df}, {output}, {input})",
+        input=[nanoAODv15.Jet_hadronFlavour, q.good_jet_collection],
+        output=[q.jet_hadronflavour_vec],
+    )
+    JetBTagVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[q.jet_BTag, q.good_jet_collection],
+        output=[q.jet_btag_value_vec],
+    )
+   
+    
     ##########################
     # Basic Jet Quantities
     # njets, pt, eta, phi, b-tag value
