@@ -432,6 +432,21 @@ DoubleTauTriggerSF = ProducerGroup(
 #########################
 
 btagging_SF = Producer(
+    call='physicsobject::jet::scalefactor::BtaggingShape({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}")',
+    input=[
+        q.Jet_pt_corrected,
+        nanoAOD.Jet_eta,
+        q.Jet_BTag,
+        nanoAOD.Jet_hadronFlavour,
+        q.good_jets_mask,
+        q.good_bjets_mask,
+        q.jet_overlap_veto_mask,
+    ],
+    output=[q.btag_weight],
+    scopes=["tt", "mt", "et", "mm", "em", "ee"],
+)
+
+btaggingWP_SF = Producer(
     call="""physicsobject::jet::scalefactor::BtaggingWP(
         {df},
         correctionManager,
@@ -450,20 +465,7 @@ btagging_SF = Producer(
     input=[
         q.Jet_pt_corrected,
         nanoAOD.Jet_eta,
-        nanoAOD.Jet_hadronFlavour,
-        q.good_jets_mask,
-        q.good_bjets_mask,
-        q.jet_overlap_veto_mask,
-    ],
-    output=[q.btag_weight],
-    scopes=["tt", "mt", "et", "mm", "em", "ee"],
-)
-
-btaggingWP_SF = Producer(
-    call='physicsobject::jet::scalefactor::BtaggingWP({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}", "{btag_wp}")',
-    input=[
-        q.Jet_pt_corrected,
-        nanoAOD.Jet_eta,
+        q.Jet_BTag,
         nanoAOD.Jet_hadronFlavour,
         q.good_jets_mask,
         q.good_bjets_mask,
