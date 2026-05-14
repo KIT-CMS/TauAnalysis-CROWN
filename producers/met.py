@@ -9,7 +9,7 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 with defaults(scopes=["global"]):
     with defaults(call="lorentzvector::BuildMET({df}, {output}, {input})"):
         BuildMetVector = Producer(input=[nanoAOD.PuppiMET_pt, nanoAOD.PuppiMET_phi], output=[q.puppimet_p4])
-        BuildRawMetVector = Producer(input=[nanoAOD.RawPuppiMET_pt, nanoAOD.RawPuppiMET_phi], output=[q.met_p4])
+        BuildRawMetVector = Producer(input=[nanoAOD.RawPuppiMET_pt, nanoAOD.RawPuppiMET_phi], output=[q.rawmet_p4])
         
         with defaults(output=[q.pfmet_p4]):
             BuildPFMetVector = Producer(input=[nanoAOD.PFMET_pt, nanoAOD.PFMET_phi])
@@ -32,12 +32,12 @@ with defaults(scopes=["global"]):
         MetSumEt = Producer(input=[nanoAOD.PuppiMET_sumEt], output=[q.metSumEt])
 
     with defaults(call="lorentzvector::GetPt({df}, {output}, {input})"):
-        MetPt_uncorrected = Producer(input=[q.met_p4], output=[q.met_uncorrected])
+        MetPt_uncorrected = Producer(input=[q.rawmet_p4], output=[q.met_uncorrected])
         PuppiMetPt = Producer(input=[q.puppimet_p4], output=[q.puppimet])
         PFMetPt_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmet_uncorrected])
 
     with defaults(call="lorentzvector::GetPhi({df}, {output}, {input})"):
-        MetPhi_uncorrected = Producer(input=[q.met_p4], output=[q.metphi_uncorrected])
+        MetPhi_uncorrected = Producer(input=[q.rawmet_p4], output=[q.metphi_uncorrected])
         PuppiMetPhi = Producer(input=[q.puppimet_p4], output=[q.puppimetphi])
         PFMetPhi_uncorrected = Producer(input=[q.pfmet_p4], output=[q.pfmetphi_uncorrected])
 
@@ -98,7 +98,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     METTypeI = Producer(
         call='met::Type1Correction({df}, {output}, {input})',
         input=[
-            q.met_p4,
+            q.rawmet_p4,
             q.CombJet_pt_L1corrected,
             q.CombJet_pt_corrected,
             nanoAOD.Jet_phi,
@@ -108,6 +108,20 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             nanoAOD.CorrT1METJet_phi,
             nanoAOD.CorrT1METJet_muonSubtrDeltaPhi,
             nanoAOD.CorrT1METJet_EmEF,
+        ],
+        output = [q.met_p4_jetcorrected],
+    )
+
+    METTypeI_v12 = Producer(
+        call='met::Type1Correction({df}, {output}, {input})',
+        input=[
+            q.rawmet_p4,
+            q.CombJet_pt_L1corrected,
+            q.CombJet_pt_corrected,
+            nanoAOD.Jet_phi,
+            nanoAOD.Jet_chEmEF,
+            nanoAOD.Jet_neEmEF,
+            nanoAOD.CorrT1METJet_phi,
         ],
         output = [q.met_p4_jetcorrected],
     )
@@ -184,7 +198,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
         MetCorrections_v12 = ProducerGroup(
             subproducers=[
-                PropagateJetsToMet,
+                METTypeI_v12,
+                # PropagateJetsToMet,
                 PropagateLeptonsToMet,
                 ApplyRecoilCorrections,
                 MetPt,

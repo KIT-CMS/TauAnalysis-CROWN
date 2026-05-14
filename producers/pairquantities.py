@@ -257,7 +257,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         tau_decaymode_2_v9 = Producer(input=[nanoAOD.Tau_decayMode, q.dileptonpair], output=[q.tau_decaymode_2])
 
     taujet_pt_2 = Producer(
-        call="event::quantity::GetJetForObject<float>({df}, {output}, {input}, 0)",
+        call="event::quantity::GetJetForObject<float>({df}, {output}, {input}, 1)",
         input=[nanoAOD.Jet_pt, nanoAOD.Tau_jetIdx, q.dileptonpair],
         output=[q.taujet_pt_2],
     )

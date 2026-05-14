@@ -432,11 +432,24 @@ DoubleTauTriggerSF = ProducerGroup(
 #########################
 
 btagging_SF = Producer(
-    call='physicsobject::jet::scalefactor::BtaggingShape({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}")',
+    call="""physicsobject::jet::scalefactor::BtaggingWP(
+        {df},
+        correctionManager,
+        {output},
+        {input},
+        "{btag_sf_file}",
+        "{btag_corr_algo}",
+        "{btag_corr_algo_lf}",
+        "{btag_sf_wp_name}",
+        "{btag_eff_file}",
+        "{btag_eff_name}",
+        "{btag_eff_sample_type}",
+        "{btag_sf_variation}",
+        "{btag_wp}")
+        """,
     input=[
         q.Jet_pt_corrected,
         nanoAOD.Jet_eta,
-        q.Jet_BTag,
         nanoAOD.Jet_hadronFlavour,
         q.good_jets_mask,
         q.good_bjets_mask,

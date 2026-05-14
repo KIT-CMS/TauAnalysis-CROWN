@@ -23,7 +23,7 @@ with defaults(scopes=["mt"]):
     MTPairSelection = Producer(
         call="ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})",
         input=[
-            *kinematic_vars.Tau,
+            *kinematic_vars.Tau_with_corrected_pt_and_mass,
             q.Tau_rawIDvsJet,
             *kinematic_vars.Muon,
             nanoAOD.Muon_pfRelIso04_all,

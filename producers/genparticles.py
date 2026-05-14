@@ -83,7 +83,7 @@ with defaults(input=[nanoAOD.GenJet_pt, nanoAOD.Jet_genJetIdx, nanoAOD.Tau_jetId
         scopes=["tt"],
     )
     gen_taujet_pt_2 = Producer(
-        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 0)",
+        call="event::quantity::GetGenJetForObject<float>({df}, {output}, {input}, 1)",
         output=[q.gen_taujet_pt_2],
         scopes=["mt", "et", "tt"],
     )

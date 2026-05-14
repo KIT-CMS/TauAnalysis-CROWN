@@ -187,10 +187,10 @@ with defaults(scopes=["global"]):
             input=[
                 nanoAOD.Jet_pt, 
                 nanoAOD.Jet_eta, 
+                nanoAOD.Jet_phi, 
                 nanoAOD.Jet_area, 
                 nanoAOD.Jet_rawFactor, 
-                q.fixedGridRho, 
-                nanoAOD.Jet_phi, 
+                q.fixedGridRho,
                 nanoAOD.run],
         )
         RenameJetPt = Producer(
@@ -311,6 +311,27 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
     with defaults(call="physicsobject::OrderByPt({df}, {output}, {input})", input=[q.Jet_pt_corrected]):
         JetCollection = ProducerGroup(output=[q.good_jet_collection], subproducers=[GoodJetsWithVeto])
         BJetCollection = ProducerGroup(output=[q.good_bjet_collection], subproducers=[GoodBJetsWithVeto])
+
+    JetPtVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[q.Jet_pt_corrected, q.good_jet_collection],
+        output=[q.jet_pt_vec],
+    )
+    JetEtaVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[nanoAOD.Jet_eta, q.good_jet_collection],
+        output=[q.jet_eta_vec],
+    )
+    JetHadFlavVec = Producer(
+        call="event::quantity::Take<UChar_t>({df}, {output}, {input})",
+        input=[nanoAOD.Jet_hadronFlavour, q.good_jet_collection],
+        output=[q.jet_hadronflavour_vec],
+    )
+    JetBTagVec = Producer(
+        call="event::quantity::Take<float>({df}, {output}, {input})",
+        input=[q.Jet_BTag, q.good_jet_collection],
+        output=[q.Jet_btag_value_vec],
+    )
 
     ##########################
     # Basic Jet Quantities

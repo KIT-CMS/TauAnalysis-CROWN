@@ -6,6 +6,10 @@ from ..scripts.CROWNWrapper import Quantity
 
 # MET and JEt corrections
 Jet_pt_L1corrected = Quantity()
+Jet_btag_value_vec = Quantity()
+jet_pt_vec = Quantity()
+jet_eta_vec = Quantity()
+jet_hadronflavour_vec = Quantity()
 CombJet_pt_L1corrected = Quantity()
 CombJet_pt_corrected = Quantity()
 Jet_rawPt = Quantity()
@@ -158,7 +162,7 @@ prefiring_wgt = Quantity()
 
 # MetBasics
 met_mask = Quantity()
-met_p4 = Quantity()
+rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()
 visgenboson_p4 = Quantity()

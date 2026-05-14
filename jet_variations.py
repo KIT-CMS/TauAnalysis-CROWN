@@ -1,6 +1,11 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 from code_generation.configuration import Configuration
 
+from .producers import jets as jets
+from .producers import scalefactors as scalefactors
+from .scripts.CROWNWrapper import (defaults,
+                                   get_adjusted_add_shift_SystematicShift)
+
 # Map internal era names to JERC JSON era names for JERC sources
 JERC_ERA_MAP = {
     "2016preVFP":"2016",
@@ -17,16 +22,10 @@ JERC_ERA_MAP = {
 
 # for btag jes sources look here https://docs.google.com/spreadsheets/d/1Feuj1n0MdotcPq19Mht7SUIgvkXkA4hiB0BxEuBShLw/edit?gid=1345121349#gid=1345121349
 # but these slides suggest to use full set for run3 https://indico.cern.ch/event/1476286/contributions/6217358/attachments/2965803/5217826/JERC_run3Uncertainties_2024-11-12.pdf
-# also because the btga jes uncertainties are provided only for the full set of sources
-            
+# also because the btag jes uncertainties are provided only for the full set of sources
 
-from .producers import jets as jets
-from .producers import scalefactors as scalefactors
-from .scripts.CROWNWrapper import (defaults,
-                                   get_adjusted_add_shift_SystematicShift)
 
 # taken from here: https://cms-jerc.web.cern.ch/Recommendations/#run-2
-
 
 def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
@@ -35,9 +34,10 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
         # no regrouped btag variations for 2022 and 2023, for 2024 it's a different scheme in any case
         # regrouped jes are available for all eras
         REGROUPED = True if int(era[:4])<2022 else False
+        jet_pt_correction_producer = jets.JetEnergyCorrection if int(era[:4])<2022 else jets.JetEnergyCorrection_Run3
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
-        if era not in ["2024", "2025"]:
+        if int(era[:4]) < 2022:
             with defaults(
                 scopes=("mt", "et", "tt"),
                 shift_key="btag_sf_variation",
@@ -57,18 +57,13 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 shift_key="btag_sf_variation",
                 producers=[scalefactors.btaggingWP_SF],
             ):
-                add_shift(name="btagUnc", shift_map={"Up": "up", "Down": "down"})
-                add_shift(name="btagUncfsr", shift_map={"Up": "up_fsrdef", "Down": "down_fsrdef"})
-                add_shift(name="btagUnchdamp", shift_map={"Up": "up_hdamp", "Down": "down_hdamp"})
-                add_shift(name="btagUncisr", shift_map={"Up": "up_isrdef", "Down": "down_isrdef"})
-                add_shift(name="btagUncjer", shift_map={"Up": "up_jer", "Down": "down_jer"})
-                add_shift(name="btagUncjes", shift_map={"Up": "up_jes", "Down": "down_jes"})
-                add_shift(name="btagUncmass", shift_map={"Up": "up_mass", "Down": "down_mass"})
-                add_shift(name="btagUncstat", shift_map={"Up": "up_statistic", "Down": "down_statistic"})
-                add_shift(name="btagUnctune", shift_map={"Up": "up_tune", "Down": "down_tune"})
+                add_shift(name="btagUncBCcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
+                add_shift(name="btagUncBCuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
+                add_shift(name="btagUncLcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
+                add_shift(name="btagUncLuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
 
-        with defaults(scopes="global", producers=[jets.JetEnergyCorrection_Run3]):
-            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
+        with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
+            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
                     name="jesUncHEMIssue",
@@ -81,9 +76,9 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 shift_key=["jet_jes_shift", "jet_jes_sources"],
                 shift_map={"Up": [1, '{"Total"}'], "Down": [-1, '{"Total"}']},
                 scopes="global",
-                producers=[jets.JetEnergyCorrection_Run3]
+                producers=[JES_CONFIG.jet_pt_correction_producer]
             )
-            if era not in ["2024", "2025"]:
+            if int(era[:4]) < 2022:
                 add_shift(
                     shift_key="btag_sf_variation",
                     shift_map={"Up": "up_jes", "Down": "down_jes"},
@@ -138,7 +133,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, f'{{"{name}"}}'], "Down": [-1, f'{{"{name}"}}']},
                         scopes="global",
-                        producers=[jets.JetEnergyCorrection_Run3]
+                        producers=[JES_CONFIG.jet_pt_correction_producer]
                     )
                     if era not in ["2024", "2025"]:
                         add_shift(
@@ -169,10 +164,10 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         shift_key=["jet_jes_shift", "jet_jes_sources"],
                         shift_map={"Up": [1, JES_source_val], "Down": [-1, JES_source_val]},
                         scopes="global",
-                        producers=[jets.JetEnergyCorrection_Run3],
+                        producers=[JES_CONFIG.jet_pt_correction_producer],
                     )
 
-                    if era not in ["2024", "2025"]:
+                    if int(era[:4]) < 2022:
                         btag_variation_source = f"{name}_{era}" if is_yearly else name
                         add_shift(
                             shift_key="btag_sf_variation",
