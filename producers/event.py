@@ -84,7 +84,7 @@ with defaults(scopes=["global"]):
         output=[q.puweight],
     )
     PUweights_root = Producer(
-        call='event::reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
+        call='event::reweighting::PUWeightROOT({df}, {output}, {input}, "{PU_reweighting_file_data}", "{PU_reweighting_file_mc}", "pileup")',
         input=[nanoAODv15.Pileup_nTrueInt],
         output=[q.puweight],
     )

@@ -126,12 +126,12 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
                     "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
                     "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
-                    "2022preEE": "data/jsonpog-integration/POG/LUM/2022_Summer22/puWeights.json.gz",
-                    "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
-                    "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
-                    "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22CDSep23-Summer22-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-04-15/puWeights_CDEFGHI.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-04-15/puWeights_CDEFGHI.json.gz",
                 }
             ),
             "PU_reweighting_file_data": EraModifier(
@@ -140,12 +140,12 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
                     "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
                     "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
-                    "2022preEE": "data/jsonpog-integration/POG/LUM/2022_Summer22/puWeights.json.gz",
-                    "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
-                    "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
-                    "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22CDSep23-Summer22-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
-                    "2025": "data/root/pileup/Data_PileUp_2025_69p2.root",
+                    "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -154,10 +154,10 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
                     "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
                     "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
-                    "2022preEE": "data/jsonpog-integration/POG/LUM/2022_Summer22/puWeights.json.gz",
-                    "2022postEE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
-                    "2023preBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
-                    "2023postBPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22CDSep23-Summer22-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/MC_PileUp_2024.root",
                     "2025": "data/root_pileup/MC_PileUp_2024.root",
                 }
@@ -172,8 +172,8 @@ def build_config(
                     "2022postEE": "Collisions2022_359022_362760_eraEFG_GoldenJson",
                     "2023preBPix": "Collisions2023_366403_369802_eraBC_GoldenJson",
                     "2023postBPix": "Collisions2023_369803_370790_eraD_GoldenJson",
-                    "2024": "Collisions24_BCDEFGHI_goldenJSON",
-                    "2025": "Collisions24_BCDEFGHI_goldenJSON",
+                    "2024": "Collisions24_CDEFGHI_goldenJSON",
+                    "2025": "Collisions24_CDEFGHI_goldenJSON",
                 }
             ),
             "PU_reweighting_variation": "nominal",
@@ -476,6 +476,7 @@ def build_config(
                     "2023preBPix": "particleNet_wp_values",
                     "2023postBPix": "particleNet_wp_values",
                     "2024": "UParTAK4_wp_values",
+                    "2025": "UParTAK4_wp_values",
                 },
             ),
             "btag_eff_name": "btag_efficiency",
@@ -737,8 +738,8 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
                 }
             ),
             "tau_sf_vsele_barrel": "nom",  # or "up"/"down" for up/down variation
@@ -789,12 +790,12 @@ def build_config(
                     "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
                     "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
                     "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
-                    "2022preEE": "data/jsonpog-integration/POG/MUO/2022_Summer22/muon_Z.json.gz",
-                    "2022postEE": "data/jsonpog-integration/POG/MUO/2022_Summer22EE/muon_Z.json.gz",
-                    "2023preBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23/muon_Z.json.gz",
-                    "2023postBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23BPix/muon_Z.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
+                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22CDSep23-Summer22-NanoAODv12/2026-04-28/muon_Z.json.gz",
+                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-28/muon_Z.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23CSep23-Summer23-NanoAODv12/2026-04-28/muon_Z.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-28/muon_Z.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-04-28/muon_Z.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-25Prompt-Summer24-NanoAODv15/2026-04-28/muon_Z.json.gz",
                 }
             ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",  # correction for mediumId WP
@@ -862,7 +863,7 @@ def build_config(
             "muon_index_in_pair": 0,
             "min_muon_pt": 15.0,
             "max_muon_eta": 2.4,
-            "max_muon_iso": 0.15,
+            "max_muon_iso": 0.5,
             "second_muon_index_in_pair": 1,
         },
     )
@@ -931,11 +932,11 @@ def build_config(
             "second_electron_index_in_pair": 0,
             "min_ele_pt": 15.0,
             "max_ele_eta": 2.5,
-            "max_ele_iso": 0.15,
+            "max_ele_iso": 0.5,
             "muon_index_in_pair": 1,
             "min_muon_pt": 15.0,
             "max_muon_eta": 2.4,
-            "max_muon_iso": 0.15,
+            "max_muon_iso": 0.5,
         },
     )
     configuration.add_config_parameters(
@@ -975,7 +976,7 @@ def build_config(
             "electron_index_in_pair": 0,
             "min_ele_pt": 15.0,
             "max_ele_eta": 2.5,
-            "max_ele_iso": 0.15,
+            "max_ele_iso": 0.5,
         },
     )
     
@@ -1638,6 +1639,13 @@ def build_config(
         configuration.add_modification_rule(
             scopes,
             ReplaceProducer(
+                producers=[scalefactors.btaggingWP_SF,scalefactors.btagging_SF],
+                exclude_samples=["data", "embedding", "embedding_mc"], 
+            ),
+        )
+        configuration.add_modification_rule(
+            scopes,
+            ReplaceProducer(
                 producers=[met.MetCorrections, met.MetCorrections_Run2],
                 exclude_samples=["fake_era"],
             ),
@@ -1874,15 +1882,6 @@ def build_config(
                 exclude_samples=["fake_era"],
             ),
         )
-    if int(era[:4]) < 2022:
-        configuration.add_modification_rule(
-            scopes,
-            ReplaceProducer(
-                producers=[scalefactors.btaggingWP_SF,scalefactors.btagging_SF],
-                exclude_samples=["data", "embedding", "embedding_mc"], 
-            ),
-        )
-
 
     #########################
     ######## OUTPUTS ########
