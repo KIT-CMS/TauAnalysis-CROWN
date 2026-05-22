@@ -125,6 +125,16 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         ],
         output=[q.topPtReweightWeight],
     )
+    #for run 3
+    TopPtReweighting_Run3 = Producer(
+        call="event::reweighting::TopPtRun3({df}, {output}, {input})",
+        input=[
+            nanoAOD.GenPart_pdgId,
+            nanoAOD.GenPart_statusFlags,
+            nanoAOD.GenPart_pt,
+        ],
+        output=[q.topPtReweightWeight],
+    )
     GGH_NNLO_Reweighting = Producer(
         call='htxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})',
         input=[nanoAOD.HTXS_Higgs_pt, nanoAOD.HTXS_njets30],

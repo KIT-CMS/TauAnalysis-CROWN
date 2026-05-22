@@ -17,7 +17,7 @@ JERC_ERA_MAP = {
     "2023preBPix": "2023",
     "2023postBPix": "2023BPix",
     "2024": "2024",
-    "2025": "2024",
+    "2025": "2025",
 }
 
 # for btag jes sources look here https://docs.google.com/spreadsheets/d/1Feuj1n0MdotcPq19Mht7SUIgvkXkA4hiB0BxEuBShLw/edit?gid=1345121349#gid=1345121349
@@ -63,7 +63,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 add_shift(name="btagUncLuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
 
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
-            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
+            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": '"up"', "Down": '"down"'})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
                     name="jesUncHEMIssue",
@@ -135,7 +135,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                         scopes="global",
                         producers=[JES_CONFIG.jet_pt_correction_producer]
                     )
-                    if era not in ["2024", "2025"]:
+                    if int(era[:4]) < 2022:
                         add_shift(
                             shift_key="btag_sf_variation",
                             shift_map={"Up": f"up_jes{name}", "Down": f"down_jes{name}"},

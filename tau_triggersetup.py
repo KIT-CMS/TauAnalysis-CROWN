@@ -705,8 +705,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
-                            "p1_filterbit": 11,
-                            "p2_filterbit": 11,
+                            "p1_filterbit": "1, 4, 11",
+                            "p2_filterbit": "1, 4, 11",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -718,8 +718,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
-                            "p1_filterbit": 11,
-                            "p2_filterbit": 11,
+                            "p1_filterbit": "1, 4, 11",
+                            "p2_filterbit": "1, 4, 11",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -731,8 +731,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -744,8 +744,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -757,8 +757,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -770,8 +770,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -1497,8 +1497,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg1_variation": "nom",
@@ -1544,8 +1544,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg2_variation": "nom",
@@ -1706,8 +1706,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg1_variation": _variation,
@@ -1753,8 +1753,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg2_variation": _variation,

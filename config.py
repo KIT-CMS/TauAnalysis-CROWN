@@ -102,7 +102,7 @@ def build_config(
             "pdf_variation": "nominal",
             "pdf_alphaS_variation": "nominal",
             
-            # golden json
+            # golden json https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions2X
             "golden_json_file": EraModifier(
                 {
                     "2016preVFP": "data/golden_json/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt",
@@ -892,7 +892,7 @@ def build_config(
                     "2023preBPix": "2023PromptC",
                     "2023postBPix": "2023PromptD",
                     "2024": "2024Prompt",
-                    "2025": "2024Prompt",
+                    "2025": "2025Prompt",
                 }
             ),
             "ele_sf_variation": "sf",  # "sf" is nominal, "sfup"/"sfdown" are up/down variations
@@ -1433,8 +1433,8 @@ def build_config(
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
-            producers=[event.TopPtReweighting], 
-            samples="ttbar"
+            producers=[event.TopPtReweighting_Run3], 
+            samples=["ttbar"],
         ),
     )
     configuration.add_modification_rule(
@@ -1531,6 +1531,13 @@ def build_config(
             ReplaceProducer(
                 producers = [electrons.ElectronIDCut, electrons.ElectronIDCut_v9],
                 exclude_samples=["fake_era"],
+            ),
+        )
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers = [event.TopPtReweighting_Run3, event.TopPtReweighting],
+                exclude_samples=["ttbar"],
             ),
         )
         configuration.add_modification_rule(
