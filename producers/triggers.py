@@ -26,7 +26,7 @@ with defaults(output="flagname"):
             {ptcut},
             {etacut},
             {trigger_particle_id},
-            {filterbit},
+            {vec_open}{filterbit}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1] + TrigObj_collection):
@@ -53,8 +53,8 @@ with defaults(output="flagname"):
             {p2_etacut},
             {p1_trigger_particle_id},
             {p2_trigger_particle_id},
-            {p1_filterbit},
-            {p2_filterbit},
+            {vec_open}{p1_filterbit}{vec_close},
+            {vec_open}{p2_filterbit}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1, q.p4_2] + TrigObj_collection):
@@ -75,8 +75,8 @@ with defaults(output="flagname"):
             {p2_etacut},
             {p1_trigger_particle_id},
             {p2_trigger_particle_id},
-            {p1_filterbit},
-            {p2_filterbit},
+            {vec_open}{p1_filterbit}{vec_close},
+            {vec_open}{p2_filterbit}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1, q.p4_2] + TrigObj_collection):
