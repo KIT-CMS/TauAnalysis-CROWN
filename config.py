@@ -2331,14 +2331,24 @@ def build_config(
     #########################
     # Pileup Shifts
     #########################
-    add_shift(
-        name="PileUp",
-        shift_key="PU_reweighting_variation",
-        shift_map={"Up": "up", "Down": "down"},
-        scopes="global",
-        producers=[event.PUweights],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    if era != "2025":
+        add_shift(
+            name=f"CMS_pileup_{era}_",
+            shift_key="PU_reweighting_variation",
+            shift_map={"Up": "up", "Down": "down"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
+    else:
+        add_shift(
+            name=f"CMS_pileup_{era}_",
+            shift_key="PU_reweighting_file_data",
+            shift_map={"Up": "up", "Down": "down"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
 
     #########################
     # Prefiring Shifts
