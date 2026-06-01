@@ -48,7 +48,7 @@ def build_config(
             "max_muon_dxy": 0.5,
             "max_muon_dz": 0.5,
             "muon_id": "Muon_looseId",
-            "muon_iso_cut": 2.5,
+            "max_muon_iso": 2.5,
         },
     )
     ###### scope Specifics ######
@@ -58,7 +58,7 @@ def build_config(
         {
             "muon_index_in_pair": 0,
             "second_muon_index_in_pair": 1,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "min_muon_pt": 23.0,
             "max_muon_eta": 2.4,
             "max_muon_dxy": 0.045,
