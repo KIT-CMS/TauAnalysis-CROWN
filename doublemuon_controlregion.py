@@ -12,7 +12,7 @@ from .producers import scalefactors as scalefactors
 from .producers import tagandprobe as tagandprobe
 from .producers import embedding as embedding
 from .producers import electrons as electrons
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv9 as nanoAOD
 from .quantities import output as q
 from .quantities import tagandprobe_output as qt
 from code_generation.configuration import Configuration
@@ -186,35 +186,34 @@ def build_config(
             ),
             "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
             "jet_reapplyJES": False,
-            "jet_jes_source": '{""}',
+            "jet_jes_sources": '{""}',
             "jet_jes_shift": 0,
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jer_shift": "nom",  # or "up", "down"
             "jet_jec_file": EraModifier(
                 {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                    "2016preVFP": "data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
+                    "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
+                    "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
                 }
             ),
             "jet_jer_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
+                    "2016preVFP": "Summer20UL16APV_JRV3_MC",
+                    "2016postVFP": "Summer20UL16_JRV3_MC",
+                    "2017": "Summer19UL17_JRV2_MC",
+                    "2018": "Summer19UL18_JRV2_MC",
                 }
             ),
-            "jet_jes_tag_data": '""',
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
+                    "2016preVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16APV_V7_MC",
+                    "2016postVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16_V7_MC",
+                    "2017": "NONE" if sample in ["embedding", "data"] else "Summer19UL17_V5_MC",
+                    "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
                 }
             ),
-            "jet_jec_algo": '"AK4PFchs"',
+            "jet_jec_algo": "AK4PFchs",
         },
     )
 
@@ -245,7 +244,7 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.3,
+            "max_muon_iso": 0.3,
         },
     )
     # MuMu scope Muon selection
@@ -254,7 +253,7 @@ def build_config(
         {
             "min_muon_pt": 10.0,
             "max_muon_eta": 2.1,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "second_muon_index_in_pair": 1,
             "muon_index_in_pair": 0,
         },
@@ -716,7 +715,7 @@ def build_config(
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
-            producers=embedding.PrivateSelectionSF, samples=["embedding"]
+            producers=embedding.TauEmbeddingSelectionSF, samples=["embedding"]
         ),
     )
 
@@ -763,10 +762,10 @@ def build_config(
         ["mm"],
         AppendProducer(
             producers=[
-                embedding.PrivateMuonIDSF_1,
-                embedding.PrivateMuonIsoSF_1,
-                embedding.PrivateMuonIDSF_2,
-                embedding.PrivateMuonIsoSF_2,
+                embedding.TauEmbeddingMuonIDSF_1,
+                embedding.TauEmbeddingMuonIsoSF_1,
+                embedding.TauEmbeddingMuonIDSF_2,
+                embedding.TauEmbeddingMuonIsoSF_2,
                 embedding.MTGenerateSingleMuonTriggerSF,
             ],
             samples=["embedding"],

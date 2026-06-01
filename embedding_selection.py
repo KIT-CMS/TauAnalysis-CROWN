@@ -78,7 +78,7 @@ def build_config(
             "max_muon_dxy": 1.00,
             "max_muon_dz": 1.00,
             "muon_id": "Muon_looseId",
-            "muon_iso_cut": 1.00,
+            "max_muon_iso": 1.00,
         },
     )
     # MuMu scope Muon selection
@@ -89,7 +89,7 @@ def build_config(
             "second_muon_index_in_pair": 1,
             "min_muon_pt": 10.0,
             "max_muon_eta": 2.4,
-            "muon_iso_cut": 1.00,
+            "max_muon_iso": 1.00,
         },
     )
     # add embedding selection scalefactors

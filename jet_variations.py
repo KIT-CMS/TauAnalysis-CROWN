@@ -34,7 +34,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
         # no regrouped btag variations for 2022 and 2023, for 2024 it's a different scheme in any case
         # regrouped jes are available for all eras
         REGROUPED = True if int(era[:4])<2022 else False
-        jet_pt_correction_producer = jets.JetEnergyCorrection if int(era[:4])<2022 else jets.JetEnergyCorrection_Run3
+        jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if int(era[:4])<2022 else jets.JetEnergyCorrection
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if int(era[:4]) < 2022:

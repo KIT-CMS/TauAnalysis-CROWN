@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 ####################
@@ -33,7 +33,7 @@ with defaults(scopes=["global"]):
         output=[q._MuonIDCut],
     )
     MuonIsoCut = Producer(
-        call='''physicsobject::CutMax<float>({df}, {output}, {input}, {muon_iso_cut})''',
+        call='''physicsobject::CutMax<float>({df}, {output}, {input}, {max_muon_iso})''',
         input=[nanoAOD.Muon_pfRelIso04_all],
         output=[q._MuonIsoCut],
     )
@@ -81,7 +81,7 @@ with defaults(scopes=["em", "mt", "mm"]):
     with defaults(output=[]):
         GoodMuonPtCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_muon_pt})''', input=[nanoAOD.Muon_pt])
         GoodMuonEtaCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_eta})''', input=[nanoAOD.Muon_eta])
-        GoodMuonIsoCut = Producer(call='''physicsobject::CutMax<float>({df}, {output}, {input}, {muon_iso_cut})''', input=[nanoAOD.Muon_pfRelIso04_all])
+        GoodMuonIsoCut = Producer(call='''physicsobject::CutMax<float>({df}, {output}, {input}, {max_muon_iso})''', input=[nanoAOD.Muon_pfRelIso04_all])
         GoodMuonDzCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dz})''', input=[nanoAOD.Muon_dz])
         GoodMuonDxyCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dxy})''', input=[nanoAOD.Muon_dxy])
 

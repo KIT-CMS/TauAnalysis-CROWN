@@ -1,7 +1,7 @@
 #ifndef GUARDFAKEFACTORS_CXX
 #define GUARDFAKEFACTORS_CXX
 
-#include "../include/fakefactors.hxx"
+#include "../include/fake_factors.hxx"
 #include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
@@ -20,7 +20,7 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace fakefactors {
+namespace fake_factors {
 
     ROOT::RDF::RNode build_model_input_column(
         ROOT::RDF::RNode df,
@@ -29,7 +29,7 @@ namespace fakefactors {
     ) {
         if (input_columns.empty()) {
             throw std::runtime_error(
-                "fakefactors::build_model_input_column requires at least one input column");
+                "fake_factors::build_model_input_column requires at least one input column");
         }
 
         std::string define_expression = "std::vector<float>{";
@@ -76,6 +76,7 @@ namespace fakefactors {
 
         return result;
     }
+
     namespace sm {
 
     std::vector<correction::Variable::Type>
@@ -430,7 +431,7 @@ namespace fakefactors {
                     ff_file,
                     ff_corr_file
                 };
-                std::string shifted_collection_identifier = fakefactors::joinAndReplace(strings, "_");
+                std::string shifted_collection_identifier = fake_factors::joinAndReplace(strings, "_");
 
                 auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, input_columns);
                 return event::quantity::Unroll<float>(df1, outputnames, shifted_collection_identifier);
@@ -695,7 +696,7 @@ namespace fakefactors {
                     ff_file,
                     ff_corr_file
                 };
-                std::string shifted_collection_identifier = fakefactors::joinAndReplace(strings, "_");
+                std::string shifted_collection_identifier = fake_factors::joinAndReplace(strings, "_");
 
                 auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, input_columns);
                 return event::quantity::Unroll<float>(df1, outputnames, shifted_collection_identifier);

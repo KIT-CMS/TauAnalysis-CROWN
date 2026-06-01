@@ -1,6 +1,6 @@
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):

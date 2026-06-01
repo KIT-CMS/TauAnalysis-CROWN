@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
 
 
@@ -95,11 +95,11 @@ with defaults(scopes=["tt"]):
     )
     Tau_1_VsEleTauID_SF_Run2 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsEle(
-            {df}, 
-            correctionManager, 
-            {output}, 
-            {input}, 
-            "{tau_sf_file}", 
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
             "{tau_id_algorithm}VSe",
             "{vsele_tau_id_WP}",
             "{era}",
@@ -250,14 +250,14 @@ with defaults(scopes=["et", "mt", "tt"]):
     Tau_2_VsEleTauID_SF_Run2 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsEle(
             {df},
-            correctionManager, 
+            correctionManager,
             {output},
             {input},
-            "{tau_sf_file}", 
-            "{tau_id_algorithm}VSe", 
-            "{vsele_tau_id_WP}", 
+            "{tau_sf_file}",
+            "{tau_id_algorithm}VSe",
+            "{vsele_tau_id_WP}",
             "{era}",
-            "{tau_sf_vsele_barrel}", 
+            "{tau_sf_vsele_barrel}",
             "{tau_sf_vsele_endcap}")''',
         input=[q.eta_2, q.tau_decaymode_2, q.gen_match_2],
         output="tau_2_vsele_sf_outputname",
@@ -533,9 +533,9 @@ DoubleTauTriggerSF = ProducerGroup(
 btagging_SF = Producer(
     call='''physicsobject::jet::scalefactor::BtaggingShape({df}, correctionManager, {output}, {input}, "{btag_sf_file}", "{btag_corr_algo}", "{btag_sf_variation}")''',
     input=[
-        q.Jet_pt_corrected,
+        q.jet_pt_corrected,
         nanoAOD.Jet_eta,
-        q.Jet_BTag,
+        q.jet_BTag,
         nanoAOD.Jet_hadronFlavour,
         q.good_jets_mask,
         q.good_bjets_mask,
@@ -561,9 +561,9 @@ btaggingWP_SF = Producer(
         "{btag_sf_variation}",
         "{btag_wp}")''',
     input=[
-        q.Jet_pt_corrected,
+        q.jet_pt_corrected,
         nanoAOD.Jet_eta,
-        q.Jet_BTag,
+        q.jet_BTag,
         nanoAOD.Jet_hadronFlavour,
         q.good_jets_mask,
         q.good_bjets_mask,

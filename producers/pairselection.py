@@ -1,6 +1,6 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, Filter, BaseFilter, defaults
+from ..quantities import nanoAODv15 as nanoAOD
+from ..scripts.CROWNWrapper import Producer, Filter, defaults
 
 ####################
 # Set of producers used for contruction of MT good pairs and the coressponding lorentz vectors
@@ -15,16 +15,16 @@ class kinematic_vars:
 
 kinematic_vars.Muon = [nanoAOD.Muon_pt, *kinematic_vars._nanoAOD_Muon]
 kinematic_vars.Tau = [nanoAOD.Tau_pt, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
-kinematic_vars.Tau_with_corrected_pt = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
-kinematic_vars.Tau_with_corrected_pt_and_mass = [q.Tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, q.Tau_mass_corrected]
-kinematic_vars.Electron_with_corrected_pt = [q.Electron_pt_corrected, *kinematic_vars._nanoAOD_Electron]
+kinematic_vars.Tau_with_corrected_pt = [q.tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
+kinematic_vars.Tau_with_corrected_pt_and_mass = [q.tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, q.tau_mass_corrected]
+kinematic_vars.Electron_with_corrected_pt = [q.electron_pt_corrected, *kinematic_vars._nanoAOD_Electron]
 
 with defaults(scopes=["mt"]):
     MTPairSelection = Producer(
         call='''ditau_pairselection::mutau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})''',
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            q.Tau_rawIDvsJet,
+            q.tau_rawIDvsJet,
             *kinematic_vars.Muon,
             nanoAOD.Muon_pfRelIso04_all,
             q.good_muons_mask,
@@ -90,7 +90,7 @@ with defaults(scopes=["et"]):
         call='''ditau_pairselection::eltau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})''',
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            q.Tau_rawIDvsJet,
+            q.tau_rawIDvsJet,
             *kinematic_vars.Electron_with_corrected_pt,
             nanoAOD.Electron_pfRelIso03_all,
             q.good_electrons_mask,
@@ -118,7 +118,7 @@ with defaults(scopes=["tt"]):
         call='''ditau_pairselection::tautau::PairSelection({df}, {input_vec}, {output}, {pairselection_min_dR})''',
         input=[
             *kinematic_vars.Tau_with_corrected_pt_and_mass,
-            q.Tau_rawIDvsJet,
+            q.tau_rawIDvsJet,
             q.good_taus_mask,
         ],
         output=[q.dileptonpair],
