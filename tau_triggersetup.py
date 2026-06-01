@@ -1,6 +1,7 @@
 from code_generation.configuration import Configuration
-from code_generation.modifiers import EraModifier
-from code_generation.systematics import SystematicShift
+from code_generation.modifiers import EraModifier, SampleModifier
+from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
+from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 from .producers import scalefactors as scalefactors
 
 
@@ -663,6 +664,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_etacut": 2.1,
                             "p1_filterbit": -1,  # TODO check if the filter bit is correct
                             "p2_filterbit": 4,  # TODO switch to "p2_filterbit": 4, if the bits are correct
+                            "p1_filterbit": -1,  # TODO check if the filter bit is correct
+                            "p2_filterbit": 4,  # TODO switch to "p2_filterbit": 4, if the bits are correct
                             **electron_tau_cross_trigger_defaults,
                         },
                         {
@@ -702,8 +705,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
-                            "p1_filterbit": 11,
-                            "p2_filterbit": 11,
+                            "p1_filterbit": "1, 4, 11",
+                            "p2_filterbit": "1, 4, 11",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -715,8 +718,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 35,
                             "p1_etacut": 2.3,
                             "p2_etacut": 2.3,
-                            "p1_filterbit": 11,
-                            "p2_filterbit": 11,
+                            "p1_filterbit": "1, 4, 11",
+                            "p2_filterbit": "1, 4, 11",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -728,8 +731,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -741,8 +744,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -754,8 +757,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -767,8 +770,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 7,
-                            "p2_filterbit": 7,
+                            "p1_filterbit": "3, 7",
+                            "p2_filterbit": "3, 7",
                             **doubletau_trigger_defaults,
                         },
                     ],
@@ -1347,12 +1350,12 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2016postVFP": '""', 
                     "2017": '""',
                     "2018": '""',
-                    "2022preEE": '"data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2022postEE": '"data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023preBPix": '"data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023postBPix": '"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2024":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2025":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2022preEE": "data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json",
+                    "2022postEE": "data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json",
+                    "2023preBPix": "data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2023postBPix": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2024":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2025":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                 }
             ),
             "mutau_trigger_leg1_sf": [
@@ -1494,8 +1497,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg1_variation": "nom",
@@ -1541,8 +1544,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg2_variation": "nom",
@@ -1703,8 +1706,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg1_variation": _variation,
@@ -1750,8 +1753,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg2_variation": _variation,
