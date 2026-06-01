@@ -7,9 +7,9 @@ from ..scripts.CROWNWrapper import Quantity
 # MET and JEt corrections
 Jet_pt_L1corrected = Quantity()
 Jet_btag_value_vec = Quantity()
-jet_pt_vec = Quantity()
-jet_eta_vec = Quantity()
-jet_hadronflavour_vec = Quantity()
+Jet_pt_vec = Quantity()
+Jet_eta_vec = Quantity()
+Jet_hadronflavour_vec = Quantity()
 CombJet_pt_L1corrected = Quantity()
 CombJet_pt_corrected = Quantity()
 Jet_rawPt = Quantity()
@@ -466,3 +466,28 @@ deltaEta_jj = Quantity()
 deltaEta_12j1 = Quantity()
 deltaEta_12j2 = Quantity()
 deltaEta_12jj = Quantity()
+
+# float quantities
+njets_float = Quantity()
+nbtag_float = Quantity()
+event_parity_float = Quantity()
+tau_decaymode_2_float = Quantity()
+tau_decaymode_1_float = Quantity()
+pzetamissvis_float = Quantity()
+
+# fake factor vectors
+ff_input_lt = Quantity()
+ff_input_fraction_lt = Quantity()
+ff_input_dr_lt = Quantity()
+ff_input_nc_lt = Quantity()
+ff_input_qcd_tt = Quantity()
+ff_input_qcdsub_tt = Quantity()
+ff_input_fraction_tt = Quantity()
+ff_input_dr_tt = Quantity()
+ff_input_nc_qcd_tt = Quantity()
+ff_input_nc_qcdsub_tt = Quantity()
+
+# nn quantities
+nn_output_vector = Quantity()
+nn_predicted_class = Quantity()
+nn_predicted_max_value = Quantity()

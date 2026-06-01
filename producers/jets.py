@@ -10,35 +10,35 @@ from code_generation.configuration import Configuration
 with defaults(scopes=["global"]):
     with defaults(output=[q.Jet_BTag]):
         JetBTagDeep = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAOD.Jet_btagDeepFlavB],
         )
         # not present in v9
         JetBTagPNet = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAODv12.Jet_btagPNetB],
         )
         # not present in v9 or v12
         JetBTagUParT = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAOD.Jet_btagUParTAK4B],
         )
     
     with defaults(output=[q.fixedGridRho]):
         # not present in v9
         JetRho = Producer(
-            call="event::quantity::Rename<float>({df}, {output}, {input})",
+            call='''event::quantity::Rename<float>({df}, {output}, {input})''',
             input=[nanoAODv12.Rho_fixedGridRhoFastjetAll],
         )
         # not present in v12 and above
         JetRho_v9 = Producer(
-            call="event::quantity::Rename<float>({df}, {output}, {input})",
+            call='''event::quantity::Rename<float>({df}, {output}, {input})''',
             input=[nanoAODv9.fixedGridRhoFastjetAll],
         )
 
     with defaults(output=[q.Jet_ID]):
         JetID = Producer(
-            call="physicsobject::jet::quantity::ID({df}, correctionManager, {output}, {input}, {jet_id_json}, {jet_collection_name})",
+            call='''physicsobject::jet::quantity::ID({df}, correctionManager, {output}, {input}, "{jet_id_json}", "{jet_collection_name}")''',
             input=[
                 nanoAOD.Jet_eta,
                 nanoAOD.Jet_chHEF,
@@ -51,7 +51,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetIDRun3NanoV12Corrected = Producer(
-            call="physicsobject::jet::quantity::PatchedIDNanoV12({df}, {output}, {input})",
+            call='''physicsobject::jet::quantity::PatchedIDNanoV12({df}, {output}, {input})''',
             input=[
                 nanoAOD.Jet_pt,
                 nanoAOD.Jet_eta,
@@ -63,12 +63,12 @@ with defaults(scopes=["global"]):
             ],
         )
         JetID_rename = Producer(
-            call="event::quantity::Rename<ROOT::RVec<int>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<int>>({df}, {output}, {input})''',
             input=[nanoAODv12.Jet_jetId],
         )
 
     JetVetoMapVeto = Producer(
-        call="""physicsobject::jet::VetoMap({df}, correctionManager, {output}, {input}, "{jet_veto_map_file}", "{jet_veto_map_name}", "{jet_veto_map_type}", {jet_veto_min_pt}, {jet_veto_id_wp}, {jet_veto_max_em_frac})""",
+        call='''physicsobject::jet::VetoMap({df}, correctionManager, {output}, {input}, "{jet_veto_map_file}", "{jet_veto_map_name}", "{jet_veto_map_type}", {jet_veto_min_pt}, {jet_veto_id_wp}, {jet_veto_max_em_frac})''',
         input=[
             q.Jet_pt_corrected,
             nanoAOD.Jet_eta,
@@ -82,7 +82,7 @@ with defaults(scopes=["global"]):
     )
 
     JetSmearingSeed = Producer(
-        call="event::quantity::GenerateSeed({df}, {output}, {input}, {jer_master_seed})",
+        call='''event::quantity::GenerateSeed({df}, {output}, {input}, {jer_master_seed})''',
         input=[
             nanoAOD.luminosityBlock,
             nanoAOD.run,
@@ -92,7 +92,7 @@ with defaults(scopes=["global"]):
     )
 
     RawJet = Producer(
-        call="physicsobject::jet::RawPt({df}, {output}, {input})",
+        call='''physicsobject::jet::RawPt({df}, {output}, {input})''',
         input=[
             nanoAOD.Jet_pt,
             nanoAOD.Jet_rawFactor,
@@ -100,8 +100,8 @@ with defaults(scopes=["global"]):
         output=[q.Jet_rawPt],
     )
 
-    with defaults(call="event::quantity::Rename<ROOT::VecOps::RVec<float>>({df}, {output}, {input})"):
-        # rename gen jet variable for data otherwise jet pt correction producer doesn't work for both mc and data at the same time
+    with defaults(call='''event::quantity::Rename<ROOT::VecOps::RVec<float>>({df}, {output}, {input})'''):
+        # rename gen jet variable for data otherwise jet pt correction producer doesn'''t work for both mc and data at the same time
         with defaults(output=[q.gen_jet_pt]):
             GenPt = Producer(input=[nanoAOD.GenJet_pt])
             GenPt_data = Producer(input=[nanoAOD.Jet_pt])
@@ -127,7 +127,7 @@ with defaults(scopes=["global"]):
     )
 
     JetPtCorrection_L1 = Producer(
-        call='physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag})',
+        call='''physicsobject::jet::PtCorrectionL1({df}, correctionManager, {output}, {input}, "{jet_jer_file}", "{jet_jec_algo}", "{jet_jes_tag}")''',
         input=[
             q.Jet_rawPt,
             nanoAOD.Jet_eta,
@@ -144,7 +144,7 @@ with defaults(scopes=["global"]):
         output=[q.Jet_pt_L1corrected, q.CombJet_pt_L1corrected],
     )
     JetPtCorrection_Run3 = Producer(
-        call='physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
+        call='''physicsobject::jet::PtCorrectionL2L3({df}, correctionManager, {output}, {input}, "{jet_jer_file}", "{jet_jec_algo}", "{jet_jes_tag}", "{jet_jes_source}", "{jet_jer_tag}", {jet_jes_shift}, "{jet_jer_shift}", "{era}")''',
         input=[
             q.Jet_pt_L1corrected,
             nanoAOD.Jet_eta,
@@ -167,7 +167,7 @@ with defaults(scopes=["global"]):
 
     with defaults(output=[q.Jet_pt_corrected]):
         JetPtCorrection = Producer(
-            call='physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, {jet_jes_sources}, {jet_jer_tag}, {jet_reapplyJES}, {jet_jes_shift}, {jet_jer_shift}, "{era}")',
+            call='''physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{jet_jer_file}", "{jet_jec_algo}", "{jet_jes_tag}", "{jet_jes_source}", "{jet_jer_tag}", "{jet_reapplyJES}", {jet_jes_shift}, "{jet_jer_shift}", "{era}")''',
             input=[
                 nanoAOD.Jet_pt,
                 nanoAOD.Jet_eta,
@@ -183,7 +183,7 @@ with defaults(scopes=["global"]):
             ],
         )
         JetPtCorrection_data = Producer(
-            call='physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, {jet_jer_file}, {jet_jec_algo}, {jet_jes_tag}, "{era}")',
+            call='''physicsobject::jet::PtCorrectionData({df}, correctionManager, {output}, {input}, "{jet_jer_file}", "{jet_jec_algo}", "{jet_jes_tag}", "{era}")''',
             input=[
                 nanoAOD.Jet_pt, 
                 nanoAOD.Jet_eta, 
@@ -194,17 +194,17 @@ with defaults(scopes=["global"]):
                 nanoAOD.run],
         )
         RenameJetPt = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAOD.Jet_pt],
         )
 
     with defaults(output=[q.Jet_mass_corrected]):
         JetMassCorrection = Producer(
-            call="physicsobject::MassCorrectionWithPt({df}, {output}, {input})",
+            call='''physicsobject::MassCorrectionWithPt({df}, {output}, {input})''',
             input=[nanoAOD.Jet_mass, nanoAOD.Jet_pt, q.Jet_pt_corrected],
         )
         RenameJetMass = Producer(
-            call="event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})",
+            call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAOD.Jet_mass],
         )
 
@@ -215,61 +215,61 @@ with defaults(scopes=["global"]):
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])
 
     with defaults(output=[]):
-        JetPtCut_loose = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_loose})", input=[q.Jet_pt_corrected], output=[q.Jet_pt_cut_loose])
-        JetPtCut_tight = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_tight})", input=[q.Jet_pt_corrected])
+        JetPtCut_loose = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_loose})''', input=[q.Jet_pt_corrected], output=[q.Jet_pt_cut_loose])
+        JetPtCut_tight = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_tight})''', input=[q.Jet_pt_corrected])
         
-        JetEtaCut_Min1 = Producer(call="physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_1})", input=[nanoAOD.Jet_eta])
-        JetEtaCut_Min2 = Producer(call="physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})", input=[nanoAOD.Jet_eta])
-        JetEtaCut_Max1 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_1})", input=[nanoAOD.Jet_eta])
-        JetEtaCut_Max2 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_2})", input=[nanoAOD.Jet_eta])
-        JetEtaCut_Max3 = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_3})", input=[nanoAOD.Jet_eta], output=[q.Jet_eta_max_cut])
+        JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAOD.Jet_eta])
+        JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAOD.Jet_eta])
+        JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAOD.Jet_eta])
+        JetEtaCut_Max2 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAOD.Jet_eta])
+        JetEtaCut_Max3 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_3})''', input=[nanoAOD.Jet_eta], output=[q.Jet_eta_max_cut])
 
-        BJetPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_bjet_pt})", input=[q.Jet_pt_corrected])
-        BJetEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_bjet_eta})", input=[nanoAOD.Jet_eta])
-        BTagCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {btag_cut})", input=[q.Jet_BTag])
+        BJetPtCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_bjet_pt})''', input=[q.Jet_pt_corrected])
+        BJetEtaCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_bjet_eta})''', input=[nanoAOD.Jet_eta])
+        BTagCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {btag_cut})''', input=[q.Jet_BTag])
 
 
     JetIDCut = Producer(
-        call="physicsobject::CutMin<int>({df}, {output}, {input}, {jet_id})",
+        call='''physicsobject::CutMin<int>({df}, {output}, {input}, {jet_id})''',
         input=[q.Jet_ID],
         output=[q.Jet_id_cut],
     )
 
     JetPUIDCut = Producer(
-        call="physicsobject::jet::CutPileupID({df}, {output}, {input}, {jet_puid}, {jet_puid_max_pt})",
+        call='''physicsobject::jet::CutPileupID({df}, {output}, {input}, {jet_puid}, {jet_puid_max_pt})''',
         input=[nanoAODv9.Jet_puId, q.Jet_pt_corrected],
         output=[q.jet_puid_mask],
     )
 
     # pt>30 & |eta| < 2.5 & id
     LooseJets_LowEta = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.Jet_id_cut, q.Jet_pt_cut_loose],
         output=[q.loose_jets_mask_loweta],
         subproducers=[JetEtaCut_Max1],
     )
     # pt>30 &  3 < |eta| < 4.7 & id
     LooseJets_HighEta = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.Jet_id_cut, q.Jet_pt_cut_loose, q.Jet_eta_max_cut],
         output=[q.loose_jets_mask_higheta],
         subproducers=[JetEtaCut_Min2],
     )
     # pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id
     GoodJets_loose = Producer(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "any_of")',
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "any_of")''',
         input=[q.loose_jets_mask_loweta, q.loose_jets_mask_higheta],
         output=[q.good_jets_mask_loose],
     )
     # pt>50 & 2.5<|eta|<3/4.7 (2022 and 2023) & id
     GoodJets_tight = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.Jet_id_cut],
         output=[q.good_jets_mask_tight],
         subproducers=[JetPtCut_tight, JetEtaCut_Min1, JetEtaCut_Max2],
     )
     
-    with defaults(call='physicsobject::CombineMasks({df}, {output}, {input}, "any_of")'):
+    with defaults(call='''physicsobject::CombineMasks({df}, {output}, {input}, "any_of")'''):
         # (pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id) || (pt>50 & 2.5<|eta|<3/4.7 (2022 and 2023) & id) for run 3
         GoodJets = Producer(
             input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
@@ -283,7 +283,7 @@ with defaults(scopes=["global"]):
         )
 
     GoodBJets = ProducerGroup(
-        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.Jet_id_cut],
         output=[q.good_bjets_mask],
         subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
@@ -299,36 +299,36 @@ with defaults(scopes=["global"]):
 
 with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
     VetoOverlappingJets = Producer(
-        call="physicsobject::jet::VetoOverlappingJets({df}, {output}, {input}, {deltaR_jet_veto})",
+        call='''physicsobject::jet::VetoOverlappingJets({df}, {output}, {input}, {deltaR_jet_veto})''',
         input=[nanoAOD.Jet_eta, nanoAOD.Jet_phi, q.p4_1, q.p4_2],
         output=[q.jet_overlap_veto_mask],
     )
 
-    with defaults(call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")', output=[]):
+    with defaults(call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''', output=[]):
         GoodJetsWithVeto = ProducerGroup(input=[q.good_jets_mask], subproducers=[VetoOverlappingJets])
         GoodBJetsWithVeto = Producer(input=[q.good_bjets_mask, q.jet_overlap_veto_mask])
 
-    with defaults(call="physicsobject::OrderByPt({df}, {output}, {input})", input=[q.Jet_pt_corrected]):
+    with defaults(call='''physicsobject::OrderByPt({df}, {output}, {input})''', input=[q.Jet_pt_corrected]):
         JetCollection = ProducerGroup(output=[q.good_jet_collection], subproducers=[GoodJetsWithVeto])
         BJetCollection = ProducerGroup(output=[q.good_bjet_collection], subproducers=[GoodBJetsWithVeto])
 
     JetPtVec = Producer(
-        call="event::quantity::Take<float>({df}, {output}, {input})",
+        call='''event::quantity::Take<float>({df}, {output}, {input})''',
         input=[q.Jet_pt_corrected, q.good_jet_collection],
-        output=[q.jet_pt_vec],
+        output=[q.Jet_pt_vec],
     )
     JetEtaVec = Producer(
-        call="event::quantity::Take<float>({df}, {output}, {input})",
+        call='''event::quantity::Take<float>({df}, {output}, {input})''',
         input=[nanoAOD.Jet_eta, q.good_jet_collection],
-        output=[q.jet_eta_vec],
+        output=[q.Jet_eta_vec],
     )
     JetHadFlavVec = Producer(
-        call="event::quantity::Take<UChar_t>({df}, {output}, {input})",
+        call='''event::quantity::Take<UChar_t>({df}, {output}, {input})''',
         input=[nanoAOD.Jet_hadronFlavour, q.good_jet_collection],
-        output=[q.jet_hadronflavour_vec],
+        output=[q.Jet_hadronflavour_vec],
     )
     JetBTagVec = Producer(
-        call="event::quantity::Take<float>({df}, {output}, {input})",
+        call='''event::quantity::Take<float>({df}, {output}, {input})''',
         input=[q.Jet_BTag, q.good_jet_collection],
         output=[q.Jet_btag_value_vec],
     )
@@ -339,7 +339,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
     ##########################
 
     LVJet1 = Producer(
-        call="lorentzvector::Build({df}, {output}, {input}, 0)",
+        call='''lorentzvector::Build({df}, {output}, {input}, 0)''',
         input=[
             q.Jet_pt_corrected,
             nanoAOD.Jet_eta,
@@ -350,7 +350,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         output=[q.jet_p4_1],
     )
     LVJet2 = Producer(
-        call="lorentzvector::Build({df}, {output}, {input}, 1)",
+        call='''lorentzvector::Build({df}, {output}, {input}, 1)''',
         input=[
             q.Jet_pt_corrected,
             nanoAOD.Jet_eta,
@@ -361,26 +361,26 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         output=[q.jet_p4_2],
     )
     NumberOfJets = Producer(
-        call="physicsobject::Size<Int_t>({df}, {output}, {input})",
+        call='''physicsobject::Size<Int_t>({df}, {output}, {input})''',
         input=[q.good_jet_collection],
         output=[q.njets],
     )
 
     with defaults(input=[q.jet_p4_1]):
-        jpt_1 = Producer(call="lorentzvector::GetPt({df}, {output}, {input})", output=[q.jpt_1])
-        jeta_1 = Producer(call="lorentzvector::GetEta({df}, {output}, {input})", output=[q.jeta_1])
-        jphi_1 = Producer(call="lorentzvector::GetPhi({df}, {output}, {input})", output=[q.jphi_1])
+        jpt_1 = Producer(call='''lorentzvector::GetPt({df}, {output}, {input})''', output=[q.jpt_1])
+        jeta_1 = Producer(call='''lorentzvector::GetEta({df}, {output}, {input})''', output=[q.jeta_1])
+        jphi_1 = Producer(call='''lorentzvector::GetPhi({df}, {output}, {input})''', output=[q.jphi_1])
     with defaults(input=[q.jet_p4_2]):
-        jpt_2 = Producer(call="lorentzvector::GetPt({df}, {output}, {input})", output=[q.jpt_2])
-        jeta_2 = Producer(call="lorentzvector::GetEta({df}, {output}, {input})", output=[q.jeta_2])
-        jphi_2 = Producer(call="lorentzvector::GetPhi({df}, {output}, {input})", output=[q.jphi_2])
+        jpt_2 = Producer(call='''lorentzvector::GetPt({df}, {output}, {input})''', output=[q.jpt_2])
+        jeta_2 = Producer(call='''lorentzvector::GetEta({df}, {output}, {input})''', output=[q.jeta_2])
+        jphi_2 = Producer(call='''lorentzvector::GetPhi({df}, {output}, {input})''', output=[q.jphi_2])
 
     with defaults(input=[q.Jet_BTag, q.good_jet_collection]):
-        jtag_value_1 = Producer(call="event::quantity::Get<float>({df}, {output}, {input}, 0)",output=[q.jtag_value_1])
-        jtag_value_2 = Producer(call="event::quantity::Get<float>({df}, {output}, {input}, 1)", output=[q.jtag_value_2])
+        jtag_value_1 = Producer(call='''event::quantity::Get<float>({df}, {output}, {input}, 0)''',output=[q.jtag_value_1])
+        jtag_value_2 = Producer(call='''event::quantity::Get<float>({df}, {output}, {input}, 1)''', output=[q.jtag_value_2])
 
     mjj = Producer(
-        call="lorentzvector::GetMass({df}, {output}, {input})",
+        call='''lorentzvector::GetMass({df}, {output}, {input})''',
         input=[q.jet_p4_1, q.jet_p4_2],
         output=[q.mjj],
     )
@@ -399,27 +399,27 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
             q.good_bjet_collection,
         ],
     ):
-        LVBJet1 = Producer(call="lorentzvector::Build({df}, {output}, {input}, 0)", output=[q.bjet_p4_1])
-        LVBJet2 = Producer(call="lorentzvector::Build({df}, {output}, {input}, 1)", output=[q.bjet_p4_2])
+        LVBJet1 = Producer(call='''lorentzvector::Build({df}, {output}, {input}, 0)''', output=[q.bjet_p4_1])
+        LVBJet2 = Producer(call='''lorentzvector::Build({df}, {output}, {input}, 1)''', output=[q.bjet_p4_2])
 
     NumberOfBJets = Producer(
-        call="physicsobject::Size<Int_t>({df}, {output}, {input})",
+        call='''physicsobject::Size<Int_t>({df}, {output}, {input})''',
         input=[q.good_bjet_collection],
         output=[q.nbtag],
     )
 
     with defaults(input=[q.bjet_p4_1]):
-        bpt_1 = Producer(call="lorentzvector::GetPt({df}, {output}, {input})", output=[q.bpt_1])
-        beta_1 = Producer(call="lorentzvector::GetEta({df}, {output}, {input})", output=[q.beta_1])
-        bphi_1 = Producer(call="lorentzvector::GetPhi({df}, {output}, {input})", output=[q.bphi_1])
+        bpt_1 = Producer(call='''lorentzvector::GetPt({df}, {output}, {input})''', output=[q.bpt_1])
+        beta_1 = Producer(call='''lorentzvector::GetEta({df}, {output}, {input})''', output=[q.beta_1])
+        bphi_1 = Producer(call='''lorentzvector::GetPhi({df}, {output}, {input})''', output=[q.bphi_1])
     with defaults(input=[q.bjet_p4_2]):
-        bpt_2 = Producer(call="lorentzvector::GetPt({df}, {output}, {input})", output=[q.bpt_2])
-        beta_2 = Producer(call="lorentzvector::GetEta({df}, {output}, {input})", output=[q.beta_2])
-        bphi_2 = Producer(call="lorentzvector::GetPhi({df}, {output}, {input})", output=[q.bphi_2])
+        bpt_2 = Producer(call='''lorentzvector::GetPt({df}, {output}, {input})''', output=[q.bpt_2])
+        beta_2 = Producer(call='''lorentzvector::GetEta({df}, {output}, {input})''', output=[q.beta_2])
+        bphi_2 = Producer(call='''lorentzvector::GetPhi({df}, {output}, {input})''', output=[q.bphi_2])
 
     with defaults(input=[q.Jet_BTag, q.good_bjet_collection]):
-        btag_value_1 = Producer(call="event::quantity::Get<float>({df}, {output}, {input}, 0)", output=[q.btag_value_1])
-        btag_value_2 = Producer(call="event::quantity::Get<float>({df}, {output}, {input}, 1)", output=[q.btag_value_2])
+        btag_value_1 = Producer(call='''event::quantity::Get<float>({df}, {output}, {input}, 0)''', output=[q.btag_value_1])
+        btag_value_2 = Producer(call='''event::quantity::Get<float>({df}, {output}, {input}, 1)''', output=[q.btag_value_2])
 
     ############################
     # Grouping the basic jet and b-jet quantities

@@ -11,6 +11,7 @@ from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
 from .producers import fakefactors as fakefactors
+from .producers import ml as ml
 from .quantities import output as q
 
 @dataclass
@@ -51,19 +52,30 @@ def build_config(
     )
 
     non_closure_granularity = NonClosureGranularity("coarse")  # "both", "coarse", "fine"
+    USE_SPLIT_INFO_PRODUCER = False
 
     # --- helper ---
 
     def ff_process_name(name: str) -> str:
-        if "process_fractions" in name:
+        if name == "process_fractions_subleading":
+            return "fraction_variation_subleading"
+        if name == "process_fractions":
             return "fraction_variation"
 
-        process = name.split("_")[0]  # QCD, Wjets, ttbar
-        if "fake_factors" in name:
+        if name.startswith("QCD_subleading_"):
+            process = "QCD_subleading"
+            remainder = name[len("QCD_subleading_"):]
+        else:
+            process = name.split("_")[0]
+            remainder = name[len(process) + 1:]
+
+        if remainder == "fake_factors":
             return f"{process}_variation"
 
-        suffix = "DR_SR" if "DR_SR" in name else "non_closure"
-        return f"{process}_{suffix}_correction"
+        if "DR_SR" in remainder:
+            return f"{process}_DR_SR_correction"
+
+        return f"{process}_non_closure_correction"
 
     def load_ff_correctionlib(path: str) -> correctionlib.CorrectionSet:
         path = os.path.join("analysis_configurations/tau", path)
@@ -73,7 +85,6 @@ def build_config(
         if "non_closure" not in name:
             return True
         return non_closure_granularity.check(name)
-
 
     # ---
 
@@ -100,10 +111,10 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_et.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/fake_factors_et.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_et.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_et.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_et.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_et.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_et.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_et.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_et.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_et.json.gz",
                 }
@@ -114,11 +125,11 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_et.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_et.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_et.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_et.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_et.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/no_chain/FF_corrections_et.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",
                 }
             ),
@@ -127,6 +138,11 @@ def build_config(
     configuration.add_producers(
         ["et"],
         [
+            ml.VariableConversionToFloatProducerGroup,
+            fakefactors.FFInput_lt,
+            fakefactors.FFInput_fractions_lt,
+            fakefactors.FFInput_DR_lt,
+            fakefactors.FFInput_NC_lt,
             fakefactors.RawFakeFactors_sm_lt,
             fakefactors.FakeFactors_sm_lt,
         ],
@@ -192,10 +208,10 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "payloads/fake_factors/sm/2018/with_embedding/fake_factors_mt.json.gz",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_mt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/fake_factors_mt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_mt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_mt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_mt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_mt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_mt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_mt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_mt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_mt.json.gz",
                 }
@@ -206,11 +222,11 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "payloads/fake_factors/sm/2018/with_embedding/FF_corrections_mt.json.gz",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_mt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_mt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_mt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_mt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_mt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/no_chain/FF_corrections_mt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",
                 }
             ),
@@ -219,6 +235,11 @@ def build_config(
     configuration.add_producers(
         ["mt"],
         [
+            ml.VariableConversionToFloatProducerGroup,
+            fakefactors.FFInput_lt,
+            fakefactors.FFInput_fractions_lt,
+            fakefactors.FFInput_DR_lt,
+            fakefactors.FFInput_NC_lt,
             fakefactors.RawFakeFactors_sm_lt,
             fakefactors.FakeFactors_sm_lt,
         ],
@@ -279,10 +300,10 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/fake_factors_tt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/fake_factors_tt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_tt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/fake_factors_tt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_tt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_tt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_tt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_tt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_tt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_tt.json.gz",
                 }
@@ -293,11 +314,11 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_tt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022preEE/FF_corrections_tt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_tt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023preBPix/FF_corrections_tt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_tt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_tt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_tt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_tt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_tt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/no_chain/FF_corrections_tt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_tt.json.gz",
                 }
             ),
@@ -306,6 +327,13 @@ def build_config(
     configuration.add_producers(
         ["tt"],
         [
+            ml.VariableConversionToFloatProducerGroup,
+            fakefactors.FFInput_QCD_tt,
+            fakefactors.FFInput_QCDsub_tt,
+            fakefactors.FFInput_fractions_tt,
+            fakefactors.FFInput_DR_tt,
+            fakefactors.FFInput_NC_QCD_tt,
+            fakefactors.FFInput_NC_QCDsub_tt,
             fakefactors.RawFakeFactors_sm_tt_1,
             fakefactors.FakeFactors_sm_tt_1,
             fakefactors.RawFakeFactors_sm_tt_2,
