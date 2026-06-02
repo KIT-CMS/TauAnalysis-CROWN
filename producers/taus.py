@@ -252,8 +252,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAODv15.Tau_pt],
         )
-        # uses old variaition scheme
-        TauPtCorrection_MC_v9 = Producer(
+        TauPtCorrection_MC = Producer(
             call='''physicsobject::tau::PtCorrectionMC(
                 {df}, 
                 correctionManager, 
@@ -261,11 +260,12 @@ with defaults(scopes=["et", "mt", "tt"]):
                 {input}, 
                 "{tau_sf_file}", 
                 "{tau_ES_json_name}", 
-                "{tau_id_algorithm}", 
-                "{tau_elefake_es_DM0_barrel}", 
-                "{tau_elefake_es_DM1_barrel}", 
-                "{tau_elefake_es_DM0_endcap}", 
-                "{tau_elefake_es_DM1_endcap}", 
+                "{tau_id_algorithm}",
+                {vec_open}{tau_dms}{vec_close},
+                "{tau_elefake_es_DM0}", 
+                "{tau_elefake_es_DM1}", 
+                "{tau_elefake_es_DM10}", 
+                "{tau_elefake_es_DM11}", 
                 "{tau_mufake_es}", 
                 "{tau_ES_shift_DM0}", 
                 "{tau_ES_shift_DM1}", 
@@ -275,7 +275,7 @@ with defaults(scopes=["et", "mt", "tt"]):
                 {tau_vsele_wp})''',
             input=[nanoAODv15.Tau_pt, nanoAODv15.Tau_eta, nanoAODv15.Tau_decayMode, nanoAODv15.Tau_genPartFlav],
         )
-        TauPtCorrection_MC = Producer(
+        TauPtCorrection_MC_toremove = Producer(
             call='''physicsobject::tau::PtCorrectionMC(
                 {df}, 
                 correctionManager, 
