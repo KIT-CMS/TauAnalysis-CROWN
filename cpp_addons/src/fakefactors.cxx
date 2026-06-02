@@ -1,7 +1,7 @@
 #ifndef GUARDFAKEFACTORS_CXX
 #define GUARDFAKEFACTORS_CXX
 
-#include "../include/fake_factors.hxx"
+#include "../include/fakefactors.hxx"
 #include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
@@ -20,7 +20,7 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace fake_factors {
+namespace fakefactors {
 
     ROOT::RDF::RNode build_model_input_column(
         ROOT::RDF::RNode df,
@@ -29,7 +29,7 @@ namespace fake_factors {
     ) {
         if (input_columns.empty()) {
             throw std::runtime_error(
-                "fake_factors::build_model_input_column requires at least one input column");
+                "fakefactors::build_model_input_column requires at least one input column");
         }
 
         std::string define_expression = "std::vector<float>{";
@@ -431,7 +431,7 @@ namespace fake_factors {
                     ff_file,
                     ff_corr_file
                 };
-                std::string shifted_collection_identifier = fake_factors::joinAndReplace(strings, "_");
+                std::string shifted_collection_identifier = fakefactors::joinAndReplace(strings, "_");
 
                 auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, input_columns);
                 return event::quantity::Unroll<float>(df1, outputnames, shifted_collection_identifier);
@@ -696,7 +696,7 @@ namespace fake_factors {
                     ff_file,
                     ff_corr_file
                 };
-                std::string shifted_collection_identifier = fake_factors::joinAndReplace(strings, "_");
+                std::string shifted_collection_identifier = fakefactors::joinAndReplace(strings, "_");
 
                 auto df1 = df.Define(shifted_collection_identifier, calc_fake_factor, input_columns);
                 return event::quantity::Unroll<float>(df1, outputnames, shifted_collection_identifier);

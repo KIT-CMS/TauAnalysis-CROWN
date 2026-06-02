@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace fake_factors {
+namespace fakefactors {
 
 ROOT::RDF::RNode build_model_input_column(
     ROOT::RDF::RNode df,

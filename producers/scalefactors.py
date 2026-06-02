@@ -93,7 +93,7 @@ with defaults(scopes=["tt"]):
         output="tau_1_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
     )
-    Tau_1_VsEleTauID_SF_Run2 = ExtendedVectorProducer(
+    Tau_1_VsEleTauID_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsEle(
             {df},
             correctionManager,
@@ -109,22 +109,7 @@ with defaults(scopes=["tt"]):
         output="tau_1_vsele_sf_outputname",
         vec_config="vsele_tau_id",
     )
-    Tau_1_VsEleTauID_SF = ExtendedVectorProducer(
-        call='''physicsobject::tau::scalefactor::Id_vsEle(
-            {df}, 
-            correctionManager, 
-            {output}, 
-            {input}, 
-            "{tau_sf_file}", 
-            "{tau_id_algorithm}VSe",
-            "{vsele_tau_id_WP}",
-            "{era}",
-            "{tau_sf_vsele_variation}")''',
-        input=[q.eta_1, q.tau_decaymode_1, q.gen_match_1],
-        output="tau_1_vsele_sf_outputname",
-        vec_config="vsele_tau_id",
-    )
-    Tau_1_VsMuTauID_SF_Run2 = ExtendedVectorProducer(
+    Tau_1_VsMuTauID_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsMu(
             {df}, 
             correctionManager, 
@@ -141,23 +126,6 @@ with defaults(scopes=["tt"]):
             "{tau_sf_vsmu_wheel3}", 
             "{tau_sf_vsmu_wheel4}", 
             "{tau_sf_vsmu_wheel5}")''',
-        input=[q.eta_1, q.gen_match_1],
-        output="tau_1_vsmu_sf_outputname",
-        vec_config="vsmu_tau_id",
-    )
-    Tau_1_VsMuTauID_SF = ExtendedVectorProducer(
-        call='''physicsobject::tau::scalefactor::Id_vsMu(
-            {df}, 
-            correctionManager, 
-            {output}, 
-            {input}, 
-            "{tau_sf_file}", 
-            "{tau_id_algorithm}VSmu",
-            "{vsmu_tau_id_WP}", 
-            "{vsele_tau_id_WP}", 
-            "{vsjet_tau_id_WP}", 
-            "{era}", 
-            "{tau_sf_vsmu_variation}")''',
         input=[q.eta_1, q.gen_match_1],
         output="tau_1_vsmu_sf_outputname",
         vec_config="vsmu_tau_id",
@@ -247,7 +215,7 @@ with defaults(
 
 
 with defaults(scopes=["et", "mt", "tt"]):
-    Tau_2_VsEleTauID_SF_Run2 = ExtendedVectorProducer(
+    Tau_2_VsEleTauID_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsEle(
             {df},
             correctionManager,
@@ -263,22 +231,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         output="tau_2_vsele_sf_outputname",
         vec_config="vsele_tau_id",
     )
-    Tau_2_VsEleTauID_SF = ExtendedVectorProducer(
-        call='''physicsobject::tau::scalefactor::Id_vsEle(
-            {df},
-            correctionManager, 
-            {output},
-            {input},
-            "{tau_sf_file}", 
-            "{tau_id_algorithm}VSe", 
-            "{vsele_tau_id_WP}", 
-            "{era}",
-            "{tau_sf_vsele_variation}")''',
-        input=[q.eta_2, q.tau_decaymode_2, q.gen_match_2],
-        output="tau_2_vsele_sf_outputname",
-        vec_config="vsele_tau_id",
-    )
-    Tau_2_VsMuTauID_SF_Run2 = ExtendedVectorProducer(
+    Tau_2_VsMuTauID_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsMu(
             {df}, 
             correctionManager, 
@@ -295,23 +248,6 @@ with defaults(scopes=["et", "mt", "tt"]):
             "{tau_sf_vsmu_wheel3}", 
             "{tau_sf_vsmu_wheel4}", 
             "{tau_sf_vsmu_wheel5}")''',
-        input=[q.eta_2, q.gen_match_2],
-        output="tau_2_vsmu_sf_outputname",
-        vec_config="vsmu_tau_id",
-    )
-    Tau_2_VsMuTauID_SF = ExtendedVectorProducer(
-        call='''physicsobject::tau::scalefactor::Id_vsMu(
-            {df}, 
-            correctionManager, 
-            {output}, 
-            {input}, 
-            "{tau_sf_file}", 
-            "{tau_id_algorithm}VSmu", 
-            "{vsmu_tau_id_WP}", 
-            "{vsele_tau_id_WP}", 
-            "{vsjet_tau_id_WP}", 
-            "{era}", 
-            "{tau_sf_vsmu_variation}")''',
         input=[q.eta_2, q.gen_match_2],
         output="tau_2_vsmu_sf_outputname",
         vec_config="vsmu_tau_id",
@@ -586,32 +522,32 @@ with defaults(call=None, input=None, output=None):
             "mm": [Muon_1_ID_SF, Muon_1_Iso_SF, Muon_2_ID_SF, Muon_2_Iso_SF],
         },
     )
-    TauID_SF_Run2 = ProducerGroup(
+    TauID_SF_v9 = ProducerGroup(
         scopes=["tt", "mt", "et"],
         subproducers={
             "tt": [
-                Tau_1_VsJetTauID_SF_Run2,
-                Tau_1_VsEleTauID_SF_Run2,
-                Tau_1_VsMuTauID_SF_Run2,
+                Tau_1_VsJetTauID_SF_v9,
+                Tau_1_VsEleTauID_SF,
+                Tau_1_VsMuTauID_SF,
                 Tau_2_VsJetTauID_tt_SF,
-                Tau_2_VsEleTauID_SF_Run2,
-                Tau_2_VsMuTauID_SF_Run2,
+                Tau_2_VsEleTauID_SF,
+                Tau_2_VsMuTauID_SF,
             ],
             "mt": [
                 # vs jet is handled by the ES_ID_SCHEME
                 # Tau_2_VsJetTauID_lt_SF, 
                 # Tau_2_VsJetTauID_lt_SF_dm_binned,
                 # Tau_2_VsJetTauID_lt_SF_dm_pt_binned, 
-                Tau_2_VsEleTauID_SF_Run2,
-                Tau_2_VsMuTauID_SF_Run2,
+                Tau_2_VsEleTauID_SF,
+                Tau_2_VsMuTauID_SF,
             ],
             "et": [
                 # vs jet is handled by the ES_ID_SCHEME
                 # Tau_2_VsJetTauID_lt_SF, 
                 # Tau_2_VsJetTauID_lt_SF_dm_binned, 
                 # Tau_2_VsJetTauID_lt_SF_dm_pt_binned, 
-                Tau_2_VsEleTauID_SF_Run2,
-                Tau_2_VsMuTauID_SF_Run2,
+                Tau_2_VsEleTauID_SF,
+                Tau_2_VsMuTauID_SF,
             ],
         },
     )
