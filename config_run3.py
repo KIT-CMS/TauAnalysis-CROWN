@@ -2414,7 +2414,6 @@ def build_config(
                     add_shift(
                         name="tauMuFakeEs",
                         shift_key="tau_mufake_es",
-                        producers=[taus.TauPtCorrection_muFake],
                     )
 
     #########################
