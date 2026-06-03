@@ -57,7 +57,7 @@ with defaults(scopes=["em", "mm"], input=[q.pt_2, q.eta_2]):
 ############################
 
 with defaults(scopes=["tt"]):
-    Tau_1_VsJetTauID_SF_Run2 = ExtendedVectorProducer(
+    Tau_1_VsJetTauID_SF_v9 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsJet(
             {df}, 
             correctionManager, 
