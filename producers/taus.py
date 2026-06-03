@@ -271,8 +271,8 @@ with defaults(scopes=["et", "mt", "tt"]):
                 "{tau_ES_shift_DM1}", 
                 "{tau_ES_shift_DM10}", 
                 "{tau_ES_shift_DM11}", 
-                {tau_vsjet_wp}, 
-                {tau_vsele_wp})''',
+                "{tau_vsjet_wp}", 
+                "{tau_vsele_wp}")''',
             input=[nanoAODv15.Tau_pt, nanoAODv15.Tau_eta, nanoAODv15.Tau_decayMode, nanoAODv15.Tau_genPartFlav],
         )
         TauPtCorrection_MC_toremove = Producer(
