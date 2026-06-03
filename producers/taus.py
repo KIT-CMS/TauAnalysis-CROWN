@@ -351,12 +351,6 @@ with defaults(scopes=["et", "mt", "tt"]):
                 TauMassCorrection,
             ],
         )
-        TauEnergyCorrection_v9 = ProducerGroup(
-            subproducers=[
-                TauPtCorrection_MC_v9,
-                TauMassCorrection,
-            ],
-        )
         TauEnergyCorrection = ProducerGroup(
             subproducers=[
                 TauPtCorrection_MC,

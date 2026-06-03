@@ -2395,14 +2395,14 @@ def build_config(
                 add_shift(name="tauEleFakeEs1prongEndcap", shift_key="tau_elefake_es_DM0_endcap")
                 add_shift(name="tauEleFakeEs1prong1pizeroBarrel", shift_key="tau_elefake_es_DM1_barrel")
                 add_shift(name="tauEleFakeEs1prong1pizeroEndcap", shift_key="tau_elefake_es_DM1_endcap")
-        else if int(era[:4]) < 2022:
+        elif int(era[:4]) < 2022:
             with defaults(scopes=("et", "mt", "tt")):
                 with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerES]):
                     for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
                         for pt in configuration.ES_ID_SCHEME.pt_binning:
                             add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        else if int(era[:4]) >= 2022:
+        elif int(era[:4]) >= 2022:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerGroupES]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
