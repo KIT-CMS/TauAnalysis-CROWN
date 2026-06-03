@@ -1040,11 +1040,6 @@ def build_config(
                 ],
                 "max_tau_eta": 2.3,
                 # variations energy scale
-                # embedding, redundant with the MC set...
-                "tau_ES_shift_DM0": "nom",
-                "tau_ES_shift_DM1": "nom",
-                "tau_ES_shift_DM10": "nom",
-                "tau_ES_shift_DM11": "nom",
                 # ecal issue
                 "tau_elefake_es_DM0_barrel": "nom",
                 "tau_elefake_es_DM0_endcap": "nom",
@@ -2400,14 +2395,14 @@ def build_config(
                 add_shift(name="tauEleFakeEs1prongEndcap", shift_key="tau_elefake_es_DM0_endcap")
                 add_shift(name="tauEleFakeEs1prong1pizeroBarrel", shift_key="tau_elefake_es_DM1_barrel")
                 add_shift(name="tauEleFakeEs1prong1pizeroEndcap", shift_key="tau_elefake_es_DM1_endcap")
-        else if int(era[:4]) < 2022:
+        elif int(era[:4]) < 2022:
             with defaults(scopes=("et", "mt", "tt")):
                 with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerES]):
                     for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
                         for pt in configuration.ES_ID_SCHEME.pt_binning:
                             add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        else if int(era[:4]) >= 2022:
+        elif int(era[:4]) >= 2022:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerGroupES]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
@@ -2421,7 +2416,6 @@ def build_config(
                         shift_key="tau_mufake_es",
                         producers=[taus.TauPtCorrection_muFake],
                     )
-
 
     #########################
     # TauID scale factor shifts
@@ -2455,21 +2449,8 @@ def build_config(
                 with defaults(producers=[scalefactors.Tau_1_VsMuTauID_SF, scalefactors.Tau_2_VsMuTauID_SF]):
                     for wheel in range(1, 6):
                         add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
-    
+            
         else:
-            # ES variation
-            with defaults(scopes=("et", "mt", "tt")):
-                with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerES]):
-                    for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
-                        for pt in configuration.ES_ID_SCHEME.pt_binning:
-                            add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
-            add_shift(
-                name="tau_es_variation_run3",
-                shift_key="tau_es_variation",
-                scopes=("et", "mt", "tt"),
-                producers=[configuration.ES_ID_SCHEME.mc.producerGroupES],
-            )
-
             # vs Ele
             with defaults(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel"):
                 add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
