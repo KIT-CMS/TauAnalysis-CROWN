@@ -1,7 +1,7 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 from typing import List, Union
 from .producers import pairquantities as pairquantities
-from .producers import ml as ml
+from .producers import nn_output as nn_output
 from .quantities import output as q
 from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
@@ -29,7 +29,8 @@ def build_config(
         quantities_map,
     )
 
-    _name = "with_angular_quantities__m10toNaN__Sigmoid__FF_False"
+    # model_name = "SANNT/groupedDNN"
+    model_name = "CENNT/groupedDNN"
 
     configuration.add_config_parameters(
         ["mt"],
@@ -39,7 +40,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": f"payloads/ml/mt/ONNX/{_name}/model.onnx",
+                    "2018": f"payloads/ml/2018/mt/{model_name}/model.onnx",
                 }
             ),
         },
@@ -48,10 +49,10 @@ def build_config(
     configuration.add_producers(
         ["mt"],
         [
-            ml.event_parity_Float,
-            ml.VariableConversionToFloatProducerGroup,
+            nn_output.event_parity_Float,
+            nn_output.VariableConversionToFloatProducerGroup,
             # -----------------------------------------
-            ml.Evaluate_DNN,
+            nn_output.Evaluate_DNN,
         ],
     )
 

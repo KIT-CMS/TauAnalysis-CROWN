@@ -69,6 +69,8 @@ namespace ml {
         const std::string &model_ff_QCD_Down,
         const std::string &model_ff_QCD_StatUp,
         const std::string &model_ff_QCD_StatDown,
+        const std::string &model_ff_QCD_NormalizationUp,
+        const std::string &model_ff_QCD_NormalizationDown,
         const std::string &ff_QCD_variation,
         // ---
         const std::string &model_ff_Wjets,
@@ -76,6 +78,8 @@ namespace ml {
         const std::string &model_ff_Wjets_Down,
         const std::string &model_ff_Wjets_StatUp,
         const std::string &model_ff_Wjets_StatDown,
+        const std::string &model_ff_Wjets_NormalizationUp,
+        const std::string &model_ff_Wjets_NormalizationDown,
         const std::string &ff_Wjets_variation,
         // ---
         const std::string &model_ff_ttbar,
@@ -83,6 +87,8 @@ namespace ml {
         const std::string &model_ff_ttbar_Down,
         const std::string &model_ff_ttbar_StatUp,
         const std::string &model_ff_ttbar_StatDown,
+        const std::string &model_ff_ttbar_NormalizationUp,
+        const std::string &model_ff_ttbar_NormalizationDown,
         const std::string &ff_ttbar_variation,
         // ---
         const std::string &model_fractions,
@@ -92,8 +98,12 @@ namespace ml {
         const std::string &model_fractions_Wjets_Down,
         const std::string &model_fractions_ttbar_Up,
         const std::string &model_fractions_ttbar_Down,
-        const std::string &model_fractions_StatUp,
-        const std::string &model_fractions_StatDown,
+        const std::string &model_fractions_QCD_StatUp,
+        const std::string &model_fractions_QCD_StatDown,
+        const std::string &model_fractions_Wjets_StatUp,
+        const std::string &model_fractions_Wjets_StatDown,
+        const std::string &model_fractions_ttbar_StatUp,
+        const std::string &model_fractions_ttbar_StatDown,
         const std::string &ml_fractions_variation,
         // ---
         const std::string &model_DR_SR_correction_QCD,
@@ -101,6 +111,8 @@ namespace ml {
         const std::string &model_DR_SR_correction_QCD_Down,
         const std::string &model_DR_SR_correction_QCD_StatUp,
         const std::string &model_DR_SR_correction_QCD_StatDown,
+        const std::string &model_DR_SR_correction_QCD_NormalizationUp,
+        const std::string &model_DR_SR_correction_QCD_NormalizationDown,
         const std::string &QCD_DR_SR_correction_variation,
         // ---
         const std::string &model_DR_SR_correction_Wjets,
@@ -108,6 +120,8 @@ namespace ml {
         const std::string &model_DR_SR_correction_Wjets_Down,
         const std::string &model_DR_SR_correction_Wjets_StatUp,
         const std::string &model_DR_SR_correction_Wjets_StatDown,
+        const std::string &model_DR_SR_correction_Wjets_NormalizationUp,
+        const std::string &model_DR_SR_correction_Wjets_NormalizationDown,
         const std::string &Wjets_DR_SR_correction_variation,
         // ---
         const std::string &QCD_non_closure_correction,

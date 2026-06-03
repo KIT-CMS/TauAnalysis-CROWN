@@ -12,6 +12,7 @@ from code_generation.systematics import SystematicShift
 
 from .producers import fakefactors_run2 as fakefactors
 from .producers import ml as ml
+from .producers import nn_output as nn_output
 from .quantities import output as q
 
 
@@ -121,7 +122,7 @@ def build_config(
             configuration.add_producers(
                 ["mt"],
                 [
-                    ml.VariableConversionToFloatProducerGroup,
+                    nn_output.VariableConversionToFloatProducerGroup,
                     fakefactors.FFInput_QCD_2018_mt,
                     fakefactors.FFInput_Wjets_2018_mt,
                     fakefactors.FFInput_ttbar_2018_mt,

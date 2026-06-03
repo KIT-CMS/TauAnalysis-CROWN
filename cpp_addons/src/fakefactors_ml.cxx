@@ -161,6 +161,8 @@ namespace ml {
         const std::string &model_ff_QCD_Down,
         const std::string &model_ff_QCD_StatUp,
         const std::string &model_ff_QCD_StatDown,
+        const std::string &model_ff_QCD_NormalizationUp,
+        const std::string &model_ff_QCD_NormalizationDown,
         const std::string &ff_QCD_variation,
         // ---
         const std::string &model_ff_Wjets,
@@ -168,6 +170,8 @@ namespace ml {
         const std::string &model_ff_Wjets_Down,
         const std::string &model_ff_Wjets_StatUp,
         const std::string &model_ff_Wjets_StatDown,
+        const std::string &model_ff_Wjets_NormalizationUp,
+        const std::string &model_ff_Wjets_NormalizationDown,
         const std::string &ff_Wjets_variation,
         // ---
         const std::string &model_ff_ttbar,
@@ -175,6 +179,8 @@ namespace ml {
         const std::string &model_ff_ttbar_Down,
         const std::string &model_ff_ttbar_StatUp,
         const std::string &model_ff_ttbar_StatDown,
+        const std::string &model_ff_ttbar_NormalizationUp,
+        const std::string &model_ff_ttbar_NormalizationDown,
         const std::string &ff_ttbar_variation,
         // ---
         const std::string &model_fractions,
@@ -184,8 +190,12 @@ namespace ml {
         const std::string &model_fractions_Wjets_Down,
         const std::string &model_fractions_ttbar_Up,
         const std::string &model_fractions_ttbar_Down,
-        const std::string &model_fractions_StatUp,
-        const std::string &model_fractions_StatDown,
+        const std::string &model_fractions_QCD_StatUp,
+        const std::string &model_fractions_QCD_StatDown,
+        const std::string &model_fractions_Wjets_StatUp,
+        const std::string &model_fractions_Wjets_StatDown,
+        const std::string &model_fractions_ttbar_StatUp,
+        const std::string &model_fractions_ttbar_StatDown,
         const std::string &ml_fractions_variation,
         // ---
         const std::string &model_DR_SR_correction_QCD,
@@ -193,6 +203,8 @@ namespace ml {
         const std::string &model_DR_SR_correction_QCD_Down,
         const std::string &model_DR_SR_correction_QCD_StatUp,
         const std::string &model_DR_SR_correction_QCD_StatDown,
+        const std::string &model_DR_SR_correction_QCD_NormalizationUp,
+        const std::string &model_DR_SR_correction_QCD_NormalizationDown,
         const std::string &QCD_DR_SR_correction_variation,
         // ---
         const std::string &model_DR_SR_correction_Wjets,
@@ -200,6 +212,8 @@ namespace ml {
         const std::string &model_DR_SR_correction_Wjets_Down,
         const std::string &model_DR_SR_correction_Wjets_StatUp,
         const std::string &model_DR_SR_correction_Wjets_StatDown,
+        const std::string &model_DR_SR_correction_Wjets_NormalizationUp,
+        const std::string &model_DR_SR_correction_Wjets_NormalizationDown,
         const std::string &Wjets_DR_SR_correction_variation,
         // ---
         const std::string &QCD_non_closure_correction,
@@ -222,6 +236,8 @@ namespace ml {
                 {"Down", &model_ff_QCD_Down},
                 {"StatUp", &model_ff_QCD_StatUp},
                 {"StatDown", &model_ff_QCD_StatDown},
+                {"NormalizationUp", &model_ff_QCD_NormalizationUp},
+                {"NormalizationDown", &model_ff_QCD_NormalizationDown},
             },
             "ff_QCD_variation");
 
@@ -233,6 +249,8 @@ namespace ml {
                 {"Down", &model_ff_Wjets_Down},
                 {"StatUp", &model_ff_Wjets_StatUp},
                 {"StatDown", &model_ff_Wjets_StatDown},
+                {"NormalizationUp", &model_ff_Wjets_NormalizationUp},
+                {"NormalizationDown", &model_ff_Wjets_NormalizationDown},
             },
             "ff_Wjets_variation");
 
@@ -244,6 +262,8 @@ namespace ml {
                 {"Down", &model_ff_ttbar_Down},
                 {"StatUp", &model_ff_ttbar_StatUp},
                 {"StatDown", &model_ff_ttbar_StatDown},
+                {"NormalizationUp", &model_ff_ttbar_NormalizationUp},
+                {"NormalizationDown", &model_ff_ttbar_NormalizationDown},
             },
             "ff_ttbar_variation");
 
@@ -257,8 +277,12 @@ namespace ml {
                 {"Wjets_Down", &model_fractions_Wjets_Down},
                 {"ttbar_Up", &model_fractions_ttbar_Up},
                 {"ttbar_Down", &model_fractions_ttbar_Down},
-                {"StatUp", &model_fractions_StatUp},
-                {"StatDown", &model_fractions_StatDown},
+                {"QCD_StatUp", &model_fractions_QCD_StatUp},
+                {"QCD_StatDown", &model_fractions_QCD_StatDown},
+                {"Wjets_StatUp", &model_fractions_Wjets_StatUp},
+                {"Wjets_StatDown", &model_fractions_Wjets_StatDown},
+                {"ttbar_StatUp", &model_fractions_ttbar_StatUp},
+                {"ttbar_StatDown", &model_fractions_ttbar_StatDown},
             },
             "ml_fractions_variation");
 
@@ -270,6 +294,8 @@ namespace ml {
                 {"Down", &model_DR_SR_correction_QCD_Down},
                 {"StatUp", &model_DR_SR_correction_QCD_StatUp},
                 {"StatDown", &model_DR_SR_correction_QCD_StatDown},
+                {"NormalizationUp", &model_DR_SR_correction_QCD_NormalizationUp},
+                {"NormalizationDown", &model_DR_SR_correction_QCD_NormalizationDown},
             },
             "QCD_DR_SR_correction_variation");
 
@@ -281,6 +307,8 @@ namespace ml {
                 {"Down", &model_DR_SR_correction_Wjets_Down},
                 {"StatUp", &model_DR_SR_correction_Wjets_StatUp},
                 {"StatDown", &model_DR_SR_correction_Wjets_StatDown},
+                {"NormalizationUp", &model_DR_SR_correction_Wjets_NormalizationUp},
+                {"NormalizationDown", &model_DR_SR_correction_Wjets_NormalizationDown},
             },
             "Wjets_DR_SR_correction_variation");
 
@@ -292,16 +320,22 @@ namespace ml {
                 model_ff_QCD_Down,
                 model_ff_QCD_StatUp,
                 model_ff_QCD_StatDown,
+                model_ff_QCD_NormalizationUp,
+                model_ff_QCD_NormalizationDown,
                 model_ff_Wjets,
                 model_ff_Wjets_Up,
                 model_ff_Wjets_Down,
                 model_ff_Wjets_StatUp,
                 model_ff_Wjets_StatDown,
+                model_ff_Wjets_NormalizationUp,
+                model_ff_Wjets_NormalizationDown,
                 model_ff_ttbar,
                 model_ff_ttbar_Up,
                 model_ff_ttbar_Down,
                 model_ff_ttbar_StatUp,
                 model_ff_ttbar_StatDown,
+                model_ff_ttbar_NormalizationUp,
+                model_ff_ttbar_NormalizationDown,
                 model_fractions,
                 model_fractions_QCD_Up,
                 model_fractions_QCD_Down,
@@ -309,18 +343,26 @@ namespace ml {
                 model_fractions_Wjets_Down,
                 model_fractions_ttbar_Up,
                 model_fractions_ttbar_Down,
-                model_fractions_StatUp,
-                model_fractions_StatDown,
+                model_fractions_QCD_StatUp,
+                model_fractions_QCD_StatDown,
+                model_fractions_Wjets_StatUp,
+                model_fractions_Wjets_StatDown,
+                model_fractions_ttbar_StatUp,
+                model_fractions_ttbar_StatDown,
                 model_DR_SR_correction_QCD,
                 model_DR_SR_correction_QCD_Up,
                 model_DR_SR_correction_QCD_Down,
                 model_DR_SR_correction_QCD_StatUp,
                 model_DR_SR_correction_QCD_StatDown,
+                model_DR_SR_correction_QCD_NormalizationUp,
+                model_DR_SR_correction_QCD_NormalizationDown,
                 model_DR_SR_correction_Wjets,
                 model_DR_SR_correction_Wjets_Up,
                 model_DR_SR_correction_Wjets_Down,
                 model_DR_SR_correction_Wjets_StatUp,
                 model_DR_SR_correction_Wjets_StatDown,
+                model_DR_SR_correction_Wjets_NormalizationUp,
+                model_DR_SR_correction_Wjets_NormalizationDown,
             });
 
         auto qcd_nc_comp = correctionManager.loadCompoundCorrection(corr_file, "QCD_compound_correction");
