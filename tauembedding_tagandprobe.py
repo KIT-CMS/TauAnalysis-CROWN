@@ -12,7 +12,7 @@ from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import embedding as emb
 from .producers import tagandprobe as tagandprobe
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv15 as nanoAOD
 from .quantities import output as q
 from .quantities import tagandprobe_output as tp_q
 from code_generation.configuration import Configuration

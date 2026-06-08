@@ -4,7 +4,6 @@ from ..scripts.CROWNWrapper import Quantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
-
 # run dependent denitions
 tau_IDvsEle = Quantity()
 tau_IDvsMu = Quantity()
@@ -464,3 +463,28 @@ deltaEta_jj = Quantity()
 deltaEta_12j1 = Quantity()
 deltaEta_12j2 = Quantity()
 deltaEta_12jj = Quantity()
+
+# float quantities
+njets_float = Quantity()
+nbtag_float = Quantity()
+event_parity_float = Quantity()
+tau_decaymode_2_float = Quantity()
+tau_decaymode_1_float = Quantity()
+pzetamissvis_float = Quantity()
+
+# fake factor vectors
+ff_input_lt = Quantity()
+ff_input_fraction_lt = Quantity()
+ff_input_dr_lt = Quantity()
+ff_input_nc_lt = Quantity()
+ff_input_qcd_tt = Quantity()
+ff_input_qcdsub_tt = Quantity()
+ff_input_fraction_tt = Quantity()
+ff_input_dr_tt = Quantity()
+ff_input_nc_qcd_tt = Quantity()
+ff_input_nc_qcdsub_tt = Quantity()
+
+# nn quantities
+nn_output_vector = Quantity()
+nn_predicted_class = Quantity()
+nn_predicted_max_value = Quantity()

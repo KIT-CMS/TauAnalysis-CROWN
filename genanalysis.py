@@ -10,7 +10,7 @@ from .producers import pairquantities as pairquantities
 from .producers import genparticles as genparticles
 from .producers import pairselection as pairselection
 from .producers import embedding as emb
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv15 as nanoAOD
 from .quantities import output as q
 from code_generation.configuration import Configuration
 from code_generation.rules import AppendProducer

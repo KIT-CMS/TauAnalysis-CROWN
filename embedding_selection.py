@@ -11,7 +11,7 @@ from .producers import triggers as triggers
 from .producers import scalefactors as scalefactors
 from .producers import tagandprobe as tagandprobe
 from .producers import embedding as embedding
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv15 as nanoAOD
 from .quantities import output as q
 from .quantities import tagandprobe_output as qt
 from code_generation.configuration import Configuration
