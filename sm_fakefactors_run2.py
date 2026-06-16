@@ -10,7 +10,7 @@ from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
-from .producers import fakefactors as fakefactors
+from .producers import fakefactors_run2 as fakefactors
 from .producers import ml as ml
 from .quantities import output as q
 
