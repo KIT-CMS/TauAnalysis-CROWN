@@ -1494,8 +1494,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg1_variation": "nom",
@@ -1541,8 +1541,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
-                            "2024":"ditau_pnet_medium",
-                            "2025":"ditau_pnet_medium"
+                            "2024":"ditau",
+                            "2025":"ditau"
                         }
                     ),
                     "doubletau_trigger_leg2_variation": "nom",
@@ -1703,8 +1703,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg1_variation": _variation,
@@ -1750,8 +1750,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
-                                        "2024":"ditau_pnet_medium",
-                                        "2025":"ditau_pnet_medium"
+                                        "2024":"ditau",
+                                        "2025":"ditau"
                                     }
                                 ),
                                 "doubletau_trigger_leg2_variation": _variation,
