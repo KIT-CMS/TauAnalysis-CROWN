@@ -1,9 +1,10 @@
-#ifndef GUARD_FAKEFACTORS_H
-#define GUARD_FAKEFACTORS_H
+#ifndef GUARD_FAKEFACTORS_CXX
+#define GUARD_FAKEFACTORS_CXX
 /// The namespace that contains the fake factor function.
 #include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
+#include "../include/fakefactors.hxx"
 #include "ROOT/RDataFrame.hxx"
 #include "correction.h"
 #include <vector>
@@ -521,4 +522,4 @@ namespace fakefactors {
         }
     } // namespace sm
 } // namespace fakefactors
-#endif /* GUARD_FAKEFACTORS_H */
+#endif /* GUARD_FAKEFACTORS_CXX */
