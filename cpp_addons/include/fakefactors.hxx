@@ -1,5 +1,5 @@
-#ifndef GUARDFAKEFACTORS_H
-#define GUARDFAKEFACTORS_H
+#ifndef GUARD_FAKEFACTORS_H
+#define GUARD_FAKEFACTORS_H
 
 #include "ROOT/RDataFrame.hxx"
 #include "correction.h"
@@ -95,4 +95,4 @@ namespace sm{
     );
 }  // namespace sm
 } // namespace fakefactors
-#endif /* GUARDFAKEFACTORS_H */
+#endif /* GUARD_FAKEFACTORS_H */
