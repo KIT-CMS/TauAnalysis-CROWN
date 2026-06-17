@@ -24,7 +24,6 @@ from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
-from .scripts.SpecialSetups import ES_ID_SCHEME
 
 
 def build_config(
@@ -45,12 +44,6 @@ def build_config(
         available_eras,
         available_scopes,
     )
-
-    # define Tau energy correction producers, id, and variation scheme
-    if int(era[:4]) < 2022:
-        configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_binned")
-    else:
-        configuration.ES_ID_SCHEME = ES_ID_SCHEME("run3")
 
     measure_btag_efficiency = False
 
@@ -745,31 +738,71 @@ def build_config(
             "tau_dms": "0,1,10,11",
             #energy scale
             "tau_ES_json_name": "tau_energy_scale",
-            # genuine tau
-            "tau_es_variation": "nom", #TO remove maybe
-            "tau_ES_shift_DM0": "nom",
-            "tau_ES_shift_DM1": "nom",
-            "tau_ES_shift_DM10": "nom",
-            "tau_ES_shift_DM11": "nom",
+            # genuine tau 
+            "tau_es_DM0": "nom",
+            "tau_es_DM1": "nom",
+            "tau_es_DM10": "nom",
+            "tau_es_DM11": "nom",
+            # for 2024 and 2025 py pt too 
+            "tau_es_DM0_pt20to40": "nom",
+            "tau_es_DM0_pt40to60": "nom",
+            "tau_es_DM0_pt60toInf": "nom",
+            "tau_es_DM1_pt20to40": "nom",
+            "tau_es_DM1_pt40to60": "nom",
+            "tau_es_DM1_pt60toInf": "nom",
+            "tau_es_DM10_pt20to40": "nom",
+            "tau_es_DM10_pt40to60": "nom",
+            "tau_es_DM10_pt60toInf": "nom",
+            "tau_es_DM11_pt20to40": "nom",
+            "tau_es_DM11_pt40to60": "nom",
+            "tau_es_DM11_pt60toInf": "nom",
+            # vs jet id
+            "tau_id_vsjet_DM0": "nom",
+            "tau_id_vsjet_DM1": "nom",
+            "tau_id_vsjet_DM10": "nom",
+            "tau_id_vsjet_DM11": "nom",
+            # vs jet id
+            "tau_id_vsjet_DM0_pt20to40": "nom",
+            "tau_id_vsjet_DM0_pt40to60": "nom",
+            "tau_id_vsjet_DM0_pt60toInf": "nom",
+            "tau_id_vsjet_DM1_pt20to40": "nom",
+            "tau_id_vsjet_DM1_pt40to60": "nom",
+            "tau_id_vsjet_DM1_pt60toInf": "nom",
+            "tau_id_vsjet_DM10_pt20to40": "nom",
+            "tau_id_vsjet_DM10_pt40to60": "nom",
+            "tau_id_vsjet_DM10_pt60toInf": "nom",
+            "tau_id_vsjet_DM11_pt20to40": "nom",
+            "tau_id_vsjet_DM11_pt40to60": "nom",
+            "tau_id_vsjet_DM11_pt60toInf": "nom",
             # fake ele
-            "tau_elefake_es_DM0": "nom",
-            "tau_elefake_es_DM1": "nom",
-            "tau_elefake_es_DM10": "nom",
-            "tau_elefake_es_DM11": "nom",
+            "tau_elefake_es_DM0_barrel": "nom",
+            "tau_elefake_es_DM1_barrel": "nom",
+            "tau_elefake_es_DM10_barrel": "nom",
+            "tau_elefake_es_DM11_barrel": "nom",
+            "tau_elefake_es_DM0_endcap": "nom",
+            "tau_elefake_es_DM1_endcap": "nom",
+            "tau_elefake_es_DM10_endcap": "nom",
+            "tau_elefake_es_DM11_endcap": "nom",
+            # vs ele id
+            "tau_id_vsele_DM0_barrel": "nom",
+            "tau_id_vsele_DM1_barrel": "nom",
+            "tau_id_vsele_DM10_barrel": "nom",
+            "tau_id_vsele_DM11_barrel": "nom",
+            "tau_id_vsele_DM0_endcap": "nom",
+            "tau_id_vsele_DM1_endcap": "nom",
+            "tau_id_vsele_DM10_endcap": "nom",
+            "tau_id_vsele_DM11_endcap": "nom",
             # fake muon
-            "tau_mufake_es": "nom",
-            # SF variations
-            # detector variations vs ele
-            "tau_sf_vsele_barrel": "nom",  
-            "tau_sf_vsele_endcap": "nom", 
-            # detector variations vs muons
-            "tau_sf_vsmu_wheel1": "nom",
-            "tau_sf_vsmu_wheel2": "nom",
-            "tau_sf_vsmu_wheel3": "nom",
-            "tau_sf_vsmu_wheel4": "nom",
-            "tau_sf_vsmu_wheel5": "nom",
-            # variations vs jet
-            "tau_sf_vsjet_variation": "nom",
+            "tau_mufake_es_DM0": "nom",
+            "tau_mufake_es_DM1": "nom",
+            "tau_mufake_es_DM10": "nom",
+            "tau_mufake_es_DM11": "nom",
+            # vs muon id
+            "tau_id_vsmu_wheel1": "nom",
+            "tau_id_vsmu_wheel2": "nom",
+            "tau_id_vsmu_wheel3": "nom",
+            "tau_id_vsmu_wheel4": "nom",
+            "tau_id_vsmu_wheel5": "nom",
             # trigger SF
             "ditau_trigger_wp": "Medium",
             "ditau_trigger_corrtype": "sf",
@@ -1040,11 +1073,6 @@ def build_config(
                 ],
                 "max_tau_eta": 2.3,
                 # variations energy scale
-                # ecal issue
-                "tau_elefake_es_DM0_barrel": "nom",
-                "tau_elefake_es_DM0_endcap": "nom",
-                "tau_elefake_es_DM1_barrel": "nom",
-                "tau_elefake_es_DM1_endcap": "nom",
                 # by dm and pt
                 "tau_ES_shift_1prong0pizero20to40": "nom",
                 "tau_ES_shift_1prong0pizero40toInf": "nom",
@@ -1062,31 +1090,25 @@ def build_config(
                 # muon fakes variation
                 "tau_mufake_es": "nom",
                 # tau ID sf variation by pt
-                "tau_sf_vsjet_tau30to35": "nom",
-                "tau_sf_vsjet_tau35to40": "nom",
-                "tau_sf_vsjet_tau40to500": "nom",
-                "tau_sf_vsjet_tau500to1000": "nom",
-                "tau_sf_vsjet_tau1000toinf": "nom",
+                "tau_id_vsjet_tau30to35": "nom",
+                "tau_id_vsjet_tau35to40": "nom",
+                "tau_id_vsjet_tau40to500": "nom",
+                "tau_id_vsjet_tau500to1000": "nom",
+                "tau_id_vsjet_tau1000toinf": "nom",
                 # tau ID sf variation by dm and pt
-                "tau_sf_vsjet_1prong0pizero20to40": "nom",
-                "tau_sf_vsjet_1prong0pizero40toInf": "nom",
-                "tau_sf_vsjet_1prong1pizero20to40": "nom",
-                "tau_sf_vsjet_1prong1pizero40toInf": "nom",
-                "tau_sf_vsjet_3prong0pizero20to40": "nom",
-                "tau_sf_vsjet_3prong0pizero40toInf": "nom",
-                "tau_sf_vsjet_3prong1pizero20to40": "nom",
-                "tau_sf_vsjet_3prong1pizero40toInf": "nom",
+                "tau_id_vsjet_1prong0pizero20to40": "nom",
+                "tau_id_vsjet_1prong0pizero40toInf": "nom",
+                "tau_id_vsjet_1prong1pizero20to40": "nom",
+                "tau_id_vsjet_1prong1pizero40toInf": "nom",
+                "tau_id_vsjet_3prong0pizero20to40": "nom",
+                "tau_id_vsjet_3prong0pizero40toInf": "nom",
+                "tau_id_vsjet_3prong1pizero20to40": "nom",
+                "tau_id_vsjet_3prong1pizero40toInf": "nom",
                 # tau ID sf variation by dm
-                "tau_sf_vsjet_1prong0pizero": "nom",
-                "tau_sf_vsjet_1prong1pizero": "nom",
-                "tau_sf_vsjet_3prong0pizero": "nom",
-                "tau_sf_vsjet_3prong1pizero": "nom",
-                # tau ID sf variation for tt channel specifically by dm
-                # definetly redundant with the previous one...
-                "tau_sf_vsjet_tauDM0": "nom",
-                "tau_sf_vsjet_tauDM1": "nom",
-                "tau_sf_vsjet_tauDM10": "nom",
-                "tau_sf_vsjet_tauDM11": "nom",
+                "tau_id_vsjet_1prong0pizero": "nom",
+                "tau_id_vsjet_1prong1pizero": "nom",
+                "tau_id_vsjet_3prong0pizero": "nom",
+                "tau_id_vsjet_3prong1pizero": "nom",
             }
         )
         configuration.add_config_parameters(
@@ -1215,7 +1237,7 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            configuration.ES_ID_SCHEME.mc.producerGroupES,
+            taus.TauEnergyCorrection,
             taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -1228,9 +1250,7 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.MTDiTauPairQuantities,
             genparticles.MTGenDiTauPairQuantities,
-            configuration.ES_ID_SCHEME.mc.producerID,
             scalefactors.MuonIDIso_SF,
-            # pairquantities.FastMTTQuantities,
             scalefactors.TauID_SF,
             triggers.MTGenerateSingleMuonTriggerFlags,
             #triggers.MTGenerateCrossTriggerFlags,
@@ -1263,7 +1283,7 @@ def build_config(
         "et",
         [
             electrons.GoodElectrons,
-            configuration.ES_ID_SCHEME.mc.producerGroupES,
+            taus.TauEnergyCorrection,
             taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -1279,7 +1299,6 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.ETDiTauPairQuantities,
             genparticles.ETGenDiTauPairQuantities,
-            configuration.ES_ID_SCHEME.mc.producerID,
             scalefactors.TauID_SF,
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
@@ -1343,7 +1362,7 @@ def build_config(
         [   
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
-            configuration.ES_ID_SCHEME.mc.producerGroupES,
+            taus.TauEnergyCorrection,
             taus.BaseTaus,
             taus.GoodTaus,
             taus.NumberOfGoodTaus,
@@ -1355,7 +1374,6 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.TTDiTauPairQuantities,
             genparticles.TTGenDiTauPairQuantities,
-            configuration.ES_ID_SCHEME.mc.producerID,
             scalefactors.TauID_SF,
             triggers.TTGenerateDoubleTauTriggerFlags,
             #triggers.GenerateSingleTrailingTauTriggerFlags,
@@ -1489,7 +1507,7 @@ def build_config(
     configuration.add_modification_rule(
         ["et", "mt", "tt"],
         ReplaceProducer(
-            producers=[configuration.ES_ID_SCHEME.mc.producerGroupES, taus.TauEnergyCorrection_data],
+            producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_data],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1498,15 +1516,6 @@ def build_config(
         RemoveProducer(
             producers=[
                 scalefactors.TauID_SF,
-            ],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["et", "mt", "tt"],
-        RemoveProducer(
-            producers=[
-                configuration.ES_ID_SCHEME.mc.producerID,
             ],
             samples=["data", "embedding", "embedding_mc"],
         ),
@@ -1705,7 +1714,14 @@ def build_config(
             ["mt", "et", "tt"],
             ReplaceProducer(
                 producers=[scalefactors.TauID_SF, scalefactors.TauID_SF_v9],
-                exclude_samples=["fake_era"],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
+        configuration.add_modification_rule(
+            ["et", "mt", "tt"],
+            ReplaceProducer(
+                producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_ES_dm_pt_binned],
+                exclude_samples=["data", "embedding", "embedding_mc"],
             ),
         )
         configuration.add_modification_rule(
@@ -1826,15 +1842,6 @@ def build_config(
             ),
         )
         configuration.add_modification_rule(
-            ["tt"],
-            RemoveProducer(
-                producers=[
-                    configuration.ES_ID_SCHEME.mc.producerID,
-                ],
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            ),
-        )
-        configuration.add_modification_rule(
             ["em"],
             AppendProducer(
                 producers=[
@@ -1919,6 +1926,20 @@ def build_config(
                 exclude_samples=["fake_era"],
             ),
         )
+        configuration.add_modification_rule(
+            ["et", "mt", "tt"],
+            ReplaceProducer(
+                producers=[taus.TauEnergyCorrection, taus.TauEnergyCorrection_v12],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
+        configuration.add_modification_rule(
+            ["mt", "et", "tt"],
+            ReplaceProducer(
+                producers=[scalefactors.TauID_SF, scalefactors.TauID_SF_v12],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
     
     if int(era[:4]) < 2024:
         configuration.add_modification_rule(
@@ -1986,7 +2007,6 @@ def build_config(
         [
             q.nmuons,
             q.ntaus,
-            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             q.extramuon_veto,
             q.dimuon_veto,
@@ -2008,7 +2028,6 @@ def build_config(
         [
             q.nelectrons,
             q.ntaus,
-            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
             q.extramuon_veto,
             q.dimuon_veto,
@@ -2052,7 +2071,6 @@ def build_config(
             q.extramuon_veto,
             q.dimuon_veto,
             q.extraelec_veto,
-            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             ] + [p for p in genparticles.TTGenDiTauPairQuantities.get_outputs("tt")
             ],
     )
@@ -2105,6 +2123,18 @@ def build_config(
                     p for p in met.MetBasics_v12.get_outputs("global")
                 ],
             )
+            configuration.add_outputs(
+                "mt",
+                [p for p in scalefactors.TauID_SF_v12.get_outputs("mt")],
+            )
+            configuration.add_outputs(
+                "et",
+                [p for p in scalefactors.TauID_SF_v12.get_outputs("et")],
+            )
+            configuration.add_outputs(
+                "tt",
+                [p for p in scalefactors.TauID_SF_v12.get_outputs("tt")],
+            )
         else:
             configuration.add_outputs(
                 "global",
@@ -2112,11 +2142,22 @@ def build_config(
                     p for p in met.MetBasics.get_outputs("global")
                 ],
             )
+            configuration.add_outputs(
+                "mt",
+                [p for p in scalefactors.TauID_SF.get_outputs("mt")],
+            )
+            configuration.add_outputs(
+                "et",
+                [p for p in scalefactors.TauID_SF.get_outputs("et")],
+            )
+            configuration.add_outputs(
+                "tt",
+                [p for p in scalefactors.TauID_SF.get_outputs("tt")],
+            )
         configuration.add_outputs(
             "mt",
             [
                 scalefactors.SingleMuTriggerSF.output_group,
-                ] + [p for p in scalefactors.TauID_SF.get_outputs("mt")
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("mt")
                 ] + [p for p in pairquantities.MTDiTauPairQuantities.get_outputs("mt")
             ],
@@ -2125,7 +2166,6 @@ def build_config(
             "et",
             [
                 scalefactors.SingleEleTriggerSF.output_group,
-                ] + [p for p in scalefactors.TauID_SF.get_outputs("et")
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("et")
                 ] + [p for p in pairquantities.ETDiTauPairQuantities.get_outputs("et")
             ],
@@ -2134,7 +2174,6 @@ def build_config(
             "tt",
             [
                 p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")
-                ] + [p for p in scalefactors.TauID_SF.get_outputs("tt")
                 ] + [p for p in pairquantities.TTDiTauPairQuantities.get_outputs("tt")
             ],
         )
@@ -2397,25 +2436,35 @@ def build_config(
                 add_shift(name="tauEleFakeEs1prong1pizeroEndcap", shift_key="tau_elefake_es_DM1_endcap")
         elif int(era[:4]) < 2022:
             with defaults(scopes=("et", "mt", "tt")):
-                with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerES]):
+                # dm and pt scheme
+                with defaults(producers=[taus.TauEnergyCorrection_ES_dm_pt_binned]):
                     for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
-                        for pt in configuration.ES_ID_SCHEME.pt_binning:
+                        for pt in ["20to40", "40toInf"]:
                             add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        elif int(era[:4]) >= 2022:
+        elif int(era[:4]) >= 2022 and int(era[:4]) < 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
-                with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerGroupES]): # propagate to mass too
+                with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
-                        add_shift(name=f"tauEsDM{dm}", shift_key=f"tau_ES_shift_DM{dm}")
+                        add_shift(name=f"tauEsDM{dm}", shift_key=f"tau_es_DM{dm}")
                         # ele fake
-                        add_shift(name=f"tauEleFakeEsDM{dm}", shift_key=f"tau_elefake_es_DM{dm}")
-                    # muon fake
-                    add_shift(
-                        name="tauMuFakeEs",
-                        shift_key="tau_mufake_es",
-                        producers=[taus.TauPtCorrection_muFake],
-                    )
+                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        # muon fake
+                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
+        elif int(era[:4]) >= 2024:
+            with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
+                with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
+                    for dm in ["0", "1", "10", "11"]:
+                        # genuine tau
+                        for pt in ["20to40", "40to60", "60toInf"]:
+                            add_shift(name=f"tauEsDM{dm}pT{pt}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                        # ele fake
+                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        # muon fake
+                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
 
     #########################
     # TauID scale factor shifts
@@ -2427,49 +2476,54 @@ def build_config(
 
         if int(era[:4]) < 2022:
             with defaults(scopes=("et", "mt")):
-                with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerID]):
+                #dm and pt scheme
+                with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned]):
                     for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
-                        for pt in configuration.ES_ID_SCHEME.pt_binning:
-                            add_shift(name=f"vsJetTau{dm}{pt}", shift_key=f"tau_sf_vsjet_{dm}{pt}")
-                with defaults(producers=[scalefactors.Tau_2_VsEleTauID_SF]):
-                    add_shift(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel")
-                    add_shift(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap")
+                        for pt in ["20to40", "40toInf"]:
+                            add_shift(name=f"vsJetTau{dm}{pt}", shift_key=f"tau_id_vsjet_{dm}{pt}")
+                with defaults(producers=[scalefactors.Tau_2_VsEleTauID_SF_Run2]):
+                    add_shift(name="vsEleBarrel", shift_key="tau_id_vsele_barrel")
+                    add_shift(name="vsEleEndcap", shift_key="tau_id_vsele_endcap")
                 with defaults(producers=[scalefactors.Tau_2_VsMuTauID_SF]):
                     for wheel in range(1, 6):
-                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
+                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
             with defaults(scopes="tt"):
-                with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF, scalefactors.Tau_2_VsJetTauID_tt_SF]):
-                    add_shift(name="vsJetTauDM0", shift_key="tau_sf_vsjet_tauDM0")
-                    add_shift(name="vsJetTauDM1", shift_key="tau_sf_vsjet_tauDM1")
-                    add_shift(name="vsJetTauDM10", shift_key="tau_sf_vsjet_tauDM10")
-                    add_shift(name="vsJetTauDM11", shift_key="tau_sf_vsjet_tauDM11")
-                with defaults(producers=[scalefactors.Tau_1_VsEleTauID_SF, scalefactors.Tau_2_VsEleTauID_SF]):
-                    add_shift(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel")
-                    add_shift(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap")
+                with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF_v12, scalefactors.Tau_2_VsJetTauID_tt_SF]):
+                    add_shift(name="vsJetTauDM0", shift_key="tau_id_vsjet_DM0")
+                    add_shift(name="vsJetTauDM1", shift_key="tau_id_vsjet_DM1")
+                    add_shift(name="vsJetTauDM10", shift_key="tau_id_vsjet_DM10")
+                    add_shift(name="vsJetTauDM11", shift_key="tau_id_vsjet_DM11")
+                with defaults(producers=[scalefactors.Tau_1_VsEleTauID_SF_Run2, scalefactors.Tau_2_VsEleTauID_SF_Run2]):
+                    add_shift(name="vsEleBarrel", shift_key="tau_id_vsele_barrel")
+                    add_shift(name="vsEleEndcap", shift_key="tau_id_vsele_endcap")
                 with defaults(producers=[scalefactors.Tau_1_VsMuTauID_SF, scalefactors.Tau_2_VsMuTauID_SF]):
                     for wheel in range(1, 6):
-                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
+                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
             
         else:
-            # vs Ele
-            with defaults(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel"):
-                add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
-                add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
-            with defaults(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap"):
-                add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
-                add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
+            for dm in ["0", "1", "10", "11"]:
+                # vs Ele
+                with defaults(name=f"vsEleDM{dm}Barrel", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
+                    add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
+                    add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
+                with defaults(name=f"vsEleDM{dm}Endcap", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
+                    add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
+                    add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
+                # vs Jet
+                if int(era[:4]) < 2024:
+                    with defaults(name=f"vsJetDM{dm}", shift_key=f"tau_id_vsjet_DM{dm}"):
+                        add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]) 
+                        add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                else:
+                    for pt in ["20to40", "40to60", "60toInf"]:
+                        with defaults(name=f"vsJetDM{dm}pT{pt}", shift_key=f"tau_od_vsjet_DM{dm}_pt{pt}"):
+                            add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF]) 
+                            add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
             # vs Muon
             for wheel in range(1, 6):
-                with defaults(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}"):
+                with defaults(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsMuTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsMuTauID_SF])
-            # vs Jet
-            with defaults(
-                name="tau_vsjet_variation",
-                shift_key="tau_sf_vsjet_variation",
-            ):
-                add_shift(scopes=("et", "mt", "tt"),producers=[configuration.ES_ID_SCHEME.mc.producerID]) #scalefactors.Tau_2_VsJetTauID_SF
-                add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
 
     #########################
     # Add additional producers and SFs related to embedded samples
