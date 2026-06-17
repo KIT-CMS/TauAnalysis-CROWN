@@ -22,7 +22,9 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
 
-inputs_without_additional_angular_quantities = [
+nn_inputs = [
+    q.event_parity_float,
+    # ---
     q.pt_1,
     q.pt_2,
     q.eta_1,
@@ -33,34 +35,7 @@ inputs_without_additional_angular_quantities = [
     q.jeta_2,
     q.m_fastmtt,
     q.pt_fastmtt,
-    q.puppimet,
-    q.njets_float,
-    q.nbtag_float,
-    q.mt_tot,
-    q.m_vis,
-    q.pt_tt,
-    q.pt_vis,
-    q.mjj,
-    q.pt_dijet,
-    q.pt_ttjj,
-    q.pzetamissvis_float,
-    q.deltaEta_jj,
-    q.deltaEta_ditaupair,
-    q.deltaR_jj,
-    q.deltaR_ditaupair,
-]  # 25
-inputs_with_additional_angular_quantities = [
-    q.pt_1,
-    q.pt_2,
-    q.eta_1,
-    q.eta_2,
-    q.jpt_1,
-    q.jpt_2,
-    q.jeta_1,
-    q.jeta_2,
-    q.m_fastmtt,
-    q.pt_fastmtt,
-    q.puppimet,
+    q.met,
     q.njets_float,
     q.nbtag_float,
     q.mt_tot,
@@ -89,26 +64,14 @@ inputs_with_additional_angular_quantities = [
     q.deltaEta_12j2,
 ]  # 37
 
-with defaults(
+Evaluate_DNN = Producer(
+    call='''ml_sm::Extracted_NN_Output<38>(
+        {df},
+        onnxSessionManager,
+        {output},
+        "{model_file_path}",
+        {input_vec})''',
+    input=nn_inputs,
     output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
     scopes=["mt"],
-    # subproducers=FloatConvertedVariablesProducers,
-):
-    Evaluate_DNN_without_additional_angular_quantities = Producer(
-        call='''ml_sm::Extracted_NN_Output<26>(
-            {df},
-            onnxSessionManager,
-            {output},
-            "{model_file_path}",
-            {input_vec})''',
-        input=[q.event_parity_float] + inputs_without_additional_angular_quantities,
-    )
-    Evaluate_DNN_with_additional_angular_quantities = Producer(
-        call='''ml_sm::Extracted_NN_Output<38>(
-            {df},
-            onnxSessionManager,
-            {output},
-            "{model_file_path}",
-            {input_vec})''',
-        input=[q.event_parity_float] + inputs_with_additional_angular_quantities,
-    )
+)

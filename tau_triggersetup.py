@@ -1561,7 +1561,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     for _variation in ["up", "down"]:
         configuration.add_shift(
             SystematicShift(
-                name=f"singleEleTriggerSF{_variation.upper()}",
+                name=f"singleEleTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("et"): {
                         "singleelectron_trigger_sf": [
@@ -1581,7 +1581,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"EleTauTriggerSF{_variation.upper()}",
+                name=f"EleTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("et"): {
                         "eletau_cross_trigger_leg1_sf": [
@@ -1613,7 +1613,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
                 SystematicShift(
-                    name=f"singleMuTriggerSF{_variation.upper()}",
+                    name=f"singleMuTriggerSF{_variation.capitalize()}",
                     shift_config={
                         ("mt"): {
                             "singlemuon_trigger_sf": [
@@ -1632,7 +1632,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             )
         configuration.add_shift(
             SystematicShift(
-                name=f"MuTauTriggerSF{_variation.upper()}",
+                name=f"MuTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
@@ -1663,7 +1663,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"DoubleTauTriggerSF{_variation.upper()}",
+                name=f"DoubleTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("tt"): {
                         "doubletau_trigger_leg1_sf": [

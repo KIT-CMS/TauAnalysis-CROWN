@@ -29,8 +29,6 @@ def build_config(
         quantities_map,
     )
 
-    _name = "with_angular_quantities__m10toNaN__Sigmoid__FF_False"
-
     configuration.add_config_parameters(
         ["mt"],
         {
@@ -39,7 +37,7 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": f"payloads/ml/mt/ONNX_combined/{_name}/model.onnx",
+                    "2018": f"payloads/ml/nn_output/2018/mt/ONNX/model.onnx",
                 }
             ),
         },
@@ -50,16 +48,14 @@ def build_config(
         [
             ml.event_parity_Float,
             ml.VariableConversionToFloatProducerGroup,
-            # -----------------------------------------
-            ml.Evaluate_DNN_with_additional_angular_quantities,
-            # ml.Evaluate_DNN_without_additional_angular_quantities,
+            ml.Evaluate_DNN,
         ],
     )
 
     configuration.add_outputs(
         ["mt"],
         [
-            # q.nn_output_vector,
+            q.nn_output_vector,
             q.nn_predicted_class,
             q.nn_predicted_max_value,
         ],

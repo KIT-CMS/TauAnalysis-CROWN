@@ -11,6 +11,7 @@ from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
 from .producers import fakefactors_run2 as fakefactors
+from .producers import ml as ml
 from .quantities import output as q
 
 
@@ -53,6 +54,7 @@ def build_config(
     )
 
     non_closure_granularity = NonClosureGranularity("coarse")  # "both", "coarse", "fine"
+    USE_SPLIT_INFO_PRODUCER = False
 
     # --- helper ---
 
@@ -114,51 +116,56 @@ def build_config(
                 ),
             },
         )
-        configuration.add_producers(
-            ["mt"],
-            [
-                fakefactors.RawFakeFactors_sm_lt,
-                fakefactors.FakeFactors_sm_lt,
-                fakefactors.FakeFactors_sm_lt_split_info,
-            ],
-        )
-        configuration.add_outputs(
-            ["mt"],
-            [
-                q.raw_fake_factor_2,
-                q.fake_factor_2,
-                # ----------------------
-                q.raw_qcd_fake_factor_2,
-                q.raw_wjets_fake_factor_2,
-                q.raw_ttbar_fake_factor_2,
-                # ---
-                q.qcd_fake_factor_fraction_2,
-                q.wjets_fake_factor_fraction_2,
-                q.ttbar_fake_factor_fraction_2,
-                # ---
-                q.qcd_DR_SR_correction_2,
-                q.wjets_DR_SR_correction_2,
-                q.ttbar_DR_SR_correction_2,
-                # ---
-                q.qcd_correction_wo_DR_SR_2,
-                q.wjets_correction_wo_DR_SR_2,
-                q.ttbar_correction_wo_DR_SR_2,
-                # ---
-                q.qcd_fake_factor_correction_2,
-                q.wjets_fake_factor_correction_2,
-                q.ttbar_fake_factor_correction_2,
-                # ---
-                q.qcd_fake_factor_2,
-                q.wjets_fake_factor_2,
-                q.ttbar_fake_factor_2,
-            ],
-        )
+        active_ff_producer = [fakefactors.FakeFactors_sm_lt_split_info, fakefactors.FakeFactors_sm_lt] if USE_SPLIT_INFO_PRODUCER else [fakefactors.FakeFactors_sm_lt]
+        if era == "2018":
+            configuration.add_producers(
+                ["mt"],
+                [
+                    ml.VariableConversionToFloatProducerGroup,
+                    fakefactors.FFInput_QCD_2018_mt,
+                    fakefactors.FFInput_Wjets_2018_mt,
+                    fakefactors.FFInput_ttbar_2018_mt,
+                    fakefactors.FFInput_fractions_2018_mt,
+                    fakefactors.FFInput_DR_QCD_2018_mt,
+                    fakefactors.FFInput_DR_Wjets_2018_mt,
+                    fakefactors.FFInput_NC_QCD_2018_mt,
+                    fakefactors.FFInput_NC_Wjets_2018_mt,
+                    fakefactors.FFInput_NC_ttbar_2018_mt,
+                    fakefactors.RawFakeFactors_sm_2018_mt,
+                    *active_ff_producer,
+                ],
+            )
 
+        active_outputs = [
+            q.fake_factor_2,
+            q.raw_qcd_fake_factor_2,
+            q.raw_wjets_fake_factor_2,
+            q.raw_ttbar_fake_factor_2,
+            q.qcd_fake_factor_fraction_2,
+            q.wjets_fake_factor_fraction_2,
+            q.ttbar_fake_factor_fraction_2,
+            q.qcd_DR_SR_correction_2,
+            q.wjets_DR_SR_correction_2,
+            q.ttbar_DR_SR_correction_2,
+            q.qcd_correction_wo_DR_SR_2,
+            q.wjets_correction_wo_DR_SR_2,
+            q.ttbar_correction_wo_DR_SR_2,
+            q.qcd_fake_factor_correction_2,
+            q.wjets_fake_factor_correction_2,
+            q.ttbar_fake_factor_correction_2,
+            q.qcd_fake_factor_2,
+            q.wjets_fake_factor_2,
+            q.ttbar_fake_factor_2,
+        ] if USE_SPLIT_INFO_PRODUCER else [q.fake_factor_2]
+
+        configuration.add_outputs(["mt"], active_outputs)
+
+    for scope in scopes:
         all_variations = (
             (ff_process_name(correction["name"]), value["key"].replace("Up", ""))
             for corrections in (
-                load_ff_correctionlib(configuration.config_parameters["mt"]["file"]),
-                load_ff_correctionlib(configuration.config_parameters["mt"]["corr_file"]),
+                load_ff_correctionlib(configuration.config_parameters[scope]["file"]),
+                load_ff_correctionlib(configuration.config_parameters[scope]["corr_file"]),
             )
             for correction in corrections
             for value in correction["data"]["content"]
@@ -170,16 +177,11 @@ def build_config(
             if not apply_variation_based_on_granularity(_name):
                 continue
             for _shift in ["Up", "Down"]:
-
-                variables = (fakefactors.FakeFactors_sm_lt, fakefactors.RawFakeFactors_sm_lt)
-                if "_correction" in _key:
-                    variables = (fakefactors.FakeFactors_sm_lt,)
-
                 configuration.add_shift(
                     SystematicShift(
                         name=f"{_name}{_shift}",
-                        shift_config={("mt",): {_key: f"{_name}{_shift}"}},
-                        producers={("mt",): variables},
+                        shift_config={(scope,): {_key: f"{_name}{_shift}"}},
+                        producers={(scope,): (fakefactors.FakeFactors_sm_lt,)},
                     ),
                 )
 

@@ -330,6 +330,25 @@ muon_nstations_2 = Quantity()
 muon_ntrackerlayers_1 = Quantity()
 muon_ntrackerlayers_2 = Quantity()
 
+## embedding quantities
+emb_genweight = Quantity()
+emb_initialMETEt = Quantity()
+emb_initialMETphi = Quantity()
+emb_initialPuppiMETEt = Quantity()
+emb_initialPuppiMETphi = Quantity()
+emb_isMediumLeadingMuon = Quantity()
+emb_isMediumTrailingMuon = Quantity()
+emb_isTightLeadingMuon = Quantity()
+emb_isTightTrailingMuon = Quantity()
+emb_InitialPairCandidates = Quantity()
+emb_SelectionOldMass = Quantity()
+emb_SelectionNewMass = Quantity()
+emb_triggersel_wgt = Quantity()
+emb_idsel_wgt_1 = Quantity()
+emb_idsel_wgt_2 = Quantity()
+emb_trg_wgt_1 = Quantity()
+emb_trg_wgt_2 = Quantity()
+
 #### scalefactors
 
 gen_match_1 = Quantity()
@@ -418,24 +437,42 @@ wjets_correction_wo_DR_SR_2 = Quantity()
 ttbar_correction_wo_DR_SR_1 = Quantity()
 ttbar_correction_wo_DR_SR_2 = Quantity()
 
-## embedding quantities
-emb_genweight = Quantity()
-emb_initialMETEt = Quantity()
-emb_initialMETphi = Quantity()
-emb_initialPuppiMETEt = Quantity()
-emb_initialPuppiMETphi = Quantity()
-emb_isMediumLeadingMuon = Quantity()
-emb_isMediumTrailingMuon = Quantity()
-emb_isTightLeadingMuon = Quantity()
-emb_isTightTrailingMuon = Quantity()
-emb_InitialPairCandidates = Quantity()
-emb_SelectionOldMass = Quantity()
-emb_SelectionNewMass = Quantity()
-emb_triggersel_wgt = Quantity()
-emb_idsel_wgt_1 = Quantity()
-emb_idsel_wgt_2 = Quantity()
-emb_trg_wgt_1 = Quantity()
-emb_trg_wgt_2 = Quantity()
+ff_ml_qcd_model_input_2 = Quantity()
+ff_ml_wjets_model_input_2 = Quantity()
+ff_ml_ttbar_model_input_2 = Quantity()
+
+ff_ml_fractions_model_input_2 = Quantity()
+
+ff_ml_dr_qcd_model_input_2 = Quantity()
+ff_ml_dr_wjets_model_input_2 = Quantity()
+
+ff_ml_nc_model_input_2 = Quantity()
+
+ff_sm_qcd_model_input_2 = Quantity()
+ff_sm_wjets_model_input_2 = Quantity()
+ff_sm_ttbar_model_input_2 = Quantity()
+
+ff_sm_fractions_model_input_2 = Quantity()
+
+ff_sm_dr_qcd_model_input_2 = Quantity()
+ff_sm_dr_wjets_model_input_2 = Quantity()
+
+ff_sm_nc_qcd_model_input_2 = Quantity()
+ff_sm_nc_wjets_model_input_2 = Quantity()
+ff_sm_nc_ttbar_model_input_2 = Quantity()
+
+nn_output_vector = Quantity()
+nn_predicted_class = Quantity()
+nn_predicted_max_value = Quantity()
+
+njets_float = Quantity()
+nbtag_float = Quantity()
+event_parity_float = Quantity()
+tau_decaymode_2_float = Quantity()
+tau_decaymode_1_float = Quantity()
+pzetamissvis_float = Quantity()
+
+# --- internally used quantities ---
 
 ## training quantities
 deltaPhi_ditaupair = Quantity()
