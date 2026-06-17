@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults, ExtendedVectorProducer, VectorProducer, ProducerGroup
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -33,7 +33,7 @@ inputs_without_additional_angular_quantities = [
     q.jeta_2,
     q.m_fastmtt,
     q.pt_fastmtt,
-    q.met,
+    q.puppimet,
     q.njets_float,
     q.nbtag_float,
     q.mt_tot,
@@ -60,7 +60,7 @@ inputs_with_additional_angular_quantities = [
     q.jeta_2,
     q.m_fastmtt,
     q.pt_fastmtt,
-    q.met,
+    q.puppimet,
     q.njets_float,
     q.nbtag_float,
     q.mt_tot,
