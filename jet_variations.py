@@ -58,9 +58,9 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 producers=[scalefactors.btaggingWP_SF],
             ):
                 add_shift(name="btagUncBCcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
-                add_shift(name="btagUncBCuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
+                add_shift(name="btagUncBCuncorrelated", shift_map={"Up": "up_uncorrelated", "Down": "down_uncorrelated"})
                 add_shift(name="btagUncLcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
-                add_shift(name="btagUncLuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
+                add_shift(name="btagUncLuncorrelated", shift_map={"Up": "up_uncorrelated", "Down": "down_uncorrelated"})
 
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
             add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
