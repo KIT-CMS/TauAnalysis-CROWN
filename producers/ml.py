@@ -1,9 +1,9 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
-from ..scripts.CROWNWrapper import Producer, defaults, ProducerGroup
+from ..quantities import nanoAODv15 as nanoAOD
+from ..scripts.CROWNWrapper import Producer, defaults, ExtendedVectorProducer, VectorProducer, ProducerGroup
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
-    with defaults(call='utility::Cast<float, int>({df}, {output}, "float", {input}).first'):
+    with defaults(call='''utility::Cast<float, int>({df}, {output}, "float", {input}).first'''):
         ConversionToFloatCollection = [
             njets_Float := Producer(input=[q.njets], output=[q.njets_float]),
             nbtag_Float := Producer(input=[q.nbtag], output=[q.nbtag_float]),
@@ -11,14 +11,14 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             tau_decaymode_1_Float := Producer(input=[q.tau_decaymode_1], output=[q.tau_decaymode_1_float]),
         ]
 
-    with defaults(call='utility::Cast<float, double>({df}, {output}, "float", {input}).first'):
+    with defaults(call='''utility::Cast<float, double>({df}, {output}, "float", {input}).first'''):
         ConversionToFloatCollection += [
             pzetamissvis_Float := Producer(input=[q.pzetamissvis], output=[q.pzetamissvis_float]),
         ]
 
     VariableConversionToFloatProducerGroup = ProducerGroup(subproducers=ConversionToFloatCollection)
 
-    with defaults(call='ml_sm::EventParity({df}, {output}, {input})'):
+    with defaults(call='''ml_sm::EventParity({df}, {output}, {input})'''):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
 

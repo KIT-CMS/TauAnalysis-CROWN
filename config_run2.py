@@ -202,7 +202,7 @@ def build_config(
                 }
             ),
             "jet_reapplyJES": False,
-            "jet_jes_sources": '{""}',
+            "jet_jes_source": "nom",
             "jet_jes_shift": 0,
             "jet_jer_shift": "nom",  # or '"up"', '"down"'
             "jet_jer_master_seed": 42,
