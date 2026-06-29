@@ -63,7 +63,7 @@ nn_input_quantities = [
     q.jeta_2,
     q.m_fastmtt,
     q.pt_fastmtt,
-    q.met,
+    q.puppimet,
     q.nbtag_float,
     q.m_vis,
     q.pt_tt,

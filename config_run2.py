@@ -1299,9 +1299,9 @@ def build_config(
             q.jet_p4_2,
             q.bjet_p4_1,
             q.bjet_p4_2,
-            q.met_p4,
+            q.puppimet_p4,
             q.pfmet_p4,
-            q.met_p4_recoilcorrected,
+            q.puppimet_p4_recoilcorrected,
             q.pfmet_p4_recoilcorrected,
         ],
     )
@@ -1325,8 +1325,8 @@ def build_config(
                 nanoAOD.genWeight,
                 q.gen_p4_1,
                 q.gen_p4_2,
-                q.recoil_genboson_p4,
-                q.recoil_vis_genboson_p4,
+                q.genboson_p4,
+                q.visgenboson_p4,
             ],
         )
         if era != "2018":

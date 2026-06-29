@@ -21,7 +21,7 @@ with defaults(scopes=["mt", "et"]):
                 q.jeta_2,
                 q.jpt_1,
                 q.jpt_2,
-                q.met,
+                q.puppimet,
                 q.pt_tt,
                 q.deltaEta_ditaupair,
                 q.deltaR_ditaupair,
