@@ -440,23 +440,17 @@ ttbar_correction_wo_DR_SR_2 = Quantity()
 ff_ml_qcd_model_input_2 = Quantity()
 ff_ml_wjets_model_input_2 = Quantity()
 ff_ml_ttbar_model_input_2 = Quantity()
-
 ff_ml_fractions_model_input_2 = Quantity()
-
 ff_ml_dr_qcd_model_input_2 = Quantity()
 ff_ml_dr_wjets_model_input_2 = Quantity()
-
 ff_ml_nc_model_input_2 = Quantity()
 
 ff_sm_qcd_model_input_2 = Quantity()
 ff_sm_wjets_model_input_2 = Quantity()
 ff_sm_ttbar_model_input_2 = Quantity()
-
 ff_sm_fractions_model_input_2 = Quantity()
-
 ff_sm_dr_qcd_model_input_2 = Quantity()
 ff_sm_dr_wjets_model_input_2 = Quantity()
-
 ff_sm_nc_qcd_model_input_2 = Quantity()
 ff_sm_nc_wjets_model_input_2 = Quantity()
 ff_sm_nc_ttbar_model_input_2 = Quantity()

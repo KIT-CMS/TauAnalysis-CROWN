@@ -1,5 +1,5 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
+from ..quantities import nanoAODv15 as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults, ProducerGroup
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -21,24 +21,50 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='ml_sm::EventParity({df}, {output}, {input})'):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
+# old pruning
+# nn_input_quantities = [
+#     q.event_parity_float,
+#     q.pt_1,
+#     q.pt_2,
+#     q.jpt_1,
+#     q.jpt_2,
+#     q.jeta_1,
+#     q.jeta_2,
+#     q.m_fastmtt,
+#     q.pt_fastmtt,
+#     q.met,
+#     q.nbtag_float,
+#     q.m_vis,
+#     q.pt_tt,
+#     q.pt_vis,
+#     q.mjj,
+#     q.pt_dijet,
+#     q.pzetamissvis_float,
+#     q.deltaR_ditaupair,
+#     q.deltaR_1j1,
+#     q.deltaR_1j2,
+#     q.deltaR_2j1,
+#     q.deltaR_2j2,
+#     q.deltaR_12j1,
+#     q.deltaEta_1j1,
+#     q.deltaEta_2j1,
+#     q.deltaEta_12j1,
+#     q.njets_float,
+# ]
 
-nn_inputs = [
+# new pruning
+nn_input_quantities = [
     q.event_parity_float,
-    # ---
     q.pt_1,
     q.pt_2,
-    q.eta_1,
-    q.eta_2,
     q.jpt_1,
     q.jpt_2,
     q.jeta_1,
     q.jeta_2,
     q.m_fastmtt,
     q.pt_fastmtt,
-    q.met,
-    q.njets_float,
+    q.puppimet,
     q.nbtag_float,
-    q.mt_tot,
     q.m_vis,
     q.pt_tt,
     q.pt_vis,
@@ -47,31 +73,28 @@ nn_inputs = [
     q.pt_ttjj,
     q.pzetamissvis_float,
     q.deltaR_ditaupair,
-    q.deltaEta_ditaupair,
-    q.deltaEta_jj,
-    q.deltaR_jj,
     q.deltaR_1j1,
     q.deltaR_1j2,
     q.deltaR_2j1,
     q.deltaR_2j2,
     q.deltaR_12j1,
-    q.deltaR_12j2,
-    q.deltaEta_1j1,
-    q.deltaEta_1j2,
-    q.deltaEta_2j1,
-    q.deltaEta_2j2,
-    q.deltaEta_12j1,
-    q.deltaEta_12j2,
-]  # 37
+    q.njets_float,
+]
 
-Evaluate_DNN = Producer(
-    call='''ml_sm::Extracted_NN_Output<38>(
-        {df},
-        onnxSessionManager,
-        {output},
-        "{model_file_path}",
-        {input_vec})''',
-    input=nn_inputs,
-    output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
+with defaults(
+    output=[
+        q.nn_output_vector,
+        q.nn_predicted_class,
+        q.nn_predicted_max_value,
+    ],
     scopes=["mt"],
-)
+):
+    Evaluate_DNN = Producer(
+        call=f'''ml_sm::Extracted_NN_Output<{len(nn_input_quantities)}>(
+            {{df}},
+            onnxSessionManager,
+            {{output}},
+            "{{model_file_path}}",
+            {{input_vec}})''',
+        input=nn_input_quantities,
+    )
