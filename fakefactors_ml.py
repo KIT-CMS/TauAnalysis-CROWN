@@ -11,7 +11,7 @@ from code_generation.systematics import SystematicShift
 
 from .fakefactors import NonClosureGranularity
 from .producers import fakefactors_ml as fakefactors_ml
-from .producers import ml as ml
+from .producers import nn_output as nn_output
 from .quantities import output as q
 from .scripts.CROWNWrapper import (defaults,
                                    get_adjusted_add_shift_SystematicShift)
@@ -57,7 +57,7 @@ def build_config(
         return non_closure_granularity.check(name)
 
     if "mt" in scopes:
-        base_ml = "payloads/fake_factors_ml/mt"
+        base_ml = "payloads/fake_factors_ml/models"
         base_ff_path = "2018/onnx_model/ff/model.onnx"
         base_nn_output_path = "2018/onnx_model/nn_output/model.onnx"
 
@@ -73,18 +73,24 @@ def build_config(
                 "model_ff_QCD_Down": get_model_path("QCD_Down"),
                 "model_ff_QCD_StatUp": get_model_path("QCD_StatUp"),
                 "model_ff_QCD_StatDown": get_model_path("QCD_StatDown"),
+                "model_ff_QCD_NormalizationUp": get_model_path("QCD_NormalizationUp"),
+                "model_ff_QCD_NormalizationDown": get_model_path("QCD_NormalizationDown"),
                 # ---
                 "model_ff_Wjets": get_model_path("Wjets"),
                 "model_ff_Wjets_Up": get_model_path("Wjets_Up"),
                 "model_ff_Wjets_Down": get_model_path("Wjets_Down"),
                 "model_ff_Wjets_StatUp": get_model_path("Wjets_StatUp"),
                 "model_ff_Wjets_StatDown": get_model_path("Wjets_StatDown"),
+                "model_ff_Wjets_NormalizationUp": get_model_path("Wjets_NormalizationUp"),
+                "model_ff_Wjets_NormalizationDown": get_model_path("Wjets_NormalizationDown"),
                 # ---
                 "model_ff_ttbar": get_model_path("ttbar"),
                 "model_ff_ttbar_Up": get_model_path("ttbar_Up"),
                 "model_ff_ttbar_Down": get_model_path("ttbar_Down"),
                 "model_ff_ttbar_StatUp": get_model_path("ttbar_StatUp"),
                 "model_ff_ttbar_StatDown": get_model_path("ttbar_StatDown"),
+                "model_ff_ttbar_NormalizationUp": get_model_path("ttbar_NormalizationUp"),
+                "model_ff_ttbar_NormalizationDown": get_model_path("ttbar_NormalizationDown"),
                 # ---
                 "model_fractions": get_model_path("fractions"),
                 "model_fractions_QCD_Up": get_model_path("fractions_QCD_Up"),
@@ -93,20 +99,28 @@ def build_config(
                 "model_fractions_Wjets_Down": get_model_path("fractions_Wjets_Down"),
                 "model_fractions_ttbar_Up": get_model_path("fractions_ttbar_Up"),
                 "model_fractions_ttbar_Down": get_model_path("fractions_ttbar_Down"),
-                "model_fractions_StatUp": get_model_path("fractions_StatUp"),
-                "model_fractions_StatDown": get_model_path("fractions_StatDown"),
+                "model_fractions_QCD_StatUp": get_model_path("fractions_QCD_StatUp"),
+                "model_fractions_QCD_StatDown": get_model_path("fractions_QCD_StatDown"),
+                "model_fractions_Wjets_StatUp": get_model_path("fractions_Wjets_StatUp"),
+                "model_fractions_Wjets_StatDown": get_model_path("fractions_Wjets_StatDown"),
+                "model_fractions_ttbar_StatUp": get_model_path("fractions_ttbar_StatUp"),
+                "model_fractions_ttbar_StatDown": get_model_path("fractions_ttbar_StatDown"),
                 # ---
                 "model_DR_SR_correction_QCD": get_model_path("QCD_DR_SR_correction"),
                 "model_DR_SR_correction_QCD_Up": get_model_path("QCD_DR_SR_correction_Up"),
                 "model_DR_SR_correction_QCD_Down": get_model_path("QCD_DR_SR_correction_Down"),
                 "model_DR_SR_correction_QCD_StatUp": get_model_path("QCD_DR_SR_correction_StatUp"),
                 "model_DR_SR_correction_QCD_StatDown": get_model_path("QCD_DR_SR_correction_StatDown"),
+                "model_DR_SR_correction_QCD_NormalizationUp": get_model_path("QCD_DR_SR_correction_NormalizationUp"),
+                "model_DR_SR_correction_QCD_NormalizationDown": get_model_path("QCD_DR_SR_correction_NormalizationDown"),
                 # ---
                 "model_DR_SR_correction_Wjets": get_model_path("Wjets_DR_SR_correction"),
                 "model_DR_SR_correction_Wjets_Up": get_model_path("Wjets_DR_SR_correction_Up"),
                 "model_DR_SR_correction_Wjets_Down": get_model_path("Wjets_DR_SR_correction_Down"),
                 "model_DR_SR_correction_Wjets_StatUp": get_model_path("Wjets_DR_SR_correction_StatUp"),
                 "model_DR_SR_correction_Wjets_StatDown": get_model_path("Wjets_DR_SR_correction_StatDown"),
+                "model_DR_SR_correction_Wjets_NormalizationUp": get_model_path("Wjets_DR_SR_correction_NormalizationUp"),
+                "model_DR_SR_correction_Wjets_NormalizationDown": get_model_path("Wjets_DR_SR_correction_NormalizationDown"),
                 # ---
                 "ff_QCD_variation": "nominal",
                 "ff_Wjets_variation": "nominal",
@@ -120,7 +134,7 @@ def build_config(
                 "ttbar_non_closure_correction": "nominal",
                 # ---
                 "corr_file": EraModifier({
-                    "2018": "payloads/fake_factors_ml/sm/2018/with_embedding/FF_corrections_mt.json.gz",
+                    "2018": "payloads/fake_factors_ml/classic_corrections/2018/with_embedding/FF_corrections_mt.json.gz",
                 }),
             },
         )
@@ -129,8 +143,8 @@ def build_config(
         configuration.add_producers(
             ["mt"],
             [
-                ml.VariableConversionToFloatProducerGroup,
-                ml.event_parity_Float,
+                nn_output.VariableConversionToFloatProducerGroup,
+                nn_output.event_parity_Float,
                 fakefactors_ml.FFModelInput_QCD_lt,
                 fakefactors_ml.FFModelInput_Wjets_lt,
                 fakefactors_ml.FFModelInput_ttbar_lt,
@@ -167,11 +181,11 @@ def build_config(
         configuration.add_outputs(["mt"], active_outputs)
 
         ml_systematics = {
-            "ff_QCD_variation": ["Up", "Down", "StatUp", "StatDown"],
-            "ff_Wjets_variation": ["Up", "Down", "StatUp", "StatDown"],
-            "ff_ttbar_variation": ["Up", "Down", "StatUp", "StatDown"],
-            "QCD_DR_SR_correction_variation": ["Up", "Down", "StatUp", "StatDown"],
-            "Wjets_DR_SR_correction_variation": ["Up", "Down", "StatUp", "StatDown"],
+            "ff_QCD_variation": ["Up", "Down", "StatUp", "StatDown", "NormalizationUp", "NormalizationDown"],
+            "ff_Wjets_variation": ["Up", "Down", "StatUp", "StatDown", "NormalizationUp", "NormalizationDown"],
+            "ff_ttbar_variation": ["Up", "Down", "StatUp", "StatDown", "NormalizationUp", "NormalizationDown"],
+            "QCD_DR_SR_correction_variation": ["Up", "Down", "StatUp", "StatDown", "NormalizationUp", "NormalizationDown"],
+            "Wjets_DR_SR_correction_variation": ["Up", "Down", "StatUp", "StatDown", "NormalizationUp", "NormalizationDown"],
         }
 
         ml_fractions_systematics = {
@@ -179,7 +193,9 @@ def build_config(
                 "QCD_Up", "QCD_Down",
                 "Wjets_Up", "Wjets_Down",
                 "ttbar_Up", "ttbar_Down",
-                "StatUp", "StatDown"
+                "QCD_StatUp", "QCD_StatDown",
+                "Wjets_StatUp", "Wjets_StatDown",
+                "ttbar_StatUp", "ttbar_StatDown",
             ]
         }
 
@@ -233,7 +249,7 @@ def build_config(
                         SystematicShift(
                             name=f"{_name}{_shift}",
                             shift_config={("mt",): {_key: f"{_name}{_shift}"}},
-                            producers={("mt",): (active_ff_producer,)},
+                            producers={("mt",): active_ff_producer},
                         ),
                     )
 

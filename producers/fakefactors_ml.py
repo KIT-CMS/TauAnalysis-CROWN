@@ -141,6 +141,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_QCD_Down}",
                 "{model_ff_QCD_StatUp}",
                 "{model_ff_QCD_StatDown}",
+                "{model_ff_QCD_NormalizationUp}",
+                "{model_ff_QCD_NormalizationDown}",
                 "{ff_QCD_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_ff_Wjets}",
@@ -148,6 +150,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_Wjets_Down}",
                 "{model_ff_Wjets_StatUp}",
                 "{model_ff_Wjets_StatDown}",
+                "{model_ff_Wjets_NormalizationUp}",
+                "{model_ff_Wjets_NormalizationDown}",
                 "{ff_Wjets_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_ff_ttbar}",
@@ -155,6 +159,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_ttbar_Down}",
                 "{model_ff_ttbar_StatUp}",
                 "{model_ff_ttbar_StatDown}",
+                "{model_ff_ttbar_NormalizationUp}",
+                "{model_ff_ttbar_NormalizationDown}",
                 "{ff_ttbar_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_fractions}",
@@ -164,15 +170,21 @@ with defaults(scopes=["mt"]):
                 "{model_fractions_Wjets_Down}",
                 "{model_fractions_ttbar_Up}",
                 "{model_fractions_ttbar_Down}",
-                "{model_fractions_StatUp}",
-                "{model_fractions_StatDown}",
-                "{ml_fractions_variation}",  // nominal, QCD_Up/Down, Wjets_Up/Down, ttbar_Up/Down, StatUp/Down
+                "{model_fractions_QCD_StatUp}",
+                "{model_fractions_QCD_StatDown}",
+                "{model_fractions_Wjets_StatUp}",
+                "{model_fractions_Wjets_StatDown}",
+                "{model_fractions_ttbar_StatUp}",
+                "{model_fractions_ttbar_StatDown}",
+                "{ml_fractions_variation}",  // nominal, QCD_Up/Down, Wjets_Up/Down, ttbar_Up/Down, QCD_StatUp/Down, Wjets_StatUp/Down, ttbar_StatUp/Down
                 // ---
                 "{model_DR_SR_correction_QCD}",
                 "{model_DR_SR_correction_QCD_Up}",
                 "{model_DR_SR_correction_QCD_Down}",
                 "{model_DR_SR_correction_QCD_StatUp}",
                 "{model_DR_SR_correction_QCD_StatDown}",
+                "{model_DR_SR_correction_QCD_NormalizationUp}",
+                "{model_DR_SR_correction_QCD_NormalizationDown}",
                 "{QCD_DR_SR_correction_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_DR_SR_correction_Wjets}",
@@ -180,6 +192,8 @@ with defaults(scopes=["mt"]):
                 "{model_DR_SR_correction_Wjets_Down}",
                 "{model_DR_SR_correction_Wjets_StatUp}",
                 "{model_DR_SR_correction_Wjets_StatDown}",
+                "{model_DR_SR_correction_Wjets_NormalizationUp}",
+                "{model_DR_SR_correction_Wjets_NormalizationDown}",
                 "{Wjets_DR_SR_correction_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{QCD_non_closure_correction}",
@@ -203,6 +217,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_QCD_Down}",
                 "{model_ff_QCD_StatUp}",
                 "{model_ff_QCD_StatDown}",
+                "{model_ff_QCD_NormalizationUp}",
+                "{model_ff_QCD_NormalizationDown}",
                 "{ff_QCD_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_ff_Wjets}",
@@ -210,6 +226,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_Wjets_Down}",
                 "{model_ff_Wjets_StatUp}",
                 "{model_ff_Wjets_StatDown}",
+                "{model_ff_Wjets_NormalizationUp}",
+                "{model_ff_Wjets_NormalizationDown}",
                 "{ff_Wjets_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_ff_ttbar}",
@@ -217,6 +235,8 @@ with defaults(scopes=["mt"]):
                 "{model_ff_ttbar_Down}",
                 "{model_ff_ttbar_StatUp}",
                 "{model_ff_ttbar_StatDown}",
+                "{model_ff_ttbar_NormalizationUp}",
+                "{model_ff_ttbar_NormalizationDown}",
                 "{ff_ttbar_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_fractions}",
@@ -226,15 +246,21 @@ with defaults(scopes=["mt"]):
                 "{model_fractions_Wjets_Down}",
                 "{model_fractions_ttbar_Up}",
                 "{model_fractions_ttbar_Down}",
-                "{model_fractions_StatUp}",
-                "{model_fractions_StatDown}",
-                "{ml_fractions_variation}",  // nominal, QCD_Up/Down, Wjets_Up/Down, ttbar_Up/Down, StatUp/Down
+                "{model_fractions_QCD_StatUp}",
+                "{model_fractions_QCD_StatDown}",
+                "{model_fractions_Wjets_StatUp}",
+                "{model_fractions_Wjets_StatDown}",
+                "{model_fractions_ttbar_StatUp}",
+                "{model_fractions_ttbar_StatDown}",
+                "{ml_fractions_variation}",  // nominal, QCD_Up/Down, Wjets_Up/Down, ttbar_Up/Down, QCD_StatUp/Down, Wjets_StatUp/Down, ttbar_StatUp/Down
                 // ---
                 "{model_DR_SR_correction_QCD}",
                 "{model_DR_SR_correction_QCD_Up}",
                 "{model_DR_SR_correction_QCD_Down}",
                 "{model_DR_SR_correction_QCD_StatUp}",
                 "{model_DR_SR_correction_QCD_StatDown}",
+                "{model_DR_SR_correction_QCD_NormalizationUp}",
+                "{model_DR_SR_correction_QCD_NormalizationDown}",
                 "{QCD_DR_SR_correction_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{model_DR_SR_correction_Wjets}",
@@ -242,6 +268,8 @@ with defaults(scopes=["mt"]):
                 "{model_DR_SR_correction_Wjets_Down}",
                 "{model_DR_SR_correction_Wjets_StatUp}",
                 "{model_DR_SR_correction_Wjets_StatDown}",
+                "{model_DR_SR_correction_Wjets_NormalizationUp}",
+                "{model_DR_SR_correction_Wjets_NormalizationDown}",
                 "{Wjets_DR_SR_correction_variation}",  // nominal, Up, Down, StatUp, StatDown
                 // ---
                 "{QCD_non_closure_correction}",

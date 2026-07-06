@@ -1,6 +1,7 @@
 #ifndef GUARD_FAKEFACTORS_CXX
 #define GUARD_FAKEFACTORS_CXX
 /// The namespace that contains the fake factor function.
+#include "../include/fakefactors.hxx"
 #include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
@@ -182,15 +183,14 @@ namespace fakefactors {
             ROOT::RDF::RNode df,
             correctionManager::CorrectionManager &correctionManager,
             const std::string &outputname,
-            // ---
+            // dedicated event validity input
             const std::string &pt_2_input,
-            // ---
+            // pre-built correctionlib input vectors
             const std::string &qcd_ff_input,
             const std::string &wjets_ff_input,
             const std::string &ttbar_ff_input,
-            // ---
             const std::string &fractions_input,
-            // ---
+            //
             const std::string &fraction_variation,
             const std::string &QCD_variation,
             const std::string &Wjets_variation,
@@ -304,22 +304,19 @@ namespace fakefactors {
             ROOT::RDF::RNode df,
             correctionManager::CorrectionManager &correctionManager,
             const std::vector<std::string> &outputnames,
-            // ---
+            // dedicated event validity input
             const std::string &pt_2_input,
-            // ---
+            // pre-built correctionlib input vectors
             const std::string &qcd_ff_input,
             const std::string &wjets_ff_input,
             const std::string &ttbar_ff_input,
-            // ---
             const std::string &fractions_input,
-            // ---
             const std::string &qcd_DR_SR_input,
             const std::string &wjets_DR_SR_input,
-            // ---
             const std::string &qcd_non_closure_input,
             const std::string &wjets_non_closure_input,
             const std::string &ttbar_non_closure_input,
-            // ---
+            // for corrections
             const std::string &fraction_variation,
             const std::string &QCD_variation,
             const std::string &Wjets_variation,
@@ -357,6 +354,8 @@ namespace fakefactors {
             auto wjets_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "Wjets_compound_correction");
 
             auto ttbar_non_closure = correctionManager.loadCompoundCorrection(ff_corr_file, "ttbar_compound_correction");
+
+            // ---
 
             auto qcd_handler = std::make_shared<NonClosureHandler>("QCD", ff_corr_file, qcd_non_closure);
             auto wjets_handler = std::make_shared<NonClosureHandler>("Wjets", ff_corr_file, wjets_non_closure);
