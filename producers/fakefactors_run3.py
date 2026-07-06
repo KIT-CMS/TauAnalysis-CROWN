@@ -1,5 +1,4 @@
 from ..quantities import output as q
-from ..quantities import nanoAOD as nanoAOD
 from ..scripts.CROWNWrapper import Producer, defaults
 
 class Inputs:
