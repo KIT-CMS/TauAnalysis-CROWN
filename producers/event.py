@@ -121,7 +121,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     # Run 2
     ZPtReweighting_Run2 = Producer(
-        call='''event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")''',
+        call='''event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")''',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )

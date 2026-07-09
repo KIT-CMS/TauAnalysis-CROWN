@@ -16,7 +16,6 @@ from .producers import triggers as triggers
 from .quantities import nanoAODv9 as nanoAOD
 from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
-from .tau_variations import add_tauVariations
 from .jet_variations import add_jetVariations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
@@ -698,7 +697,7 @@ def build_config(
             electrons.BaseElectrons_v9,
             jets.JetSmearingSeed,
             jets.JetID_rename,
-            jets.JetEnergyCorrection,
+            jets.JetEnergyCorrection_Run2,
             jets.GoodJets_Run2,
             jets.JetBTagDeep,
             jets.GoodBJets_Run2,
@@ -707,7 +706,7 @@ def build_config(
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             genparticles.GenBosonMass,
-            met.MetBasics,
+            met.MetBasics_v12,
         ],
     )
     # add prefiring
@@ -797,7 +796,7 @@ def build_config(
             genparticles.MTGenDiTauPairQuantities,
             #  scalefactors.MuonIDIso_SF,
             configuration.ES_ID_SCHEME.mc.producerID,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SF_v9,
             triggers.MTGenerateSingleMuonTriggerFlags,
             triggers.MTGenerateCrossTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
@@ -827,7 +826,7 @@ def build_config(
             pairquantities.ETDiTauPairQuantities_v9,
             genparticles.ETGenDiTauPairQuantities,
             configuration.ES_ID_SCHEME.mc.producerID,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SF_v9,
             # scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
             triggers.ETGenerateCrossTriggerFlags,
@@ -854,7 +853,7 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.TTDiTauPairQuantities_v9,
             genparticles.TTGenDiTauPairQuantities,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SF_v9,
             triggers.TTGenerateDoubleTauTriggerFlags,
             triggers.GenerateSingleTrailingTauTriggerFlags,
             triggers.GenerateSingleLeadingTauTriggerFlags,
@@ -896,9 +895,9 @@ def build_config(
         ["et", "mt"],
         RemoveProducer(
             producers=[
-                scalefactors.Tau_2_VsMuTauID_SF,
+                scalefactors.Tau_2_VsMuTauID_SF_Run2,
                 configuration.ES_ID_SCHEME.mc.producerID,
-                scalefactors.Tau_2_VsEleTauID_SF,
+                scalefactors.Tau_2_VsEleTauID_SF_Run2,
             ],
             samples=["data"],
         ),
@@ -908,12 +907,12 @@ def build_config(
         ["tt"],
         RemoveProducer(
             producers=[
-                scalefactors.Tau_1_VsJetTauID_SF,
-                scalefactors.Tau_1_VsEleTauID_SF,
-                scalefactors.Tau_1_VsMuTauID_SF,
-                scalefactors.Tau_2_VsJetTauID_tt_SF,
-                scalefactors.Tau_2_VsEleTauID_SF,
-                scalefactors.Tau_2_VsMuTauID_SF,
+                scalefactors.Tau_1_VsJetTauID_SF_Run2,
+                scalefactors.Tau_1_VsEleTauID_SF_Run2,
+                scalefactors.Tau_1_VsMuTauID_SF_Run2,
+                scalefactors.Tau_2_VsJetTauID_SF_Run2,
+                scalefactors.Tau_2_VsEleTauID_SF_Run2,
+                scalefactors.Tau_2_VsMuTauID_SF_Run2,
             ],
             samples=["data"],
         ),
@@ -937,7 +936,7 @@ def build_config(
     configuration.add_modification_rule(
         "global",
         ReplaceProducer(
-            producers=[jets.JetEnergyCorrection, jets.JetEnergyCorrection_data],
+            producers=[jets.JetEnergyCorrection_Run2, jets.JetEnergyCorrection_data],
             samples=["data", "embedding", "embedding_mc"],
         ),
     )
@@ -1015,14 +1014,14 @@ def build_config(
     )
     configuration.add_modification_rule(
         scopes,
-        AppendProducer(producers=event.TopPtReweighting, samples=["ttbar"]),
+        AppendProducer(producers=event.TopPtReweighting_Run2, samples=["ttbar"]),
     )
     # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
     if "2016" not in era:
         configuration.add_modification_rule(
             scopes,
             AppendProducer(
-                producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]
+                producers=event.ZPtReweighting_Run2, samples=["dyjets", "electroweak_boson"]
             ),
         )
 
@@ -1340,8 +1339,8 @@ def build_config(
             q.nmuons,
             q.ntaus,
             configuration.ES_ID_SCHEME.mc.producerID.output_group,
-            scalefactors.Tau_2_VsEleTauID_SF.output_group,
-            scalefactors.Tau_2_VsMuTauID_SF.output_group,
+            scalefactors.Tau_2_VsEleTauID_SF_Run2.output_group,
+            scalefactors.Tau_2_VsMuTauID_SF_Run2.output_group,
             pairquantities.VsJetTauIDFlag_2_v9.output_group,
             pairquantities.VsEleTauIDFlag_2_v9.output_group,
             pairquantities.VsMuTauIDFlag_2_v9.output_group,
@@ -1368,8 +1367,8 @@ def build_config(
             q.nelectrons,
             q.ntaus,
             configuration.ES_ID_SCHEME.mc.producerID.output_group,
-            scalefactors.Tau_2_VsEleTauID_SF.output_group,
-            scalefactors.Tau_2_VsMuTauID_SF.output_group,
+            scalefactors.Tau_2_VsEleTauID_SF_Run2.output_group,
+            scalefactors.Tau_2_VsMuTauID_SF_Run2.output_group,
             pairquantities.VsJetTauIDFlag_2_v9.output_group,
             pairquantities.VsEleTauIDFlag_2_v9.output_group,
             pairquantities.VsMuTauIDFlag_2_v9.output_group,
@@ -1394,12 +1393,12 @@ def build_config(
         "tt",
         [
             q.ntaus,
-            scalefactors.Tau_1_VsJetTauID_SF.output_group,
-            scalefactors.Tau_1_VsEleTauID_SF.output_group,
-            scalefactors.Tau_1_VsMuTauID_SF.output_group,
-            scalefactors.Tau_2_VsJetTauID_tt_SF.output_group,
-            scalefactors.Tau_2_VsEleTauID_SF.output_group,
-            scalefactors.Tau_2_VsMuTauID_SF.output_group,
+            scalefactors.Tau_1_VsJetTauID_SF_Run2.output_group,
+            scalefactors.Tau_1_VsEleTauID_SF_Run2.output_group,
+            scalefactors.Tau_1_VsMuTauID_SF_Run2.output_group,
+            scalefactors.Tau_2_VsJetTauID_SF_Run2.output_group,
+            scalefactors.Tau_2_VsEleTauID_SF_Run2.output_group,
+            scalefactors.Tau_2_VsMuTauID_SF_Run2.output_group,
             pairquantities.VsJetTauIDFlag_1_v9.output_group,
             pairquantities.VsEleTauIDFlag_1_v9.output_group,
             pairquantities.VsMuTauIDFlag_1_v9.output_group,
@@ -1620,7 +1619,40 @@ def build_config(
     #########################
     # TauID scale factor shifts, channel dependent # Tau energy scale shifts, dm dependent
     #########################
-    configuration = add_tauVariations(configuration, sample)
+    with defaults(
+        exclude_samples=["data", "embedding", "embedding_mc"],
+        shift_map={"Up": "up", "Down": "down"}
+        ):
+        with defaults(scopes=("et", "mt")):
+            with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerID]):
+                for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                    for pt in configuration.ES_ID_SCHEME.pt_binning:
+                        add_shift(name=f"vsJetTau{dm}{pt}", shift_key=f"tau_sf_vsjet_{dm}{pt}")
+            with defaults(producers=[scalefactors.Tau_2_VsEleTauID_SF_Run2]):
+                add_shift(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel")
+                add_shift(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap")
+            with defaults(producers=[scalefactors.Tau_2_VsMuTauID_SF_Run2]):
+                for wheel in range(1, 6):
+                    add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
+        # --- TES shifts ---
+        with defaults(scopes=("et", "mt", "tt")):
+            with defaults(producers=[configuration.ES_ID_SCHEME.mc.producerES]):
+                for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                    for pt in configuration.ES_ID_SCHEME.pt_binning:
+                        add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
+        with defaults(scopes="tt"):
+            with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF_Run2, scalefactors.Tau_2_VsJetTauID_SF_Run2]):
+                add_shift(name="vsJetTauDM0", shift_key="tau_sf_vsjet_tauDM0")
+                add_shift(name="vsJetTauDM1", shift_key="tau_sf_vsjet_tauDM1")
+                add_shift(name="vsJetTauDM10", shift_key="tau_sf_vsjet_tauDM10")
+                add_shift(name="vsJetTauDM11", shift_key="tau_sf_vsjet_tauDM11")
+            with defaults(producers=[scalefactors.Tau_1_VsEleTauID_SF_Run2, scalefactors.Tau_2_VsEleTauID_SF_Run2]):
+                add_shift(name="vsEleBarrel", shift_key="tau_sf_vsele_barrel")
+                add_shift(name="vsEleEndcap", shift_key="tau_sf_vsele_endcap")
+            with defaults(producers=[scalefactors.Tau_1_VsMuTauID_SF_Run2, scalefactors.Tau_2_VsMuTauID_SF_Run2]):
+                for wheel in range(1, 6):
+                    add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_sf_vsmu_wheel{wheel}")
+        
     #########################
     # Import triggersetup   #
     #########################
