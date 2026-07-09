@@ -28,12 +28,12 @@ with defaults(scopes=["global"]):
             input=[nanoAODv9.Electron_pt, nanoAODv9.Electron_eta, nanoAODv9.Electron_seedGain, nanoAODv9.Electron_dEsigmaUp, nanoAODv9.Electron_dEsigmaDown],
         )
         ElectronPtCorrectionMC = ProducerGroup(
-            call="physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, \"{ele_es_file}\", {ele_es_mc_name}, \"{ele_es_variation}\")",
+            call="physicsobject::electron::PtCorrectionMC({df}, correctionManager, {output}, {input}, \"{ele_es_file}\", \"{ele_es_mc_name}\", \"{ele_es_variation}\")",
             input=[nanoAODv15.Electron_pt, nanoAODv15.Electron_eta, nanoAODv15.Electron_deltaEtaSC, nanoAODv15.Electron_r9,],
             subproducers=[ElectronPtSmearingSeed],
         )
         ElectronPtCorrectionData = Producer(
-            call="physicsobject::electron::PtCorrectionData({df}, correctionManager, {output}, {input}, \"{ele_es_file}\", {ele_es_data_name})",
+            call="physicsobject::electron::PtCorrectionData({df}, correctionManager, {output}, {input}, \"{ele_es_file}\", \"{ele_es_data_name}\")",
             input=[nanoAODv15.Electron_pt, nanoAODv15.Electron_eta, nanoAODv15.Electron_deltaEtaSC, nanoAODv15.Electron_seedGain, nanoAODv15.Electron_r9, nanoAODv15.run],
         )
         RenameElectronPt = Producer(

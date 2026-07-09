@@ -112,12 +112,12 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     # Run 2
     ZPtMassReweighting = Producer(
-        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")',
+        call='event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )
     TopPtReweighting = Producer(
-        call="event::reweighting::TopPt({df}, {output}, {input})",
+        call="event::reweighting::TopPt_13_0_TeV({df}, {output}, {input})",
         input=[
             nanoAODv15.GenPart_pdgId,
             nanoAODv15.GenPart_statusFlags,

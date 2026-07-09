@@ -61,26 +61,26 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
 with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
     TauEmbeddingMuonIDSF_1 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_id_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_id_sf}", "emb", {embedding_muon_id_extrapolation})',
         output=[q.id_wgt_mu_1],
     )
     TauEmbeddingMuonIsoSF_1 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb", {embedding_muon_iso_extrapolation})',
         output=[q.iso_wgt_mu_1],
     )
     MTGenerateSingleMuonTriggerSF = ExtendedVectorProducer(
         call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_trigger_sf}", "emb", {trg_extrapolation})',
         output="flagname",
-        vec_config="singlemuon_trigger_sf",
+        vec_config="singlemuon_trigger_sf_emb",
     )
 
 with defaults(scopes=["mm", "em"], input=[q.pt_2, q.eta_2]):
     TauEmbeddingMuonIDSF_2 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_id_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_id_sf}", "emb", {embedding_muon_id_extrapolation})',
         output=[q.id_wgt_mu_2],
     )
     TauEmbeddingMuonIsoSF_2 = Producer(
-        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb")',
+        call='embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_muon_iso_sf}", "emb", {embedding_muon_iso_extrapolation})',
         output=[q.iso_wgt_mu_2],
     )
 
@@ -139,10 +139,10 @@ with defaults(vec_configs="vsjet_tau_id_sf_embedding"):
                     "{vsjet_tau_id_WP}",
                     "{tau_vsjet_vseleWP}",
                     "{tau_emb_vsjet_sf_dependence}",
-                    "{tau_emb_sf_vsjet_1prong0pizero}",
-                    "{tau_emb_sf_vsjet_1prong1pizero}",
-                    "{tau_emb_sf_vsjet_3prong0pizero}",
-                    "{tau_emb_sf_vsjet_3prong1pizero}")''',
+                    "{tau_emb_sf_vsjet_DM0}",
+                    "{tau_emb_sf_vsjet_DM1}",
+                    "{tau_emb_sf_vsjet_DM10}",
+                    "{tau_emb_sf_vsjet_DM11}")''',
             )
             Tau_2_VsJetTauID_lt_SF_dm_pt_binned = ExtendedVectorProducer(
                 call='''physicsobject::tau::scalefactor::Id_vsJet(
@@ -155,14 +155,14 @@ with defaults(vec_configs="vsjet_tau_id_sf_embedding"):
                     "{vsjet_tau_id_WP}",
                     "{tau_vsjet_vseleWP}",
                     "{tau_emb_vsjet_sf_dependence}",
-                    "{tau_emb_sf_vsjet_1prong0pizero20to40}",
-                    "{tau_emb_sf_vsjet_1prong0pizero40toInf}",
-                    "{tau_emb_sf_vsjet_1prong1pizero20to40}",
-                    "{tau_emb_sf_vsjet_1prong1pizero40toInf}",
-                    "{tau_emb_sf_vsjet_3prong0pizero20to40}",
-                    "{tau_emb_sf_vsjet_3prong0pizero40toInf}",
-                    "{tau_emb_sf_vsjet_3prong1pizero20to40}",
-                    "{tau_emb_sf_vsjet_3prong1pizero40toInf}")''',
+                    "{tau_emb_sf_vsjet_DM0_20to40}",
+                    "{tau_emb_sf_vsjet_DM0_40toInf}",
+                    "{tau_emb_sf_vsjet_DM1_20to40}",
+                    "{tau_emb_sf_vsjet_DM1_40toInf}",
+                    "{tau_emb_sf_vsjet_DM10_20to40}",
+                    "{tau_emb_sf_vsjet_DM10_40toInf}",
+                    "{tau_emb_sf_vsjet_DM11_20to40}",
+                    "{tau_emb_sf_vsjet_DM11_40toInf}")''',
             )
         Tau_2_VsJetTauID_tt_SF = ExtendedVectorProducer(
             call='''physicsobject::tau::scalefactor::Id_vsJet(

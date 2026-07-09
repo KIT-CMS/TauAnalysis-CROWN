@@ -22,8 +22,8 @@ class _Embedding_ES_ID_Scheme_dm_pt_binned:
 
 @dataclass
 class _MC_ES_ID_Scheme_dm_binned:
-    producerES = taus.TauPtCorrection_genTau_dm_binned
-    producerGroupES = taus.TauEnergyCorrection_ES_dm_binned
+    producerES = taus.TauPtCorrection_genTau_dm_binned_v15
+    producerGroupES = taus.TauEnergyCorrection_ES_dm_binned_v15
     producerID = scalefactors.Tau_2_VsJetTauID_lt_SF_dm_binned
 
 
@@ -35,9 +35,9 @@ class _MC_ES_ID_Scheme_dm_pt_binned:
 
 @dataclass
 class _MCRun3_ES_ID_Scheme_dm_binned:
-    producerES = taus.TauPtCorrection_MC
+    producerES = taus.TauPtCorrection_genTau_dm_binned_v15
     producerGroupES = taus.TauEnergyCorrection
-    producerID = scalefactors.Tau_2_VsJetTauID_lt_SF
+    producerID = scalefactors.Tau_2_VsJetTauID_SF
 
 
 class ES_ID_SCHEME:

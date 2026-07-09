@@ -10,7 +10,7 @@ from .producers import pairquantities as pairquantities
 from .producers import genparticles as genparticles
 from .producers import pairselection as pairselection
 from .producers import embedding as emb
-from .quantities import nanoAOD as nanoAOD
+from .quantities import nanoAODv15 as nanoAODv15
 from .quantities import output as q
 from code_generation.configuration import Configuration
 from code_generation.rules import AppendProducer
@@ -48,7 +48,7 @@ def build_config(
             "max_muon_dxy": 0.5,
             "max_muon_dz": 0.5,
             "muon_id": "Muon_looseId",
-            "muon_iso_cut": 2.5,
+            "max_muon_iso": 2.5,
         },
     )
     ###### scope Specifics ######
@@ -58,7 +58,7 @@ def build_config(
         {
             "muon_index_in_pair": 0,
             "second_muon_index_in_pair": 1,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "min_muon_pt": 23.0,
             "max_muon_eta": 2.4,
             "max_muon_dxy": 0.045,
@@ -102,9 +102,9 @@ def build_config(
     configuration.add_outputs(
         ["mm"],
         [
-            nanoAOD.run,
+            nanoAODv15.run,
             q.lumi,
-            nanoAOD.event,
+            nanoAODv15.event,
             q.gen_pt_1,
             q.gen_eta_1,
             q.gen_phi_1,

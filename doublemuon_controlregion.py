@@ -13,6 +13,7 @@ from .producers import tagandprobe as tagandprobe
 from .producers import embedding as embedding
 from .producers import electrons as electrons
 from .quantities import nanoAODv9 as nanoAOD
+from .quantities import nanoAODv15 as nanoAODv15
 from .quantities import output as q
 from .quantities import tagandprobe_output as qt
 from code_generation.configuration import Configuration
@@ -244,7 +245,7 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.3,
+            "max_muon_iso": 0.3,
         },
     )
     # MuMu scope Muon selection
@@ -253,7 +254,7 @@ def build_config(
         {
             "min_muon_pt": 10.0,
             "max_muon_eta": 2.1,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "second_muon_index_in_pair": 1,
             "muon_index_in_pair": 0,
         },
@@ -614,9 +615,9 @@ def build_config(
             q.is_dyjets,
             q.is_wjets,
             q.is_diboson,
-            nanoAOD.run,
+            nanoAODv15.run,
             q.lumi,
-            nanoAOD.event,
+            nanoAODv15.event,
             q.puweight,
             q.pt_1,
             q.pt_2,
@@ -669,7 +670,7 @@ def build_config(
     if sample != "data":
         configuration.add_outputs(
             scopes,
-            nanoAOD.genWeight,
+            nanoAODv15.genWeight,
         )
 
     configuration.add_modification_rule(

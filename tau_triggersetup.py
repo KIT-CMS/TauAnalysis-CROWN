@@ -1343,16 +1343,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
 
             "mutau_cross_trigger_leg1_sf_file": EraModifier(
                 {
-                    "2016preVFP": '""',
-                    "2016postVFP": '""', 
-                    "2017": '""',
-                    "2018": '""',
-                    "2022preEE": '"data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2022postEE": '"data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023preBPix": '"data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2023postBPix": '"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2024":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
-                    "2025":'"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json"',
+                    "2016preVFP": "Missing or non existent",
+                    "2016postVFP": "Missing or non existent", 
+                    "2017": "Missing or non existent",
+                    "2018": "Missing or non existent",
+                    "2022preEE": "data/hleprare/TriggerScaleFactors/2022preEE/CrossMuTauHlt_MuLeg_v1.json",
+                    "2022postEE": "data/hleprare/TriggerScaleFactors/2022postEE/CrossMuTauHlt_MuLeg_v1.json",
+                    "2023preBPix": "data/hleprare/TriggerScaleFactors/2023preBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2023postBPix": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2024":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2025":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                 }
             ),
             "mutau_trigger_leg1_sf": [
@@ -1380,10 +1380,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singleelectron_trigger_sf_file": EraModifier(
                 {
-                    "2016preVFP": '""',
-                    "2016postVFP": '""', 
-                    "2017": '""',
-                    "2018": '""',
+                    "2016preVFP": "Missing or non existent",
+                    "2016postVFP": "Missing or non existent", 
+                    "2017": "Missing or non existent",
+                    "2018": "Missing or non existent",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/2025-12-15/electronHlt.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-15/electronHlt.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/2025-12-15/electronHlt.json.gz",
@@ -1394,10 +1394,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             ),
             "singleelctron_trigger_era": EraModifier(
                 {
-                    "2016preVFP": '""',
-                    "2016postVFP": '""', 
-                    "2017": '""',
-                    "2018": '""',
+                    "2016preVFP": "Missing or non existent",
+                    "2016postVFP": "Missing or non existent", 
+                    "2017": "Missing or non existent",
+                    "2018": "Missing or non existent",
                     "2022preEE": "2022Re-recoBCD",
                     "2022postEE": "2022Re-recoE+PromptFG",
                     "2023preBPix": "2023PromptC",
@@ -1418,10 +1418,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
 
             "eletau_cross_trigger_leg1_sf_file": EraModifier(
                 {
-                    "2016preVFP": '""',
-                    "2016postVFP": '""', 
-                    "2017": '""',
-                    "2018": '""',
+                    "2016preVFP": "Missing or non existent",
+                    "2016postVFP": "Missing or non existent", 
+                    "2017": "Missing or non existent",
+                    "2018": "Missing or non existent",
                     "2022preEE": "data/hleprare/TriggerScaleFactors/2022preEE/CrossEleTauHlt_EleLeg_v1.json",
                     "2022postEE": "data/hleprare/TriggerScaleFactors/2022postEE/CrossEleTauHlt_EleLeg_v1.json",
                     "2023preBPix": "data/hleprare/TriggerScaleFactors/2023preBPix/CrossEleTauHlt_EleLeg_v1.json",
@@ -1458,10 +1458,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 {
                     "doubletau_trigger_leg1_flagname": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE": "trg_wgt_doubletau35_leg1",
                             "2022postEE": "trg_wgt_doubletau35_leg1",
                             "2023preBPix": "trg_wgt_doubletau35_leg1",
@@ -1472,10 +1472,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ),
                     "doubletau_trigger_flag": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE": "trg_double_tau35_mediumiso_hps",
                             "2022postEE": "trg_double_tau35_mediumiso_hps",
                             "2023preBPix": "trg_double_tau35_mediumiso_hps",
@@ -1486,10 +1486,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ),
                     "doubletau_trigger_leg1_sf_name": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE":"ditau",
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
@@ -1505,10 +1505,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 {
                     "doubletau_trigger_leg2_flagname": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE": "trg_wgt_doubletau35_leg2",
                             "2022postEE": "trg_wgt_doubletau35_leg2",
                             "2023preBPix": "trg_wgt_doubletau35_leg2",
@@ -1519,10 +1519,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ),
                     "doubletau_trigger_flag": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE": "trg_double_tau35_mediumiso_hps",
                             "2022postEE": "trg_double_tau35_mediumiso_hps",
                             "2023preBPix": "trg_double_tau35_mediumiso_hps",
@@ -1533,10 +1533,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ),
                     "doubletau_trigger_leg2_sf_name": EraModifier(
                         {
-                            "2016preVFP": '""',
-                            "2016postVFP": '""', 
-                            "2017": '""',
-                            "2018": '""',
+                            "2016preVFP": "Missing or non existent",
+                            "2016postVFP": "Missing or non existent", 
+                            "2017": "Missing or non existent",
+                            "2018": "Missing or non existent",
                             "2022preEE":"ditau",
                             "2022postEE":"ditau",
                             "2023preBPix":"ditau",
@@ -1558,7 +1558,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     for _variation in ["up", "down"]:
         configuration.add_shift(
             SystematicShift(
-                name=f"singleEleTriggerSF{_variation.upper()}",
+                name=f"singleEleTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("et"): {
                         "singleelectron_trigger_sf": [
@@ -1578,7 +1578,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"EleTauTriggerSF{_variation.upper()}",
+                name=f"EleTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("et"): {
                         "eletau_cross_trigger_leg1_sf": [
@@ -1610,7 +1610,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
                 SystematicShift(
-                    name=f"singleMuTriggerSF{_variation.upper()}",
+                    name=f"singleMuTriggerSF{_variation.capitalize()}",
                     shift_config={
                         ("mt"): {
                             "singlemuon_trigger_sf": [
@@ -1629,7 +1629,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             )
         configuration.add_shift(
             SystematicShift(
-                name=f"MuTauTriggerSF{_variation.upper()}",
+                name=f"MuTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
@@ -1660,17 +1660,17 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"DoubleTauTriggerSF{_variation.upper()}",
+                name=f"DoubleTauTriggerSF{_variation.capitalize()}",
                 shift_config={
                     ("tt"): {
                         "doubletau_trigger_leg1_sf": [
                             {
                                 "doubletau_trigger_leg1_flagname": EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE": "trg_wgt_doubletau35_leg1",
                                         "2022postEE": "trg_wgt_doubletau35_leg1",
                                         "2023preBPix": "trg_wgt_doubletau35_leg1",
@@ -1681,10 +1681,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 ),
                                 "doubletau_trigger_flag":  EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE": "trg_double_tau35_mediumiso_hps",
                                         "2022postEE": "trg_double_tau35_mediumiso_hps",
                                         "2023preBPix": "trg_double_tau35_mediumiso_hps",
@@ -1695,10 +1695,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 ),
                                 "doubletau_trigger_leg1_sf_name": EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE":"ditau",
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
@@ -1714,10 +1714,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             {
                                 "doubletau_trigger_leg2_flagname": EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE": "trg_wgt_doubletau35_leg2",
                                         "2022postEE": "trg_wgt_doubletau35_leg2",
                                         "2023preBPix": "trg_wgt_doubletau35_leg2",
@@ -1728,10 +1728,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 ),
                                 "doubletau_trigger_flag":  EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE": "trg_double_tau35_mediumiso_hps",
                                         "2022postEE": "trg_double_tau35_mediumiso_hps",
                                         "2023preBPix": "trg_double_tau35_mediumiso_hps",
@@ -1742,10 +1742,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 ),
                                 "doubletau_trigger_leg2_sf_name": EraModifier(
                                     {
-                                        "2016preVFP": '""',
-                                        "2016postVFP": '""', 
-                                        "2017": '""',
-                                        "2018": '""',
+                                        "2016preVFP": "Missing or non existent",
+                                        "2016postVFP": "Missing or non existent", 
+                                        "2017": "Missing or non existent",
+                                        "2018": "Missing or non existent",
                                         "2022preEE":"ditau",
                                         "2022postEE":"ditau",
                                         "2023preBPix":"ditau",
@@ -1781,43 +1781,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 {
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2024": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022postEE": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022preEE": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
@@ -1881,43 +1881,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 {
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2024": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022postEE": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022preEE": [ ## TODO: not implemented, here as a placeholder
                         {
-                            "flagname": '""',
-                            "mc_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "mc_trigger_sf": "Missing or non existent",
                             "mc_trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
@@ -1997,43 +1997,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2024": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
@@ -2112,43 +2112,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
                                 "2024": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
                                 "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
                                 "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
                                 "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
                                 "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                     {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
+                                        "flagname": "Missing or non existent",
+                                        "mc_trigger_sf": "Missing or non existent",
                                         "mc_trg_extrapolation": 1.0,  # for nominal case
                                     },
                                 ],
@@ -2228,43 +2228,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2024": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
@@ -2333,43 +2333,43 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2024": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023postBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2023preBPix": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022postEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
                             "2022preEE": [ ## TODO: not implemented, here as a placeholder
                                 {
-                                    "flagname": '""',
-                                    "mc_trigger_sf": '""',
+                                    "flagname": "Missing or non existent",
+                                    "mc_trigger_sf": "Missing or non existent",
                                     "mc_trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],

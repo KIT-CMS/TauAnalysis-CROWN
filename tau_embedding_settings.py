@@ -14,10 +14,12 @@ from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from .scripts.SpecialSetups import ES_ID_SCHEME
+import numpy as np
 
-measure_tauES = False
+measure_tauES = True
 measure_eleES = False
-measure_tauID = False
+measure_tauID = True
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -> Configuration:
@@ -58,18 +60,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     configuration.add_config_parameters(
         scopes,
         {
-            "embedding_selection_sf_file": EraModifier(
+            "embedding_selection_sf_file": EraModifier( ### ToDo: up to date?
                 {
                     "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
                     "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
                     "2017": "data/embedding/embeddingselection_2017UL.json.gz",
                     "2018": "data/embedding/embeddingselection_2018UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": '""',
-                    "2025": '""',
+                    "2022preEE": "Missing or non existent",
+                    "2022postEE": "Missing or non existent",
+                    "2023preBPix": "Missing or non existent",
+                    "2023postBPix": "Missing or non existent",
+                    "2024": "Missing or non existent",
+                    "2025": "Missing or non existent",
                 }
             ),
             "embedding_selection_trigger_sf": "m_sel_trg_kit_ratio",
@@ -87,16 +89,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2016postVFP": "data/embedding/muon_2016postVFPUL.json.gz",
                     "2017": "data/embedding/muon_2017UL.json.gz",
                     "2018": "data/embedding/muon_2018UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": '""',
-                    "2025": '""',
+                    "2022preEE": "Missing or non existent",
+                    "2022postEE": "Missing or non existent",
+                    "2023preBPix": "Missing or non existent",
+                    "2023postBPix": "Missing or non existent",
+                    "2024": "Missing or non existent",
+                    "2025": "Missing or non existent",
                 }
             ),
             "embedding_muon_id_sf": "ID_pt_eta_bins",
+            "embedding_muon_id_extrapolation": 1.0,
             "embedding_muon_iso_sf": "Iso_pt_eta_bins",
+            "embedding_muon_iso_extrapolation": 1.0,
         },
     )
     # add electron scalefactors from embedding measurements
@@ -109,16 +113,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2016postVFP": "data/embedding/electron_2016postVFPUL.json.gz",
                     "2017": "data/embedding/electron_2017UL.json.gz",
                     "2018": "data/embedding/electron_2018UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": '""',
-                    "2025": '""',
+                    "2022preEE": "Missing or non existent",
+                    "2022postEE": "Missing or non existent",
+                    "2023preBPix": "Missing or non existent",
+                    "2023postBPix": "Missing or non existent",
+                    "2024": "Missing or non existent",
+                    "2025": "Missing or non existent",
                 }
             ),
             "embedding_electron_id_sf": "ID90_pt_eta_bins",
             "embedding_electron_iso_sf": "Iso_pt_eta_bins",
+            "embedding_electron_id_extrapolation": 1.0,
+            "embedding_electron_iso_extrapolation": 1.0,
         },
     )
 
@@ -535,47 +541,47 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     configuration.add_config_parameters(
         ["mt", "mm"],
         {
-            "singlemuon_trigger_sf": EraModifier(
+            "singlemuon_trigger_sf_emb": EraModifier(
                 {
                     "2025": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2024": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023postBPix": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023preBPix": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022postEE": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022preEE": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
@@ -639,43 +645,43 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 {
                     "2025": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2024": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023postBPix": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2023preBPix": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022postEE": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
                     "2022preEE": [ # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "Missing or non existent",
+                            "embedding_trigger_sf": "Missing or non existent",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
@@ -751,16 +757,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             "emb_ditau_trigger_syst": "nom",
             "emb_ditau_trigger_file": EraModifier(
                 {
-                    "2016preVFP": "",
-                    "2016postVFP": "",
-                    "2017": "",
+                    "2016preVFP": "Missing or non existent",
+                    "2016postVFP": "Missing or non existent",
+                    "2017": "Missing or non existent",
                     "2018": "data/embedding/tau_trigger2018_UL.json.gz",
-                    "2022preEE": "",
-                    "2022postEE": "",
-                    "2023preBPix": "",
-                    "2023postBPix": "",
-                    "2024": "",
-                    "2025": "",
+                    "2022preEE": "Missing or non existent",
+                    "2022postEE": "Missing or non existent",
+                    "2023preBPix": "Missing or non existent",
+                    "2023postBPix": "Missing or non existent",
+                    "2024": "Missing or non existent",
+                    "2025": "Missing or non existent",
                 }
             ),
         },
@@ -842,7 +848,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             name="singleMuonTriggerSFUp",
             shift_config={
                 ("mt", "mm"): {
-                    "singlemuon_trigger_sf": EraModifier(
+                    "singlemuon_trigger_sf_emb": EraModifier(
                         {
                             "2025": [ # TODO: not implemented yet
                                 {
@@ -950,7 +956,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             name="singleMuonTriggerSFDown",
             shift_config={
                 ("mt", "mm"): {
-                    "singlemuon_trigger_sf": EraModifier(
+                    "singlemuon_trigger_sf_emb": EraModifier(
                         {
                             "2025": [ # TODO: not implemented yet
                                 {
@@ -1214,21 +1220,93 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         configuration.add_outputs(
             "tt", triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group
         )
-        # use other trigger flags for embedding samples
-        configuration.add_modification_rule(
-            "mt",
-            ReplaceProducer(
-                producers=[
-                    triggers.MTGenerateCrossTriggerFlags,
-                    triggers.MTGenerateCrossTriggerFlagsEmbedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_outputs(
-            "mt", triggers.MTGenerateCrossTriggerFlagsEmbedding.output_group
-        )
 
+    ######################
+    # Tau ID/ISO Variations
+    ######################
+    # ID
+    configuration.add_shift(
+         SystematicShift(
+             name="muonIdSFUp",
+             scopes=["mt", "mm"],
+             shift_config={
+                 ("mt"): {"embedding_muon_id_extrapolation": 1.02},
+                 ("mm"): {"embedding_muon_id_extrapolation": 1.02},
+             },
+             producers={
+                 ("mt"): [
+                     embedding.TauEmbeddingMuonIDSF_1,
+                 ],
+                 ("mm"): [
+                     embedding.TauEmbeddingMuonIDSF_1,
+                     embedding.TauEmbeddingMuonIDSF_2,
+                 ],
+             },
+         ),
+         samples=["embedding", "embedding_mc"],
+     )
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIdSFDown",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_id_extrapolation": 0.98},
+                ("mm"): {"embedding_muon_id_extrapolation": 0.98},
+            },
+            producers={
+                ("mt"): [
+                    embedding.TauEmbeddingMuonIDSF_1,
+                ],
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIDSF_1,
+                    embedding.TauEmbeddingMuonIDSF_2,
+                ],
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    # ISO
+    configuration.add_shift(
+         SystematicShift(
+             name="muonIsoSFUp",
+             scopes=["mt", "mm"],
+             shift_config={
+                 ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
+                 ("mm"): {"embedding_muon_iso_extrapolation": 1.02},
+             },
+             producers={
+                 ("mt"): [
+                     embedding.TauEmbeddingMuonIsoSF_1,
+                 ],
+                 ("mm"): [
+                     embedding.TauEmbeddingMuonIsoSF_1,
+                     embedding.TauEmbeddingMuonIsoSF_2,
+                 ],
+             },
+         ),
+         samples=["embedding", "embedding_mc"],
+     )
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIsoSFDown",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
+                ("mm"): {"embedding_muon_iso_extrapolation": 0.98},
+            },
+            producers={
+                ("mt"): [
+                    embedding.TauEmbeddingMuonIsoSF_1,
+                ],
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIsoSF_1,
+                    embedding.TauEmbeddingMuonIsoSF_2,
+                ],
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    
     ######################
     # Tau ID SFs
     ######################
@@ -1254,18 +1332,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     }
                 ),
                 "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
-                "tau_emb_sf_vsjet_1prong0pizero": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero40toInf": "nom",
+                "tau_emb_sf_vsjet_DM0": "nom",
+                "tau_emb_sf_vsjet_DM0_20to40": "nom",
+                "tau_emb_sf_vsjet_DM0_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM1": "nom",
+                "tau_emb_sf_vsjet_DM1_20to40": "nom",
+                "tau_emb_sf_vsjet_DM1_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM10": "nom",
+                "tau_emb_sf_vsjet_DM10_20to40": "nom",
+                "tau_emb_sf_vsjet_DM10_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM11": "nom",
+                "tau_emb_sf_vsjet_DM11_20to40": "nom",
+                "tau_emb_sf_vsjet_DM11_40toInf": "nom",
                 "tau_emb_sf_vsjet_variation": "nom",
                 "tau_emb_ES_WP": "Tight",  # Do also for more WP (vsjets) if needed !!!
                 "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
@@ -1303,27 +1381,27 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                         "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
                         "2017": "data/embedding/tau_2017UL.json.gz",
                         "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
-                        "2022preEE": '""',
-                        "2022postEE": '""',
-                        "2023preBPix": '""',
-                        "2023postBPix": '""',
-                        "2024": '""',
-                        "2025": '""',
+                        "2022preEE": "Missing or non existent",
+                        "2022postEE": "Missing or non existent",
+                        "2023preBPix": "Missing or non existent",
+                        "2023postBPix": "Missing or non existent",
+                        "2024": "Missing or non existent",
+                        "2025": "Missing or non existent",
                     }
                 ),
                 "tau_emb_ES_json_name": configuration.ES_ID_SCHEME.embedding.tau_emb_ES_json_name,
-                "tau_emb_sf_vsjet_1prong0pizero": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero40toInf": "nom",
+                "tau_emb_sf_vsjet_DM0": "nom",
+                "tau_emb_sf_vsjet_DM0_20to40": "nom",
+                "tau_emb_sf_vsjet_DM0_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM1": "nom",
+                "tau_emb_sf_vsjet_DM1_20to40": "nom",
+                "tau_emb_sf_vsjet_DM1_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM10": "nom",
+                "tau_emb_sf_vsjet_DM10_20to40": "nom",
+                "tau_emb_sf_vsjet_DM10_40toInf": "nom",
+                "tau_emb_sf_vsjet_DM11": "nom",
+                "tau_emb_sf_vsjet_DM11_20to40": "nom",
+                "tau_emb_sf_vsjet_DM11_40toInf": "nom",
                 "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
                 "tau_emb_vsjet_sf_dependence": configuration.ES_ID_SCHEME.embedding.tau_emb_vsjet_sf_dependence,
                 "vsjet_tau_id_sf_embedding": [
@@ -1351,12 +1429,19 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         )
         if int(era[:4]) < 2022:
             configuration.add_modification_rule(
-                ["et", "mt"],
+                ["mt", "et", "tt"],
                 ReplaceProducer(
                     producers=[
-                        configuration.ES_ID_SCHEME.mc.producerID,
-                        configuration.ES_ID_SCHEME.embedding.producerID,
+                        configuration.ES_ID_SCHEME.mc.producerGroupES,
+                        configuration.ES_ID_SCHEME.embedding.producerGroupES,
                     ],
+                    samples=["embedding"],
+                ),
+            )
+            configuration.add_modification_rule(
+                ["et", "mt"],
+                AppendProducer(
+                    producers=[configuration.ES_ID_SCHEME.embedding.producerID],
                     samples=["embedding"],
                 ),
             )
@@ -1398,45 +1483,41 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         with defaults(shift_map={"Up": "up", "Down": "down"}):
             with defaults(scopes=("et", "mt")):
                 with defaults(producers=[configuration.ES_ID_SCHEME.embedding.producerID]):
-                    for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                    for dm in ["DM0", "DM1", "DM10", "DM11"]:
                         for var in configuration.ES_ID_SCHEME.pt_binning:
                             add_shift(name=f"vsJetTau{dm}{var}", shift_key=f"tau_emb_sf_vsjet_{dm}{var}")
-
-                with defaults(producers=[configuration.ES_ID_SCHEME.embedding.producerES]):
-                    for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
-                        for var in configuration.ES_ID_SCHEME.pt_binning:
-                            add_shift(name=f"tauEs{dm}{var}", shift_key=f"tau_ES_shift_{dm}{var}")
 
             with defaults(scopes="tt", producers=[embedding.Tau_1_VsJetTauID_tt_SF, embedding.Tau_2_VsJetTauID_tt_SF]):
                 for dm in [0, 1, 10, 11]:
                     for var in configuration.ES_ID_SCHEME.pt_binning:
-                        add_shift(name=f"vsJetTauDM{dm}{var}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}{var}")
+                        add_shift(name=f"vsJetTauDM{dm}{var}", shift_key=f"tau_emb_sf_vsjet_tauDM{dm}{var}") 
     
     if measure_tauES:
         ###################
         # Tau ES variations for measurement
-        # first set the initial variation to nominal
-
+        # first exchange the producer to shift raw/uncorrected pt and set the initial variation to nominal
+        configuration.add_modification_rule(
+                ["mt"],
+                ReplaceProducer(
+                    producers=[
+                        configuration.ES_ID_SCHEME.mc.producerGroupES,
+                        taus.TauEnergyCorrection_Embedding
+                    ],
+                    samples=["embedding"],
+                ),
+            )
         configuration.add_config_parameters(
             "mt",
             {
-                "tau_ES_shift_DM0": 1.0,
-                "tau_ES_shift_DM1": 1.0,
-                "tau_ES_shift_DM10": 1.0,
-                "tau_ES_shift_DM11": 1.0,
+                "shift_tau_ES_DM0_byValue": 1.0,
+                "shift_tau_ES_DM1_byValue": 1.0,
+                "shift_tau_ES_DM10_byValue": 1.0,
+                "shift_tau_ES_DM11_byValue": 1.0,
             },
         )
-        configuration.add_modification_rule(
-            "mt",
-            ReplaceProducer(
-                producers=[
-                    configuration.ES_ID_SCHME.mc.producerGroupES,  # taus.TauEnergyCorrection,
-                    configuration.ES_ID_SCHME.embedding.producerGroupES,  # taus.TauEnergyCorrection_Embedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        tauESvariations = [-8.0 + 0.1 * i for i in range(0, 121)]
+        tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x != 0]
+        # tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even 
+        # tauESvariations = [x for x in np.arange(19.9, -20.0, -0.2).round(2).tolist()] # odd
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
@@ -1444,10 +1525,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     name=f"EMBtauESshift_{name}",
                     shift_config={
                         ("mt"): {
-                            "tau_ES_shift_DM0": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM1": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM10": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM11": 1.0 + (round(tauESvariation / 100.0, 5)),
+                            "shift_tau_ES_DM0_byValue": 1.0 + (round(tauESvariation / 100.0, 5)),
+                            "shift_tau_ES_DM1_byValue": 1.0 + (round(tauESvariation / 100.0, 5)),
+                            "shift_tau_ES_DM10_byValue": 1.0 + (round(tauESvariation / 100.0, 5)),
+                            "shift_tau_ES_DM11_byValue": 1.0 + (round(tauESvariation / 100.0, 5)),
                         }
                     },
                     producers={("mt"): taus.TauPtCorrection_byValue},
@@ -1455,17 +1536,14 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 samples=["embedding"],
             )
     else:
-        if int(era[:4]) < 2022:
-            configuration.add_modification_rule(
-                ["mt", "et", "tt"],
-                ReplaceProducer(
-                    producers=[
-                        configuration.ES_ID_SCHEME.mc.producerGroupES,
-                        configuration.ES_ID_SCHEME.embedding.producerGroupES,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
+        add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+        with defaults(shift_map={"Up": "up", "Down": "down"}):
+            with defaults(scopes=("et", "mt", "tt")):
+                with defaults(producers=[configuration.ES_ID_SCHEME.embedding.producerGroupES],
+                              exclude_samples=["data"]):
+                            for dm in ["DM0", "DM1", "DM10", "DM11"]:
+                                for var in configuration.ES_ID_SCHEME.pt_binning:
+                                    add_shift(name=f"tauEs{dm}{var}", shift_key=f"tau_ES_shift_{dm}{var}")
 
     if measure_eleES:
         ###################
@@ -1519,12 +1597,12 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                         "2016postVFP": "data/embedding/eleES_2016postVFPUL.json.gz",
                         "2017": "data/embedding/eleES_2017UL.json.gz",
                         "2018": "data/embedding/eleES_2018UL.json.gz",
-                        "2022preEE": "",
-                        "2022postEE": "",
-                        "2023preBPix": "",
-                        "2023postBPix": "",
-                        "2024": "",
-                        "2025": "",
+                        "2022preEE": "Missing or non existent",
+                        "2022postEE": "Missing or non existent",
+                        "2023preBPix": "Missing or non existent",
+                        "2023postBPix": "Missing or non existent",
+                        "2024": "Missing or non existent",
+                        "2025": "Missing or non existent",
                     }
                 ),
                 "ele_ES_json_name": "eleES",
@@ -1538,7 +1616,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "global",
                 ReplaceProducer(
                     producers=[
-                        electrons.ElectronPtCorrectionMC_v9,
+                        electrons.ElectronPtCorrectionMC,
                         electrons.ElectronPtCorrectionEmbedding,
                     ],
                     samples=["embedding"],

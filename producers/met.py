@@ -161,7 +161,16 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_recoilcorrected],
         )
 
-    with defaults(call='met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, {recoil_systematic_shift_up}, {recoil_systematic_shift_down}, {is_wjets})'):
+    with defaults(call='''met::RecoilCorrection({df},
+                  {output}, {input},
+                  "{recoil_corrections_file}",
+                  "{recoil_systematics_file}",
+                  {applyRecoilCorrections},
+                  {apply_recoil_resolution_systematic},
+                  {apply_recoil_response_systematic},
+                  {recoil_systematic_shift_up},
+                  {recoil_systematic_shift_down},
+                  {is_wjets})'''):
         ApplyRecoilCorrections_Run2 = Producer(
             input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
             output=[q.puppimet_p4_recoilcorrected],
