@@ -1,5 +1,6 @@
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import Producer, defaults
+from code_generation.producer import Producer
+from code_generation.helpers import defaults
 
 
 with defaults(scopes=["mt", "et"]):

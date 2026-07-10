@@ -23,7 +23,8 @@ from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from code_generation.helpers import defaults
+from code_generation.systematics import get_adjusted_add_shift_SystematicShift
 from .scripts.SpecialSetups import ES_ID_SCHEME
 
 

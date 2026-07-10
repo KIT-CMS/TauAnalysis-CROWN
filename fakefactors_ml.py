@@ -8,13 +8,13 @@ import correctionlib
 from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
+from code_generation.helpers import defaults
+from code_generation.systematics import get_adjusted_add_shift_SystematicShift
 
 from .fakefactors import NonClosureGranularity
 from .producers import fakefactors_ml as fakefactors_ml
 from .producers import nn_output as nn_output
 from .quantities import output as q
-from .scripts.CROWNWrapper import (defaults,
-                                   get_adjusted_add_shift_SystematicShift)
 
 
 def build_config(

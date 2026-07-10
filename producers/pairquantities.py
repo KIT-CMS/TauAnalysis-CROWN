@@ -1,12 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
-from ..scripts.CROWNWrapper import (
-    Producer,
-    ProducerGroup,
-    ExtendedVectorProducer,
-    defaults,
-)
-
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
+from code_generation.helpers import defaults
 
 ####################
 # Set of general producers for DiTauPair Quantities

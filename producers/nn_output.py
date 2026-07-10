@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, defaults, ProducerGroup
+from code_generation.producer import Producer, ProducerGroup
+from code_generation.helpers import defaults
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='utility::Cast<float, int>({df}, {output}, "float", {input}).first'):

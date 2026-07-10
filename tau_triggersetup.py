@@ -1,7 +1,6 @@
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 from .producers import scalefactors as scalefactors
 
 

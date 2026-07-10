@@ -1,6 +1,7 @@
 from ..quantities import output as q
-from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from ..quantities import nanoAODv15, nanoAODv12
+from code_generation.producer import Producer, ProducerGroup
+from code_generation.helpers import defaults
 
 ####################
 # Set of producers used for contruction of met related quantities

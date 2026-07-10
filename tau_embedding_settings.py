@@ -13,7 +13,8 @@ from .producers import electrons as electrons
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from code_generation.helpers import defaults
+from code_generation.systematics import get_adjusted_add_shift_SystematicShift
 
 measure_tauES = False
 measure_eleES = False

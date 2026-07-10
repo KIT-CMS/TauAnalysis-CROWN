@@ -1,10 +1,10 @@
 from __future__ import annotations  # needed for type annotations in > python 3.7
 from code_generation.configuration import Configuration
+from code_generation.helpers import defaults
+from code_generation.systematics import get_adjusted_add_shift_SystematicShift
 
 from .producers import jets as jets
 from .producers import scalefactors as scalefactors
-from .scripts.CROWNWrapper import (defaults,
-                                   get_adjusted_add_shift_SystematicShift)
 
 # Map internal era names to JERC JSON era names for JERC sources
 JERC_ERA_MAP = {

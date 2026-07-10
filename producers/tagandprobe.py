@@ -4,7 +4,8 @@ from ..quantities import nanoAODv15 as nanoAOD
 from ..producers import muons as muons
 from ..producers import electrons as electrons
 from ..producers import photons as photons
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
+from code_generation.helpers import defaults
 
 TrigObj_collection = [
     nanoAOD.TrigObj_filterBits,
