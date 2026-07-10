@@ -199,10 +199,10 @@ def build_config(
             ),
             "jet_jer_tag": EraModifier(
                 {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
+                    "2016preVFP": "Summer20UL16APV_JRV3_MC",
+                    "2016postVFP": "Summer20UL16_JRV3_MC",
+                    "2017": "Summer19UL17_JRV2_MC",
+                    "2018": "Summer19UL18_JRV2_MC",
                 }
             ),
             "jet_jes_tag": EraModifier(
@@ -244,7 +244,7 @@ def build_config(
             "max_muon_dxy": 0.045,
             "max_muon_dz": 0.2,
             "muon_id": "Muon_mediumId",
-            "muon_iso_cut": 0.3,
+            "max_muon_iso": 0.3,
         },
     )
     # MuMu scope Muon selection
@@ -253,7 +253,7 @@ def build_config(
         {
             "min_muon_pt": 10.0,
             "max_muon_eta": 2.1,
-            "muon_iso_cut": 0.15,
+            "max_muon_iso": 0.15,
             "second_muon_index_in_pair": 1,
             "muon_index_in_pair": 0,
         },
