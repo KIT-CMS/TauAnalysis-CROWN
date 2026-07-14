@@ -21,8 +21,38 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='''ml_sm::EventParity({df}, {output}, {input})'''):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
+    # era flags
+    with defaults(input=[]):
+        EraFlags_ProducerCollection = [
+            is_2025 := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2025})''',
+                output=[q.is_2025],
+            ),
+            is_2024 := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2024})''',
+                output=[q.is_2024],
+            ),
+            is_2023postBPix := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2023postBPix})''',
+                output=[q.is_2023postBPix],
+            ),
+            is_2023preBPix := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2023preBPix})''',
+                output=[q.is_2023preBPix],
+            ),
+            is_2022postEE := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2022postEE})''',
+                output=[q.is_2022postEE],
+            ),
+            is_2022preEE := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2022preEE})''',
+                output=[q.is_2022preEE],
+            ),
+        ]
+    EraFlags = ProducerGroup(call=None, input=None, output=None, subproducers=EraFlags_ProducerCollection)
 
-inputs_without_additional_angular_quantities = [
+
+inputs = [
     q.pt_1,
     q.pt_2,
     q.eta_1,
@@ -32,83 +62,55 @@ inputs_without_additional_angular_quantities = [
     q.jeta_1,
     q.jeta_2,
     q.m_fastmtt,
-    q.pt_fastmtt,
-    q.puppimet,
+    q.m_vis,
+    q.mjj,
+    q.pt_vis,
+    q.pt_dijet,
+    q.pt_tt,
+    q.pt_ttjj,
     q.njets_float,
     q.nbtag_float,
-    q.mt_tot,
-    q.m_vis,
-    q.pt_tt,
-    q.pt_vis,
-    q.mjj,
-    q.pt_dijet,
-    q.pt_ttjj,
-    q.pzetamissvis_float,
-    q.deltaEta_jj,
-    q.deltaEta_ditaupair,
-    q.deltaR_jj,
-    q.deltaR_ditaupair,
-]  # 25
-inputs_with_additional_angular_quantities = [
-    q.pt_1,
-    q.pt_2,
-    q.eta_1,
-    q.eta_2,
-    q.jpt_1,
-    q.jpt_2,
-    q.jeta_1,
-    q.jeta_2,
-    q.m_fastmtt,
-    q.pt_fastmtt,
     q.puppimet,
-    q.njets_float,
-    q.nbtag_float,
-    q.mt_tot,
-    q.m_vis,
-    q.pt_tt,
-    q.pt_vis,
-    q.mjj,
-    q.pt_dijet,
-    q.pt_ttjj,
-    q.pzetamissvis_float,
-    q.deltaR_ditaupair,
     q.deltaEta_ditaupair,
-    q.deltaEta_jj,
+    q.deltaR_ditaupair,
+    q.mt_1,
+    q.mt_2,
+    q.pt_fastmtt,
+    q.mt_tot,
+    # q.pzetamissvis_float,
     q.deltaR_jj,
-    q.deltaR_1j1,
-    q.deltaR_1j2,
-    q.deltaR_2j1,
-    q.deltaR_2j2,
-    q.deltaR_12j1,
-    q.deltaR_12j2,
-    q.deltaEta_1j1,
-    q.deltaEta_1j2,
-    q.deltaEta_2j1,
-    q.deltaEta_2j2,
-    q.deltaEta_12j1,
-    q.deltaEta_12j2,
-]  # 37
+    q.deltaEta_jj,
+    # q.deltaR_1j1,
+    # q.deltaR_2j2,
+    # q.deltaR_2j1,
+    # q.deltaR_1j2,
+    # q.deltaR_12j1,
+    # q.deltaR_12j2,
+    # q.deltaEta_1j1,
+    # q.deltaEta_1j2,
+    # q.deltaEta_2j1,
+    # q.deltaEta_2j2,
+    # q.deltaEta_12j1,
+    # q.deltaEta_12j2,
+    q.is_2025,
+    q.is_2024,
+    q.is_2023postBPix,
+    q.is_2023preBPix,
+    q.is_2022postEE,
+    q.is_2022preEE,
+]  # 26 + 6 = 32 + event parity = 33
 
 with defaults(
     output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
-    scopes=["mt"],
-    # subproducers=FloatConvertedVariablesProducers,
+    scopes=["mt", "et", "tt"],
+    # subproducers=FloatConvertedVariablesProducers, # included in FF
 ):
-    Evaluate_DNN_without_additional_angular_quantities = Producer(
-        call='''ml_sm::Extracted_NN_Output<26>(
+    Evaluate_DNN = Producer(
+        call='''ml_sm::Extracted_NN_Output<33>(
             {df},
             onnxSessionManager,
             {output},
             "{model_file_path}",
             {input_vec})''',
-        input=[q.event_parity_float] + inputs_without_additional_angular_quantities,
-    )
-    Evaluate_DNN_with_additional_angular_quantities = Producer(
-        call='''ml_sm::Extracted_NN_Output<38>(
-            {df},
-            onnxSessionManager,
-            {output},
-            "{model_file_path}",
-            {input_vec})''',
-        input=[q.event_parity_float] + inputs_with_additional_angular_quantities,
+        input=[q.event_parity_float] + inputs,
     )

@@ -622,8 +622,17 @@ def build_config(
             ),
             "zptmass_functor": "zptmass_weight_nom",
             "zptmass_arguments": "z_gen_mass,z_gen_pt",
-            "DY_order": SampleModifier(
-                {"dyjets_powheg": "NNLO"}, 
+            "DY_order": SampleModifier( #mg is LO, amcat is NLO, powheg is NNLO
+                {
+                    "dyjets_powheg": "NNLO",
+                    "ggh_htautau": "NNLO",
+                    "ggh_hbb": "NNLO",
+                    "vbf_htautau": "NNLO",
+                    "vbf_hbb": "NNLO",
+                    "rem_htautau": "NNLO",
+                    "rem_hbb": "NNLO",
+                    "wjets": "NNLO",
+                    }, 
                 default="NLO",
             ), #from GrASP it looks like the DY powheg samples are also NLO and not NNLO
             "zpt_variation": "nom",
