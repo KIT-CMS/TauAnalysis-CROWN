@@ -22,6 +22,16 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singlemuon_trigger": EraModifier(
                 {
+                    "2026": [
+                        {
+                            "flagname": "trg_single_mu24",
+                            "hlt_path": "HLT_IsoMu24",
+                            "ptcut": 26,
+                            "etacut": 2.4,
+                            "filterbit": 1,
+                            **singlemuon_trigger_defaults,
+                        },
+                    ],
                     "2025": [
                         {
                             "flagname": "trg_single_mu24",
@@ -220,6 +230,17 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "mutau_cross_trigger": EraModifier(
                 {
+                    "2026": [
+                        {
+                            "flagname": "trg_cross_mu20tau27_hps",
+                            "hlt_path": "HLT_IsoMu20_eta2p1_LooseDeepTauPFTauHPS27_eta2p1_CrossL1",
+                            "p1_ptcut": 20,
+                            "p2_ptcut": 32,
+                            "p1_filterbit": 1,
+                            "p2_filterbit": 9,  
+                            **mutau_cross_trigger_defaults,
+                        },
+                    ],
                     "2025": [
                         {
                             "flagname": "trg_cross_mu20tau27_hps",
@@ -357,6 +378,15 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singleelectron_trigger": EraModifier(
                 {
+                    "2026": [
+                        {
+                            "flagname": "trg_single_ele30",
+                            "hlt_path": "HLT_Ele30_WPTight_Gsf",
+                            "ptcut": 32,
+                            "etacut": 2.5,
+                            **singleelectron_trigger_defaults,
+                        },
+                    ],
                     "2025": [
                         {
                             "flagname": "trg_single_ele30",
@@ -492,6 +522,19 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "eltau_cross_trigger": EraModifier(
                 {
+                    "2026": [
+                        {
+                            "flagname": "trg_cross_ele24tau30_hps",
+                            "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_LooseDeepTauPFTauHPS30_eta2p1_CrossL1",
+                            "p1_ptcut": 25,
+                            "p2_ptcut": 35,
+                            "p1_etacut": 2.1,
+                            "p2_etacut": 2.1, 
+                            "p1_filterbit": 2, 
+                            "p2_filterbit": 3,  
+                            **electron_tau_cross_trigger_defaults,
+                        },
+                    ],
                     "2025": [
                         {
                             "flagname": "trg_cross_ele24tau30_hps",
@@ -697,6 +740,19 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "doubletau_trigger": EraModifier(
                 {
+                    "2026": [
+                        {
+                            "flagname": "trg_double_tau30_mediumiso_pnet",
+                            "hlt_path": "HLT_DoublePNetTauhPFJet30_Medium_L2NN_eta2p3",
+                            "p1_ptcut": 35,
+                            "p2_ptcut": 35,
+                            "p1_etacut": 2.3,
+                            "p2_etacut": 2.3,
+                            "p1_filterbit": "1, 4, 11",
+                            "p2_filterbit": "1, 4, 11",
+                            **doubletau_trigger_defaults,
+                        },
+                    ],
                     "2025": [
                         {
                             "flagname": "trg_double_tau30_mediumiso_pnet",
@@ -926,6 +982,15 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "elmu_cross_trigger": EraModifier(
                 {
+                    "2026": [ ## TODO: not implemented, here as a placeholder
+                        {
+                            "flagname": "trg_cross_mu23ele12",
+                            "hlt_path": "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
+                            "p1_ptcut": 12,
+                            "p2_ptcut": 24,
+                            **elmu_cross_trigger_defaults,
+                        },
+                    ],
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": "trg_cross_mu23ele12",
@@ -1090,6 +1155,14 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_leading": EraModifier(
                 {
+                    "2026": [ ## TODO: not implemented, here as a placeholder
+                        {
+                            "flagname": "trg_single_tau180_1",
+                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "ptcut": 180,
+                            **singletau_trigger_defaults,
+                        },
+                    ],
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": "trg_single_tau180_1",
@@ -1200,6 +1273,14 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_trailing": EraModifier(
                 {
+                    "2026": [ ## TODO: not implemented, here as a placeholder
+                        {
+                            "flagname": "trg_single_tau180_2",
+                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "ptcut": 180,
+                            **singletau_trigger_trailing_defaults,
+                        },
+                    ],
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": "trg_single_tau180_2",
@@ -1356,6 +1437,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023postBPix": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                     "2024":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                     "2025":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
+                    "2026":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                 }
             ),
             "mutau_trigger_leg1_sf": [
@@ -1393,6 +1475,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-15/electronHlt.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronHlt.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronHlt.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronHlt.json.gz",
                 }
             ),
             "singleelctron_trigger_era": EraModifier(
@@ -1407,6 +1490,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023postBPix": "2023PromptD",
                     "2024": "2024Prompt",
                     "2025": "2024Prompt",
+                    "2026": "2024Prompt",
                 }
             ),
             "singleelectron_trigger_sf": [
@@ -1431,6 +1515,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2023postBPix": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                     "2024": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                     "2025": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
+                    "2026": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                 }
             ),
             "eletau_cross_trigger_leg1_sf": [
@@ -1471,6 +1556,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023postBPix": "trg_wgt_doubletau35_leg1",
                             "2024": "trg_wgt_doubletau30_leg1",
                             "2025": "trg_wgt_doubletau30_leg1",
+                            "2026": "trg_wgt_doubletau30_leg1",
                         }
                     ),
                     "doubletau_trigger_flag": EraModifier(
@@ -1485,6 +1571,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023postBPix": "trg_double_tau35_mediumiso_hps",
                             "2024": "trg_double_tau30_mediumiso_pnet",
                             "2025": "trg_double_tau30_mediumiso_pnet",
+                            "2026": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
                     "doubletau_trigger_leg1_sf_name": EraModifier(
@@ -1498,7 +1585,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
                             "2024":"ditau",
-                            "2025":"ditau"
+                            "2025":"ditau",
+                            "2026":"ditau",
                         }
                     ),
                     "doubletau_trigger_leg1_variation": "nom",
@@ -1518,6 +1606,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023postBPix": "trg_wgt_doubletau35_leg2",
                             "2024": "trg_wgt_doubletau30_leg2",
                             "2025": "trg_wgt_doubletau30_leg2",
+                            "2026": "trg_wgt_doubletau30_leg2",
                         }
                     ),
                     "doubletau_trigger_flag": EraModifier(
@@ -1532,6 +1621,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023postBPix": "trg_double_tau35_mediumiso_hps",
                             "2024": "trg_double_tau30_mediumiso_pnet",
                             "2025": "trg_double_tau30_mediumiso_pnet",
+                            "2026": "trg_double_tau30_mediumiso_pnet",
                         }
                     ),
                     "doubletau_trigger_leg2_sf_name": EraModifier(
@@ -1545,7 +1635,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "2023preBPix":"ditau",
                             "2023postBPix":"ditau",
                             "2024":"ditau",
-                            "2025":"ditau"
+                            "2025":"ditau",
+                            "2026":"ditau",
                         }
                     ),
                     "doubletau_trigger_leg2_variation": "nom",
@@ -1680,6 +1771,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023postBPix": "trg_wgt_doubletau35_leg1",
                                         "2024": "trg_wgt_doubletau30_leg1",
                                         "2025": "trg_wgt_doubletau30_leg1",
+                                        "2026": "trg_wgt_doubletau30_leg1",
                                     }
                                 ),
                                 "doubletau_trigger_flag":  EraModifier(
@@ -1694,6 +1786,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023postBPix": "trg_double_tau35_mediumiso_hps",
                                         "2024": "trg_double_tau30_mediumiso_pnet",
                                         "2025": "trg_double_tau30_mediumiso_pnet",
+                                        "2026": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
                                 "doubletau_trigger_leg1_sf_name": EraModifier(
@@ -1707,7 +1800,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
                                         "2024":"ditau",
-                                        "2025":"ditau"
+                                        "2025":"ditau",
+                                        "2026":"ditau",
                                     }
                                 ),
                                 "doubletau_trigger_leg1_variation": _variation,
@@ -1727,6 +1821,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023postBPix": "trg_wgt_doubletau35_leg2",
                                         "2024": "trg_wgt_doubletau30_leg2",
                                         "2025": "trg_wgt_doubletau30_leg2",
+                                        "2026": "trg_wgt_doubletau30_leg2",
                                     }
                                 ),
                                 "doubletau_trigger_flag":  EraModifier(
@@ -1741,6 +1836,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023postBPix": "trg_double_tau35_mediumiso_hps",
                                         "2024": "trg_double_tau30_mediumiso_pnet",
                                         "2025": "trg_double_tau30_mediumiso_pnet",
+                                        "2026": "trg_double_tau30_mediumiso_pnet",
                                     }
                                 ),
                                 "doubletau_trigger_leg2_sf_name": EraModifier(
@@ -1754,7 +1850,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                         "2023preBPix":"ditau",
                                         "2023postBPix":"ditau",
                                         "2024":"ditau",
-                                        "2025":"ditau"
+                                        "2025":"ditau",
+                                        "2026":"ditau",
                                     }
                                 ),
                                 "doubletau_trigger_leg2_variation": _variation,
@@ -1782,6 +1879,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singlemuon_trigger_sf_mc": EraModifier(
                 {
+                    "2026": [ ## TODO: not implemented, here as a placeholder
+                        {
+                            "flagname": '""',
+                            "mc_trigger_sf": '""',
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
@@ -1882,6 +1986,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singlelectron_trigger_sf_mc": EraModifier(
                 {
+                    "2026": [ ## TODO: not implemented, here as a placeholder
+                        {
+                            "flagname": '""',
+                            "mc_trigger_sf": '""',
+                            "mc_trg_extrapolation": 1.0,  # for nominal case
+                        },
+                    ],
                     "2025": [ ## TODO: not implemented, here as a placeholder
                         {
                             "flagname": '""',
@@ -1998,6 +2109,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 ("et"): {
                     "singlelectron_trigger_sf_mc": EraModifier(
                         {
+                            "2026": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
@@ -2113,48 +2231,55 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 ("et"): {
                     "singlelectron_trigger_sf_mc": EraModifier(
                         {
+                            "2026": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
                             "2025": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2024": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2023postBPix": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2023preBPix": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2022postEE": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
-                                "2022preEE": [ ## TODO: not implemented, here as a placeholder
-                                    {
-                                        "flagname": '""',
-                                        "mc_trigger_sf": '""',
-                                        "mc_trg_extrapolation": 1.0,  # for nominal case
-                                    },
-                                ],
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
+                            "2024": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
+                            "2023postBPix": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
+                            "2023preBPix": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
+                            "2022postEE": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
+                            "2022preEE": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
                             "2018": [
                                 {
                                     "flagname": "trg_wgt_single_ele32orele35",
@@ -2229,6 +2354,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 ("mt"): {
                     "singlemuon_trigger_sf_mc": EraModifier(
                         {
+                            "2026": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',
@@ -2334,6 +2466,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                 ("mt"): {
                     "singlemuon_trigger_sf_mc": EraModifier(
                         {
+                            "2026": [ ## TODO: not implemented, here as a placeholder
+                                {
+                                    "flagname": '""',
+                                    "mc_trigger_sf": '""',
+                                    "mc_trg_extrapolation": 1.0,  # for nominal case
+                                },
+                            ],
                             "2025": [ ## TODO: not implemented, here as a placeholder
                                 {
                                     "flagname": '""',

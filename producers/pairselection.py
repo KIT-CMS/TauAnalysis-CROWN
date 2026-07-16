@@ -13,7 +13,7 @@ class kinematic_vars:
     _nanoAOD_Electron = [nanoAOD.Electron_eta, nanoAOD.Electron_phi, nanoAOD.Electron_mass]
 
 
-kinematic_vars.Muon = [nanoAOD.Muon_pt, *kinematic_vars._nanoAOD_Muon]
+kinematic_vars.Muon = [q.muon_pt_corrected, *kinematic_vars._nanoAOD_Muon]
 kinematic_vars.Tau = [nanoAOD.Tau_pt, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
 kinematic_vars.Tau_with_corrected_pt = [q.tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, nanoAOD.Tau_mass]
 kinematic_vars.Tau_with_corrected_pt_and_mass = [q.tau_pt_corrected, *kinematic_vars._nanoAOD_Tau, q.tau_mass_corrected]

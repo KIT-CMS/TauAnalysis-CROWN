@@ -222,6 +222,7 @@ base_photons_mask = Quantity()
 # BaseMuons
 base_muons_mask = Quantity()
 good_muons_mask = Quantity()
+muon_pt_corrected = Quantity()
 _MuonEtaCut = Quantity()
 _MuonDxyCut = Quantity()
 _MuonDzCut = Quantity()
