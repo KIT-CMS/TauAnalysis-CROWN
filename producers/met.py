@@ -196,6 +196,26 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         output=[q.puppimet_p4_recoiluncertaintycorrected],
     )
 
+    # Bundles the nominal (QuantileMapHist) recoil correction with the
+    # response/resolution uncertainty step that must be evaluated on top of
+    # it (see comment on ApplyRecoilUncertainty above). This is purely a
+    # convenience grouping to avoid repeating the same two-producer chain in
+    # both MetCorrections and MetCorrections_v12 below; ApplyRecoilCorrections
+    # and ApplyRecoilUncertainty remain independently usable/addressable
+    # (e.g. config.py's metRecoilResponse/metRecoilResolution shifts still
+    # target met.ApplyRecoilUncertainty directly, and other configs such as
+    # doublemuon_controlregion.py still use met.ApplyRecoilCorrections on its
+    # own without the uncertainty step).
+    RecoilCorrectionRun3 = ProducerGroup(
+        call=None,
+        input=None,
+        output=None,
+        subproducers=[
+            ApplyRecoilCorrections,
+            ApplyRecoilUncertainty,
+        ],
+    )
+
     with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
         ApplyRecoilCorrections_Run2 = Producer(
             input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
@@ -241,8 +261,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             subproducers=[
                 METTypeI,
                 PropagateLeptonsToMet,
-                ApplyRecoilCorrections,
-                ApplyRecoilUncertainty,
+                RecoilCorrectionRun3,
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
@@ -252,8 +271,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             subproducers=[
                 METTypeI_v12,
                 PropagateLeptonsToMet,
-                ApplyRecoilCorrections,
-                ApplyRecoilUncertainty,
+                RecoilCorrectionRun3,
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
