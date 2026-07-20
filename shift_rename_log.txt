@@ -205,3 +205,165 @@ singleMuonTriggerSFDown       only!!"). No unambiguous convention entry
    legs together; master's naming is really meant for the tau leg alone.
 9. Four embedding-only trigger shifts in tau_triggersetup.py left
    unrenamed, see "NOT RENAMED" section above.
+
+=== Follow-up pass: era-tag decorrelation (config.py) ===
+
+Continuing from the naming pass above, this pass focuses purely on
+*decorrelating shift names across eras* (embedding an era tag into the
+`name=` string), independent of whether the CMS_* rename has been applied
+yet. A module-level ERA_MAP was added near the top of config.py (same
+token scheme as jet_variations.py's ERA_MAP / systematics_master.yml era
+tokens: 2016preVFP/2016postVFP/2017/2018 unchanged, 2022preEE->2022,
+2022postEE->2022EE, 2023preBPix->2023, 2023postBPix->2023BPix, 2024/2025/
+2026 unchanged), exposed as `era_tag = ERA_MAP[era]` at the top of
+build_config. The following shift names were changed to embed `era_tag`,
+each cross-referenced against an explicit era-dependent regex group in
+systematics_master.txt or an explicit "uncorrelated across years/eras"
+statement in the TauPOG Wiki (Introduction_-_TauPOG_Wiki.txt):
+
+  muonEsScale        -> muonEsScale_{era_tag}        (CMS_scale_m_<era>)
+  muonEsReso         -> muonEsReso_{era_tag}          (by analogy, edge case 2 above)
+  eleEsReso          -> eleEsReso_{era_tag}           (CMS_res_e_<era>)
+  eleEsScale         -> eleEsScale_{era_tag}          (CMS_scale_e_<era>)
+  electronIdSF       -> electronIdSF_{era_tag}        (CMS_eff_e_id_<era>)
+  PileUp             -> PileUp_{era_tag}              (CMS_pileup_<era>)
+  zPtReweightWeight_unc{n} -> zPtReweightWeight_unc{n}_{era_tag}
+                                          (DY kinematic reweighting doc requires
+                                           full decorrelation of each fit-parameter
+                                           uncertainty; era decorrelation was
+                                           previously left to the datacard stage,
+                                           now also enforced at the CROWN level)
+  tauEsDM{dm}                  -> tauEsDM{dm}_{era_tag}           (TauPOG Wiki:
+  tauEsDM{dm}pT{pt}            -> tauEsDM{dm}pT{pt}_{era_tag}      "TES ... decorrelated
+                                                                    per era and DM bin")
+  tauEleFakeEsDM{dm}Barrel/Endcap -> +_{era_tag}      (TauPOG Wiki: e-fake tau ES
+                                                        "uncorrelated across different
+                                                        decay modes, and years")
+  tauMuFakeEsDM{dm}            -> +_{era_tag}          (extended for consistency;
+                                                          wiki only explicitly requires
+                                                          DM-decorrelation here, era
+                                                          decorrelation is a superset,
+                                                          harmless)
+  vsEleDM{dm}Barrel/Endcap (era>=2022) -> +_{era_tag}  (TauPOG Wiki: e-fake vsEle
+                                                         ID SF "uncorrelated across
+                                                         Eras, as well as ... DM bins")
+  vsMuWheel{wheel} (era>=2022 branch only) -> +_{era_tag} (TauPOG Wiki: mu-fake vsMu
+                                                            ID SF "uncorrelated across
+                                                            years")
+  vsJetStat1{era}DM{dm}    -> vsJetStat1{era_tag}DM{dm}   (was using the raw `era`
+  vsJetStat2{era}DM{dm}    -> vsJetStat2{era_tag}DM{dm}    string, e.g. "2022preEE",
+  vsJetSystTES{era}DM{dm}  -> vsJetSystTES{era_tag}DM{dm}  instead of the mapped
+  vsJetSyst{era}           -> vsJetSyst{era_tag}           era token "2022"/"2022EE"
+                                                            used by systematics_master
+                                                            -- corrected for
+                                                            consistency; this does NOT
+                                                            change correctness/
+                                                            decorrelation (era was
+                                                            already embedded), only
+                                                            the token spelling)
+
+NOT changed (left alone deliberately):
+- Run2 (<2022) vsEleBarrel/vsEleEndcap/vsMuWheel{wheel}/vsJetTau{...} shift
+  names: out of scope for this Run3-focused pass; systematics_master also
+  does not list an era regex group for VSe/VSmu fake-tau ID SF at all
+  (edge case: CMS_fake_t_..._VSe / CMS_fake_t_..._VSmu have no era
+  suffix in the master list), so unlike TES this is not unambiguously
+  required by the generic convention -- only the TauPOG-specific wiki
+  asks for it, and only for era>=2022 was it applied here to stay
+  consistent with the rest of this Run3 audit chain.
+- metRecoilResponse / metRecoilResolution: left to the recoil-producer
+  task (separate branch/topic), no master entry exists for recoil either
+  way (edge case 3 above still open).
+- CMS_l1_ecal_prefiring{Up,Down} (edge case 4) and CMS_htt_zptReweight's
+  CADI-id-less naming (edge case 5): unrelated to era-tagging, still open.
+- Full CMS_* renaming of muonEsScale/muonEsReso/eleEsReso/eleEsScale/
+  electronIdSF/PileUp/tauEsDM.../tauEleFakeEsDM.../tauMuFakeEsDM.../
+  vsEleDM.../vsMuWheel...: this pass only added the era_tag suffix to the
+  existing legacy names; the CMS_* prefix rename documented earlier in
+  this log has not been applied to these particular shifts yet (it was
+  applied to jet_variations.py and (partially) attempted for config.py
+  muon/electron/tau names per the top of this log, but the working tree
+  state found at the start of this pass still had the pre-rename legacy
+  names for all of the above). Renaming AND era-tagging in the same pass
+  was avoided to keep this diff reviewable and focused on decorrelation;
+  recommend a follow-up pass to finish applying the CMS_* prefix.
+
+=== 2026-07-20 addendum: era-tag decorrelation pass ===
+
+Follow-up pass on top of the renames above, adding an explicit per-era tag
+to config.py shift `name`s for every uncertainty the relevant object
+twiki (systematics_master.txt / Conventions / TauPOG Wiki / EGamma
+Scales-and-Smearings) says must be treated as uncorrelated across eras/
+years, but whose CROWN shift name did not previously embed `era` (so an
+identically-named shift from every era's build_config() call would
+otherwise collide into one accidentally-correlated nuisance downstream).
+A new module-level `ERA_MAP` dict (config.py top) maps each era string to
+the systematics_master.yml-style era token (e.g. "2022preEE" -> "2022",
+"2022postEE" -> "2022EE", "2023postBPix" -> "2023BPix", matching the
+tokens already used for jet_variations.py per the jets audit); this is
+computed once per build_config() call as `era_tag = ERA_MAP[era]`.
+
+Renamed (era_tag appended, shift_key/correction string unchanged unless
+noted):
+  muonEsScale        -> muonEsScale_{era_tag}
+  muonEsReso         -> muonEsReso_{era_tag}
+  eleEsReso          -> eleEsReso_{era_tag}   (both <2022 and >=2022 branches)
+  eleEsScale         -> eleEsScale_{era_tag}  (both <2022 and >=2022 branches)
+  zPtReweightWeight_unc{n} -> zPtReweightWeight_unc{n}_{era_tag}  (NNLO and
+                              NLO/amcatnlo blocks; per-fit-parameter AND
+                              per-era decorrelation, per user request --
+                              AUDIT_REPORT_zpt.txt had left era-correlation
+                              to the downstream combine/datacard stage,
+                              this supersedes that and decorrelates at the
+                              CROWN level instead)
+  tauEsDM{dm}        -> tauEsDM{dm}_{era_tag}          (2022-2023 TES)
+  tauEsDM{dm}pT{pt}  -> tauEsDM{dm}pT{pt}_{era_tag}    (>=2024 TES)
+  tauEleFakeEsDM{dm}Barrel/Endcap -> ..._{era_tag}     (both era branches)
+  tauMuFakeEsDM{dm}  -> tauMuFakeEsDM{dm}_{era_tag}    (both era branches)
+  vsEleDM{dm}Barrel/Endcap (SF)   -> ..._{era_tag}
+  vsMuWheel{wheel} (SF)           -> vsMuWheel{wheel}_{era_tag}
+  vsJetStat1{era}DM{dm}    -> vsJetStat1{era_tag}DM{dm}   (era-string ->
+  vsJetStat2{era}DM{dm}    -> vsJetStat2{era_tag}DM{dm}    era_tag, same
+  vsJetSystTES{era}DM{dm}  -> vsJetSystTES{era_tag}DM{dm}  decorrelation,
+  vsJetSyst{era}           -> vsJetSyst{era_tag}            just consistent
+                                                             token style)
+
+Rationale per family:
+- muon/electron energy scale+resolution: EGamma "Scales_and_Smearings"
+  doc and standard MUO/EGM practice treat per-era scale/smearing
+  corrections as separate, uncorrelated measurements; nothing in either
+  doc suggests correlating them across eras.
+- Z pT reweighting: DY_kinematic_reweighting doc requires each
+  fit-parameter uncertainty "fully uncorrelated from each other"; the
+  per-era decorrelation is an explicit user request on top of that
+  (each era's DY_pTll_reweighting fit is an independent measurement).
+- Tau ES (genuine/e-fake/mu-fake) and e/mu-fake tau ID SF: TauPOG Wiki
+  states explicitly "TES... decorrelated per era and DM bin", e-fake SF/ES
+  "uncorrelated across Eras, as well as across Tau Eta and DM bins", and
+  mu-fake SF "uncorrelated across years, as well as across tau eta bins" --
+  none of these were previously era-tagged (only the vsJet ID SF from
+  Issue #2 was). This pass extends the same era-tagging pattern used
+  there to these families.
+- vsJet ID SF (stat1/stat2/syst_TES) and CMS_res_m/CMS_res_e/CMS_scale_m/
+  CMS_scale_e: already effectively decorrelated at the correctionlib-key
+  level per era (era_key baked into the correction-string lookup itself);
+  this pass only aligns the shift *name* token style to the new
+  `era_tag`/ERA_MAP convention for consistency across the file (was
+  previously the raw `era` string, e.g. "vsJetSyst2022preEE" ->
+  "vsJetSyst2022").
+
+Not changed / edge cases:
+- btag, jet (JES/JER) shift names already embed era via their own
+  per-topic ERA_MAP-equivalent (jet_variations.py, see original section
+  above) -- left untouched, out of scope for this analysis-config-level
+  pass (that file lives in the outer CROWN repo).
+- Electron ID SF (CMS_eff_e_id / electronIdSF) and muon ID/Iso SF
+  (muon_id_variation/muon_iso_variation, see the muon_sf_variation
+  KeyError fix in a separate commit on this branch) currently have NO
+  Up/Down shift wired at all in config.py (no add_shift call references
+  them) -- there is nothing to era-tag; flagged as a pre-existing gap,
+  not fixed here since adding a wholly new systematic is out of scope
+  for a renaming/decorrelation pass.
+- Trigger SF shifts (CMS_trig_*) and trigger filter-bit correctness are
+  being handled in a separate, parallel worktree/pass -- not touched
+  here to avoid stepping on that work.
