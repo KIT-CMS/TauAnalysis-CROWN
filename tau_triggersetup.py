@@ -231,24 +231,30 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "mutau_cross_trigger": EraModifier(
                 {
                     "2026": [
+                        # DeepTau HPS cross-triggers were removed from the GRun menu during
+                        # 2025 (CMSHLT-3447 / CMSHLT-3567; DeepTau paths set to PS=0, then
+                        # dropped entirely). Use the PNet-based path instead (Medium WP,
+                        # matching the WP used for the ditau PNet trigger below).
                         {
-                            "flagname": "trg_cross_mu20tau27_hps",
-                            "hlt_path": "HLT_IsoMu20_eta2p1_LooseDeepTauPFTauHPS27_eta2p1_CrossL1",
+                            "flagname": "trg_cross_mu20tau27_pnet",
+                            "hlt_path": "HLT_IsoMu20_eta2p1_PNetTauhPFJet27_Medium_eta2p3_CrossL1",
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "1, 4, 13",
                             **mutau_cross_trigger_defaults,
                         },
                     ],
                     "2025": [
+                        # see comment for 2026 above: DeepTau cross-triggers are PS=0 in
+                        # 2025 (CMSHLT-3447), so use the PNet Medium WP path.
                         {
-                            "flagname": "trg_cross_mu20tau27_hps",
-                            "hlt_path": "HLT_IsoMu20_eta2p1_LooseDeepTauPFTauHPS27_eta2p1_CrossL1",
+                            "flagname": "trg_cross_mu20tau27_pnet",
+                            "hlt_path": "HLT_IsoMu20_eta2p1_PNetTauhPFJet27_Medium_eta2p3_CrossL1",
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "1, 4, 13",
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -523,28 +529,34 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "eltau_cross_trigger": EraModifier(
                 {
                     "2026": [
+                        # DeepTau HPS cross-triggers were removed from the GRun menu during
+                        # 2025 (CMSHLT-3447 / CMSHLT-3567; DeepTau paths set to PS=0, then
+                        # dropped entirely). Use the PNet-based path instead (Medium WP,
+                        # matching the WP used for the ditau PNet trigger below).
                         {
-                            "flagname": "trg_cross_ele24tau30_hps",
-                            "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_LooseDeepTauPFTauHPS30_eta2p1_CrossL1",
+                            "flagname": "trg_cross_ele24tau30_pnet",
+                            "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_PNetTauhPFJet30_Medium_eta2p3_CrossL1",
                             "p1_ptcut": 25,
                             "p2_ptcut": 35,
                             "p1_etacut": 2.1,
-                            "p2_etacut": 2.1, 
-                            "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 2,
+                            "p2_filterbit": "1, 4, 12",
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
                     "2025": [
+                        # see comment for 2026 above: DeepTau cross-triggers are PS=0 in
+                        # 2025 (CMSHLT-3447), so use the PNet Medium WP path.
                         {
-                            "flagname": "trg_cross_ele24tau30_hps",
-                            "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_LooseDeepTauPFTauHPS30_eta2p1_CrossL1",
+                            "flagname": "trg_cross_ele24tau30_pnet",
+                            "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_PNetTauhPFJet30_Medium_eta2p3_CrossL1",
                             "p1_ptcut": 25,
                             "p2_ptcut": 35,
                             "p1_etacut": 2.1,
-                            "p2_etacut": 2.1, 
-                            "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_etacut": 2.1,
+                            "p1_filterbit": 2,
+                            "p2_filterbit": "1, 4, 12",
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -1155,59 +1167,73 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_leading": EraModifier(
                 {
-                    "2026": [ ## TODO: not implemented, here as a placeholder
+                    # 2022-2024: Run3 SingleTau signal path is DeepTau-based
+                    # (HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1), NanoAOD V14/V15
+                    # triggerbits 3 (DeepTau) and 9 (SingleTau leg), not the Run2
+                    # ChargedIso path that was previously left here as a stale
+                    # placeholder (that path does not exist in the Run3 menu).
+                    # 2025-2026: DeepTau paths are PS=0 / removed from GRun
+                    # (CMSHLT-3447/CMSHLT-3567), so the PNet Medium WP path is used.
+                    "2026": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
-                            "ptcut": 180,
+                            "flagname": "trg_single_tau130_pnet_1",
+                            "hlt_path": "HLT_SinglePNetTauhPFJet130_Medium_L2NN_eta2p3",
+                            "ptcut": 130,
+                            "filterbit": "1, 4, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2025": [ ## TODO: not implemented, here as a placeholder
+                    "2025": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
-                            "ptcut": 180,
+                            "flagname": "trg_single_tau130_pnet_1",
+                            "hlt_path": "HLT_SinglePNetTauhPFJet130_Medium_L2NN_eta2p3",
+                            "ptcut": 130,
+                            "filterbit": "1, 4, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2024": [ ## TODO: not implemented, here as a placeholder
+                    "2024": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_1",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2023postBPix": [ ## TODO: not implemented, here as a placeholder
+                    "2023postBPix": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_1",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2023preBPix": [ ## TODO: not implemented, here as a placeholder
+                    "2023preBPix": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_1",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2022postEE": [ ## TODO: not implemented, here as a placeholder
+                    "2022postEE": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_1",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
-                    "2022preEE": [ ## TODO: not implemented, here as a placeholder
+                    "2022preEE": [
                         {
-                            "flagname": "trg_single_tau180_1",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_1",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_defaults,
                         },
                     ],
@@ -1273,59 +1299,69 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_trailing": EraModifier(
                 {
-                    "2026": [ ## TODO: not implemented, here as a placeholder
+                    # see singletau_trigger_leading above for the rationale of the
+                    # per-era HLT path choice (Run3 uses DeepTau HPS through 2024,
+                    # PNet from 2025 once DeepTau paths are PS=0 / removed, CMSHLT-3447).
+                    "2026": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
-                            "ptcut": 180,
+                            "flagname": "trg_single_tau130_pnet_2",
+                            "hlt_path": "HLT_SinglePNetTauhPFJet130_Medium_L2NN_eta2p3",
+                            "ptcut": 130,
+                            "filterbit": "1, 4, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2025": [ ## TODO: not implemented, here as a placeholder
+                    "2025": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
-                            "ptcut": 180,
+                            "flagname": "trg_single_tau130_pnet_2",
+                            "hlt_path": "HLT_SinglePNetTauhPFJet130_Medium_L2NN_eta2p3",
+                            "ptcut": 130,
+                            "filterbit": "1, 4, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2024": [ ## TODO: not implemented, here as a placeholder
+                    "2024": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_2",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2023postBPix": [ ## TODO: not implemented, here as a placeholder
+                    "2023postBPix": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_2",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2023preBPix": [ ## TODO: not implemented, here as a placeholder
+                    "2023preBPix": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_2",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2022postEE": [ ## TODO: not implemented, here as a placeholder
+                    "2022postEE": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_2",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
-                    "2022preEE": [ ## TODO: not implemented, here as a placeholder
+                    "2022preEE": [
                         {
-                            "flagname": "trg_single_tau180_2",
-                            "hlt_path": "HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1",
+                            "flagname": "trg_single_tau180_hps_2",
+                            "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
+                            "filterbit": "3, 9",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
@@ -1440,10 +1476,29 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2026":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                 }
             ),
+            # NOTE: the flagname produced by the mutau_cross_trigger EraModifier above
+            # switches from "trg_cross_mu20tau27_hps" (DeepTau, 2022-2024) to
+            # "trg_cross_mu20tau27_pnet" (PNet, 2025-2026, since DeepTau cross-triggers
+            # are PS=0/removed from the GRun menu from 2025 onward, CMSHLT-3447). The
+            # flag looked up here must track that per-era.
             "mutau_trigger_leg1_sf": [
                 {
                     "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                    "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                    "mutau_cross_trigger_flag": EraModifier(
+                        {
+                            "2016preVFP": "trg_cross_mu20tau27_hps",
+                            "2016postVFP": "trg_cross_mu20tau27_hps",
+                            "2017": "trg_cross_mu20tau27_hps",
+                            "2018": "trg_cross_mu20tau27_hps",
+                            "2022preEE": "trg_cross_mu20tau27_hps",
+                            "2022postEE": "trg_cross_mu20tau27_hps",
+                            "2023preBPix": "trg_cross_mu20tau27_hps",
+                            "2023postBPix": "trg_cross_mu20tau27_hps",
+                            "2024": "trg_cross_mu20tau27_hps",
+                            "2025": "trg_cross_mu20tau27_pnet",
+                            "2026": "trg_cross_mu20tau27_pnet",
+                        }
+                    ),
                     "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
                     "mutau_cross_trigger_leg1_variation": "nominal",
                 },
@@ -1451,7 +1506,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "mutau_trigger_leg2_sf": [
                 {
                     "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
-                    "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                    "mutau_cross_trigger_flag": EraModifier(
+                        {
+                            "2016preVFP": "trg_cross_mu20tau27_hps",
+                            "2016postVFP": "trg_cross_mu20tau27_hps",
+                            "2017": "trg_cross_mu20tau27_hps",
+                            "2018": "trg_cross_mu20tau27_hps",
+                            "2022preEE": "trg_cross_mu20tau27_hps",
+                            "2022postEE": "trg_cross_mu20tau27_hps",
+                            "2023preBPix": "trg_cross_mu20tau27_hps",
+                            "2023postBPix": "trg_cross_mu20tau27_hps",
+                            "2024": "trg_cross_mu20tau27_hps",
+                            "2025": "trg_cross_mu20tau27_pnet",
+                            "2026": "trg_cross_mu20tau27_pnet",
+                        }
+                    ),
                     "mutau_cross_trigger_leg2_sf_name": "mutau",
                     "mutau_cross_trigger_leg2_variation": "nom",
                 },
@@ -1518,9 +1587,28 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2026": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                 }
             ),
+            # NOTE: the flagname produced by the eltau_cross_trigger EraModifier above
+            # switches from "trg_cross_ele24tau30_hps" (DeepTau, 2022-2024) to
+            # "trg_cross_ele24tau30_pnet" (PNet, 2025-2026, since DeepTau cross-triggers
+            # are PS=0/removed from the GRun menu from 2025 onward, CMSHLT-3447). The
+            # flag looked up here must track that per-era.
             "eletau_cross_trigger_leg1_sf": [
                 {
-                    "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                    "eletau_cross_trigger_flag": EraModifier(
+                        {
+                            "2016preVFP": "trg_cross_ele24tau30_hps",
+                            "2016postVFP": "trg_cross_ele24tau30_hps",
+                            "2017": "trg_cross_ele24tau30_hps",
+                            "2018": "trg_cross_ele24tau30_hps",
+                            "2022preEE": "trg_cross_ele24tau30_hps",
+                            "2022postEE": "trg_cross_ele24tau30_hps",
+                            "2023preBPix": "trg_cross_ele24tau30_hps",
+                            "2023postBPix": "trg_cross_ele24tau30_hps",
+                            "2024": "trg_cross_ele24tau30_hps",
+                            "2025": "trg_cross_ele24tau30_pnet",
+                            "2026": "trg_cross_ele24tau30_pnet",
+                        }
+                    ),
                     "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
                     "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
                     "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
@@ -1530,7 +1618,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "eletau_cross_trigger_leg2_sf": [
                 {
                     "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                    "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                    "eletau_cross_trigger_flag": EraModifier(
+                        {
+                            "2016preVFP": "trg_cross_ele24tau30_hps",
+                            "2016postVFP": "trg_cross_ele24tau30_hps",
+                            "2017": "trg_cross_ele24tau30_hps",
+                            "2018": "trg_cross_ele24tau30_hps",
+                            "2022preEE": "trg_cross_ele24tau30_hps",
+                            "2022postEE": "trg_cross_ele24tau30_hps",
+                            "2023preBPix": "trg_cross_ele24tau30_hps",
+                            "2023postBPix": "trg_cross_ele24tau30_hps",
+                            "2024": "trg_cross_ele24tau30_hps",
+                            "2025": "trg_cross_ele24tau30_pnet",
+                            "2026": "trg_cross_ele24tau30_pnet",
+                        }
+                    ),
                     "eletau_cross_trigger_leg2_sf_name": "etau",
                     "eletau_cross_trigger_leg2_variation": "nom",
                 },
@@ -1678,7 +1780,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "eletau_cross_trigger_leg1_sf": [
                             {
                                 "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
-                                "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                                "eletau_cross_trigger_flag": EraModifier(
+                                    {
+                                        "2016preVFP": "trg_cross_ele24tau30_hps",
+                                        "2016postVFP": "trg_cross_ele24tau30_hps",
+                                        "2017": "trg_cross_ele24tau30_hps",
+                                        "2018": "trg_cross_ele24tau30_hps",
+                                        "2022preEE": "trg_cross_ele24tau30_hps",
+                                        "2022postEE": "trg_cross_ele24tau30_hps",
+                                        "2023preBPix": "trg_cross_ele24tau30_hps",
+                                        "2023postBPix": "trg_cross_ele24tau30_hps",
+                                        "2024": "trg_cross_ele24tau30_hps",
+                                        "2025": "trg_cross_ele24tau30_pnet",
+                                        "2026": "trg_cross_ele24tau30_pnet",
+                                    }
+                                ),
                                 "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
                                 "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
                                 "eletau_cross_trigger_leg1_variation": f"sf{_variation}",
@@ -1687,7 +1803,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "eletau_cross_trigger_leg2_sf": [
                             {
                                 "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                                "eletau_cross_trigger_flag": "trg_cross_ele24tau30_hps",
+                                "eletau_cross_trigger_flag": EraModifier(
+                                    {
+                                        "2016preVFP": "trg_cross_ele24tau30_hps",
+                                        "2016postVFP": "trg_cross_ele24tau30_hps",
+                                        "2017": "trg_cross_ele24tau30_hps",
+                                        "2018": "trg_cross_ele24tau30_hps",
+                                        "2022preEE": "trg_cross_ele24tau30_hps",
+                                        "2022postEE": "trg_cross_ele24tau30_hps",
+                                        "2023preBPix": "trg_cross_ele24tau30_hps",
+                                        "2023postBPix": "trg_cross_ele24tau30_hps",
+                                        "2024": "trg_cross_ele24tau30_hps",
+                                        "2025": "trg_cross_ele24tau30_pnet",
+                                        "2026": "trg_cross_ele24tau30_pnet",
+                                    }
+                                ),
                                 "eletau_cross_trigger_leg2_sf_name": "etau",
                                 "eletau_cross_trigger_leg2_variation": _variation,
                             },
@@ -1728,7 +1858,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
                             {
-                                "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                                "mutau_cross_trigger_flag": EraModifier(
+                                    {
+                                        "2016preVFP": "trg_cross_mu20tau27_hps",
+                                        "2016postVFP": "trg_cross_mu20tau27_hps",
+                                        "2017": "trg_cross_mu20tau27_hps",
+                                        "2018": "trg_cross_mu20tau27_hps",
+                                        "2022preEE": "trg_cross_mu20tau27_hps",
+                                        "2022postEE": "trg_cross_mu20tau27_hps",
+                                        "2023preBPix": "trg_cross_mu20tau27_hps",
+                                        "2023postBPix": "trg_cross_mu20tau27_hps",
+                                        "2024": "trg_cross_mu20tau27_hps",
+                                        "2025": "trg_cross_mu20tau27_pnet",
+                                        "2026": "trg_cross_mu20tau27_pnet",
+                                    }
+                                ),
                                 "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
                                 "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
                                 "mutau_cross_trigger_leg1_variation": f"syst{_variation}",
@@ -1736,7 +1880,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         ],
                         "mutau_trigger_leg2_sf": [
                             {
-                                "mutau_cross_trigger_flag": "trg_cross_mu20tau27_hps",
+                                "mutau_cross_trigger_flag": EraModifier(
+                                    {
+                                        "2016preVFP": "trg_cross_mu20tau27_hps",
+                                        "2016postVFP": "trg_cross_mu20tau27_hps",
+                                        "2017": "trg_cross_mu20tau27_hps",
+                                        "2018": "trg_cross_mu20tau27_hps",
+                                        "2022preEE": "trg_cross_mu20tau27_hps",
+                                        "2022postEE": "trg_cross_mu20tau27_hps",
+                                        "2023preBPix": "trg_cross_mu20tau27_hps",
+                                        "2023postBPix": "trg_cross_mu20tau27_hps",
+                                        "2024": "trg_cross_mu20tau27_hps",
+                                        "2025": "trg_cross_mu20tau27_pnet",
+                                        "2026": "trg_cross_mu20tau27_pnet",
+                                    }
+                                ),
                                 "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
                                 "mutau_cross_trigger_leg2_sf_name": "mutau",
                                 "mutau_cross_trigger_leg2_variation": _variation,
