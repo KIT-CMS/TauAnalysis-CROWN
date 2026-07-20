@@ -1,0 +1,53 @@
+Follow-up review: taus.py / scalefactors.py tau ID+ES producer calls
+=====================================================================
+Scope: continuation of AUDIT_REPORT_tau.txt's "did not exhaustively
+re-verify every one of the ~15 SF/ES producer overloads" gap. Covers
+producers/taus.py (PtCorrectionMC* calls) and producers/scalefactors.py's
+tau vsJet/vsEle/vsMu ID SF producers (NOT trigger SF producers, NOT
+electron/muon SF, both out of this pass's scope per task split with
+sibling agents working era-tag renaming, met.py recoil cleanup, and
+trigger-bit/ditau verification).
+
+Method: cross-checked every producer call's correctionlib-key/argument
+list against the corresponding C++ overload signature in
+include/taus.hxx (outer CROWN repo, read-only) for exact argument
+count, order, and DM/pT-bin naming, for all 7 Run3 eras plus the
+Run2 (<2022) legacy branches still present in the same file.
+
+RESULT: no new bugs found.
+------------------------------
+Every call verified (Tau_{1,2}_VsJetTauID_SF{_v12,_tt_SF,_lt_SF,
+_lt_SF_dm_binned,_lt_SF_dm_pt_binned}, Tau_{1,2}_VsEleTauID_SF{_Run2},
+Tau_{1,2}_VsMuTauID_SF, TauPtCorrection_{eleFake,muFake},
+TauPtCorrection_genTau{_dm_binned,_dm_pt_binned},
+TauPtCorrection_emb_genTau_{dm_binned,dm_pt_binned},
+TauPtCorrection_MC_v12/TauEnergyCorrection_v12,
+TauEnergyCorrection's PtCorrectionMC call) matches its C++ overload's
+argument order exactly (spot-checked include/taus.hxx line numbers:
+65-98 combined MC overload, 148-167 eleFake/muFake, 168-218
+genuineTau variants, 234-325 scalefactor::Id_vsJet/_lt/Id_vsEle/
+Id_vsMu). In particular the vsJet ID SF wiring in config.py
+(lines ~2635-2721) already reflects AUDIT_REPORT_tau.txt Issue #2's
+fix (per-era stat1/stat2/syst_TES/syst_alleras/syst_<era> keys for
+2022-2023preBPix/postBPix, plain nom/up/down only for the pre-2024
+Run2 <2022 legacy branch where that's the actually-correct json
+structure) -- did not find any regression or leftover bug instance.
+
+PtCorrectionMC_eleFake's 4-argument (DM0/DM1 barrel+endcap only, no
+DM10/DM11) signature is intentional: it's only invoked from the
+Run2 (<2022) branch (config.py ~2561-2568), which uses the older,
+less granular e-fake ES measurement (1-prong DMs only) -- matches
+include/taus.hxx:148-158 exactly, not a bug.
+
+Not independently re-verified in this pass (would require live
+correctionlib json access I did not have time to redo beyond what
+the original audit already did): the literal string content of "nom"/
+"up"/"down" keys for tau_energy_scale and DeepTau2018v2p5VSe/VSmu --
+already confirmed correct by AUDIT_REPORT_tau.txt's cvmfs json
+inspection, no reason found to redo it since no code changed on that
+path.
+
+FILES CHANGED: none (no bugs found requiring a fix).
+No commit was made on branch audit-run3-htautau-review beyond the
+pre-applied muon_sf_variation fix (commit 1e56955, already present
+before this review started, not part of this pass's findings).
