@@ -461,7 +461,15 @@ def build_config(
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
                 }
             ),
-            "btag_sf_variation": "central",
+            "btag_sf_variation": "central",  # used by BtaggingShape (Run2, deepJet_shape)
+            # Used by BtaggingWP (Run3, fixedWP SFs). The BTV POG measures
+            # b/c-flavor (mujets/comb) and light-flavor (incl) scale factors
+            # with independent methods and independent uncertainty sources
+            # (see https://btv-wiki.docs.cern.ch/ScaleFactors/#sf-uncertainties-and-correlations-across-years),
+            # so they need two independent variation knobs: shifting one must
+            # leave the other at "central".
+            "btag_sf_variation_bc": "central",
+            "btag_sf_variation_lf": "central",
             "btag_wp": "M",
             "btag_corr_algo": EraModifier(
                 {
