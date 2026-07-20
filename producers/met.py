@@ -29,7 +29,7 @@ with defaults(scopes=["global"]):
     with defaults(call='''lorentzvector::BuildMET({df}, {output}, {input})'''):
         BuildMetVector = Producer(input=[nanoAODv15.PuppiMET_pt, nanoAODv15.PuppiMET_phi], output=[q.puppimet_p4])
         BuildRawMetVector = Producer(input=[nanoAODv15.RawPuppiMET_pt, nanoAODv15.RawPuppiMET_phi], output=[q.rawmet_p4])
-        
+
         with defaults(output=[q.pfmet_p4]):
             BuildPFMetVector = Producer(input=[nanoAODv15.PFMET_pt, nanoAODv15.PFMET_phi])
             BuildPFMetVector_v12 = Producer(input=[nanoAODv12.MET_pt, nanoAODv12.MET_phi])
@@ -47,7 +47,7 @@ with defaults(scopes=["global"]):
         with defaults(output=[q.metcov11]):
             MetCov11 = Producer(input=[nanoAODv15.PuppiMET_covYY])
             MetCov11_v12 = Producer(input=[nanoAODv12.MET_covYY])
-        
+
         MetSumEt = Producer(input=[nanoAODv15.PuppiMET_sumEt], output=[q.metSumEt])
 
     with defaults(call='''lorentzvector::GetPt({df}, {output}, {input})'''):
@@ -138,7 +138,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         ],
         output = [q.puppimet_p4_jetcorrected],
     )
-    
+
     # for run 2 and run3 v12
     with defaults(call='''physicsobject::PropagateToMET({df}, {output}, {input}, "{propagateJets}", {min_jetpt_met_propagation})'''):
         PartialJetsToMetInput = [
@@ -159,7 +159,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             input=[q.pfmet_p4] + PartialJetsToMetInput,
             output=[q.pfmet_p4_jetcorrected],
         )
-        
+
     # apply to both
     with defaults(call='''lorentzvector::PropagateToMET({df}, {output}, {input}, "{propagateLeptons}")'''):
         PropagateLeptonsToMet = Producer(
