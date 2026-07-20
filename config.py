@@ -2700,19 +2700,19 @@ def build_config(
                             # stat uncertainties are decorrelated per DM *and*
                             # per era (2 x 4 x 4 = 16 nuisances in total, per
                             # the TauPOG Wiki), hence era is part of the name.
-                            name=f"vsJetStat1{era_tag}DM{dm}",
+                            name=f"vsJetStat1{era}DM{dm}",
                             shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"},
                         ):
                             add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
                             add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                         with defaults(
-                            name=f"vsJetStat2{era_tag}DM{dm}",
+                            name=f"vsJetStat2{era}DM{dm}",
                             shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"},
                         ):
                             add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
                             add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                         with defaults(
-                            name=f"vsJetSystTES{era_tag}DM{dm}",
+                            name=f"vsJetSystTES{era}DM{dm}",
                             shift_map={
                                 "Up": f"syst_TES_{era_key}_dm{dm}_up",
                                 "Down": f"syst_TES_{era_key}_dm{dm}_down",
@@ -2741,7 +2741,7 @@ def build_config(
                 # syst_<era>: correlated across DMs, uncorrelated across eras
                 # (implicit since era_key/name differ per era's config).
                 with defaults(
-                    name=f"vsJetSyst{era_tag}",
+                    name=f"vsJetSyst{era}",
                     shift_key=dm_keys,
                     shift_map={
                         "Up": [f"syst_{era_key}_up"] * 4,

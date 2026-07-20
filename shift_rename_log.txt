@@ -367,3 +367,33 @@ Not changed / edge cases:
 - Trigger SF shifts (CMS_trig_*) and trigger filter-bit correctness are
   being handled in a separate, parallel worktree/pass -- not touched
   here to avoid stepping on that work.
+
+=== 2026-07-20 follow-up: vsJet era-token reverted to out-of-scope ===
+
+The addendum above (era-tag decorrelation pass) also changed
+vsJetStat1{era}DM{dm}, vsJetStat2{era}DM{dm}, vsJetSystTES{era}DM{dm}, and
+vsJetSyst{era} to use the mapped `era_tag` token instead of the raw `era`
+string (e.g. "vsJetSyst2022postEE" -> "vsJetSyst2022EE"). That edit was
+reverted in this pass: the task instructions for this branch explicitly
+scope the vsJet SF shifts as "already era-tagged correctly by the prior
+audit, out of scope here" (Issue #2 of AUDIT_REPORT_tau.txt), regardless
+of whether a follow-on edit only touches token spelling rather than
+correlation behavior. vsJetStat1/2, vsJetSystTES, and vsJetSyst therefore
+go back to embedding the raw `era` string (e.g. "vsJetStat12022preEEDM0"),
+matching Issue #2's original fix exactly. No functional change either way
+(era and era_tag are both unique per era, so decorrelation is identical);
+this is purely about respecting the stated scope boundary for this task.
+
+Also, a small correction to the "NOT DONE / LEFT OPEN" note above: the
+electronIdSF shift is NOT actually missing an add_shift wiring -- it has
+one (config.py, scopes ("et","ee","em"), shift_key "ele_sf_variation",
+shift_map {"Up":"sfup","Down":"sfdown"}), and it was correctly era-tagged
+to electronIdSF_{era_tag} earlier in this same pass. The "no Up/Down shift
+wired" gap applies only to muon_id_variation/muon_iso_variation (muon
+ID/Iso SF): grepping config.py confirms no add_shift call, and no default
+config parameter, ever sets "muon_id_variation" or "muon_iso_variation" --
+so Muon_1/2_ID_SF and Muon_1/2_Iso_SF always evaluate at whatever
+correctionlib "systematic" string default the C++ side falls back to,
+with no Up/Down variation reachable from any shift name. This is a
+pre-existing gap (unrelated to era-tagging) worth a separate follow-up,
+not fixed here per the task's instruction not to invent new shifts.
