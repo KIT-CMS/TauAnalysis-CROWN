@@ -206,6 +206,88 @@ singleMuonTriggerSFDown       only!!"). No unambiguous convention entry
 9. Four embedding-only trigger shifts in tau_triggersetup.py left
    unrenamed, see "NOT RENAMED" section above.
 
+=== Follow-up pass: era-tag decorrelation (config.py) ===
+
+Continuing from the naming pass above, this pass focuses purely on
+*decorrelating shift names across eras* (embedding an era tag into the
+`name=` string), independent of whether the CMS_* rename has been applied
+yet. A module-level ERA_MAP was added near the top of config.py (same
+token scheme as jet_variations.py's ERA_MAP / systematics_master.yml era
+tokens: 2016preVFP/2016postVFP/2017/2018 unchanged, 2022preEE->2022,
+2022postEE->2022EE, 2023preBPix->2023, 2023postBPix->2023BPix, 2024/2025/
+2026 unchanged), exposed as `era_tag = ERA_MAP[era]` at the top of
+build_config. The following shift names were changed to embed `era_tag`,
+each cross-referenced against an explicit era-dependent regex group in
+systematics_master.txt or an explicit "uncorrelated across years/eras"
+statement in the TauPOG Wiki (Introduction_-_TauPOG_Wiki.txt):
+
+  muonEsScale        -> muonEsScale_{era_tag}        (CMS_scale_m_<era>)
+  muonEsReso         -> muonEsReso_{era_tag}          (by analogy, edge case 2 above)
+  eleEsReso          -> eleEsReso_{era_tag}           (CMS_res_e_<era>)
+  eleEsScale         -> eleEsScale_{era_tag}          (CMS_scale_e_<era>)
+  electronIdSF       -> electronIdSF_{era_tag}        (CMS_eff_e_id_<era>)
+  PileUp             -> PileUp_{era_tag}              (CMS_pileup_<era>)
+  zPtReweightWeight_unc{n} -> zPtReweightWeight_unc{n}_{era_tag}
+                                          (DY kinematic reweighting doc requires
+                                           full decorrelation of each fit-parameter
+                                           uncertainty; era decorrelation was
+                                           previously left to the datacard stage,
+                                           now also enforced at the CROWN level)
+  tauEsDM{dm}                  -> tauEsDM{dm}_{era_tag}           (TauPOG Wiki:
+  tauEsDM{dm}pT{pt}            -> tauEsDM{dm}pT{pt}_{era_tag}      "TES ... decorrelated
+                                                                    per era and DM bin")
+  tauEleFakeEsDM{dm}Barrel/Endcap -> +_{era_tag}      (TauPOG Wiki: e-fake tau ES
+                                                        "uncorrelated across different
+                                                        decay modes, and years")
+  tauMuFakeEsDM{dm}            -> +_{era_tag}          (extended for consistency;
+                                                          wiki only explicitly requires
+                                                          DM-decorrelation here, era
+                                                          decorrelation is a superset,
+                                                          harmless)
+  vsEleDM{dm}Barrel/Endcap (era>=2022) -> +_{era_tag}  (TauPOG Wiki: e-fake vsEle
+                                                         ID SF "uncorrelated across
+                                                         Eras, as well as ... DM bins")
+  vsMuWheel{wheel} (era>=2022 branch only) -> +_{era_tag} (TauPOG Wiki: mu-fake vsMu
+                                                            ID SF "uncorrelated across
+                                                            years")
+  vsJetStat1{era}DM{dm}    -> vsJetStat1{era_tag}DM{dm}   (was using the raw `era`
+  vsJetStat2{era}DM{dm}    -> vsJetStat2{era_tag}DM{dm}    string, e.g. "2022preEE",
+  vsJetSystTES{era}DM{dm}  -> vsJetSystTES{era_tag}DM{dm}  instead of the mapped
+  vsJetSyst{era}           -> vsJetSyst{era_tag}           era token "2022"/"2022EE"
+                                                            used by systematics_master
+                                                            -- corrected for
+                                                            consistency; this does NOT
+                                                            change correctness/
+                                                            decorrelation (era was
+                                                            already embedded), only
+                                                            the token spelling)
+
+NOT changed (left alone deliberately):
+- Run2 (<2022) vsEleBarrel/vsEleEndcap/vsMuWheel{wheel}/vsJetTau{...} shift
+  names: out of scope for this Run3-focused pass; systematics_master also
+  does not list an era regex group for VSe/VSmu fake-tau ID SF at all
+  (edge case: CMS_fake_t_..._VSe / CMS_fake_t_..._VSmu have no era
+  suffix in the master list), so unlike TES this is not unambiguously
+  required by the generic convention -- only the TauPOG-specific wiki
+  asks for it, and only for era>=2022 was it applied here to stay
+  consistent with the rest of this Run3 audit chain.
+- metRecoilResponse / metRecoilResolution: left to the recoil-producer
+  task (separate branch/topic), no master entry exists for recoil either
+  way (edge case 3 above still open).
+- CMS_l1_ecal_prefiring{Up,Down} (edge case 4) and CMS_htt_zptReweight's
+  CADI-id-less naming (edge case 5): unrelated to era-tagging, still open.
+- Full CMS_* renaming of muonEsScale/muonEsReso/eleEsReso/eleEsScale/
+  electronIdSF/PileUp/tauEsDM.../tauEleFakeEsDM.../tauMuFakeEsDM.../
+  vsEleDM.../vsMuWheel...: this pass only added the era_tag suffix to the
+  existing legacy names; the CMS_* prefix rename documented earlier in
+  this log has not been applied to these particular shifts yet (it was
+  applied to jet_variations.py and (partially) attempted for config.py
+  muon/electron/tau names per the top of this log, but the working tree
+  state found at the start of this pass still had the pre-rename legacy
+  names for all of the above). Renaming AND era-tagging in the same pass
+  was avoided to keep this diff reviewable and focused on decorrelation;
+  recommend a follow-up pass to finish applying the CMS_* prefix.
+
 === 2026-07-20 addendum: era-tag decorrelation pass ===
 
 Follow-up pass on top of the renames above, adding an explicit per-era tag
