@@ -653,6 +653,12 @@ def build_config(
                     "2023preBPix": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2023preBPix_v5.json.gz",
                     "2023postBPix": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2023postBPix_v5.json.gz",
                     "2024": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2024_v5.json.gz",
+                    # NOTE: as of the v5 correctionlib recommendation
+                    # (https://cms-higgs-leprare.docs.cern.ch/htt-common/DY_reweight/),
+                    # no dedicated DY pTll reweighting has been derived yet for
+                    # 2025/2026 data-taking. The 2024 corrections are reused as a
+                    # placeholder until a dedicated recommendation is published;
+                    # revisit once 2025/2026 corrections become available.
                     "2025": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2024_v5.json.gz",
                     "2026": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2024_v5.json.gz",
                 }
@@ -2470,15 +2476,38 @@ def build_config(
     #########################
     # Z pt DY uncertainties
     #########################
+    # Per the CMS H->tautau DY kinematic reweighting recommendation
+    # (https://cms-higgs-leprare.docs.cern.ch/htt-common/DY_reweight/), the
+    # DY_pTll_reweighting correction provides N fit-parameter uncertainties per
+    # DY sample order (8 for LO/madgraph, 10 for NLO/amcatnlo, 9 for NNLO/powheg,
+    # also given by the DY_pTll_reweighting_N_uncertainty correction). The doc
+    # states: "all uncertainties are required to be included and are fully
+    # uncorrelated from each other." A single up/down envelope therefore does not
+    # reflect the recommendation; instead one fully-uncorrelated shift is added
+    # per fit-parameter uncertainty ("upN"/"downN"), split by DY sample order so
+    # that only the number of uncertainties valid for that order is used.
+    DY_PTLL_N_UNC = {"LO": 8, "NLO": 10, "NNLO": 9}
     if int(era[:4]) >= 2022:
-        add_shift(
-            scopes=("et", "mt", "tt", "em", "ee", "mm"),
-            producers=[event.ZPtReweighting],
-            shift_key="zpt_variation",
-            name="zPtReweightWeight",
-            shift_map={"Up":"up", "Down":"down"},
-            samples=["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
-        )
+        # NNLO (powheg) samples
+        for n in range(1, DY_PTLL_N_UNC["NNLO"] + 1):
+            add_shift(
+                scopes=("et", "mt", "tt", "em", "ee", "mm"),
+                producers=[event.ZPtReweighting],
+                shift_key="zpt_variation",
+                name=f"zPtReweightWeight_unc{n}",
+                shift_map={"Up": f"up{n}", "Down": f"down{n}"},
+                samples=["dyjets_powheg"],
+            )
+        # NLO (amcatnlo) samples, incl. combined electroweak_boson sample
+        for n in range(1, DY_PTLL_N_UNC["NLO"] + 1):
+            add_shift(
+                scopes=("et", "mt", "tt", "em", "ee", "mm"),
+                producers=[event.ZPtReweighting],
+                shift_key="zpt_variation",
+                name=f"zPtReweightWeight_unc{n}",
+                shift_map={"Up": f"up{n}", "Down": f"down{n}"},
+                samples=["dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
+            )
     
     #########################
     # Tau energy scale shifts  #
