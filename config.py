@@ -790,7 +790,14 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    # 2025: TauPOG explicitly recommends reusing the 2024 (Summer24-NanoAODv15)
+                    # corrections for 2025, since the same MC campaign is used
+                    # (https://tau-wiki.docs.cern.ch, "NanoAOD version" section).
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    # 2026: NOT an official recommendation yet -- as of the TauPOG Wiki
+                    # (2026-06-10) all 2026 tau corrections (ID SF, ES, e/mu fake SF, trigger)
+                    # are marked unavailable ("Not available yet"). This reuses the 2024/2025
+                    # json as a placeholder; replace once TauPOG publishes 2026 corrections.
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
                 }
             ),
@@ -2613,14 +2620,77 @@ def build_config(
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
                 if int(era[:4]) < 2024:
-                    with defaults(name=f"vsJetDM{dm}", shift_key=f"tau_id_vsjet_DM{dm}"):
-                        add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]) 
-                        add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                    # NOTE: for eras before 2024 the "DeepTau2018v2p5VSjet"
+                    # correctionlib json (flag="dm") does *not* provide plain
+                    # "nom"/"up"/"down" categories for the "syst" input. It
+                    # instead only defines the individual, named uncertainty
+                    # sources (stat1_dm<DM>, stat2_dm<DM>, syst_alleras,
+                    # syst_<era>, syst_TES_<era>_dm<DM>) with a "default"
+                    # fallback formula that returns the nominal SF for *any*
+                    # unmatched string, including "up"/"down". Passing plain
+                    # "up"/"down" (as previously done here) therefore silently
+                    # evaluated to the nominal SF for both directions, i.e. the
+                    # systematic had no effect at all. We now pass the exact
+                    # json keys for each individual uncertainty source, as
+                    # documented on the TauPOG Wiki ("Run 2" recipe, reused
+                    # for 2022/2023): https://tau-wiki.docs.cern.ch (higher
+                    # precedence than the outdated CMS TWiki TauIDRecommendationForRun3 page).
+                    era_key = era[:4] + "_" + era[4:]  # e.g. 2022preEE -> 2022_preEE
+                    with defaults(shift_key=f"tau_id_vsjet_DM{dm}"):
+                        with defaults(
+                            # stat uncertainties are decorrelated per DM *and*
+                            # per era (2 x 4 x 4 = 16 nuisances in total, per
+                            # the TauPOG Wiki), hence era is part of the name.
+                            name=f"vsJetStat1{era}DM{dm}",
+                            shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"},
+                        ):
+                            add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
+                            add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                        with defaults(
+                            name=f"vsJetStat2{era}DM{dm}",
+                            shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"},
+                        ):
+                            add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
+                            add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                        with defaults(
+                            name=f"vsJetSystTES{era}DM{dm}",
+                            shift_map={
+                                "Up": f"syst_TES_{era_key}_dm{dm}_up",
+                                "Down": f"syst_TES_{era_key}_dm{dm}_down",
+                            },
+                        ):
+                            add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
+                            add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                 else:
                     for pt in ["20to40", "40to60", "60toInf"]:
-                        with defaults(name=f"vsJetDM{dm}pT{pt}", shift_key=f"tau_od_vsjet_DM{dm}_pt{pt}"):
-                            add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF]) 
+                        with defaults(name=f"vsJetDM{dm}pT{pt}", shift_key=f"tau_id_vsjet_DM{dm}_pt{pt}"):
+                            add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF])
                             add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
+            if int(era[:4]) < 2024:
+                # syst_alleras: fully correlated across DMs and (by construction
+                # of reusing the same shift name in every era's config) across
+                # eras as well.
+                era_key = era[:4] + "_" + era[4:]
+                dm_keys = ["tau_id_vsjet_DM0", "tau_id_vsjet_DM1", "tau_id_vsjet_DM10", "tau_id_vsjet_DM11"]
+                with defaults(
+                    name="vsJetSystAllEras",
+                    shift_key=dm_keys,
+                    shift_map={"Up": ["syst_alleras_up"] * 4, "Down": ["syst_alleras_down"] * 4},
+                ):
+                    add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
+                    add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                # syst_<era>: correlated across DMs, uncorrelated across eras
+                # (implicit since era_key/name differ per era's config).
+                with defaults(
+                    name=f"vsJetSyst{era}",
+                    shift_key=dm_keys,
+                    shift_map={
+                        "Up": [f"syst_{era_key}_up"] * 4,
+                        "Down": [f"syst_{era_key}_down"] * 4,
+                    },
+                ):
+                    add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
+                    add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
             # vs Muon
             for wheel in range(1, 6):
                 with defaults(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
