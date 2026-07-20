@@ -577,7 +577,8 @@ btaggingWP_SF = Producer(
         "{btag_eff_file}",
         "{btag_eff_name}",
         "{btag_eff_sample_type}",
-        "{btag_sf_variation}",
+        "{btag_sf_variation_bc}",
+        "{btag_sf_variation_lf}",
         "{btag_wp}")''',
     input=[
         q.jet_pt_corrected,

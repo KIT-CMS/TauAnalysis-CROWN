@@ -52,15 +52,37 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 add_shift(name="btagUncCFerr1", shift_map={"Up": "up_cferr1", "Down": "down_cferr1"})
                 add_shift(name="btagUncCFerr2", shift_map={"Up": "up_cferr2", "Down": "down_cferr2"})
         else:
+            # BTV fixedWP SFs: b/c-flavor (mujets/comb) and light-flavor
+            # (incl) scale factors are measured independently and have
+            # independent (uncorrelated) uncertainty sources, so each is
+            # varied via its own "btag_sf_variation_bc"/"btag_sf_variation_lf"
+            # knob while the other flavor group's variation is kept at
+            # "central" (via shift_key being a list of both config keys, cf.
+            # https://btv-wiki.docs.cern.ch/ScaleFactors/#sf-uncertainties-and-correlations-across-years).
             with defaults(
                 scopes=("mt", "et", "tt"),
-                shift_key="btag_sf_variation",
                 producers=[scalefactors.btaggingWP_SF],
             ):
-                add_shift(name="btagUncBCcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
-                add_shift(name="btagUncBCuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
-                add_shift(name="btagUncLcorrelated", shift_map={"Up": "up_correlated", "Down": "down_correlated"})
-                add_shift(name="btagUncLuncorrelated", shift_map={"Up_uncorrelated": "up", "Down": "down_uncorrelated"})
+                add_shift(
+                    name="btagUncBCcorrelated",
+                    shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
+                    shift_map={"Up": ["up_correlated", "central"], "Down": ["down_correlated", "central"]},
+                )
+                add_shift(
+                    name="btagUncBCuncorrelated",
+                    shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
+                    shift_map={"Up": ["up_uncorrelated", "central"], "Down": ["down_uncorrelated", "central"]},
+                )
+                add_shift(
+                    name="btagUncLcorrelated",
+                    shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
+                    shift_map={"Up": ["central", "up_correlated"], "Down": ["central", "down_correlated"]},
+                )
+                add_shift(
+                    name="btagUncLuncorrelated",
+                    shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
+                    shift_map={"Up": ["central", "up_uncorrelated"], "Down": ["central", "down_uncorrelated"]},
+                )
 
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
             add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
