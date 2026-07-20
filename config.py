@@ -25,6 +25,23 @@ from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProduce
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
+# Era tokens matching the CMS Common Analysis Tools systematics_master.yml
+# convention (e.g. CMS_res_e_2022EE, CMS_scale_t_..._2023BPix), used to tag
+# shift names for uncertainties that must be decorrelated across eras.
+ERA_MAP = {
+    "2016preVFP": "2016preVFP",
+    "2016postVFP": "2016postVFP",
+    "2017": "2017",
+    "2018": "2018",
+    "2022preEE": "2022",
+    "2022postEE": "2022EE",
+    "2023preBPix": "2023",
+    "2023postBPix": "2023BPix",
+    "2024": "2024",
+    "2025": "2025",
+    "2026": "2026",
+}
+
 
 def build_config(
     era: str,
@@ -46,6 +63,8 @@ def build_config(
     )
 
     measure_btag_efficiency = False
+
+    era_tag = ERA_MAP[era]
 
     ###########################
     ####### Parameters ########
@@ -2349,8 +2368,11 @@ def build_config(
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name="muonEsScale", shift_map={"Up": "ScaleUp", "Down": "ScaleDown"})
-        add_shift(name="muonEsReso", shift_map={"Up": "ResoUp", "Down": "ResoDown"})
+        # Per systematics_master.yml (CMS_scale_m_<era>), muon energy scale is
+        # decorrelated across eras; era_tag is embedded in the name so each
+        # era's build_config invocation yields a distinct nuisance.
+        add_shift(name=f"muonEsScale_{era_tag}", shift_map={"Up": "ScaleUp", "Down": "ScaleDown"})
+        add_shift(name=f"muonEsReso_{era_tag}", shift_map={"Up": "ResoUp", "Down": "ResoDown"})
 
     #########################
     # Electron energy correction shifts
@@ -2362,8 +2384,10 @@ def build_config(
             producers=[electrons.ElectronPtCorrectionMC_v9],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
-            add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-            add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
+            # Per systematics_master.yml (CMS_res_e_<era>/CMS_scale_e_<era>),
+            # electron energy resolution/scale is decorrelated across eras.
+            add_shift(name=f"eleEsReso_{era_tag}", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+            add_shift(name=f"eleEsScale_{era_tag}", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
     else:
         with defaults(
             scopes="global",
@@ -2371,14 +2395,18 @@ def build_config(
             producers=[electrons.ElectronPtCorrectionMC],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
-            add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-            add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
+            # Per systematics_master.yml (CMS_res_e_<era>/CMS_scale_e_<era>),
+            # electron energy resolution/scale is decorrelated across eras.
+            add_shift(name=f"eleEsReso_{era_tag}", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+            add_shift(name=f"eleEsScale_{era_tag}", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
 
     #########################
     # Electron ID shifts
     #########################
+    # Per systematics_master.yml (CMS_eff_e_id_<era>), the electron ID SF
+    # uncertainty is decorrelated across eras.
     add_shift(
-        name="electronIdSF",
+        name=f"electronIdSF_{era_tag}",
         scopes=("et", "ee", "em"),
         shift_key="ele_sf_variation",
         shift_map={"Up":"sfup", "Down":"sfdown"},
@@ -2479,8 +2507,10 @@ def build_config(
     #         exclude_samples=["data", "embedding", "embedding_mc"],
     #     )
     # else:
+    # Per systematics_master.yml (CMS_pileup_<era>), pileup reweighting is
+    # decorrelated across eras.
     add_shift(
-        name=f"PileUp",
+        name=f"PileUp_{era_tag}",
         shift_key="PU_reweighting_file_data",
         shift_map={"Up": "up", "Down": "down"},
         scopes="global",
@@ -2524,6 +2554,11 @@ def build_config(
     # reflect the recommendation; instead one fully-uncorrelated shift is added
     # per fit-parameter uncertainty ("upN"/"downN"), split by DY sample order so
     # that only the number of uncertainties valid for that order is used.
+    # Each per-fit-parameter uncertainty's name embeds era_tag so that, in
+    # addition to being uncorrelated from each other (see above), they are
+    # also uncorrelated across eras: without the era tag, "zPtReweightWeight_
+    # unc1" from every era's build_config invocation would collide into a
+    # single, unintentionally era-correlated nuisance name downstream.
     DY_PTLL_N_UNC = {"LO": 8, "NLO": 10, "NNLO": 9}
     if int(era[:4]) >= 2022:
         # NNLO (powheg) samples
@@ -2532,7 +2567,7 @@ def build_config(
                 scopes=("et", "mt", "tt", "em", "ee", "mm"),
                 producers=[event.ZPtReweighting],
                 shift_key="zpt_variation",
-                name=f"zPtReweightWeight_unc{n}",
+                name=f"zPtReweightWeight_unc{n}_{era_tag}",
                 shift_map={"Up": f"up{n}", "Down": f"down{n}"},
                 samples=["dyjets_powheg"],
             )
@@ -2542,7 +2577,7 @@ def build_config(
                 scopes=("et", "mt", "tt", "em", "ee", "mm"),
                 producers=[event.ZPtReweighting],
                 shift_key="zpt_variation",
-                name=f"zPtReweightWeight_unc{n}",
+                name=f"zPtReweightWeight_unc{n}_{era_tag}",
                 shift_map={"Up": f"up{n}", "Down": f"down{n}"},
                 samples=["dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
             )
@@ -2579,24 +2614,24 @@ def build_config(
                 with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
-                        add_shift(name=f"tauEsDM{dm}", shift_key=f"tau_es_DM{dm}")
+                        add_shift(name=f"tauEsDM{dm}_{era_tag}", shift_key=f"tau_es_DM{dm}")
                         # ele fake
-                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel_{era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap_{era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
-                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"tauMuFakeEsDM{dm}_{era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
         elif int(era[:4]) >= 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
                         for pt in ["20to40", "40to60", "60toInf"]:
-                            add_shift(name=f"tauEsDM{dm}pT{pt}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                            add_shift(name=f"tauEsDM{dm}pT{pt}_{era_tag}", shift_key=f"tau_es_DM{dm}_pt{pt}")
                         # ele fake
-                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel_{era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap_{era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
-                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"tauMuFakeEsDM{dm}_{era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
 
     #########################
     # TauID scale factor shifts
@@ -2635,10 +2670,10 @@ def build_config(
         else:
             for dm in ["0", "1", "10", "11"]:
                 # vs Ele
-                with defaults(name=f"vsEleDM{dm}Barrel", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
+                with defaults(name=f"vsEleDM{dm}Barrel_{era_tag}", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
-                with defaults(name=f"vsEleDM{dm}Endcap", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
+                with defaults(name=f"vsEleDM{dm}Endcap_{era_tag}", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
@@ -2664,19 +2699,19 @@ def build_config(
                             # stat uncertainties are decorrelated per DM *and*
                             # per era (2 x 4 x 4 = 16 nuisances in total, per
                             # the TauPOG Wiki), hence era is part of the name.
-                            name=f"vsJetStat1{era}DM{dm}",
+                            name=f"vsJetStat1{era_tag}DM{dm}",
                             shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"},
                         ):
                             add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
                             add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                         with defaults(
-                            name=f"vsJetStat2{era}DM{dm}",
+                            name=f"vsJetStat2{era_tag}DM{dm}",
                             shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"},
                         ):
                             add_shift(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
                             add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                         with defaults(
-                            name=f"vsJetSystTES{era}DM{dm}",
+                            name=f"vsJetSystTES{era_tag}DM{dm}",
                             shift_map={
                                 "Up": f"syst_TES_{era_key}_dm{dm}_up",
                                 "Down": f"syst_TES_{era_key}_dm{dm}_down",
@@ -2705,7 +2740,7 @@ def build_config(
                 # syst_<era>: correlated across DMs, uncorrelated across eras
                 # (implicit since era_key/name differ per era's config).
                 with defaults(
-                    name=f"vsJetSyst{era}",
+                    name=f"vsJetSyst{era_tag}",
                     shift_key=dm_keys,
                     shift_map={
                         "Up": [f"syst_{era_key}_up"] * 4,
@@ -2716,7 +2751,7 @@ def build_config(
                     add_shift(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
             # vs Muon
             for wheel in range(1, 6):
-                with defaults(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
+                with defaults(name=f"vsMuWheel{wheel}_{era_tag}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsMuTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsMuTauID_SF])
 
