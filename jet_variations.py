@@ -7,7 +7,7 @@ from .scripts.CROWNWrapper import (defaults,
                                    get_adjusted_add_shift_SystematicShift)
 
 # Map internal era names to JERC JSON era names for JERC sources
-JERC_ERA_MAP = {
+ERA_MAP = {
     "2016preVFP":"2016",
     "2016postVFP":"2016", 
     "2017":"2017", 
@@ -18,6 +18,7 @@ JERC_ERA_MAP = {
     "2023postBPix": "2023BPix",
     "2024": "2024",
     "2025": "2025",
+    "2026": "2026",
 }
 
 # for btag jes sources look here https://docs.google.com/spreadsheets/d/1Feuj1n0MdotcPq19Mht7SUIgvkXkA4hiB0BxEuBShLw/edit?gid=1345121349#gid=1345121349
@@ -29,12 +30,16 @@ JERC_ERA_MAP = {
 
 def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
     add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+    era_tag = ERA_MAP[era]
 
     class JES_CONFIG:
         # no regrouped btag variations for 2022 and 2023, for 2024 it's a different scheme in any case
         # regrouped jes are available for all eras
-        REGROUPED = True if int(era[:4])<2022 else False
-        jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if int(era[:4])<2022 else jets.JetEnergyCorrection
+        # Run 3 (>=2022) uses the JERC-recommended reduced/regrouped JES source
+        # scheme ("preferred configuration" below); legacy Run 2 (<2022) keeps
+        # the full individual JES source breakdown.
+        REGROUPED = True if int(era[:4])>=2022 else False
+        jet_pt_correction_producer = jets.JetEnergyCorrection_v12 if int(era[:4])<2022 else jets.JetEnergyCorrection
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if int(era[:4]) < 2022:
@@ -43,14 +48,14 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 shift_key="btag_sf_variation",
                 producers=[scalefactors.btagging_SF],
             ):
-                add_shift(name="btagUncHF", shift_map={"Up": "up_hf", "Down": "down_hf"})
-                add_shift(name="btagUncHFstats1", shift_map={"Up": "up_hfstats1", "Down": "down_hfstats1"})
-                add_shift(name="btagUncHFstats2", shift_map={"Up": "up_hfstats2", "Down": "down_hfstats2"})
-                add_shift(name="btagUncLF", shift_map={"Up": "up_lf", "Down": "down_lf"})
-                add_shift(name="btagUncLFstats1", shift_map={"Up": "up_lfstats1", "Down": "down_lfstats1"})
-                add_shift(name="btagUncLFstats2", shift_map={"Up": "up_lfstats2", "Down": "down_lfstats2"})
-                add_shift(name="btagUncCFerr1", shift_map={"Up": "up_cferr1", "Down": "down_cferr1"})
-                add_shift(name="btagUncCFerr2", shift_map={"Up": "up_cferr2", "Down": "down_cferr2"})
+                add_shift(name="CMS_btag_fullShape_hf", shift_map={"Up": "up_hf", "Down": "down_hf"})
+                add_shift(name=f"CMS_btag_fullShape_hfstats1_{era_tag}", shift_map={"Up": "up_hfstats1", "Down": "down_hfstats1"})
+                add_shift(name=f"CMS_btag_fullShape_hfstats2_{era_tag}", shift_map={"Up": "up_hfstats2", "Down": "down_hfstats2"})
+                add_shift(name="CMS_btag_fullShape_lf", shift_map={"Up": "up_lf", "Down": "down_lf"})
+                add_shift(name=f"CMS_btag_fullShape_lfstats1_{era_tag}", shift_map={"Up": "up_lfstats1", "Down": "down_lfstats1"})
+                add_shift(name=f"CMS_btag_fullShape_lfstats2_{era_tag}", shift_map={"Up": "up_lfstats2", "Down": "down_lfstats2"})
+                add_shift(name="CMS_btag_fullShape_cferr1", shift_map={"Up": "up_cferr1", "Down": "down_cferr1"})
+                add_shift(name="CMS_btag_fullShape_cferr2", shift_map={"Up": "up_cferr2", "Down": "down_cferr2"})
         else:
             # BTV fixedWP SFs: b/c-flavor (mujets/comb) and light-flavor
             # (incl) scale factors are measured independently and have
@@ -64,36 +69,36 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 producers=[scalefactors.btaggingWP_SF],
             ):
                 add_shift(
-                    name="btagUncBCcorrelated",
+                    name="CMS_btag_fixedWP_bc_correlated",
                     shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
                     shift_map={"Up": ["up_correlated", "central"], "Down": ["down_correlated", "central"]},
                 )
                 add_shift(
-                    name="btagUncBCuncorrelated",
+                    name=f"CMS_btag_fixedWP_bc_uncorrelated_{era_tag}",
                     shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
                     shift_map={"Up": ["up_uncorrelated", "central"], "Down": ["down_uncorrelated", "central"]},
                 )
                 add_shift(
-                    name="btagUncLcorrelated",
+                    name="CMS_btag_fixedWP_light_correlated",
                     shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
                     shift_map={"Up": ["central", "up_correlated"], "Down": ["central", "down_correlated"]},
                 )
                 add_shift(
-                    name="btagUncLuncorrelated",
+                    name=f"CMS_btag_fixedWP_light_uncorrelated_{era_tag}",
                     shift_key=["btag_sf_variation_bc", "btag_sf_variation_lf"],
                     shift_map={"Up": ["central", "up_uncorrelated"], "Down": ["central", "down_uncorrelated"]},
                 )
 
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
-            add_shift(name="jerUnc", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
+            add_shift(name=f"CMS_res_j_{era_tag}", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
             if era == "2018":  # --- HEM 15/16 issue ---
                 add_shift(
-                    name="jesUncHEMIssue",
+                    name="CMS_scale_j_HEMIssue_2018",
                     shift_key=["jet_jes_shift", "jet_jes_source"],
                     shift_map={"Up": [1, "HEMIssue"], "Down": [-1, "HEMIssue"]},
                 )
 
-        with defaults(name="jesUncTotal"):  # two components of jesUncTotal
+        with defaults(name="CMS_scale_j_Total"):  # two components of CMS_scale_j_Total
             add_shift(
                 shift_key=["jet_jes_shift", "jet_jes_source"],
                 shift_map={"Up": [1, "Total"], "Down": [-1, "Total"]},
@@ -110,7 +115,7 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
 
         if not JES_CONFIG.REGROUPED:
             for name in [
-                # --- jesUncAbsolute ---
+                # --- CMS_scale_j_Absolute ---
                 "SinglePionECAL",
                 "SinglePionHCAL",
                 "AbsoluteMPFBias",
@@ -119,38 +124,38 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 "PileUpDataMC",
                 "RelativeFSR",
                 "PileUpPtRef",
-                # --- jesUncAbsolute{era} ---
+                # --- CMS_scale_j_Absolute_{era} ---
                 "AbsoluteStat",
                 "TimePtEta",
                 "RelativeStatFSR",
-                # --- jesUncFlavorQCD ---
+                # --- CMS_scale_j_FlavorQCD ---
                 "FlavorQCD",
-                # --- jesUncBBEC1 ---
+                # --- CMS_scale_j_BBEC1 ---
                 "PileUpPtEC1",
                 "PileUpPtBB",
                 "RelativePtBB",
-                # --- jesUncBBEC1{era} ---
+                # --- CMS_scale_j_BBEC1_{era} ---
                 "RelativeJEREC1",
                 "RelativePtEC1",
                 "RelativeStatEC",
-                # --- jesUncHF ---
+                # --- CMS_scale_j_HF ---
                 "RelativePtHF",
                 "PileUpPtHF",
                 "RelativeJERHF",
-                # --- jesUncHF{era} ---
+                # --- CMS_scale_j_HF_{era} ---
                 "RelativeStatHF",
-                # --- jesUncEC2 ---
+                # --- CMS_scale_j_EC2 ---
                 "PileUpPtEC2",
-                # --- jesUncEC2{era} ---
+                # --- CMS_scale_j_EC2_{era} ---
                 "RelativeJEREC2",
                 "RelativePtEC2",
-                # --- jesUncRelativeBal ---
+                # --- CMS_scale_j_RelativeBal ---
                 "RelativeBal",
-                # --- jesUncRelativeSample{era} ---
+                # --- CMS_scale_j_RelativeSample_{era} ---
                 "RelativeSample",
             ]:
-                # two components of jesUnc{name}
-                with defaults(name=f"jesUnc{name}"):
+                # two components of CMS_scale_j_{name}
+                with defaults(name=f"CMS_scale_j_{name}"):
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_source"],
                         shift_map={"Up": [1, name], "Down": [-1, name]},
@@ -174,13 +179,13 @@ def add_jetVariations(configuration: Configuration, era: str) -> Configuration:
                 ("EC2", "Regrouped_EC2"),
                 ("RelativeBal", "Regrouped_RelativeBal"),
                 # --- Yearly variations ---
-                ("Absolute", lambda era: f"Regrouped_Absolute_{JERC_ERA_MAP[era]}", era),
-                ("BBEC1", lambda era: f"Regrouped_BBEC1_{JERC_ERA_MAP[era]}", era),
-                ("HF", lambda era: f"Regrouped_HF_{JERC_ERA_MAP[era]}", era),
-                ("EC2", lambda era: f"Regrouped_EC2_{JERC_ERA_MAP[era]}", era),
-                ("RelativeSample", lambda era: f"Regrouped_RelativeSample_{JERC_ERA_MAP[era]}", era),
+                ("Absolute", lambda era: f"Regrouped_Absolute_{ERA_MAP[era]}", era),
+                ("BBEC1", lambda era: f"Regrouped_BBEC1_{ERA_MAP[era]}", era),
+                ("HF", lambda era: f"Regrouped_HF_{ERA_MAP[era]}", era),
+                ("EC2", lambda era: f"Regrouped_EC2_{ERA_MAP[era]}", era),
+                ("RelativeSample", lambda era: f"Regrouped_RelativeSample_{ERA_MAP[era]}", era),
             ]:
-                with defaults(name=f"jesUnc{name}Year" if is_yearly else f"jesUnc{name}"):
+                with defaults(name=f"CMS_scale_j_{name}_{era_tag}" if is_yearly else f"CMS_scale_j_{name}"):
                     JES_source_val = JES_source(era) if is_yearly else JES_source
                     add_shift(
                         shift_key=["jet_jes_shift", "jet_jes_source"],
