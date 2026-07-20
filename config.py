@@ -591,6 +591,9 @@ def build_config(
                 default=True,
             ),
             "propagateJets": True,
+            # propagate the (NanoAOD-derived) unclustered energy variation onto
+            # the analysis MET, see met.ApplyUnclusteredMetShift
+            "propagateUnclustered": True,
             # recoil corrections
             "recoil_corrections_file": EraModifier(
                 {
@@ -624,6 +627,16 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
+            # Recoil response/resolution uncertainty (Run3, correctionlib-based).
+            # Per the HLepRare recoil documentation, these uncertainties must be
+            # evaluated on top of the nominally (QuantileMapHist) recoil-corrected
+            # MET, not on the pre-recoil-correction MET. This is a separate
+            # producer (met.ApplyRecoilUncertainty) chained after the nominal
+            # recoil correction; applyRecoilUncertainty defaults to False (no-op)
+            # and is only switched on for the metRecoilResponse/metRecoilResolution
+            # shifts, see below.
+            "applyRecoilUncertainty": False,
+            "recoil_uncertainty_variation": "RespUp",
             "applyRecoilCorrections": SampleModifier( #apply only to single boson processes
                 {
                     "dyjets": True,
@@ -2427,20 +2440,30 @@ def build_config(
                     "Down": [True, False, False, True],
                 },
             )
-    else: 
+    else:
+        # NOTE: per the HLepRare recoil documentation, the Response/Resolution
+        # uncertainty must be evaluated on the MET *after* the nominal
+        # (QuantileMapHist) recoil correction has already been applied (H_para/
+        # H_perp are computed from the QuantileMapHist-corrected MET, see the
+        # "Uncertainty description" / example snippet on the recoil corrections
+        # page). We therefore only toggle the dedicated ApplyRecoilUncertainty
+        # producer (chained after met.ApplyRecoilCorrections, which always keeps
+        # using the nominal "QuantileMapHist" method) instead of switching the
+        # method of ApplyRecoilCorrections itself, which would incorrectly
+        # evaluate the uncertainty on the pre-recoil-correction MET.
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
-            producers=[met.ApplyRecoilCorrections],
+            producers=[met.ApplyRecoilUncertainty],
             exclude_samples=["data", "embedding", "embedding_mc"],
-            shift_key=["recoil_method", "recoil_variation"]
+            shift_key=["applyRecoilUncertainty", "recoil_uncertainty_variation"]
         ):
             add_shift(
                 name="metRecoilResponse",
-                shift_map={"Up": ["Uncertainty", "RespUp"], "Down": ["Uncertainty", "RespDown"]}
+                shift_map={"Up": [True, "RespUp"], "Down": [True, "RespDown"]}
             )
             add_shift(
                 name="metRecoilResolution",
-                shift_map={"Up": ["Uncertainty", "ResolUp"], "Down": ["Uncertainty", "ResolDown"]}
+                shift_map={"Up": [True, "ResolUp"], "Down": [True, "ResolDown"]}
             )
 
     #########################
