@@ -26,6 +26,21 @@ from code_generation.systematics import SystematicShift, SystematicShiftByQuanti
 from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
 
 
+ERA_MAP = {
+    "2016preVFP":"2016",
+    "2016postVFP":"2016", 
+    "2017":"2017", 
+    "2018":"2018",
+    "2022preEE": "2022",
+    "2022postEE": "2022EE",
+    "2023preBPix": "2023",
+    "2023postBPix": "2023BPix",
+    "2024": "2024",
+    "2025": "2025",
+    "2026": "2026",
+}
+
+
 def build_config(
     era: str,
     sample: str,
@@ -46,6 +61,8 @@ def build_config(
     )
 
     measure_btag_efficiency = False
+
+    era_tag = ERA_MAP[era]
 
     ###########################
     ####### Parameters ########
@@ -877,7 +894,8 @@ def build_config(
             ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",  # correction for mediumId WP
             "muon_iso_sf_name": "NUM_TightPFIso_DEN_MediumID",  # correction for TightPFIso WP (PF isolation < 0.15)
-            "muon_sf_variation": "nominal",  # "systup"/"systdown" are up/down variations
+            "muon_id_variation": "nominal",  
+            "muon_iso_variation": "nominal",
 
             #run 2 scale factors from embedding framework
             "mc_muon_sf_file": EraModifier(
@@ -2295,16 +2313,16 @@ def build_config(
     #########################
     # LHE Scale Weight variations
     #########################
-    if "ggh" in sample or "qqh" in sample:
-        with defaults(scopes="global"):
-            with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
-                add_shift(name="muRWeight", shift_key="muR", producers=[event.LHE_Scale_weight])
-                add_shift(name="muFWeight", shift_key="muF", producers=[event.LHE_Scale_weight])
-                add_shift(name="FsrWeight", shift_key="fsr", producers=[event.PS_weight])
-                add_shift(name="IsrWeight", shift_key="isr", producers=[event.PS_weight])
+    with defaults(scopes="global"):
+        if "ggh" in sample or "rem" in sample or "vbf":
+            with defaults(shift_map={"Up": 2.0, "Down": 0.5}):    
+                add_shift(name="QCDscale_ren", shift_key="muR", producers=[event.LHE_Scale_weight])
+                add_shift(name="QCDscale_fac", shift_key="muF", producers=[event.LHE_Scale_weight])
+                add_shift(name="ps_fsr", shift_key="fsr", producers=[event.PS_weight])
+                add_shift(name="ps_isr", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):
-                add_shift(name="PdfWeight", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
-                add_shift(name="AlphaSWeight", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
+                add_shift(name="pdf_Higgs", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
+                add_shift(name="pdf_alphas", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
     
     #########################
     # Muon scale and resolution correction shifts
@@ -2315,8 +2333,68 @@ def build_config(
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name="muonEsScale", shift_map={"Up": "ScaleUp", "Down": "ScaleDown"})
-        add_shift(name="muonEsReso", shift_map={"Up": "ResoUp", "Down": "ResoDown"})
+        add_shift(name="CMS_scale_m", shift_map={"Up": "ScaleUp", "Down": "ScaleDown"})
+        add_shift(name="CMS_res_m", shift_map={"Up": "ResoUp", "Down": "ResoDown"})
+
+    #########################
+    # Muon ID shifts
+    #########################
+    with defaults(scopes=("mt", "mm")):
+        add_shift(
+            name="CMS_eff_m_id_syst",
+            shift_key="muon_id_variation",
+            shift_map={"Up":"systup", "Down":"systdown"},
+            producers=[scalefactors.Muon_1_ID_SF],
+        )
+        add_shift(
+            name=f"CMS_eff_m_id_stat_{era_tag}",
+            shift_key="muon_id_variation",
+            shift_map={"Up":"statup", "Down":"statdown"},
+            producers=[scalefactors.Muon_1_ID_SF],
+        )
+    with defaults(scopes=("mm", "em")):
+        add_shift(
+            name="CMS_eff_m_id_syst",
+            shift_key="muon_id_variation",
+            shift_map={"Up":"systup", "Down":"systdown"},
+            producers=[scalefactors.Muon_2_ID_SF],
+        )
+        add_shift(
+            name=f"CMS_eff_m_id_stat_{era_tag}",
+            shift_key="muon_id_variation",
+            shift_map={"Up":"statup", "Down":"statdown"},
+            producers=[scalefactors.Muon_2_ID_SF],
+        )
+
+    #########################
+    # Muon iso shifts
+    #########################
+    with defaults(scopes=("mt", "mm")):
+        add_shift(
+            name="CMS_eff_m_iso_syst",
+            shift_key="muon_iso_variation",
+            shift_map={"Up":"systup", "Down":"systdown"},
+            producers=[scalefactors.Muon_1_ID_SF],
+        )
+        add_shift(
+            name=f"CMS_eff_m_iso_stat_{era_tag}",
+            shift_key="muon_iso_variation",
+            shift_map={"Up":"statup", "Down":"statdown"},
+            producers=[scalefactors.Muon_1_ID_SF],
+        )
+    with defaults(scopes=("mm", "em")):
+        add_shift(
+            name="CMS_eff_m_iso_syst",
+            shift_key="muon_iso_variation",
+            shift_map={"Up":"systup", "Down":"systdown"},
+            producers=[scalefactors.Muon_2_ID_SF],
+        )
+        add_shift(
+            name=f"CMS_eff_m_iso_stat_{era_tag}",
+            shift_key="muon_iso_variation",
+            shift_map={"Up":"statup", "Down":"statdown"},
+            producers=[scalefactors.Muon_2_ID_SF],
+        )
 
     #########################
     # Electron energy correction shifts
@@ -2328,8 +2406,8 @@ def build_config(
             producers=[electrons.ElectronPtCorrectionMC_v9],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
-            add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-            add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
+            add_shift(name="CMS_res_e", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+            add_shift(name="CMS_scale_e", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
     else:
         with defaults(
             scopes="global",
@@ -2337,14 +2415,14 @@ def build_config(
             producers=[electrons.ElectronPtCorrectionMC],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
-            add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-            add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
+            add_shift(name="CMS_res_e", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+            add_shift(name="CMS_scale_e", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
 
     #########################
     # Electron ID shifts
     #########################
     add_shift(
-        name="electronIdSF",
+        name="CMS_eff_e_id",
         scopes=("et", "ee", "em"),
         shift_key="ele_sf_variation",
         shift_map={"Up":"sfup", "Down":"sfdown"},
@@ -2356,7 +2434,7 @@ def build_config(
     #########################
     configuration.add_shift(
         SystematicShiftByQuantity(
-            name="metUnclusteredEnUp",
+            name="CMS_scale_met_unclustered_energyUp",
             quantity_change={
                 nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredUp",
                 nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredUp",
@@ -2367,7 +2445,7 @@ def build_config(
     )
     configuration.add_shift(
         SystematicShiftByQuantity(
-            name="metUnclusteredEnDown",
+            name="CMS_scale_met_unclustered_energyDown",
             quantity_change={
                 nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
                 nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
@@ -2393,14 +2471,14 @@ def build_config(
             ]
         ):
             add_shift(
-                name="metRecoilResponse",
+                name="CMS_scale_met_recoil_response",
                 shift_map={
                     "Up": [False, True, True, False],
                     "Down": [False, True, False, True],
                 }
             )
             add_shift(
-                name="metRecoilResolution",
+                name="CMS_res_met_recoil_resolution",
                 shift_map={
                     "Up": [True, False, True, False],
                     "Down": [True, False, False, True],
@@ -2414,11 +2492,11 @@ def build_config(
             shift_key=["recoil_method", "recoil_variation"]
         ):
             add_shift(
-                name="metRecoilResponse",
+                name="CMS_scale_met_recoil_response",
                 shift_map={"Up": ["Uncertainty", "RespUp"], "Down": ["Uncertainty", "RespDown"]}
             )
             add_shift(
-                name="metRecoilResolution",
+                name="CMS_res_met_recoil_resolution",
                 shift_map={"Up": ["Uncertainty", "ResolUp"], "Down": ["Uncertainty", "ResolDown"]}
             )
 
@@ -2427,7 +2505,7 @@ def build_config(
     #########################
     # if era == "2025":
     #     add_shift(
-    #         name=f"PileUp",
+    #         name="CMS_pileup",
     #         shift_key="PU_reweighting_variation",
     #         shift_map={"Up": "data/root_pileup/Data_PileUp_2025_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_66p0168.root"},
     #         scopes="global",
@@ -2436,7 +2514,7 @@ def build_config(
     #     )
     # else:
     add_shift(
-        name=f"PileUp",
+        name="CMS_pileup",
         shift_key="PU_reweighting_file_data",
         shift_map={"Up": "up", "Down": "down"},
         scopes="global",
@@ -2450,7 +2528,7 @@ def build_config(
     if int(era[:4]) < 2018:
         configuration.add_shift(
             SystematicShiftByQuantity(
-                name="prefiringDown",
+                name="CMS_l1_ecal_prefiringDown",
                 quantity_change={
                     nanoAODv9.L1PreFiringWeight_Nom: "L1PreFiringWeight_Dn",
                 },
@@ -2459,7 +2537,7 @@ def build_config(
         )
         configuration.add_shift(
             SystematicShiftByQuantity(
-                name="prefiringUp",
+                name="CMS_l1_ecal_prefiringUp",
                 quantity_change={
                     nanoAODv9.L1PreFiringWeight_Nom: "L1PreFiringWeight_Up",
                 },
@@ -2475,7 +2553,7 @@ def build_config(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[event.ZPtReweighting],
             shift_key="zpt_variation",
-            name="zPtReweightWeight",
+            name="CMS_htt_zptReweight",
             shift_map={"Up":"up", "Down":"down"},
             samples=["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
         )
@@ -2486,7 +2564,7 @@ def build_config(
     with defaults(shift_map={"Down": "down", "Up": "up"}):
         if ("dyjets" in sample or "electroweak_boson" in sample) and int(era[:4]) < 2022:
             add_shift(
-                name="tauMuFakeEs",
+                name="CMS_scale_t_genMuon",
                 shift_key="tau_mufake_es",
                 scopes="mt",
                 producers=[taus.TauPtCorrection_muFake],
@@ -2495,41 +2573,46 @@ def build_config(
                 scopes="et",
                 producers=[taus.TauPtCorrection_eleFake],
             ):
-                add_shift(name="tauEleFakeEs1prongBarrel", shift_key="tau_elefake_es_DM0_barrel")
-                add_shift(name="tauEleFakeEs1prongEndcap", shift_key="tau_elefake_es_DM0_endcap")
-                add_shift(name="tauEleFakeEs1prong1pizeroBarrel", shift_key="tau_elefake_es_DM1_barrel")
-                add_shift(name="tauEleFakeEs1prong1pizeroEndcap", shift_key="tau_elefake_es_DM1_endcap")
+                add_shift(name="CMS_scale_t_DM0_genElectron_barrel", shift_key="tau_elefake_es_DM0_barrel")
+                add_shift(name="CMS_scale_t_DM0_genElectron_endcap", shift_key="tau_elefake_es_DM0_endcap")
+                add_shift(name="CMS_scale_t_DM1_genElectron_barrel", shift_key="tau_elefake_es_DM1_barrel")
+                add_shift(name="CMS_scale_t_DM1_genElectron_endcap", shift_key="tau_elefake_es_DM1_endcap")
         elif int(era[:4]) < 2022:
             with defaults(scopes=("et", "mt", "tt")):
                 # dm and pt scheme
                 with defaults(producers=[taus.TauEnergyCorrection_ES_dm_pt_binned]):
-                    for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                    for dm, dm_num in [
+                        ("1prong0pizero", "0"),
+                        ("1prong1pizero", "1"),
+                        ("3prong0pizero", "10"),
+                        ("3prong1pizero", "11"),
+                    ]:
                         for pt in ["20to40", "40toInf"]:
-                            add_shift(name=f"tauEs{dm}{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
+                            add_shift(name=f"CMS_scale_t_DM{dm_num}_genTau_pT{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
         elif int(era[:4]) >= 2022 and int(era[:4]) < 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
-                        add_shift(name=f"tauEsDM{dm}", shift_key=f"tau_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau", shift_key=f"tau_es_DM{dm}")
                         # ele fake
-                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
-                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon", shift_key=f"tau_mufake_es_DM{dm}")
         elif int(era[:4]) >= 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
                         for pt in ["20to40", "40to60", "60toInf"]:
-                            add_shift(name=f"tauEsDM{dm}pT{pt}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                            add_shift(name=f"CMS_scale_t_DM{dm}_genTau_pT{pt}", shift_key=f"tau_es_DM{dm}_pt{pt}")
                         # ele fake
-                        add_shift(name=f"tauEleFakeEsDM{dm}Barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"tauEleFakeEsDM{dm}Endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
-                        add_shift(name=f"tauMuFakeEsDM{dm}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon", shift_key=f"tau_mufake_es_DM{dm}")
 
     #########################
     # TauID scale factor shifts
@@ -2543,50 +2626,55 @@ def build_config(
             with defaults(scopes=("et", "mt")):
                 #dm and pt scheme
                 with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned]):
-                    for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                    for dm, dm_num in [
+                        ("1prong0pizero", "0"),
+                        ("1prong1pizero", "1"),
+                        ("3prong0pizero", "10"),
+                        ("3prong1pizero", "11"),
+                    ]:
                         for pt in ["20to40", "40toInf"]:
-                            add_shift(name=f"vsJetTau{dm}{pt}", shift_key=f"tau_id_vsjet_{dm}{pt}")
+                            add_shift(name=f"CMS_eff_t_DeepTau2017v2p1_VSjet_DM{dm_num}_pT{pt}", shift_key=f"tau_id_vsjet_{dm}{pt}")
                 with defaults(producers=[scalefactors.Tau_2_VsEleTauID_SF_Run2]):
-                    add_shift(name="vsEleBarrel", shift_key="tau_id_vsele_barrel")
-                    add_shift(name="vsEleEndcap", shift_key="tau_id_vsele_endcap")
+                    add_shift(name="CMS_fake_t_DeepTau2017v2p1_VSe_barrel", shift_key="tau_id_vsele_barrel")
+                    add_shift(name="CMS_fake_t_DeepTau2017v2p1_VSe_endcap", shift_key="tau_id_vsele_endcap")
                 with defaults(producers=[scalefactors.Tau_2_VsMuTauID_SF]):
                     for wheel in range(1, 6):
-                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
+                        add_shift(name=f"CMS_fake_t_DeepTau2017v2p1_VSmu_wheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
             with defaults(scopes="tt"):
                 with defaults(producers=[scalefactors.Tau_1_VsJetTauID_SF_v12, scalefactors.Tau_2_VsJetTauID_tt_SF]):
-                    add_shift(name="vsJetTauDM0", shift_key="tau_id_vsjet_DM0")
-                    add_shift(name="vsJetTauDM1", shift_key="tau_id_vsjet_DM1")
-                    add_shift(name="vsJetTauDM10", shift_key="tau_id_vsjet_DM10")
-                    add_shift(name="vsJetTauDM11", shift_key="tau_id_vsjet_DM11")
+                    add_shift(name="CMS_eff_t_DeepTau2017v2p1_VSjet_DM0", shift_key="tau_id_vsjet_DM0")
+                    add_shift(name="CMS_eff_t_DeepTau2017v2p1_VSjet_DM1", shift_key="tau_id_vsjet_DM1")
+                    add_shift(name="CMS_eff_t_DeepTau2017v2p1_VSjet_DM10", shift_key="tau_id_vsjet_DM10")
+                    add_shift(name="CMS_eff_t_DeepTau2017v2p1_VSjet_DM11", shift_key="tau_id_vsjet_DM11")
                 with defaults(producers=[scalefactors.Tau_1_VsEleTauID_SF_Run2, scalefactors.Tau_2_VsEleTauID_SF_Run2]):
-                    add_shift(name="vsEleBarrel", shift_key="tau_id_vsele_barrel")
-                    add_shift(name="vsEleEndcap", shift_key="tau_id_vsele_endcap")
+                    add_shift(name="CMS_fake_t_DeepTau2017v2p1_VSe_barrel", shift_key="tau_id_vsele_barrel")
+                    add_shift(name="CMS_fake_t_DeepTau2017v2p1_VSe_endcap", shift_key="tau_id_vsele_endcap")
                 with defaults(producers=[scalefactors.Tau_1_VsMuTauID_SF, scalefactors.Tau_2_VsMuTauID_SF]):
                     for wheel in range(1, 6):
-                        add_shift(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
-            
+                        add_shift(name=f"CMS_fake_t_DeepTau2017v2p1_VSmu_wheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
+
         else:
             for dm in ["0", "1", "10", "11"]:
                 # vs Ele
-                with defaults(name=f"vsEleDM{dm}Barrel", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_barrel", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
-                with defaults(name=f"vsEleDM{dm}Endcap", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_endcap", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
                 if int(era[:4]) < 2024:
-                    with defaults(name=f"vsJetDM{dm}", shift_key=f"tau_id_vsjet_DM{dm}"):
-                        add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]) 
+                    with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}", shift_key=f"tau_id_vsjet_DM{dm}"):
+                        add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF_v12])
                         add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
                 else:
                     for pt in ["20to40", "40to60", "60toInf"]:
-                        with defaults(name=f"vsJetDM{dm}pT{pt}", shift_key=f"tau_od_vsjet_DM{dm}_pt{pt}"):
-                            add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF]) 
+                        with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_pT{pt}", shift_key=f"tau_od_vsjet_DM{dm}_pt{pt}"):
+                            add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF])
                             add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
             # vs Muon
             for wheel in range(1, 6):
-                with defaults(name=f"vsMuWheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSmu_wheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsMuTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsMuTauID_SF])
 

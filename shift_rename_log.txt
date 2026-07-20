@@ -1,0 +1,207 @@
+Shift renaming log
+==================
+Generated while aligning shift names in config.py, jet_variations.py, and
+tau_triggersetup.py with the CMS Common Analysis Tools naming conventions
+(Conventions - CMS Common Analysis Tools Documentation) and the master
+systematics list (systematics_master.yml), both from
+https://cms-analysis.docs.cern.ch/guidelines/systematics/systematics/
+
+Format: original_name -> new_name   [file]   notes
+
+Convention recap: CMS_<type>_<obj>[_<step>][_<extra>][_<era>], type in
+{eff, scale, res, trigger/trig, fake}, obj in {e, m, t, j, b, g, met}.
+Theory uncertainties use pdf_*, QCDscale_*, ps_isr/ps_fsr, BR_*, UEPS
+(not prefixed with CMS_). Names are kept singular/stem-form wherever the
+code appends "Up"/"Down" automatically via shift_map; where the code
+already bakes "Up"/"Down" into the name explicitly (no shift_map), the
+new name keeps that suffix explicit too, matching the original pattern.
+
+=== config.py ===
+
+LHE scale / PS weight variations (ggH/qqH signal samples only; the same
+add_shift call is used regardless of whether the sample is ggH or qqH, so
+both process tags are combined with "_" as a best-guess placeholder --
+EDGE CASE, may want to split into separate ggH- and qqH-only shifts):
+muRWeight        -> QCDscale_ren_ggH_qqH
+muFWeight        -> QCDscale_fac_ggH_qqH
+FsrWeight        -> ps_fsr_ggH_qqH
+IsrWeight        -> ps_isr_ggH_qqH
+PdfWeight        -> pdf_Higgs_ggH_qqH
+AlphaSWeight     -> pdf_alphas_ggH_qqH
+
+Muon energy scale/resolution:
+muonEsScale      -> CMS_scale_m
+muonEsReso       -> CMS_res_m   (EDGE CASE: master list snippet only shows
+                                  CMS_res_e explicitly; CMS_res_m follows
+                                  the same <type>_<obj> pattern by analogy)
+
+Electron energy scale/resolution (used identically in both the <2022 and
+>=2022 branches):
+eleEsReso        -> CMS_res_e
+eleEsScale       -> CMS_scale_e
+
+Electron ID scale factor:
+electronIdSF     -> CMS_eff_e_id
+
+MET shifts (explicit Up/Down calls, no shift_map -> suffix kept explicit):
+metUnclusteredEnUp     -> CMS_scale_met_unclustered_energyUp
+metUnclusteredEnDown   -> CMS_scale_met_unclustered_energyDown
+
+MET recoil corrections (used identically in Run2 and Run3 branches;
+EDGE CASE: "recoil response/resolution" has no exact master entry, named
+by analogy to CMS_scale_met / MET_resolution class):
+metRecoilResponse    -> CMS_scale_met_recoil_response
+metRecoilResolution  -> CMS_res_met_recoil_resolution
+
+Pileup (both the active call and the commented-out era=="2025" block):
+PileUp           -> CMS_pileup
+
+L1 prefiring (explicit Up/Down; assumed ECAL prefiring since it reads
+nanoAODv9.L1PreFiringWeight_Nom -- EDGE CASE: could also be
+CMS_l1_muon_prefiring if the analysis intends the muon component):
+prefiringDown    -> CMS_l1_ecal_prefiringDown
+prefiringUp      -> CMS_l1_ecal_prefiringUp
+
+Drell-Yan Z pT reweighting (EDGE CASE: analysis-specific uncertainty, no
+CADI id known, so a generic "htt" group tag was used instead of
+CMS_<analysisid>_ as the strict convention prescribes):
+zPtReweightWeight -> CMS_htt_zptReweight
+
+Tau energy scale (genuine tau / e->tau fake / mu->tau fake), decay mode
+strings mapped to DM numbers per master convention
+(1prong0pizero=DM0, 1prong1pizero=DM1, 3prong0pizero=DM10, 3prong1pizero=DM11):
+tauMuFakeEs                    -> CMS_scale_t_genMuon
+tauEleFakeEs1prongBarrel       -> CMS_scale_t_DM0_genElectron_barrel
+tauEleFakeEs1prongEndcap       -> CMS_scale_t_DM0_genElectron_endcap
+tauEleFakeEs1prong1pizeroBarrel -> CMS_scale_t_DM1_genElectron_barrel
+tauEleFakeEs1prong1pizeroEndcap -> CMS_scale_t_DM1_genElectron_endcap
+tauEs{dm}{pt} (<2022, dm/pt-binned, dm in [1prong0pizero,1prong1pizero,3prong0pizero,3prong1pizero], pt in [20to40,40toInf]):
+  tauEs1prong0pizero20to40  -> CMS_scale_t_DM0_genTau_pT20to40
+  tauEs1prong0pizero40toInf -> CMS_scale_t_DM0_genTau_pT40toInf
+  tauEs1prong1pizero20to40  -> CMS_scale_t_DM1_genTau_pT20to40
+  tauEs1prong1pizero40toInf -> CMS_scale_t_DM1_genTau_pT40toInf
+  tauEs3prong0pizero20to40  -> CMS_scale_t_DM10_genTau_pT20to40
+  tauEs3prong0pizero40toInf -> CMS_scale_t_DM10_genTau_pT40toInf
+  tauEs3prong1pizero20to40  -> CMS_scale_t_DM11_genTau_pT20to40
+  tauEs3prong1pizero40toInf -> CMS_scale_t_DM11_genTau_pT40toInf
+tauEsDM{dm} (2022-2023, dm in [0,1,10,11])            -> CMS_scale_t_DM{dm}_genTau
+tauEleFakeEsDM{dm}Barrel (2022+, dm in [0,1,10,11])   -> CMS_scale_t_DM{dm}_genElectron_barrel
+tauEleFakeEsDM{dm}Endcap (2022+, dm in [0,1,10,11])   -> CMS_scale_t_DM{dm}_genElectron_endcap
+tauMuFakeEsDM{dm} (2022+, dm in [0,1,10,11])          -> CMS_scale_t_DM{dm}_genMuon
+tauEsDM{dm}pT{pt} (>=2024, dm in [0,1,10,11], pt in [20to40,40to60,60toInf]) -> CMS_scale_t_DM{dm}_genTau_pT{pt}
+
+TauID scale factors, tagged with the DeepTau version used per era branch
+(DeepTau2017v2p1 for Run2 <2022, DeepTau2018v2p5 for Run3 >=2022 --
+EDGE CASE: the exact discriminator version for the >=2024 branch could
+not be confirmed from producers/scalefactors.py, kept as DeepTau2018v2p5
+by best guess):
+vsJetTau{dm}{pt} (<2022, dm/pt-binned)     -> CMS_eff_t_DeepTau2017v2p1_VSjet_DM{n}_pT{pt}  (n via DM map above)
+vsEleBarrel (<2022)                        -> CMS_fake_t_DeepTau2017v2p1_VSe_barrel
+vsEleEndcap (<2022)                        -> CMS_fake_t_DeepTau2017v2p1_VSe_endcap
+vsMuWheel{wheel} (<2022, wheel 1-5)        -> CMS_fake_t_DeepTau2017v2p1_VSmu_wheel{wheel}
+vsJetTauDM0/1/10/11 (<2022, tt scope)      -> CMS_eff_t_DeepTau2017v2p1_VSjet_DM0/1/10/11
+vsEleDM{dm}Barrel (>=2022)                 -> CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_barrel
+vsEleDM{dm}Endcap (>=2022)                 -> CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_endcap
+vsJetDM{dm} (2022-2023)                    -> CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}
+vsJetDM{dm}pT{pt} (>=2024)                 -> CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_pT{pt}
+vsMuWheel{wheel} (>=2022, wheel 1-5)       -> CMS_fake_t_DeepTau2018v2p5_VSmu_wheel{wheel}
+
+=== jet_variations.py ===
+
+Era tag in the renamed names uses JERC_ERA_MAP[era] (e.g. "2022preEE" ->
+"2022", "2022postEE" -> "2022EE"), matching the era tokens used by
+systematics_master.yml.
+
+btag full-shape (Run2, <2022):
+btagUncHF          -> CMS_btag_fullShape_hf
+btagUncHFstats1    -> CMS_btag_fullShape_hfstats1_{era}
+btagUncHFstats2    -> CMS_btag_fullShape_hfstats2_{era}
+btagUncLF          -> CMS_btag_fullShape_lf
+btagUncLFstats1    -> CMS_btag_fullShape_lfstats1_{era}
+btagUncLFstats2    -> CMS_btag_fullShape_lfstats2_{era}
+btagUncCFerr1      -> CMS_btag_fullShape_cferr1
+btagUncCFerr2      -> CMS_btag_fullShape_cferr2
+
+btag fixed working point (Run3, >=2022):
+btagUncBCcorrelated    -> CMS_btag_fixedWP_bc_correlated
+btagUncBCuncorrelated  -> CMS_btag_fixedWP_bc_uncorrelated_{era}
+btagUncLcorrelated     -> CMS_btag_fixedWP_light_correlated
+btagUncLuncorrelated   -> CMS_btag_fixedWP_light_uncorrelated_{era}
+
+Jet energy resolution / scale:
+jerUnc             -> CMS_res_j_{era}   (UPDATED per Unc.pdf Table 5, which
+                       gives "CMS_res_j_2025 (total)" as the era-tagged
+                       "total" JER CAT name; era tag uses the same ERA_MAP
+                       as the JES sources)
+jesUncHEMIssue (2018 only) -> CMS_scale_j_HEMIssue_2018   (EDGE CASE: no
+                              master entry for the HEM15/16 issue; kept
+                              descriptive with era suffix)
+jesUncTotal        -> CMS_scale_j_Total   (UPDATED per Unc.pdf Table 3, which
+                       gives "CMS_scale_j_Total" explicitly, not bare
+                       "CMS_scale_j")
+
+Non-regrouped JES sources (<2022, 1:1 with master CMS_scale_j_<source>
+names; era suffix only for the sources master lists as era-dependent):
+SinglePionECAL, SinglePionHCAL, AbsoluteMPFBias, AbsoluteScale,
+Fragmentation, PileUpDataMC, RelativeFSR, PileUpPtRef, FlavorQCD,
+PileUpPtEC1, PileUpPtBB, RelativePtBB, RelativePtHF, PileUpPtHF,
+RelativeJERHF, PileUpPtEC2, RelativeBal
+    jesUnc{X} -> CMS_scale_j_{X}
+AbsoluteStat, TimePtEta, RelativeStatFSR, RelativeJEREC1, RelativePtEC1,
+RelativeStatEC, RelativeStatHF, RelativeJEREC2, RelativePtEC2,
+RelativeSample
+    jesUnc{X} -> CMS_scale_j_{X}_{era}
+
+Regrouped JES sources (>=2022, preferred scheme):
+Absolute, FlavorQCD, BBEC1, HF, EC2, RelativeBal (non-yearly)
+    jesUnc{X} -> CMS_scale_j_{X}
+Absolute, BBEC1, HF, EC2, RelativeSample (yearly)
+    jesUnc{X}Year -> CMS_scale_j_{X}_{era}
+
+=== tau_triggersetup.py ===
+
+Cross/single trigger scale factors (explicit Up/Down via
+f"...{_variation.upper()}", non-embedding, applies to MC samples):
+singleEleTriggerSF{VAR}   -> CMS_eff_e_trigger{VAR}
+singleMuTriggerSF{VAR}    -> CMS_eff_m_trigger{VAR}
+EleTauTriggerSF{VAR}      -> CMS_trig_etau_cross{VAR}     (EDGE CASE:
+                              combines the electron leg and tau leg SF
+                              variation into one shift; master only names
+                              the tau leg alone as CMS_trig_t_etau_*)
+MuTauTriggerSF{VAR}       -> CMS_trig_mutau_cross{VAR}    (same edge case)
+DoubleTauTriggerSF{VAR}   -> CMS_trig_t_ditau_cross{VAR}  (same edge case,
+                              kept the "_t_" object token since both legs
+                              are tau legs)
+
+NOT RENAMED - flagged for manual decision:
+singleElectronTriggerSFUp    (embedding-only, Run 2, see comment at
+singleElectronTriggerSFDown   tau_triggersetup.py line ~1875 "trigger SF
+singleMuonTriggerSFUp         settings from embedding framework for run 2
+singleMuonTriggerSFDown       only!!"). No unambiguous convention entry
+                               distinguishes an "embedding" variant of
+                               CMS_eff_e_trigger / CMS_eff_m_trigger from
+                               the regular MC one; left as-is per request
+                               rather than inventing a suffix.
+
+=== Summary of edge cases requiring possible follow-up ===
+1. ggH/qqH combined QCD scale / PDF / PS weights in config.py: the same
+   shift name is applied whether the sample is ggH or qqH. Consider
+   whether these should be split into per-process shifts.
+2. CMS_res_m: no exact master entry seen in the fetched documentation
+   excerpt, named by analogy with CMS_res_e.
+3. CMS_scale_met_recoil_response / CMS_res_met_recoil_resolution: no
+   exact master entry for recoil corrections specifically.
+4. CMS_l1_ecal_prefiring{Up,Down}: assumed ECAL prefiring source; verify
+   against the actual NanoAOD branch used (nanoAODv9.L1PreFiringWeight_Nom).
+5. CMS_htt_zptReweight: analysis-specific uncertainty named without a
+   known CADI id; convention strictly wants CMS_<analysisid>_...
+6. jesUncHEMIssue -> CMS_scale_j_HEMIssue_2018: no master entry for this
+   one-off 2018 detector issue.
+7. DeepTau version tag for the >=2024 tau ID branch (vsJetDM{dm}pT{pt})
+   could not be confirmed against producers/scalefactors.py; kept as
+   DeepTau2018v2p5.
+8. EleTauTriggerSF / MuTauTriggerSF / DoubleTauTriggerSF: renamed as
+   combined "_cross" shifts since one add_shift call varies both trigger
+   legs together; master's naming is really meant for the tau leg alone.
+9. Four embedding-only trigger shifts in tau_triggersetup.py left
+   unrenamed, see "NOT RENAMED" section above.
