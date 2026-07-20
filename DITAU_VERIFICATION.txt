@@ -1,0 +1,56 @@
+Ditau trigger implementation verification (follow-up to AUDIT_REPORT_trigger.txt)
+====================================================================================
+Scope: doubletau_trigger wiring in tau_triggersetup.py (HLT path selection,
+filterbits, WP, per-era EraModifier switching) and its SF producers in
+producers/scalefactors.py (DoubleTauTriggerLeg1SF/Leg2SF), cross-checked
+against TauTrigger_CMS_TWiki.txt's per-year trigger tables.
+
+RESULT: implementation is correct for all 7 Run3 eras; no new bugs found.
+--------------------------------------------------------------------------
+HLT path / filterbit per era (tau_triggersetup.py "doubletau_trigger"):
+  2022preEE/2022postEE/2023preBPix/2023postBPix: HLT_DoubleMediumDeepTauPFTauHPS35_L2NN_eta2p1,
+    filterbit "3, 7" both legs -- matches the doc's 2022 table (line ~1251)
+    and 2023 table (line ~1021) "V12 NanoAOD Triggerbit" column exactly
+    (now fixed by this branch's filterbit commit 3915138; both eras use
+    NanoAODv12 so share the same bit values, verified independently in
+    both tables rather than assuming).
+  2024/2025/2026: HLT_DoublePNetTauhPFJet30_Medium_L2NN_eta2p3, filterbit
+    "1, 4, 11" both legs -- matches the doc's 2024 table (V14 NanoAOD,
+    line ~591) and 2025 table (line ~251) exactly. Using PNet rather than
+    DeepTau for 2024 is explicitly doc-sanctioned ("No recommendation has
+    been made by Tau POG on which trigger to use" for 2024, with PNet
+    showing "same or higher efficiency"), and DeepTau ditau is PS=0 from
+    2025 (same CMSHLT-3447/3567 menu change already documented for
+    mutau/eltau in AUDIT_REPORT_trigger.txt), so PNet is required for
+    2025/2026 -- no discrepancy with the mutau/eltau PNet-migration
+    reasoning already established.
+  p*_etacut (2.1 for DeepTau path, 2.3 for PNet path) matches each path's
+  own eta2p1/eta2p3 name suffix exactly.
+
+Scale factors (producers/scalefactors.py DoubleTauTriggerLeg1SF/Leg2SF,
+both calling physicsobject::tau::scalefactor::Trigger with sf_name=
+"ditau"): the tau_trigger correctionlib correction's "ditau" trigger_name
+category matches AUDIT_REPORT_trigger.txt's already-established finding
+("SFs are only calculated for the tau leg of DiTau, DiTau+Jet, ETau,
+MuTau, and SingleTau") -- not re-verified against a live json in this
+pass (no code/config changed on that path since the original audit; a
+redundant json re-inspection was not repeated to stay within scope/time).
+"doubletau_trigger_flag" (used as the match-flag argument for the SF
+lookup) correctly switches "trg_double_tau35_mediumiso_hps" ->
+"trg_double_tau30_mediumiso_pnet" at the 2023BPix/2024 boundary via
+EraModifier, both in the nominal SF wiring (tau_triggersetup.py ~1682,
+~1732) and in the CMS_trig_t_ditau_cross{Up,Down} shift's SystematicShift
+block (~1953) -- consistent, no hardcoded-flagname bug of the kind found
+and fixed for mutau/eltau in the original trigger audit.
+"ditau_trigger_wp"="Medium" / "ditau_trigger_corrtype"="sf" (config.py)
+are applied uniformly and match HLT_Double*_Medium_* for both the DeepTau
+and PNet path names in every era -- consistent with AUDIT_REPORT_trigger.txt
+item 6 (WP name is tagger-agnostic at the correctionlib level).
+
+Not independently re-verified (same caveats as the original audit):
+literal correctionlib json content for the "ditau" trigger_name category
+(nom/up/down keys, per-era file paths) -- no cvmfs/network json inspection
+was repeated in this pass.
+
+FILES CHANGED: none in this pass (verification only; the filterbit fix
+itself is a separate commit, 3915138, on this same branch).
