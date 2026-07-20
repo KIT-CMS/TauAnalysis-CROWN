@@ -1,53 +1,146 @@
-Follow-up review: taus.py / scalefactors.py tau ID+ES producer calls
-=====================================================================
-Scope: continuation of AUDIT_REPORT_tau.txt's "did not exhaustively
-re-verify every one of the ~15 SF/ES producer overloads" gap. Covers
-producers/taus.py (PtCorrectionMC* calls) and producers/scalefactors.py's
-tau vsJet/vsEle/vsMu ID SF producers (NOT trigger SF producers, NOT
-electron/muon SF, both out of this pass's scope per task split with
-sibling agents working era-tag renaming, met.py recoil cleanup, and
-trigger-bit/ditau verification).
+Follow-up review: taus.py / scalefactors.py tau ID+ES producer call signatures
+================================================================================
+Scope: closes AUDIT_REPORT_tau.txt's explicitly stated gap -- "did not
+exhaustively re-verify every one of the ~15 SF/ES producer overloads in
+taus.py/scalefactors.py against every era's json". Covers:
+  - producers/taus.py (all producer/ProducerGroup definitions)
+  - producers/scalefactors.py's tau vsJet/vsEle/vsMu ID SF producers and
+    tau energy-scale-related producers
+Out of scope (owned by parallel agents, not touched, not edited):
+  - tau_triggersetup.py
+  - trigger-SF producers in scalefactors.py (SingleEleTriggerSF,
+    SingleMuTriggerSF, MuTauTriggerLeg1/2SF, EleTauTriggerLeg1/2SF,
+    DoubleTauTriggerLeg1/2SF)
+  - config.py (read-only reference only)
+  - producers/met.py
 
-Method: cross-checked every producer call's correctionlib-key/argument
-list against the corresponding C++ overload signature in
-include/taus.hxx (outer CROWN repo, read-only) for exact argument
-count, order, and DM/pT-bin naming, for all 7 Run3 eras plus the
-Run2 (<2022) legacy branches still present in the same file.
+METHOD
+------
+For every Producer/ExtendedVectorProducer call string in producers/taus.py
+and producers/scalefactors.py (tau-ID/ES portion), matched the Python
+`call=` argument list one-for-one against the actual C++ function overload
+it invokes, using include/taus.hxx (declarations) and src/taus.cxx
+(implementations, read-only, outer CROWN repo) as ground truth. Where the
+implementation calls correctionlib's `evaluate()` directly, additionally
+cross-checked the literal positional order of that evaluate() call against
+the real `inputs` list of the deployed correctionlib json (inspected
+directly via gzip+json.load from /cvmfs/cms-griddata.cern.ch, for both a
+pre-2024 era (2022preEE) and 2024), matching the ground-truth technique the
+original audit used.
 
-RESULT: no new bugs found.
-------------------------------
-Every call verified (Tau_{1,2}_VsJetTauID_SF{_v12,_tt_SF,_lt_SF,
-_lt_SF_dm_binned,_lt_SF_dm_pt_binned}, Tau_{1,2}_VsEleTauID_SF{_Run2},
-Tau_{1,2}_VsMuTauID_SF, TauPtCorrection_{eleFake,muFake},
-TauPtCorrection_genTau{_dm_binned,_dm_pt_binned},
-TauPtCorrection_emb_genTau_{dm_binned,dm_pt_binned},
-TauPtCorrection_MC_v12/TauEnergyCorrection_v12,
-TauEnergyCorrection's PtCorrectionMC call) matches its C++ overload's
-argument order exactly (spot-checked include/taus.hxx line numbers:
-65-98 combined MC overload, 148-167 eleFake/muFake, 168-218
-genuineTau variants, 234-325 scalefactor::Id_vsJet/_lt/Id_vsEle/
-Id_vsMu). In particular the vsJet ID SF wiring in config.py
-(lines ~2635-2721) already reflects AUDIT_REPORT_tau.txt Issue #2's
-fix (per-era stat1/stat2/syst_TES/syst_alleras/syst_<era> keys for
-2022-2023preBPix/postBPix, plain nom/up/down only for the pre-2024
-Run2 <2022 legacy branch where that's the actually-correct json
-structure) -- did not find any regression or leftover bug instance.
+RESULT: no new bugs found in either file.
+--------------------------------------------------------------------------
 
-PtCorrectionMC_eleFake's 4-argument (DM0/DM1 barrel+endcap only, no
-DM10/DM11) signature is intentional: it's only invoked from the
-Run2 (<2022) branch (config.py ~2561-2568), which uses the older,
-less granular e-fake ES measurement (1-prong DMs only) -- matches
-include/taus.hxx:148-158 exactly, not a bug.
+producers/taus.py -- every PtCorrectionMC* producer's call string was
+checked against every overload in include/taus.hxx's
+`physicsobject::tau` namespace:
+  - TauPtCorrection_eleFake -> PtCorrectionMC_eleFake (4 variation args:
+    dm0_barrel, dm1_barrel, dm0_endcap, dm1_endcap) -- matches exactly.
+  - TauPtCorrection_muFake -> PtCorrectionMC_muFake (1 variation arg) --
+    matches.
+  - TauPtCorrection_genTau / TauPtCorrection_genTau_dm_binned ->
+    PtCorrectionMC_genuineTau, the no-wp/4-variation (dm0/1/10/11)
+    overload -- matches.
+  - TauPtCorrection_genTau_dm_pt_binned -> PtCorrectionMC_genuineTau, the
+    no-wp/8-variation (dm{0,1,10,11}_pt{20to40,40toInf}) overload --
+    matches; argument order dm0,dm1,dm10,dm11 with pt20to40 before
+    pt40toInf in each pair, exactly as declared.
+  - TauPtCorrection_emb_genTau_dm_binned/_dm_pt_binned ->
+    PtCorrectionMC_genuineTau, the wp+vsele_wp overloads (4- and
+    8-variation respectively) -- matches; wp/vsele_wp param order
+    (id_algorithm, wp, vsele_wp, then variations) is correct.
+  - TauPtCorrection_MC_v12 -> PtCorrectionMC, the overload with
+    4 DM-binned mufake variations + 4 DM-binned (non-pt) gentau
+    variations -- matches exactly (8 efake args + 4 mufake args + 4
+    gentau args, in that order).
+  - TauPtCorrection_MC -> PtCorrectionMC, the overload with 4 DM-binned
+    mufake variations + 12 DM-and-pt-binned (3 pt bins x 4 DM) gentau
+    variations -- matches exactly.
+  - TauPtCorrection_byValue -> embedding::tau::PtCorrection_byValue,
+    4 DM args -- matches (a simple by-value shift, not a correctionlib
+    evaluate(), so no json cross-check needed).
+  All decay-mode naming (1prong0pizero=DM0, 1prong1pizero=DM1,
+  3prong0pizero=DM10, 3prong1pizero=DM11) is internally consistent across
+  every producer and matches the standard CMS tau decay-mode integer
+  convention.
 
-Not independently re-verified in this pass (would require live
-correctionlib json access I did not have time to redo beyond what
-the original audit already did): the literal string content of "nom"/
-"up"/"down" keys for tau_energy_scale and DeepTau2018v2p5VSe/VSmu --
-already confirmed correct by AUDIT_REPORT_tau.txt's cvmfs json
-inspection, no reason found to redo it since no code changed on that
-path.
+producers/scalefactors.py (tau ID/ES portion only) -- every
+Id_vsJet/Id_vsJet_lt/Id_vsEle/Id_vsMu producer checked against
+include/taus.hxx's `physicsobject::tau::scalefactor` namespace:
+  - Tau_{1,2}_VsJetTauID_SF_v12, Tau_2_VsJetTauID_tt_SF,
+    Tau_2_VsJetTauID_lt_SF_dm_binned -> Id_vsJet, the 4-variation
+    (dm0/1/10/11, no pt) overload -- matches.
+  - Tau_{1,2}_VsJetTauID_SF -> Id_vsJet, the 12-variation
+    (4 DM x 3 pt bins: 20to40/40to60/60toInf) overload -- matches, order
+    dm0(3),dm1(3),dm10(3),dm11(3) exactly as declared and as passed.
+  - Tau_2_VsJetTauID_lt_SF_dm_pt_binned -> Id_vsJet, the 8-variation
+    (4 DM x 2 pt bins: 20to40/40toInf) overload -- matches.
+  - Tau_2_VsJetTauID_lt_SF -> Id_vsJet_lt (pt-flag-based overload with
+    tau30to35/35to40/40to500/500to1000/1000toinf variations, used only
+    for the Run2 (<2022) "lt" high-pT branch per config.py) -- argument
+    order (sf_file, sf_name, selected_dms vector, wp, vsele_wp,
+    sf_dependence, 5 pt-bin variations) matches the header exactly.
+  - Tau_{1,2}_VsEleTauID_SF_Run2 -> Id_vsEle, the 2-variation
+    (barrel/endcap) overload -- matches.
+  - Tau_{1,2}_VsEleTauID_SF -> Id_vsEle, the 8-variation
+    (4 DM x barrel/endcap) overload -- matches, order
+    DM0_barrel,DM1_barrel,DM10_barrel,DM11_barrel,DM0_endcap,DM1_endcap,
+    DM10_endcap,DM11_endcap exactly as declared.
+  - Tau_{1,2}_VsMuTauID_SF -> Id_vsMu -- argument order
+    (wp=vsmu_tau_id_WP, wp_ele=vsele_tau_id_WP, wp_jet=vsjet_tau_id_WP,
+    era, wheel1..5) matches the header exactly.
+
+GROUND-TRUTH JSON CROSS-CHECK (evaluate() call order vs json `inputs`)
+--------------------------------------------------------------------------
+Inspected the deployed jsons directly (2022preEE and 2024 tau.json.gz,
+gzip+json.load, walking the correction node tree) and compared each
+correction's declared `inputs` list against the positional order used in
+the corresponding evaluator->evaluate({...}) call in src/taus.cxx
+(read-only, outer repo; not edited -- three other agents own C++/other
+config areas, this was cross-checked purely as ground truth for judging
+the Python-side wiring):
+  - DeepTau2018v2p5VSe: json inputs = [eta, dm, genmatch, wp, syst].
+    C++ evaluate({abs_eta, decay_mode, gen_match, wp, variation}) --
+    order matches exactly.
+  - DeepTau2018v2p5VSmu: json inputs = [eta, genmatch, wp, syst]
+    (genmatch remapped via a transform node before the wp/eta/syst
+    category tree) -- C++ evaluate order (eta, wp-tree traversal, syst)
+    is structurally consistent with this input list.
+  - DeepTau2018v2p5VSjet: json inputs = [pt, dm, genmatch, wp, wp_VSe,
+    syst, flag] for BOTH 2022preEE and 2024 (identical input-list shape
+    across the pre-2024/2024+ split already documented in
+    AUDIT_REPORT_tau.txt Issue #2). C++ evaluate({pt, decay_mode,
+    gen_match, wp, vsele_wp, variation, sf_dependence}) -- order matches
+    exactly (wp_VSe<->vsele_wp, syst<->variation, flag<->sf_dependence).
+  No mismatches found between the evaluate() call order and the json's
+  declared inputs for any of the three corrections checked.
+
+NOT RE-CHECKED IN THIS PASS
+-------------------------------
+- The literal "nom"/"up"/"down" (and, for pre-2024 vsJet, the
+  stat1/stat2/syst_TES/syst_alleras/syst_<era>) key strings themselves --
+  this is config.py content (owned by the config.py agent in this task
+  split) and was already ground-truth-verified against the deployed jsons
+  by AUDIT_REPORT_tau.txt (Issues #1/#2). This pass only re-verified that
+  the *positions* in the call strings that receive those config values
+  line up with the correct C++ parameter and correct json `inputs` slot --
+  it did not re-audit the string *values* themselves, since that is
+  outside this pass's file scope.
+- Trigger SF producers (out of scope per task instructions, assigned to a
+  parallel agent).
+- producers/met.py, config.py, tau_triggersetup.py (out of scope, not
+  touched).
+
+CONCLUSION
+-------------
+Every producer overload in producers/taus.py and the tau-ID/ES portion of
+producers/scalefactors.py was checked against its C++ header declaration
+and (for evaluate()-calling corrections) against the deployed
+correctionlib json's `inputs` order. All matched exactly. No bugs found;
+no code changes were necessary in either file. This closes the specific
+"not exhaustively re-verified" gap named in AUDIT_REPORT_tau.txt.
 
 FILES CHANGED: none (no bugs found requiring a fix).
-No commit was made on branch audit-run3-htautau-review beyond the
-pre-applied muon_sf_variation fix (commit 1e56955, already present
-before this review started, not part of this pass's findings).
+No new commit needed on branch audit-run3-htautau-review beyond the
+pre-existing muon_sf_variation fix (commit 1e56955) already present before
+this review pass.
