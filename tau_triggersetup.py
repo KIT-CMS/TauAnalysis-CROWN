@@ -258,6 +258,13 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             **mutau_cross_trigger_defaults,
                         },
                     ],
+                    # 2022-2024 DeepTau HPS mutau cross-trigger p2_filterbit fixed per the
+                    # TauTrigger twiki's per-year tables: the tau leg needs BOTH the common
+                    # DeepTau-overlap-filter bit (3) AND the MuTau-leg bit, which differs by
+                    # NanoAOD campaign for the identical HLT path -- "3, 9" for NanoAODv12
+                    # (2022preEE/2022postEE/2023preBPix/2023postBPix), "3, 13" for
+                    # NanoAODv14/v15 (2024). A single bit (9) was previously used for all of
+                    # these eras, matching neither.
                     "2024": [
                         {
                             "flagname": "trg_cross_mu20tau27_hps",
@@ -265,7 +272,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "3, 13",  
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -276,7 +283,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "3, 9",  
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -287,7 +294,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "3, 9",  
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -298,7 +305,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "3, 9",  
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -309,7 +316,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_ptcut": 20,
                             "p2_ptcut": 32,
                             "p1_filterbit": 1,
-                            "p2_filterbit": 9,  
+                            "p2_filterbit": "3, 9",  
                             **mutau_cross_trigger_defaults,
                         },
                     ],
@@ -560,6 +567,12 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
+                    # 2022-2024 DeepTau HPS eltau cross-trigger p2_filterbit fixed per the
+                    # TauTrigger twiki's per-year tables: same reasoning as mutau_cross_trigger
+                    # above -- "3, 8" for NanoAODv12 eras (2022preEE/2022postEE/2023preBPix/
+                    # 2023postBPix), "3, 12" for NanoAODv14/v15 (2024). A single bit (3) was
+                    # previously used for all of these eras, which is only the common bit,
+                    # missing the ETau-leg-specific bit.
                     "2024": [
                         {
                             "flagname": "trg_cross_ele24tau30_hps",
@@ -569,7 +582,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1, 
                             "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_filterbit": "3, 12",  
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -582,7 +595,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1, 
                             "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_filterbit": "3, 8",  
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -595,7 +608,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1, 
                             "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_filterbit": "3, 8",  
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -608,7 +621,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1, 
                             "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_filterbit": "3, 8",  
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -621,7 +634,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1, 
                             "p1_filterbit": 2, 
-                            "p2_filterbit": 3,  
+                            "p2_filterbit": "3, 8",  
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
@@ -1168,10 +1181,15 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "singletau_trigger_leading": EraModifier(
                 {
                     # 2022-2024: Run3 SingleTau signal path is DeepTau-based
-                    # (HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1), NanoAOD V14/V15
-                    # triggerbits 3 (DeepTau) and 9 (SingleTau leg), not the Run2
+                    # (HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1), not the Run2
                     # ChargedIso path that was previously left here as a stale
                     # placeholder (that path does not exist in the Run3 menu).
+                    # Filterbits differ by NanoAOD production version, per the
+                    # TauTrigger twiki's per-year tables: eras processed with
+                    # NanoAODv12 (2022preEE/2022postEE/2023preBPix/2023postBPix)
+                    # use "3, 10"; 2024 (NanoAODv14/v15) uses "3, 9" -- the doc's
+                    # bit indices for this same HLT path shifted between the two
+                    # NanoAOD campaigns, they are NOT interchangeable.
                     # 2025-2026: DeepTau paths are PS=0 / removed from GRun
                     # (CMSHLT-3447/CMSHLT-3567), so the PNet Medium WP path is used.
                     "2026": [
@@ -1206,7 +1224,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_1",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_defaults,
                         },
                     ],
@@ -1215,7 +1233,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_1",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_defaults,
                         },
                     ],
@@ -1224,7 +1242,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_1",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_defaults,
                         },
                     ],
@@ -1233,7 +1251,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_1",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_defaults,
                         },
                     ],
@@ -1334,7 +1352,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_2",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
@@ -1343,7 +1361,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_2",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
@@ -1352,7 +1370,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_2",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
@@ -1361,7 +1379,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_single_tau180_hps_2",
                             "hlt_path": "HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1",
                             "ptcut": 180,
-                            "filterbit": "3, 9",
+                            "filterbit": "3, 10",
                             **singletau_trigger_trailing_defaults,
                         },
                     ],
