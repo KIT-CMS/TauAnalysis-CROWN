@@ -776,7 +776,14 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    # 2025: TauPOG explicitly recommends reusing the 2024 (Summer24-NanoAODv15)
+                    # corrections for 2025, since the same MC campaign is used
+                    # (https://tau-wiki.docs.cern.ch, "NanoAOD version" section).
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    # 2026: NOT an official recommendation yet -- as of the TauPOG Wiki
+                    # (2026-06-10) all 2026 tau corrections (ID SF, ES, e/mu fake SF, trigger)
+                    # are marked unavailable ("Not available yet"). This reuses the 2024/2025
+                    # json as a placeholder; replace once TauPOG publishes 2026 corrections.
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
                 }
             ),
