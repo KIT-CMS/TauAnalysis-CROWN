@@ -231,10 +231,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "mutau_cross_trigger": EraModifier(
                 {
                     "2026": [
-                        # DeepTau HPS cross-triggers were removed from the GRun menu during
-                        # 2025 (CMSHLT-3447 / CMSHLT-3567; DeepTau paths set to PS=0, then
-                        # dropped entirely). Use the PNet-based path instead (Medium WP,
-                        # matching the WP used for the ditau PNet trigger below).
                         {
                             "flagname": "trg_cross_mu20tau27_pnet",
                             "hlt_path": "HLT_IsoMu20_eta2p1_PNetTauhPFJet27_Medium_eta2p3_CrossL1",
@@ -246,8 +242,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         },
                     ],
                     "2025": [
-                        # see comment for 2026 above: DeepTau cross-triggers are PS=0 in
-                        # 2025 (CMSHLT-3447), so use the PNet Medium WP path.
                         {
                             "flagname": "trg_cross_mu20tau27_pnet",
                             "hlt_path": "HLT_IsoMu20_eta2p1_PNetTauhPFJet27_Medium_eta2p3_CrossL1",
@@ -258,13 +252,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             **mutau_cross_trigger_defaults,
                         },
                     ],
-                    # 2022-2024 DeepTau HPS mutau cross-trigger p2_filterbit fixed per the
-                    # TauTrigger twiki's per-year tables: the tau leg needs BOTH the common
-                    # DeepTau-overlap-filter bit (3) AND the MuTau-leg bit, which differs by
-                    # NanoAOD campaign for the identical HLT path -- "3, 9" for NanoAODv12
-                    # (2022preEE/2022postEE/2023preBPix/2023postBPix), "3, 13" for
-                    # NanoAODv14/v15 (2024). A single bit (9) was previously used for all of
-                    # these eras, matching neither.
                     "2024": [
                         {
                             "flagname": "trg_cross_mu20tau27_hps",
@@ -536,10 +523,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "eltau_cross_trigger": EraModifier(
                 {
                     "2026": [
-                        # DeepTau HPS cross-triggers were removed from the GRun menu during
-                        # 2025 (CMSHLT-3447 / CMSHLT-3567; DeepTau paths set to PS=0, then
-                        # dropped entirely). Use the PNet-based path instead (Medium WP,
-                        # matching the WP used for the ditau PNet trigger below).
                         {
                             "flagname": "trg_cross_ele24tau30_pnet",
                             "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_PNetTauhPFJet30_Medium_eta2p3_CrossL1",
@@ -553,8 +536,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         },
                     ],
                     "2025": [
-                        # see comment for 2026 above: DeepTau cross-triggers are PS=0 in
-                        # 2025 (CMSHLT-3447), so use the PNet Medium WP path.
                         {
                             "flagname": "trg_cross_ele24tau30_pnet",
                             "hlt_path": "HLT_Ele24_eta2p1_WPTight_Gsf_PNetTauhPFJet30_Medium_eta2p3_CrossL1",
@@ -567,12 +548,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             **electron_tau_cross_trigger_defaults,
                         },
                     ],
-                    # 2022-2024 DeepTau HPS eltau cross-trigger p2_filterbit fixed per the
-                    # TauTrigger twiki's per-year tables: same reasoning as mutau_cross_trigger
-                    # above -- "3, 8" for NanoAODv12 eras (2022preEE/2022postEE/2023preBPix/
-                    # 2023postBPix), "3, 12" for NanoAODv14/v15 (2024). A single bit (3) was
-                    # previously used for all of these eras, which is only the common bit,
-                    # missing the ETau-leg-specific bit.
                     "2024": [
                         {
                             "flagname": "trg_cross_ele24tau30_hps",
@@ -1180,18 +1155,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_leading": EraModifier(
                 {
-                    # 2022-2024: Run3 SingleTau signal path is DeepTau-based
-                    # (HLT_LooseDeepTauPFTauHPS180_L2NN_eta2p1), not the Run2
-                    # ChargedIso path that was previously left here as a stale
-                    # placeholder (that path does not exist in the Run3 menu).
-                    # Filterbits differ by NanoAOD production version, per the
-                    # TauTrigger twiki's per-year tables: eras processed with
-                    # NanoAODv12 (2022preEE/2022postEE/2023preBPix/2023postBPix)
-                    # use "3, 10"; 2024 (NanoAODv14/v15) uses "3, 9" -- the doc's
-                    # bit indices for this same HLT path shifted between the two
-                    # NanoAOD campaigns, they are NOT interchangeable.
-                    # 2025-2026: DeepTau paths are PS=0 / removed from GRun
-                    # (CMSHLT-3447/CMSHLT-3567), so the PNet Medium WP path is used.
                     "2026": [
                         {
                             "flagname": "trg_single_tau130_pnet_1",
@@ -1317,9 +1280,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "singletau_trigger_trailing": EraModifier(
                 {
-                    # see singletau_trigger_leading above for the rationale of the
-                    # per-era HLT path choice (Run3 uses DeepTau HPS through 2024,
-                    # PNet from 2025 once DeepTau paths are PS=0 / removed, CMSHLT-3447).
                     "2026": [
                         {
                             "flagname": "trg_single_tau130_pnet_2",
@@ -1494,11 +1454,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2026":"data/hleprare/TriggerScaleFactors/2023postBPix/CrossMuTauHlt_MuLeg_v1.json",
                 }
             ),
-            # NOTE: the flagname produced by the mutau_cross_trigger EraModifier above
-            # switches from "trg_cross_mu20tau27_hps" (DeepTau, 2022-2024) to
-            # "trg_cross_mu20tau27_pnet" (PNet, 2025-2026, since DeepTau cross-triggers
-            # are PS=0/removed from the GRun menu from 2025 onward, CMSHLT-3447). The
-            # flag looked up here must track that per-era.
             "mutau_trigger_leg1_sf": [
                 {
                     "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
@@ -1605,11 +1560,6 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     "2026": "data/hleprare/TriggerScaleFactors/2023postBPix/CrossEleTauHlt_EleLeg_v1.json",
                 }
             ),
-            # NOTE: the flagname produced by the eltau_cross_trigger EraModifier above
-            # switches from "trg_cross_ele24tau30_hps" (DeepTau, 2022-2024) to
-            # "trg_cross_ele24tau30_pnet" (PNet, 2025-2026, since DeepTau cross-triggers
-            # are PS=0/removed from the GRun menu from 2025 onward, CMSHLT-3447). The
-            # flag looked up here must track that per-era.
             "eletau_cross_trigger_leg1_sf": [
                 {
                     "eletau_cross_trigger_flag": EraModifier(
