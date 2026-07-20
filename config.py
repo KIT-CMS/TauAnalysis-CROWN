@@ -930,7 +930,8 @@ def build_config(
             ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",  # correction for mediumId WP
             "muon_iso_sf_name": "NUM_TightPFIso_DEN_MediumID",  # correction for TightPFIso WP (PF isolation < 0.15)
-            "muon_sf_variation": "nominal",  # "systup"/"systdown" are up/down variations
+            "muon_id_variation": "nominal",  # "systup"/"systdown" are up/down variations
+            "muon_iso_variation": "nominal",  # "systup"/"systdown" are up/down variations
 
             #run 2 scale factors from embedding framework
             "mc_muon_sf_file": EraModifier(
