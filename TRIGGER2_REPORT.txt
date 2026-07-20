@@ -4,6 +4,18 @@ Branch: audit-run3-htautau-trigger2 (nested TauAnalysis-CROWN repo)
 Continues AUDIT_REPORT_trigger.txt's "GAPS / COULD NOT FULLY VERIFY" section, using the full
 extracted TauTrigger_CMS_TWiki.txt (4002 lines) as reference.
 
+DOCUMENTATION SOURCE / PRECEDENCE CHECK
+------------------------------------------
+Per the task instructions, checked the reference doc's own header/URL before trusting it as
+higher-precedence. Line 10 of TauTrigger_CMS_TWiki.txt reads:
+  "TWiki> CMS Web>Tau>TauTrigger (2026-04-24, BradenAllmond)"
+This confirms the doc genuinely IS the CMS-internal TWiki (twiki.cern.ch, "CMS Web" space) —
+matching its filename, NOT a TauPOG-hosted page (e.g. tau-wiki.docs.cern.ch, which is what the
+sibling tau-ID audit used and which would have outranked it per the stated precedence rule). No
+TauPOG-hosted trigger-specific page was available for this task, so this CMS TWiki was used as
+the sole source at its normal (lower) precedence tier — there was no conflicting higher-tier doc
+to reconcile against for the trigger topic specifically.
+
 ISSUES FOUND AND FIXED (tau_triggersetup.py)
 ----------------------------------------------
 Root cause common to all three: the twiki's per-year trigger tables report DIFFERENT NanoAOD
