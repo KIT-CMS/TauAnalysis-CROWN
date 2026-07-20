@@ -397,3 +397,56 @@ correctionlib "systematic" string default the C++ side falls back to,
 with no Up/Down variation reachable from any shift name. This is a
 pre-existing gap (unrelated to era-tagging) worth a separate follow-up,
 not fixed here per the task's instruction not to invent new shifts.
+
+=== 2026-07-20 follow-up: restored CMS CAT base names lost in an earlier merge ===
+
+A much older WIP branch (commit b5b2d63, "Preserve uncommitted prior-session
+WIP: systematics naming convention alignment") had already renamed most of
+the base shift names below to the CMS_<type>_<obj>... convention documented
+at the top of this file. That branch was merged into sm_htt_run3 earlier
+this session (merge commit 2cd155b), but the merge silently did not carry
+the config.py renames through -- the merged result still had the original,
+un-prefixed names (muRWeight, tauMuFakeEs, vsJetTauDM0, etc.), even though
+the merge commit message claimed otherwise. The subsequent era-tag pass
+(this file's entries above) then built era_tag suffixes on top of those
+un-renamed base names, so eras/DMs got correctly decorrelated but the CMS
+prefix itself was missing.
+
+Restored (base token renamed, any era_tag/DM suffix from the pass above
+kept exactly as-is):
+  muRWeight -> QCDscale_ren_ggH_qqH, muFWeight -> QCDscale_fac_ggH_qqH,
+  FsrWeight -> ps_fsr_ggH_qqH, IsrWeight -> ps_isr_ggH_qqH,
+  PdfWeight -> pdf_Higgs_ggH_qqH, AlphaSWeight -> pdf_alphas_ggH_qqH
+  muonEsScale_{era_tag} -> CMS_scale_m_{era_tag}
+  muonEsReso_{era_tag} -> CMS_res_m_{era_tag}
+  eleEsReso_{era_tag} -> CMS_res_e_{era_tag}
+  eleEsScale_{era_tag} -> CMS_scale_e_{era_tag}
+  electronIdSF_{era_tag} -> CMS_eff_e_id_{era_tag}
+  metUnclusteredEnUp/Down -> CMS_scale_met_unclustered_energyUp/Down
+  metRecoilResponse -> CMS_scale_met_recoil_response
+  metRecoilResolution -> CMS_res_met_recoil_resolution
+  PileUp_{era_tag} -> CMS_pileup_{era_tag}
+  prefiringUp/Down -> CMS_l1_ecal_prefiringUp/Down
+  zPtReweightWeight_unc{n}_{era_tag} -> CMS_htt_zptReweight_unc{n}_{era_tag}
+  tauMuFakeEs -> CMS_scale_t_genMuon
+  tauEleFakeEs1prongBarrel/Endcap -> CMS_scale_t_DM0_genElectron_barrel/endcap
+  tauEleFakeEs1prong1pizeroBarrel/Endcap -> CMS_scale_t_DM1_genElectron_barrel/endcap
+  tauEs{dm}{pt} (<2022, prose DM) -> CMS_scale_t_DM{n}_genTau_pT{pt}
+  tauEsDM{dm}_{era_tag} -> CMS_scale_t_DM{dm}_genTau_{era_tag}
+  tauEleFakeEsDM{dm}Barrel/Endcap_{era_tag} -> CMS_scale_t_DM{dm}_genElectron_barrel/endcap_{era_tag}
+  tauMuFakeEsDM{dm}_{era_tag} -> CMS_scale_t_DM{dm}_genMuon_{era_tag}
+  tauEsDM{dm}pT{pt}_{era_tag} -> CMS_scale_t_DM{dm}_genTau_pT{pt}_{era_tag}
+  vsJetTau{dm}{pt} (<2022, prose DM) -> CMS_eff_t_DeepTau2017v2p1_VSjet_DM{n}_pT{pt}
+  vsEleBarrel/Endcap -> CMS_fake_t_DeepTau2017v2p1_VSe_barrel/endcap
+  vsMuWheel{wheel} (<2022) -> CMS_fake_t_DeepTau2017v2p1_VSmu_wheel{wheel}
+  vsJetTauDM0/1/10/11 -> CMS_eff_t_DeepTau2017v2p1_VSjet_DM0/1/10/11
+  vsEleDM{dm}Barrel/Endcap_{era_tag} -> CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_barrel/endcap_{era_tag}
+  vsJetDM{dm}pT{pt} -> CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_pT{pt}
+  vsMuWheel{wheel}_{era_tag} (>=2022) -> CMS_fake_t_DeepTau2018v2p5_VSmu_wheel{wheel}_{era_tag}
+
+Deliberately NOT touched: vsJetStat1/2{era}DM{dm}, vsJetSystTES{era}DM{dm},
+vsJetSystAllEras, vsJetSyst{era} -- these are a finer-grained breakdown added
+later (Issue #2 of AUDIT_REPORT_tau.txt), after b5b2d63 was authored, so they
+were never part of that WIP's rename mapping and aren't "lost" work; leaving
+them under their existing descriptive names per the reasoning already logged
+above (2026-07-20 follow-up: vsJet era-token reverted to out-of-scope).
