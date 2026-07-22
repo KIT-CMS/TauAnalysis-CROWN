@@ -107,6 +107,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         output = [q.puppimet_p4_jetcorrected],
     )
 
+    # for run 3 v12
     METTypeI_v12 = Producer(
         call='''met::Type1Correction({df}, {output}, {input})''',
         input=[
@@ -121,7 +122,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         output = [q.puppimet_p4_jetcorrected],
     )
 
-    # for run 2 and run3 v12
+    # for run 2 
     with defaults(call='''physicsobject::PropagateToMET({df}, {output}, {input}, "{propagateJets}", {min_jetpt_met_propagation})'''):
         PartialJetsToMetInput = [
             q.jet_pt_corrected,
@@ -163,14 +164,14 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_recoilcorrected],
         )
 
-    # Recoil uncertainty variations 
+    # Recoil uncertainty variations, new call on corrected MET
     ApplyRecoilUncertainty = Producer(
-        call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "Uncertainty", "{DY_order}", "{recoil_uncertainty_variation}", {applyRecoilUncertainty})''',
+        call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "Uncertainty", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})''',
         input=[q.puppimet_p4_recoilcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
         output=[q.puppimet_p4_recoiluncertaintycorrected],
     )
 
-    with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
+    with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}",, {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
         ApplyRecoilCorrections_Run2 = Producer(
             input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
             output=[q.puppimet_p4_recoilcorrected],
@@ -181,7 +182,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         )
 
     ApplyUnclusteredMetShift = Producer(
-        call='''met::PropagateUnclusteredEnergyToMET({df}, {output}, {input}, {propagateUnclustered})''',
+        call='''met::PropagateUnclusteredEnergyToMET({df}, {output}, {input})''',
         input=[
             q.puppimet_p4_recoiluncertaintycorrected,
             PuppiMET_pt_nominal_ref,
