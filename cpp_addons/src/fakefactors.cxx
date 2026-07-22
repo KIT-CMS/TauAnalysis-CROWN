@@ -76,7 +76,6 @@ namespace fakefactors {
 
         return result;
     }
-
     namespace sm {
         std::vector<correction::Variable::Type>
         to_correction_args(const std::vector<float> &values) {

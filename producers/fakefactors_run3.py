@@ -16,7 +16,7 @@ class Inputs:
     ]
     
 with defaults(scopes=["mt", "et"]):
-    with defaults(call='''fakefactors::build_model_input_column({df}, {output}, {input_vec})'''):
+    with defaults(call='''fakefactors_run3::build_model_input_column({df}, {output}, {input_vec})'''):
         FFInput_lt = Producer(
             input=[q.pt_2, q.njets_float],
             output=[q.ff_input_lt]
@@ -42,7 +42,7 @@ with defaults(scopes=["mt", "et"]):
             )
 
     RawFakeFactors_sm_lt = Producer(
-        call='''fakefactors::sm::raw_fakefactor_lt(
+        call='''fakefactors_run3::sm::raw_fakefactor_lt(
             {df},
             correctionManager,
             {output},
@@ -65,7 +65,7 @@ with defaults(scopes=["mt", "et"]):
         ],
     ):
         FakeFactors_sm_lt = Producer(
-            call='''fakefactors::sm::fakefactor_lt(
+            call='''fakefactors_run3::sm::fakefactor_lt(
                 {df},
                 correctionManager,
                 {output_vec},
@@ -86,7 +86,7 @@ with defaults(scopes=["mt", "et"]):
         )
         
 with defaults(scopes=["tt"]):
-    with defaults(call='''fakefactors::build_model_input_column({df}, {output}, {input_vec})'''):
+    with defaults(call='''fakefactors_run3::build_model_input_column({df}, {output}, {input_vec})'''):
         FFInput_QCD_tt = Producer(
             input=[q.pt_1, q.njets_float],
             output=[q.ff_input_qcd_tt]
@@ -128,10 +128,10 @@ with defaults(scopes=["tt"]):
         input=Inputs.raw_fakefactor_tt,
     ):
         RawFakeFactors_sm_tt_1 = Producer(
-            call='''fakefactors::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{file}")''',
+            call='''fakefactors_run3::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 0, {input}, "{QCD_variation}", "{fraction_variation}", "{file}")''',
             output=[q.raw_fake_factor_1],)
         RawFakeFactors_sm_tt_2 = Producer(
-            call='''fakefactors::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{file}")''',
+            call='''fakefactors_run3::sm::raw_fakefactor_tt({df}, correctionManager, {output}, 1, {input}, "{QCD_subleading_variation}", "{fraction_variation_subleading}", "{file}")''',
             output=[q.raw_fake_factor_2],
         )
 
@@ -148,7 +148,7 @@ with defaults(scopes=["tt"]):
         ],
     ):
         FakeFactors_sm_tt_1 = Producer(
-            call='''fakefactors::sm::fakefactor_tt(
+            call='''fakefactors_run3::sm::fakefactor_tt(
                     {df},
                     correctionManager,
                     {output_vec},
@@ -163,7 +163,7 @@ with defaults(scopes=["tt"]):
                     false)''',
             output=[q.fake_factor_1],)
         FakeFactors_sm_tt_2 = Producer(
-            call='''fakefactors::sm::fakefactor_tt(
+            call='''fakefactors_run3::sm::fakefactor_tt(
                     {df},
                     correctionManager,
                     {output_vec},
