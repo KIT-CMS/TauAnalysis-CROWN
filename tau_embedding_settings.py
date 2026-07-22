@@ -229,9 +229,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                             "p2_ptcut": 35,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
+                            "p1_filterbit": -1,  # 13,  # TODO: check this
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
+                            "p2_filterbit": -1,  # 13,  # TODO: check this
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -241,9 +241,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
+                            "p1_filterbit": -1,  # 13,  # TODO: check this
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
+                            "p2_filterbit": -1,  # 13,  # TODO: check this
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -253,9 +253,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                             "p2_ptcut": 40,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
+                            "p1_filterbit": -1,  # 13,  # TODO: check this
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
+                            "p2_filterbit": -1,  # 13,  # TODO: check this
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -265,9 +265,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                             "p2_ptcut": 35,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
+                            "p1_filterbit": -1,  # 13,  # TODO: check this
                             "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
+                            "p2_filterbit": -1,  # 13,  # TODO: check this
                             "p2_trigger_particle_id": 15,
                             "max_deltaR_triggermatch": 0.4,
                         },
@@ -1364,7 +1364,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tt",
                 ReplaceProducer(
                     producers=[
-                        scalefactors.Tau_1_VsJetTauID_SF,
+                        scalefactors.Tau_1_VsJetTauID_SF_Run2,
                         embedding.Tau_1_VsJetTauID_tt_SF,
                     ],
                     samples=["embedding"],
@@ -1374,7 +1374,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tt",
                 ReplaceProducer(
                     producers=[
-                        scalefactors.Tau_2_VsJetTauID_tt_SF,
+                        scalefactors.Tau_2_VsJetTauID_SF_Run2,
                         embedding.Tau_2_VsJetTauID_tt_SF,
                     ],
                     samples=["embedding"],

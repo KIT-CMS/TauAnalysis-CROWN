@@ -103,6 +103,19 @@ with defaults(scopes=["global"]):
             ElectronIsoCut,
         ],
     )
+    BaseElectrons_v9 = ProducerGroup(
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
+        input=[],
+        output=[q.base_electrons_mask],
+        subproducers=[
+            ElectronPtCut,
+            ElectronEtaCut,
+            ElectronDxyCut,
+            ElectronDzCut,
+            ElectronIDCut_v9,
+            ElectronIsoCut,
+        ],
+    )
 
     DiElectronVeto = ProducerGroup(
         call='''physicsobject::LeptonPairVeto({df}, {output}, {input}, {dileptonveto_dR})''',

@@ -75,7 +75,7 @@ with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
         output=[q.iso_wgt_mu_1],
     )
     MTGenerateSingleMuonTriggerSF = ExtendedVectorProducer(
-        call='''embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_trigger_sf}", "emb", "{trg_extrapolation})''',
+        call='''embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_muon_sf_file}", "{embedding_trigger_sf}", "emb", {trg_extrapolation})''',
         output="flagname",
         vec_config="singlemuon_trigger_sf",
     )
@@ -113,7 +113,7 @@ with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2]):
     )
 
 ETGenerateSingleElectronTriggerSF = ExtendedVectorProducer(
-    call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_electron_sf_file}", "{embedding_trigger_sf}", "emb", "{trg_extrapolation})''',
+    call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_electron_sf_file}", "{embedding_trigger_sf}", "emb", {trg_extrapolation})''',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scope=["et", "ee"],

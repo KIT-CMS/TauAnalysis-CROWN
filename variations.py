@@ -405,7 +405,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     
     class JES_CONFIG:
         REGROUPED = True
-        jet_pt_correction_producer = jets.JetEnergyCorrection_v12 if int(era[:4])<2022 else jets.JetEnergyCorrection
+        jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if int(era[:4])<2022 else jets.JetEnergyCorrection
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
         if int(era[:4]) < 2022:
@@ -565,10 +565,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Trigger scale factor shifts (Run 3)
     #########################
-    for _variation in ["up", "down"]:
+    for variation in ["up", "down"]:
         configuration.add_shift(
             SystematicShift(
-                name=f"CMS_eff_e_trigger{_variation.upper()}",
+                name=f"CMS_eff_e_trigger{variation.upper()}",
                 shift_config={
                     ("et"): {
                         "singleelectron_trigger_sf": [
@@ -577,7 +577,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "singleelectron_trigger_flag": "trg_single_ele30",
                                 "singleelectron_trigger_sf_name": "Electron-HLT-SF",
                                 "singleelectron_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
-                                "singleelectron_trigger_variation": f"sf{_variation}",
+                                "singleelectron_trigger_variation": f"sf{variation}",
                             },
                         ],
                     }
@@ -588,7 +588,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"CMS_trig_etau_cross{_variation.upper()}",
+                name=f"CMS_trig_etau_cross{variation.upper()}",
                 shift_config={
                     ("et"): {
                         "eletau_cross_trigger_leg1_sf": [
@@ -597,7 +597,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "eletau_cross_trigger_flag": ELETAU_CROSS_TRIGGER_FLAG,
                                 "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
                                 "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
-                                "eletau_cross_trigger_leg1_variation": f"sf{_variation}",
+                                "eletau_cross_trigger_leg1_variation": f"sf{variation}",
                             },
                         ],
                         "eletau_cross_trigger_leg2_sf": [
@@ -605,7 +605,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
                                 "eletau_cross_trigger_flag": ELETAU_CROSS_TRIGGER_FLAG,
                                 "eletau_cross_trigger_leg2_sf_name": "etau",
-                                "eletau_cross_trigger_leg2_variation": _variation,
+                                "eletau_cross_trigger_leg2_variation": variation,
                             },
                         ]
                     },
@@ -620,7 +620,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         )
         configuration.add_shift(
                 SystematicShift(
-                    name=f"CMS_eff_m_trigger{_variation.upper()}",
+                    name=f"CMS_eff_m_trigger{variation.upper()}",
                     shift_config={
                         ("mt"): {
                             "singlemuon_trigger_sf": [
@@ -628,7 +628,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
                                     "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": f"syst{_variation}",
+                                    "singlemuon_trigger_variation": f"syst{variation}",
                                 },
                             ],
                         }
@@ -639,7 +639,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             )
         configuration.add_shift(
             SystematicShift(
-                name=f"CMS_trig_mutau_cross{_variation.upper()}",
+                name=f"CMS_trig_mutau_cross{variation.upper()}",
                 shift_config={
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
@@ -647,7 +647,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "mutau_cross_trigger_flag": MUTAU_CROSS_TRIGGER_FLAG,
                                 "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
                                 "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
-                                "mutau_cross_trigger_leg1_variation": f"syst{_variation}",
+                                "mutau_cross_trigger_leg1_variation": f"syst{variation}",
                             },
                         ],
                         "mutau_trigger_leg2_sf": [
@@ -655,7 +655,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "mutau_cross_trigger_flag": MUTAU_CROSS_TRIGGER_FLAG,
                                 "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
                                 "mutau_cross_trigger_leg2_sf_name": "mutau",
-                                "mutau_cross_trigger_leg2_variation": _variation,
+                                "mutau_cross_trigger_leg2_variation": variation,
                             },
                         ],
                     },
@@ -670,7 +670,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         )
         configuration.add_shift(
             SystematicShift(
-                name=f"CMS_trig_t_ditau_cross{_variation.upper()}",
+                name=f"CMS_trig_t_ditau_cross{variation.upper()}",
                 shift_config={
                     ("tt"): {
                         "doubletau_trigger_leg1_sf": [
@@ -678,7 +678,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "doubletau_trigger_leg1_flagname": DOUBLETAU_TRIGGER_LEG1_FLAGNAME,
                                 "doubletau_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
                                 "doubletau_trigger_leg1_sf_name": DOUBLETAU_TRIGGER_SF_NAME,
-                                "doubletau_trigger_leg1_variation": _variation,
+                                "doubletau_trigger_leg1_variation": variation,
                             },
                         ],
                         "doubletau_trigger_leg2_sf": [
@@ -686,7 +686,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "doubletau_trigger_leg2_flagname": DOUBLETAU_TRIGGER_LEG2_FLAGNAME,
                                 "doubletau_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
                                 "doubletau_trigger_leg2_sf_name": DOUBLETAU_TRIGGER_SF_NAME,
-                                "doubletau_trigger_leg2_variation": _variation,
+                                "doubletau_trigger_leg2_variation": variation,
                             },
                         ],
                     },

@@ -1,7 +1,6 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
-from code_generation.configuration import Configuration
 
 ####################
 # Set of producers used for selection possible good jets
@@ -166,7 +165,7 @@ with defaults(scopes=["global"]):
     )
 
     with defaults(output=[q.jet_pt_corrected]):
-        JetPtCorrection_v12 = Producer(
+        JetPtCorrection_Run2 = Producer(
             call='''physicsobject::jet::PtCorrectionMC({df}, correctionManager, {output}, {input}, "{jet_jec_file}", "{jet_jec_algo}", "{jet_jes_tag}", "{jet_jes_source}", "{jet_jer_tag}", "{jet_reapplyJES}", {jet_jes_shift}, "{jet_jer_shift}", "{era}")''',
             input=[
                 nanoAODv15.Jet_pt,
@@ -211,13 +210,15 @@ with defaults(scopes=["global"]):
     with defaults(call=None, input=None, output=None):
         RenameJetsData = ProducerGroup(subproducers=[RenameJetPt, RenameJetMass])
         JetEnergyCorrection = ProducerGroup(subproducers=[RawJet, JetPtCorrection_L1, JetPtCorrectionL2L3, JetMassCorrection])
-        JetEnergyCorrection_v12 = ProducerGroup(subproducers=[JetPtCorrection_v12, JetMassCorrection])
+        JetEnergyCorrection_Run2 = ProducerGroup(subproducers=[JetPtCorrection_Run2, JetMassCorrection])
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])
 
     with defaults(output=[]):
+        JetPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt})", input=[q.jet_pt_corrected])
         JetPtCut_loose = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_loose})''', input=[q.jet_pt_corrected], output=[q.jet_pt_mask_loose])
         JetPtCut_tight = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_tight})''', input=[q.jet_pt_corrected])
         
+        JetEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_jet_eta})", input=[nanoAODv15.Jet_eta])
         JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
@@ -275,12 +276,13 @@ with defaults(scopes=["global"]):
             input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
             output=[q.good_jets_mask],
         )
-        # run 2 without horn selection, pt>30 and eta<4.7
-        GoodJets_Run2 = ProducerGroup(
-            input=[q.jet_pt_mask_loose, q.jet_id_mask, q.jet_eta_mask_max],
-            output=[q.good_jets_mask],
-            subproducers=[JetPUIDCut],
-        )
+    # run 2 without horn selection, pt>30 and eta<4.7
+    GoodJets_Run2 = ProducerGroup(
+        call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
+        input=[],
+        output=[q.good_jets_mask],
+        subproducers=[JetPtCut, JetEtaCut, JetIDCut, JetPUIDCut],
+    )
 
     GoodBJets = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
