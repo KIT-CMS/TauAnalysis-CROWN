@@ -1364,7 +1364,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tt",
                 ReplaceProducer(
                     producers=[
-                        scalefactors.Tau_1_VsJetTauID_SF,
+                        scalefactors.Tau_1_VsJetTauID_SF_Run2,
                         embedding.Tau_1_VsJetTauID_tt_SF,
                     ],
                     samples=["embedding"],
@@ -1374,7 +1374,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tt",
                 ReplaceProducer(
                     producers=[
-                        scalefactors.Tau_2_VsJetTauID_tt_SF,
+                        scalefactors.Tau_2_VsJetTauID_SF_Run2,
                         embedding.Tau_2_VsJetTauID_tt_SF,
                     ],
                     samples=["embedding"],

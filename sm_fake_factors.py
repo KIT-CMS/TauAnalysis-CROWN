@@ -11,7 +11,7 @@ from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
 from .producers import fakefactors as fakefactors
-from .producers import ml as ml
+from .producers import nn_output as nn_output
 from .quantities import output as q
 
 @dataclass
@@ -138,7 +138,7 @@ def build_config(
     configuration.add_producers(
         ["et"],
         [
-            ml.VariableConversionToFloatProducerGroup,
+            nn_output.VariableConversionToFloatProducerGroup,
             fakefactors.FFInput_lt,
             fakefactors.FFInput_fractions_lt,
             fakefactors.FFInput_DR_lt,
@@ -235,7 +235,7 @@ def build_config(
     configuration.add_producers(
         ["mt"],
         [
-            ml.VariableConversionToFloatProducerGroup,
+            nn_output.VariableConversionToFloatProducerGroup,
             fakefactors.FFInput_lt,
             fakefactors.FFInput_fractions_lt,
             fakefactors.FFInput_DR_lt,
@@ -327,7 +327,7 @@ def build_config(
     configuration.add_producers(
         ["tt"],
         [
-            ml.VariableConversionToFloatProducerGroup,
+            nn_output.VariableConversionToFloatProducerGroup,
             fakefactors.FFInput_QCD_tt,
             fakefactors.FFInput_QCDsub_tt,
             fakefactors.FFInput_fractions_tt,

@@ -4,6 +4,10 @@ from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
+####################
+# Set of producers used for contruction of met related quantities
+####################
+
 PuppiMET_pt_nominal_ref = NanoAODQuantity("PuppiMET_pt")
 PuppiMET_phi_nominal_ref = NanoAODQuantity("PuppiMET_phi")
 

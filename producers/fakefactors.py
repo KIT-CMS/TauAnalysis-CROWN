@@ -34,7 +34,6 @@ with defaults(scopes=["mt", "et"]):
                 q.tau_decaymode_2_float,
                 q.mass_2,
                 q.eta_2,
-                q.puppimet,
                 # q.pt_ttjj,
                 q.njets_float,
             ],

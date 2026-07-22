@@ -1415,7 +1415,7 @@ def build_config(
             ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_v9], {"exclude_samples": MC_ONLY}),
             ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt], {"samples": MC_ONLY}),
             ("global", ReplaceProducer, [event.DiLeptonVeto, event.DiLeptonVeto_v9], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.JetEnergyCorrection, jets.JetEnergyCorrection_v12], {"exclude_samples": MC_ONLY}),
+            ("global", ReplaceProducer, [jets.JetEnergyCorrection, jets.JetEnergyCorrection_Run2], {"exclude_samples": MC_ONLY}),
             ("global", ReplaceProducer, [jets.JetEnergyCorrection, jets.JetEnergyCorrection_data], {"samples": MC_ONLY}),
             ("global", ReplaceProducer, [jets.JetID, jets.JetID_rename], {"exclude_samples": ["fake_era"]}),
             ("global", ReplaceProducer, [jets.JetBTagUParT, jets.JetBTagDeep], {"exclude_samples": ["fake_era"]}),

@@ -1,9 +1,9 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, defaults, ExtendedVectorProducer, VectorProducer, ProducerGroup
+from ..scripts.CROWNWrapper import Producer, defaults, ProducerGroup
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
-    with defaults(call='''utility::Cast<float, int>({df}, {output}, "float", {input}).first'''):
+    with defaults(call='utility::Cast<float, int>({df}, {output}, "float", {input}).first'):
         ConversionToFloatCollection = [
             njets_Float := Producer(input=[q.njets], output=[q.njets_float]),
             nbtag_Float := Producer(input=[q.nbtag], output=[q.nbtag_float]),
@@ -11,14 +11,14 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             tau_decaymode_1_Float := Producer(input=[q.tau_decaymode_1], output=[q.tau_decaymode_1_float]),
         ]
 
-    with defaults(call='''utility::Cast<float, double>({df}, {output}, "float", {input}).first'''):
+    with defaults(call='utility::Cast<float, double>({df}, {output}, "float", {input}).first'):
         ConversionToFloatCollection += [
             pzetamissvis_Float := Producer(input=[q.pzetamissvis], output=[q.pzetamissvis_float]),
         ]
 
     VariableConversionToFloatProducerGroup = ProducerGroup(subproducers=ConversionToFloatCollection)
 
-    with defaults(call='''ml_sm::EventParity({df}, {output}, {input})'''):
+    with defaults(call='ml_sm::EventParity({df}, {output}, {input})'):
         event_parity_Float = Producer(input=[nanoAOD.event], output=[q.event_parity_float])
 
     # era flags
@@ -48,11 +48,54 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 call='''event::quantity::Define<float>({df}, {output}, {is_2022preEE})''',
                 output=[q.is_2022preEE],
             ),
+            is_2018 := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2018})''',
+                output=[q.is_2018],
+            ),
+            is_2017 := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2017})''',
+                output=[q.is_2017],
+            ),
+            is_2016postVFP := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2016postVFP})''',
+                output=[q.is_2016postVFP],
+            ),
+            is_2016preVFP := Producer(
+                call='''event::quantity::Define<float>({df}, {output}, {is_2016preVFP})''',
+                output=[q.is_2016preVFP],
+            ),
         ]
     EraFlags = ProducerGroup(call=None, input=None, output=None, subproducers=EraFlags_ProducerCollection)
 
+inputs_run2 = [
+    q.event_parity_float,
+    q.pt_1,
+    q.pt_2,
+    q.jpt_1,
+    q.jpt_2,
+    q.jeta_1,
+    q.jeta_2,
+    q.m_fastmtt,
+    q.pt_fastmtt,
+    q.puppimet,
+    q.nbtag_float,
+    q.m_vis,
+    q.pt_tt,
+    q.pt_vis,
+    q.mjj,
+    q.pt_dijet,
+    q.pt_ttjj,
+    q.pzetamissvis_float,
+    q.deltaR_ditaupair,
+    q.deltaR_1j1,
+    q.deltaR_1j2,
+    q.deltaR_2j1,
+    q.deltaR_2j2,
+    q.deltaR_12j1,
+    q.njets_float,
+]
 
-inputs = [
+inputs_run3 = [
     q.pt_1,
     q.pt_2,
     q.eta_1,
@@ -98,19 +141,36 @@ inputs = [
     q.is_2023preBPix,
     q.is_2022postEE,
     q.is_2022preEE,
-]  # 26 + 6 = 32 + event parity = 33
+]
+
+with defaults(
+    output=[
+        q.nn_output_vector,
+        q.nn_predicted_class,
+        q.nn_predicted_max_value,
+    ],
+    scopes=["mt"],
+):
+    Evaluate_DNN_run2 = Producer(
+        call=f'''ml_sm::Extracted_NN_Output<{len(inputs_run2)}>(
+            {{df}},
+            onnxSessionManager,
+            {{output}},
+            "{{model_file_path}}",
+            {{input_vec}})''',
+        input=inputs_run2,
+    )
 
 with defaults(
     output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
     scopes=["mt", "et", "tt"],
-    # subproducers=FloatConvertedVariablesProducers, # included in FF
 ):
-    Evaluate_DNN = Producer(
-        call='''ml_sm::Extracted_NN_Output<33>(
-            {df},
+    Evaluate_DNN_run3 = Producer(
+        call=f'''ml_sm::Extracted_NN_Output<{len(inputs_run3)}>(
+            {{df}},
             onnxSessionManager,
-            {output},
-            "{model_file_path}",
-            {input_vec})''',
-        input=[q.event_parity_float] + inputs,
+            {{output}},
+            "{{model_file_path}}",
+            {{input_vec}})''',
+        input=[q.event_parity_float] + inputs_run3,
     )
