@@ -1357,33 +1357,6 @@ def build_config(
     ################################
     ######### Modifications ########
     ################################
-    
-    if era == "2024":
-        # separate MC for 2024 and 2025 by even/odd event number
-        configuration.add_modification_rule(
-            "global",
-            AppendProducer(
-                producers=[event.EvenIDFilter],
-                exclude_samples=["data", "embedding"],
-            ),
-        )
-    if era == "2025":
-        # temporary root pileup for data 2025 by tau fw group, 23/03/2026
-        configuration.add_modification_rule(
-            "global",
-            ReplaceProducer(
-                producers=[event.PUweights, event.PUweights_root],
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            ),
-        )
-        # separate MC for 2024 and 2025 by even/odd event number
-        configuration.add_modification_rule(
-            "global",
-            AppendProducer(
-                producers=[event.OddIDFilter],
-                exclude_samples=["data", "embedding"],
-            ),
-        )
 
     MC_ONLY = ["data", "embedding", "embedding_mc"]
     
@@ -1629,7 +1602,6 @@ def build_config(
             [
                 triggers.MTGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in scalefactors.TauID_SF_v9.get_outputs("mt")
                 ] + [p for p in pairquantities.MTDiTauPairQuantities_v9.get_outputs("mt")
             ],
         )
@@ -1638,7 +1610,6 @@ def build_config(
             [
                 triggers.ETGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in scalefactors.TauID_SF_v9.get_outputs("et")
                 ] + [p for p in pairquantities.ETDiTauPairQuantities_v9.get_outputs("et")
             ],
         )
@@ -1653,7 +1624,6 @@ def build_config(
             [
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
-                ] + [p for p in scalefactors.TauID_SF_v9.get_outputs("tt")
                 ] + [p for p in pairquantities.TTDiTauPairQuantities_v9.get_outputs("tt")
             ],
         )
