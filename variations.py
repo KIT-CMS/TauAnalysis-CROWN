@@ -121,8 +121,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name=f"CMS_scale_m_{shift_era_tag}", shift_map={"Up": "ScaleUp", "Down": "ScaleDown"})
-        add_shift(name=f"CMS_res_m_{shift_era_tag}", shift_map={"Up": "ResoUp", "Down": "ResoDown"})
+        add_shift(name=f"CMS_scale_m_stat", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
+        add_shift(name=f"CMS_scale_m_syst{shift_era_tag}", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
+        add_shift(name=f"CMS_res_m_stat", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
+        add_shift(name=f"CMS_res_m_syst_{shift_era_tag}", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
 
     #########################
     # Muon ID shifts
