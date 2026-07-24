@@ -243,13 +243,13 @@ def ExtendedVectorProducer(*args, **kwargs) -> _ExtendedVectorProducer:
     kwargs.setdefault("call", CONTEXT_REGISTRY["call"].get())
     kwargs.setdefault("input", CONTEXT_REGISTRY["input"].get())
     kwargs.setdefault("output", CONTEXT_REGISTRY["output"].get())
-    kwargs.setdefault("scope", CONTEXT_REGISTRY["scopes"].get())  # not a typo but inconsistencies within CROWN code generation itself!
+    kwargs.setdefault("scopes", CONTEXT_REGISTRY["scopes"].get())
     kwargs.setdefault("vec_config", CONTEXT_REGISTRY["vec_configs"].get())  # not a typo but inconsistencies within CROWN code generation itself!
 
     if kwargs["name"] is None:
         raise NameNotDetermined
 
-    for key in ["scope", "input", "output", "vec_config", "call"]:
+    for key in ["scopes", "input", "output", "vec_config", "call"]:
         if kwargs[key] is None:
             raise MissingValue(key)
 

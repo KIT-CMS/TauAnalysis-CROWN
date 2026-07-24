@@ -116,7 +116,7 @@ ETGenerateSingleElectronTriggerSF = ExtendedVectorProducer(
     call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{embedding_electron_sf_file}", "{embedding_trigger_sf}", "emb", {trg_extrapolation})''',
     input=[q.pt_1, q.eta_1],
     output="flagname",
-    scope=["et", "ee"],
+    scopes=["et", "ee"],
     vec_config="singlelectron_trigger_sf",
 )
 
@@ -185,12 +185,12 @@ with defaults(vec_configs="vsjet_tau_id_sf_embedding"):
                 "{tau_emb_sf_vsjet_tauDM1}",
                 "{tau_emb_sf_vsjet_tauDM10}",
                 "{tau_emb_sf_vsjet_tauDM11}")''',
-            scope=["tt"],
+            scopes=["tt"],
         )
 
     Tau_1_VsJetTauID_tt_SF = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsJet({df}, correctionManager, {output}, {input}, "{tau_emb_sf_file}", "{tau_emb_id_sf_correctionset}", "{vsjet_tau_id_WP}", "{tau_vsjet_vseleWP}", "{tau_emb_vsjet_sf_dependence}", "{tau_emb_sf_vsjet_tauDM0}", "{tau_emb_sf_vsjet_tauDM1}", "{tau_emb_sf_vsjet_tauDM10}", "{tau_emb_sf_vsjet_tauDM11}")''',
         input=[q.pt_1, q.tau_decaymode_1, q.gen_match_1],
         output="tau_1_vsjet_sf_outputname",
-        scope=["tt"],
+        scopes=["tt"],
     )
