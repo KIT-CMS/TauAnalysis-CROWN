@@ -404,7 +404,7 @@ ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(  # --- from our m
     call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_trigger_sf}", "mc", "{mc_trg_extrapolation}")''',
     input=[q.pt_1, q.eta_1],
     output="flagname",
-    scope=["et", "ee"],
+    scopes=["et", "ee"],
     vec_config="singlelectron_trigger_sf_mc",
 )
 
@@ -420,7 +420,7 @@ SingleEleTriggerSF = ExtendedVectorProducer(
         q.eta_1,
     ],
     output="singleelectron_trigger_flagname",
-    scope=["et","em"],
+    scopes=["et","em"],
     vec_config="singleelectron_trigger_sf",
 )
 
@@ -432,7 +432,7 @@ SingleMuTriggerSF = ExtendedVectorProducer(
         q.eta_1,
     ],
     output="singlemuon_trigger_flagname",
-    scope=["mt","em"],
+    scopes=["mt","em"],
     vec_config="singlemuon_trigger_sf",
 )
 
@@ -444,7 +444,7 @@ MuTauTriggerLeg1SF = ExtendedVectorProducer(
         q.eta_1,
     ],
     output="mutau_cross_trigger_leg1_flagname",
-    scope=["mt"],
+    scopes=["mt"],
     vec_config="mutau_trigger_leg1_sf",
 )
 
@@ -456,7 +456,7 @@ MuTauTriggerLeg2SF = ExtendedVectorProducer(
         q.tau_decaymode_2,
     ],
     output="mutau_cross_trigger_leg2_flagname",
-    scope=["mt"],
+    scopes=["mt"],
     vec_config="mutau_trigger_leg2_sf",
 )
 
@@ -481,7 +481,7 @@ EleTauTriggerLeg1SF = ExtendedVectorProducer(
         q.eta_1,
     ],
     output="eletau_cross_trigger_leg1_flagname",
-    scope=["et"],
+    scopes=["et"],
     vec_config="eletau_cross_trigger_leg1_sf",
 )
 
@@ -493,7 +493,7 @@ EleTauTriggerLeg2SF = ExtendedVectorProducer(
         q.tau_decaymode_2,
     ],
     output="eletau_cross_trigger_leg2_flagname",
-    scope=["et"],
+    scopes=["et"],
     vec_config="eletau_cross_trigger_leg2_sf",
 )
 
@@ -517,7 +517,7 @@ DoubleTauTriggerLeg1SF = ExtendedVectorProducer(
         q.tau_decaymode_1,
     ],
     output="doubletau_trigger_leg1_flagname",
-    scope=["tt"],
+    scopes=["tt"],
     vec_config="doubletau_trigger_leg1_sf",
 )
 
@@ -529,7 +529,7 @@ DoubleTauTriggerLeg2SF = ExtendedVectorProducer(
         q.tau_decaymode_2,
     ],
     output="doubletau_trigger_leg2_flagname",
-    scope=["tt"],
+    scopes=["tt"],
     vec_config="doubletau_trigger_leg2_sf",
 )
 
