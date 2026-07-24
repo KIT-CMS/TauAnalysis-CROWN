@@ -8,7 +8,7 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 
 with defaults(scopes=["global"]):
     MuonPtCorrection = Producer(
-        call='''physicsobject::muon::PtCorrectionMC({df}, correctionManager, {output}, {input}, 26.0, "{muon_sr_file}", "{muon_sr_shift}", {is_data})''',
+        call='''physicsobject::muon::PtCorrection({df}, correctionManager, {output}, {input}, 26.0, "{muon_sr_file}", "{muon_sr_shift}", {is_data})''',
         input=[nanoAOD.Muon_pt, nanoAOD.Muon_eta, nanoAOD.Muon_phi, nanoAOD.Muon_charge, nanoAOD.Muon_nTrackerLayers, nanoAOD.luminosityBlock, nanoAOD.event],
         output=[q.muon_pt_corrected]
     )
