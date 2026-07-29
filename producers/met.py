@@ -157,7 +157,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_leptoncorrected],
         )
 
-    with defaults(call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'''):
+    with defaults(call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'''):
         ApplyRecoilCorrections = Producer(
             input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
             output=[q.puppimet_p4_recoilcorrected],
@@ -166,13 +166,6 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             input=[q.pfmet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
             output=[q.pfmet_p4_recoilcorrected],
         )
-
-    # Recoil uncertainty variations, new call on corrected MET
-    ApplyRecoilUncertainty = Producer(
-        call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "Recoil_correction", "Uncertainty", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})''',
-        input=[q.puppimet_p4_recoilcorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
-        output=[q.puppimet_p4_recoiluncertaintycorrected],
-    )
 
     with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}",, {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
         ApplyRecoilCorrections_Run2 = Producer(
@@ -187,7 +180,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     ApplyUnclusteredMetShift = Producer(
         call='''met::PropagateUnclusteredEnergyToMET({df}, {output}, {input})''',
         input=[
-            q.puppimet_p4_recoiluncertaintycorrected,
+            q.puppimet_p4_recoilcorrected,
             PuppiMET_pt_nominal_ref,
             PuppiMET_phi_nominal_ref,
             nanoAODv15.PuppiMET_pt,
