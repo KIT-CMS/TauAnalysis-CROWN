@@ -377,7 +377,17 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         add_shift(name=f"CMS_fake_t_DeepTau2017v2p1_VSmu_wheel{wheel}", shift_key=f"tau_id_vsmu_wheel{wheel}")
             
         else:
-            for dm in ["0", "1", "10", "11"]:
+            # Naming convention of the eras used inside the TAU POG correctionlib
+            # json files for the DM-binned "DeepTau2018v2p5VSjet" SFs (2022-2023),
+            # see https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendationForRun3
+            TAU_JSON_ERA_MAP = {
+                "2022preEE": "2022_preEE",
+                "2022postEE": "2022_postEE",
+                "2023preBPix": "2023_preBPix",
+                "2023postBPix": "2023_postBPix",
+            }
+            vsjet_dms = ["0", "1", "10", "11"]
+            for dm in vsjet_dms:
                 # vs Ele
                 with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_barrel_{shift_era_tag}", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
@@ -387,14 +397,50 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
                 if int(era[:4]) < 2024:
-                    with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_{shift_era_tag}", shift_key=f"tau_id_vsjet_DM{dm}"):
-                        add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]) 
-                        add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF_v12])
+                    # 2022-2023 (NanoAODv12): DM-dependent ("dm" flag) SFs. Per the
+                    # TauPOG recommendation the uncertainty is split into:
+                    #  - 2 stat. uncertainties per DM, uncorrelated across DM and era
+                    #  - 1 syst. uncertainty fully correlated across DM and era ("alleras")
+                    #  - 1 syst. uncertainty correlated across DM, uncorrelated across era
+                    #  - 1 syst. (TES-induced) uncertainty per DM, uncorrelated across DM and era
+                    json_era_tag = TAU_JSON_ERA_MAP[era]
+                    with defaults(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12], shift_key=f"tau_id_vsjet_DM{dm}"):
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_TES_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
+                    with defaults(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12], shift_key=f"tau_id_vsjet_DM{dm}"):
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_TES_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
                 else:
                     for pt in ["20to40", "40to60", "60toInf"]:
                         with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_pT{pt}_{shift_era_tag}", shift_key=f"tau_id_vsjet_DM{dm}_pt{pt}"):
                             add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF])
                             add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
+
+            if int(era[:4]) < 2024:
+                # vs Jet uncertainties correlated across decay modes (2022-2023):
+                # shift all DM-binned config keys simultaneously.
+                json_era_tag = TAU_JSON_ERA_MAP[era]
+                with defaults(shift_key=[f"tau_id_vsjet_DM{dm}" for dm in vsjet_dms]):
+                    with defaults(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]):
+                        add_shift(
+                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_syst_alleras",
+                            shift_map={"Up": ["syst_alleras_up"] * len(vsjet_dms), "Down": ["syst_alleras_down"] * len(vsjet_dms)},
+                        )
+                        add_shift(
+                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_{shift_era_tag}",
+                            shift_map={"Up": [f"syst_{json_era_tag}_up"] * len(vsjet_dms), "Down": [f"syst_{json_era_tag}_down"] * len(vsjet_dms)},
+                        )
+                    with defaults(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12]):
+                        add_shift(
+                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_syst_alleras",
+                            shift_map={"Up": ["syst_alleras_up"] * len(vsjet_dms), "Down": ["syst_alleras_down"] * len(vsjet_dms)},
+                        )
+                        add_shift(
+                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_{shift_era_tag}",
+                            shift_map={"Up": [f"syst_{json_era_tag}_up"] * len(vsjet_dms), "Down": [f"syst_{json_era_tag}_down"] * len(vsjet_dms)},
+                        )
             # vs Muon
             for wheel in range(1, 6):
                 with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSmu_wheel{wheel}_{shift_era_tag}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
@@ -622,7 +668,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         )
         configuration.add_shift(
                 SystematicShift(
-                    name=f"CMS_eff_m_trigger{variation.upper()}",
+                    name=f"CMS_eff_m_trigger_syst{variation.upper()}",
                     shift_config={
                         ("mt"): {
                             "singlemuon_trigger_sf": [
@@ -640,8 +686,27 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 exclude_samples=["data", "embedding", "embedding_mc"],
             )
         configuration.add_shift(
+                SystematicShift(
+                    name=f"CMS_eff_m_trigger_stat_{shift_era_tag}{variation.upper()}",
+                    shift_config={
+                        ("mt"): {
+                            "singlemuon_trigger_sf": [
+                                {
+                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                                    "singlemuon_trigger_flag": "trg_single_mu24",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                                    "singlemuon_trigger_variation": f"stat{variation}",
+                                },
+                            ],
+                        }
+                    },
+                    producers={("mt"): scalefactors.SingleMuTriggerSF},
+                ),
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            )
+        configuration.add_shift(
             SystematicShift(
-                name=f"CMS_trig_mutau_cross{variation.upper()}",
+                name=f"CMS_trig_mutau_cross_syst{variation.upper()}",
                 shift_config={
                     ("mt"): {
                         "mutau_trigger_leg1_sf": [
@@ -658,6 +723,29 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                                 "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
                                 "mutau_cross_trigger_leg2_sf_name": "mutau",
                                 "mutau_cross_trigger_leg2_variation": variation,
+                            },
+                        ],
+                    },
+                },
+                producers={
+                    ("mt"): [
+                        scalefactors.MuTauTriggerSF,
+                    ],
+                },
+            ),
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name=f"CMS_trig_mutau_cross_stat_{shift_era_tag}{variation.upper()}",
+                shift_config={
+                    ("mt"): {
+                        "mutau_trigger_leg1_sf": [
+                            {
+                                "mutau_cross_trigger_flag": MUTAU_CROSS_TRIGGER_FLAG,
+                                "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
+                                "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
+                                "mutau_cross_trigger_leg1_variation": f"stat{variation}",
                             },
                         ],
                     },
