@@ -255,7 +255,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     else:
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
-            producers=[met.ApplyRecoilUncertainty],
+            producers=[met.ApplyRecoilCorrections],
             exclude_samples=["data", "embedding", "embedding_mc"],
             shift_key="recoil_variation",
         ):

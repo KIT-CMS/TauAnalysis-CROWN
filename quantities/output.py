@@ -1,5 +1,6 @@
 # from code_generation.quantity import Quantity
 from ..scripts.CROWNWrapper import Quantity
+from ..scripts.CROWNWrapper import NanoAODQuantity
 
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
@@ -151,6 +152,9 @@ ps_weight = Quantity()
 prefiring_wgt = Quantity()
 
 #### MET 
+
+PuppiMET_pt_nanoAOD_ref = NanoAODQuantity("PuppiMET_pt")
+PuppiMET_phi_nanoAOD_ref = NanoAODQuantity("PuppiMET_phi")
 
 # MetBasics
 met_mask = Quantity()
