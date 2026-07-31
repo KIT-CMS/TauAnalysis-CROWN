@@ -11,11 +11,13 @@ HOW TO READ THIS FILE
 1. `_era_parameters()` collects *everything* that depends on the era (and on
    the scope) in one place: thresholds, working points and trigger flag names.
    Only the *preselection* is era dependent at all -- see below.
-2. `_mask_composition()` is the literal region table: one line per mask,
-   listing exactly the atomic cuts it consists of. This is the definition of
-   what each mask means -- if a region changes, change it here.
-3. `add_selection()` books the required producers, config parameters and
-   outputs generically from those two tables.
+2. `add_selection()` books the producers, config parameters and outputs of
+   each scope.
+
+The literal region table -- one `Producer` per mask, one line per region,
+listing exactly the atomic cuts it consists of -- is NOT here: it is at the
+bottom of `producers/selection.py` (`LT_MASKS`, `TT_MASKS`, `EM_MASKS`).
+**If you want to know or change what a mask means, look there.**
 
 WHAT THE MASKS CONTAIN
 ----------------------
@@ -59,6 +61,16 @@ The masks encode the `nbtag` cuts exactly as written in the yaml files, even
 though the current TauFakeFactors `apply_region_filters` silently skips them.
 This is a deliberate, signed-off difference; see the validation notes of the
 selection-mask work.
+
+TWO YAML CUTS ARE INTENTIONALLY OMITTED
+---------------------------------------
+`nbtag: (nbtag >= 0)` (the QCD, process fraction and `AR_SR` regions) and
+`lep_mt: (mt_1 > 0)` (the W+jets `DR_SR` regions) are NOT part of any mask.
+Both are unconditionally true -- `nbtag` is a jet multiplicity and `mt_1` a
+transverse mass, so neither can ever be negative -- and dropping them leaves
+every mask semantically identical while saving two columns per event. A
+cut-by-cut diff of the masks against the yaml files will show these two as
+missing; that is expected and is the only such difference.
 """
 
 from code_generation.configuration import Configuration
@@ -126,8 +138,8 @@ def _era_parameters(scope, era):
         parameters.update(
             {
                 # stored column type of the hadronic tau decay mode; the
-                # accepted modes {0, 1, 10, 11} are one `EqualFlag` producer
-                # each, see `producers/selection.py`
+                # accepted modes themselves come from the `tau_dms` config
+                # parameter, shared with the object level decay mode cut
                 "selection_decaymode_type": "UChar_t",
                 # tau vs jet working points used by the fake factor regions
                 "ff_tau_iso_wp": "Medium",
@@ -194,109 +206,7 @@ def _era_parameters(scope, era):
 
 
 ##############################################################################
-# 2. region composition -- WHAT EACH MASK MEANS
-##############################################################################
-
-
-def _mask_composition(scope):
-    """Literal table of the atomic cuts making up each mask of a scope."""
-
-    # short aliases, purely to keep the table below readable
-    dm1, dm2 = q.selcut_presel_tau_dm_1, q.selcut_presel_tau_dm_2
-    vse1, vse2 = q.selcut_presel_vsele_1, q.selcut_presel_vsele_2
-    vsm1, vsm2 = q.selcut_presel_vsmu_1, q.selcut_presel_vsmu_2
-    pt1, pt2 = q.selcut_presel_pt_1, q.selcut_presel_pt_2
-    eta1 = q.selcut_presel_eta_1
-    trg = q.selcut_presel_trigger
-    jetveto = q.selcut_jet_veto
-
-    veto = q.selcut_lepton_veto  # extraelec && extramuon && dilepton
-    veto_inv = q.selcut_lepton_veto_inv  # !(the above)
-    os_, ss_ = q.sel_os, q.sel_ss
-
-    iso1, iso2 = q.selcut_tau_iso_1, q.selcut_tau_iso_2  # vsJet Medium > 0.5
-    nis1, nis2 = q.selcut_tau_noniso_1, q.selcut_tau_noniso_2  # vsJet Medium < 0.5
-    vvl1, vvl2 = q.selcut_tau_vvvloose_1, q.selcut_tau_vvvloose_2
-
-    lep_iso = q.selcut_lep_iso  # iso_1 < 0.15
-    lep_anti = q.selcut_lep_antiiso  # iso_1 >= 0.15
-
-    mt70 = q.selcut_mt_lt_70  # mt_1 < 70
-    mt0, w_mt = q.selcut_mt_gt_0, q.selcut_wjets_mt  # mt_1 > 0, mt_1 >= 70
-    nb0, nbeq0 = q.selcut_nbtag_ge_0, q.selcut_nbtag_eq_0
-    tt_nb = q.selcut_ttbar_nbtag
-
-    if scope == "em":
-        return {q.presel_mask: [eta1, pt1, pt2, trg, jetveto]}
-
-    if scope == "tt":
-        return {
-            q.presel_mask:              [dm1, dm2, vse1, vse2, vsm1, vsm2, pt1, pt2, trg, jetveto],
-            # --- QCD fake factors, leading tau ---
-            q.ff_qcd_SRlike:            [iso1, iso2, veto, ss_],
-            q.ff_qcd_ARlike:            [vvl1, nis1, iso2, veto, ss_],
-            # --- QCD fake factors, subleading tau ---
-            q.ff_qcd_sub_SRlike:        [iso1, iso2, veto, ss_],
-            q.ff_qcd_sub_ARlike:        [iso1, vvl2, nis2, veto, ss_],
-            # --- process fractions ---
-            q.ff_fraction_SR:           [iso1, iso2, veto, os_],
-            q.ff_fraction_AR:           [vvl1, nis1, nis2, veto, os_],
-            q.ff_fraction_sub_SR:       [iso1, iso2, veto, os_],
-            q.ff_fraction_sub_AR:       [nis1, vvl2, nis2, veto, os_],
-            # --- DR to SR corrections, leading tau ---
-            q.ff_qcd_DR_SR_SRlike:      [iso1, nis2, veto, ss_],
-            q.ff_qcd_DR_SR_ARlike:      [vvl1, nis1, nis2, veto, ss_],
-            q.ff_qcd_AR_SR_SRlike:      [iso1, nis2, veto, os_],
-            q.ff_qcd_AR_SR_ARlike:      [vvl1, nis1, nis2, veto, os_],
-            # --- DR to SR corrections, subleading tau ---
-            q.ff_qcd_sub_DR_SR_SRlike:  [nis1, iso2, veto, ss_],
-            q.ff_qcd_sub_DR_SR_ARlike:  [nis1, vvl2, nis2, veto, ss_],
-            q.ff_qcd_sub_AR_SR_SRlike:  [nis1, iso2, veto, os_],
-            q.ff_qcd_sub_AR_SR_ARlike:  [nis1, vvl2, nis2, veto, os_],
-        }
-
-    # --- et and mt -----------------------------------------------------------
-    anti = [vvl2, nis2]  # (vsJet VVVLoose > 0.5) && (vsJet Medium < 0.5)
-
-    return {
-        q.presel_mask:                 [dm2, vse2, vsm2, pt1, pt2, trg, jetveto],
-        # --- QCD fake factors ---
-        q.ff_qcd_SRlike:               [iso2, lep_iso, mt70, nb0, veto, ss_],
-        q.ff_qcd_ARlike:      [*anti,  lep_iso, mt70, nb0, veto, ss_],
-        # --- W+jets fake factors (and their same-sign QCD estimation) ---
-        q.ff_wjets_SRlike:             [iso2, lep_iso, w_mt, nbeq0, veto, os_],
-        q.ff_wjets_ARlike:    [*anti,  lep_iso, w_mt, nbeq0, veto, os_],
-        q.ff_wjets_SRlike_ss:          [iso2, lep_iso, w_mt, nbeq0, veto, ss_],
-        q.ff_wjets_ARlike_ss: [*anti,  lep_iso, w_mt, nbeq0, veto, ss_],
-        # --- ttbar fake factors: SR/AR (MC), SR-like/AR-like (inverted veto) ---
-        q.ff_ttbar_SR:                 [iso2, lep_iso, mt70, tt_nb, veto, os_],
-        q.ff_ttbar_AR:        [*anti,  lep_iso, mt70, tt_nb, veto, os_],
-        q.ff_ttbar_SRlike:             [iso2, lep_iso, mt70, tt_nb, veto_inv, os_],
-        q.ff_ttbar_ARlike:    [*anti,  lep_iso, mt70, tt_nb, veto_inv, os_],
-        q.ff_ttbar_SRlike_ss:          [iso2, lep_iso, mt70, tt_nb, veto_inv, ss_],
-        q.ff_ttbar_ARlike_ss: [*anti,  lep_iso, mt70, tt_nb, veto_inv, ss_],
-        # --- process fractions ---
-        q.ff_fraction_SR:              [iso2, lep_iso, mt70, nb0, veto, os_],
-        q.ff_fraction_AR:     [*anti,  lep_iso, mt70, nb0, veto, os_],
-        # --- QCD DR to SR corrections (lepton isolation inverted) ---
-        q.ff_qcd_DR_SR_SRlike:         [iso2, lep_anti, mt70, nb0, veto, ss_],
-        q.ff_qcd_DR_SR_ARlike:[*anti,  lep_anti, mt70, nb0, veto, ss_],
-        q.ff_qcd_AR_SR_SRlike:         [iso2, lep_anti, mt70, nb0, veto, os_],
-        q.ff_qcd_AR_SR_ARlike:[*anti,  lep_anti, mt70, nb0, veto, os_],
-        # --- W+jets DR to SR corrections (and their same-sign variants) ---
-        q.ff_wjets_DR_SR_SRlike:          [iso2, lep_iso, mt0, nbeq0, veto, os_],
-        q.ff_wjets_DR_SR_ARlike: [*anti,  lep_iso, mt0, nbeq0, veto, os_],
-        q.ff_wjets_DR_SR_SRlike_ss:       [iso2, lep_iso, mt0, nbeq0, veto, ss_],
-        q.ff_wjets_DR_SR_ARlike_ss:[*anti, lep_iso, mt0, nbeq0, veto, ss_],
-        q.ff_wjets_AR_SR_SRlike:          [iso2, lep_iso, mt70, nb0, veto, os_],
-        q.ff_wjets_AR_SR_ARlike: [*anti,  lep_iso, mt70, nb0, veto, os_],
-        q.ff_wjets_AR_SR_SRlike_ss:       [iso2, lep_iso, mt70, nb0, veto, ss_],
-        q.ff_wjets_AR_SR_ARlike_ss:[*anti, lep_iso, mt70, nb0, veto, ss_],
-    }
-
-
-##############################################################################
-# 3. generic booking
+# 2. booking
 ##############################################################################
 
 
@@ -350,9 +260,7 @@ def _atomic_producers(scope):
         selection.TauNonIsoFlag_2,
         selection.TauVVVLooseFlag_2,
         selection.MtBelow70Flag,
-        selection.MtAboveZeroFlag,
         selection.WjetsMtFlag,
-        selection.NBtagGeZeroFlag,
         selection.NBtagEqZeroFlag,
         selection.TTbarNBtagFlag,
         selection.LepIsoFlag,
@@ -396,20 +304,16 @@ def add_selection(
         configuration.add_config_parameters([scope], parameters)
         configuration.add_producers([scope], _atomic_producers(scope))
 
-        masks = _mask_composition(scope)
-        mask_producers = [
-            selection.make_mask_producer(
-                name=mask.name,
-                output_quantity=mask,
-                flags=flags,
-                scopes=[scope],
-            )
-            for mask, flags in masks.items()
-            # sel_os / sel_ss are written directly by the charge producers
-            if mask not in (q.sel_os, q.sel_ss)
-        ]
-        configuration.add_producers([scope], mask_producers)
-        configuration.add_outputs([scope], list(masks.keys()) + [q.sel_os, q.sel_ss])
+        # the region table lives in `producers/selection.py`; every mask
+        # producer writes exactly one public branch. `sel_os` / `sel_ss` are
+        # written directly by the charge producers, so they are outputs
+        # without being masks.
+        mask_producers = selection.MASKS[scope]
+        configuration.add_producers([scope], list(mask_producers))
+        configuration.add_outputs(
+            [scope],
+            [producer.output[0] for producer in mask_producers] + [q.sel_os, q.sel_ss],
+        )
 
     # tt embedding samples use a different double tau trigger producer, so the
     # trigger flag producer has to follow a different `output_group`
@@ -460,11 +364,9 @@ def restrict_selection_shifts(configuration: Configuration, scopes) -> Configura
         return configuration
 
     for scope in [s for s in scopes if s in SUPPORTED_SCOPES]:
-        composition = _mask_composition(scope)
-
         keep, drop = set(), set()
         # sub-flags that only feed other selcut_* flags and therefore never
-        # appear in the composition table itself
+        # appear in the region table itself
         if scope != "em":
             drop.update(
                 [
@@ -473,7 +375,8 @@ def restrict_selection_shifts(configuration: Configuration, scopes) -> Configura
                     q.selcut_no_dilepton,
                 ]
             )
-        for mask, flags in composition.items():
+        for producer in selection.MASKS[scope]:
+            mask, flags = producer.output[0], producer.input[scope]
             if mask.name in MASKS_WITH_SHIFTS:
                 keep.update(flags)
             else:

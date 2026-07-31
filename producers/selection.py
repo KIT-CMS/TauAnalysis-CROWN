@@ -1,37 +1,50 @@
-"""Atomic selection-flag producers and the region-mask machinery.
-
-This module only defines *how* a cut is evaluated. *Which* cuts make up which
-region, and which era uses which thresholds, is defined in the top level
-``analysis_configurations/tau/selection.py`` -- look there first if you want to
-know or change what a mask means.
+"""Atomic selection-flag producers and the region masks.
 
 Two kinds of objects live here:
 
 ``selcut_*`` producers
     One producer per atomic cut. They write an internal ``bool`` column
     (``q.selcut_*``) that is *not* part of the ntuple output. Thresholds, WP
-    names, trigger flag names and column types are supplied through config
-    parameters so that a single producer can serve several scopes and eras.
+    names, accepted decay modes, trigger flag names and column types are
+    supplied through config parameters so that a single producer can serve
+    several scopes and eras.
 
-``CombineFlags`` / ``PreselectionFilter``
-    ``make_mask_producer()`` builds the region masks by AND-ing a list of
-    ``selcut_*`` flags with ``event::CombineFlags(..., "all_of")``.
-    ``PreselectionFilter`` is the opt-in hard event filter on ``presel_mask``.
+mask producers
+    One producer per public mask branch, AND-ing a list of ``selcut_*`` flags
+    with ``event::CombineFlags(..., "all_of")``. They form the literal region
+    table at the bottom of this file: one line per region, the ``input`` list
+    *is* the definition of the region. **If a region changes, change it
+    there.** ``PreselectionFilter`` is the opt-in hard event filter on
+    ``presel_mask``.
+
+The masks are era independent; only the scope varies. The per-era thresholds,
+working points and trigger flag names of the *preselection*, and the booking of
+all of this into a ``Configuration``, live in the top level
+``analysis_configurations/tau/selection.py``.
 
 Every cut is expressed with the generic CROWN core helpers only
-(``event::quantity::{Min,Greater,Max,AbsMax,Equal}Flag``,
+(``event::quantity::{Min,Greater,Max,AbsMax,Equal,InList}Flag``,
 ``event::quantity::Product``, ``event::CombineFlags`` and ``event::filter::``);
-there is no analysis specific C++ addon for the selection. Cuts that are not a
-single comparison (the accepted tau decay mode list, the combined lepton veto
-and its negation) are composed from those primitives with a ``ProducerGroup``
-writing intermediate ``selcut_*`` columns.
+there is no analysis specific C++ addon for the selection. The only cut that is
+not a single comparison is the combined lepton veto and its negation, composed
+from those primitives with intermediate ``selcut_*`` columns.
 
 The yaml files spell the boolean/flag columns out as ``col > 0.5`` ("pass") and
 ``col < 0.5`` ("fail"). Those are reproduced here as ``MinFlag<T>(..., 1)`` and
 ``MaxFlag<T>(..., 1)``, which are exactly equivalent for any non-negative
 integer or bool column and do not rely on the flag producers upstream only ever
-emitting 0 or 1. Genuine equality cuts (the tau decay modes, ``nbtag == 0``)
-use ``EqualFlag``.
+emitting 0 or 1. Genuine equality cuts (``nbtag == 0``) use ``EqualFlag``; the
+accepted hadronic tau decay modes use ``InListFlag`` with the values of the
+``tau_dms`` config parameter.
+
+TWO YAML CUTS ARE DELIBERATELY NOT IN THE MASKS
+-----------------------------------------------
+``nbtag: (nbtag >= 0)`` (QCD / fraction / AR_SR regions) and
+``lep_mt: (mt_1 > 0)`` (W+jets DR_SR regions) are unconditionally true --
+``nbtag`` is a jet count and ``mt_1`` a transverse mass, both non-negative by
+construction. They are omitted, so the masks are semantically identical to the
+yaml regions even though a literal cut-by-cut diff against the yaml files will
+show these two as missing.
 
 Columns that are leaves of a ``QuantityGroup`` (the tau ID working point flags
 ``id_tau_vsJet_Medium_2`` and the trigger flags ``trg_single_mu24``, ...) cannot
@@ -41,139 +54,53 @@ quoted config-parameter placeholder inside the call, while the corresponding
 the producer ordering places the flag producer after the group.
 """
 
-from code_generation.producer import Producer as _RawProducer
-
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, defaults
+from ..scripts.CROWNWrapper import BaseFilter, Producer, defaults
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
-
-# scopes for which the selection masks are defined
-LT_SCOPES = ["et", "mt"]
-TT_SCOPES = ["tt"]
-LTT_SCOPES = ["et", "mt", "tt"]
-ALL_SCOPES = ["et", "mt", "tt", "em"]
-
-# `output_group`s that carry the tau-vs-jet/-ele/-mu ID working point flags.
-# The leg-1 groups only exist in the tt scope, the leg-2 groups in et/mt/tt.
-_VSJET_2 = pairquantities.VsJetTauIDFlag_2.output_group  # Medium
-_VSJET_ONLY_2 = pairquantities.VsJetTauIDFlagOnly_2.output_group  # VVVLoose, ...
-_VSJET_1 = pairquantities.VsJetTauIDFlag_1.output_group
-_VSJET_ONLY_1 = pairquantities.VsJetTauIDFlagOnly_1.output_group
-_VSELE_2 = pairquantities.VsEleTauIDFlag_2.output_group
-_VSELE_1 = pairquantities.VsEleTauIDFlag_1.output_group
-_VSMU_2 = pairquantities.VsMuTauIDFlag_2.output_group
-_VSMU_1 = pairquantities.VsMuTauIDFlag_1.output_group
-
-
-# The accepted hadronic tau decay modes are cut on one by one and OR-ed
-# together, so the value cannot come from a (scope-global) config parameter.
-def _decaymode_call(mode):
-    """`event::quantity::EqualFlag` call comparing the decay mode to `mode`."""
-    return (
-        "event::quantity::EqualFlag<{selection_decaymode_type}>"
-        "({df}, {output}, {input}, " + str(mode) + ")"
-    )
-
 
 ##############################################################################
 # preselection: hadronic tau requirements
 ##############################################################################
 
-with defaults(scopes=LTT_SCOPES):
-    # (tau_decaymode_2 == 0) || (... == 1) || (... == 10) || (... == 11),
-    # built as one `EqualFlag` per accepted decay mode plus an `any_of`
-    with defaults(input=[q.tau_decaymode_2]):
-        PreselTauDecayModeEq0_2 = Producer(
-            call=_decaymode_call(0),
-            output=[q.selcut_presel_tau_dm_2_eq_0],
-        )
-        PreselTauDecayModeEq1_2 = Producer(
-            call=_decaymode_call(1),
-            output=[q.selcut_presel_tau_dm_2_eq_1],
-        )
-        PreselTauDecayModeEq10_2 = Producer(
-            call=_decaymode_call(10),
-            output=[q.selcut_presel_tau_dm_2_eq_10],
-        )
-        PreselTauDecayModeEq11_2 = Producer(
-            call=_decaymode_call(11),
-            output=[q.selcut_presel_tau_dm_2_eq_11],
-        )
-
-    PreselTauDecayMode_2 = ProducerGroup(
-        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''',
-        input=[
-            q.selcut_presel_tau_dm_2_eq_0,
-            q.selcut_presel_tau_dm_2_eq_1,
-            q.selcut_presel_tau_dm_2_eq_10,
-            q.selcut_presel_tau_dm_2_eq_11,
-        ],
+with defaults(scopes=["et", "mt", "tt"]):
+    # tau_decaymode_2 is one of the modes listed in the `tau_dms` config
+    # parameter, which also drives the object level decay mode cut in
+    # `producers/taus.py`, so the two can never drift apart
+    PreselTauDecayMode_2 = Producer(
+        call='''event::quantity::InListFlag<{selection_decaymode_type}>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})''',
+        input=[q.tau_decaymode_2],
         output=[q.selcut_presel_tau_dm_2],
-        subproducers=[
-            PreselTauDecayModeEq0_2,
-            PreselTauDecayModeEq1_2,
-            PreselTauDecayModeEq10_2,
-            PreselTauDecayModeEq11_2,
-        ],
     )
 
     # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
     PreselVsEleTauID_2 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
-        input=[_VSELE_2],
+        input=[pairquantities.VsEleTauIDFlag_2.output_group],
         output=[q.selcut_presel_vsele_2],
     )
     PreselVsMuTauID_2 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
-        input=[_VSMU_2],
+        input=[pairquantities.VsMuTauIDFlag_2.output_group],
         output=[q.selcut_presel_vsmu_2],
     )
 
-with defaults(scopes=TT_SCOPES):
-    with defaults(input=[q.tau_decaymode_1]):
-        PreselTauDecayModeEq0_1 = Producer(
-            call=_decaymode_call(0),
-            output=[q.selcut_presel_tau_dm_1_eq_0],
-        )
-        PreselTauDecayModeEq1_1 = Producer(
-            call=_decaymode_call(1),
-            output=[q.selcut_presel_tau_dm_1_eq_1],
-        )
-        PreselTauDecayModeEq10_1 = Producer(
-            call=_decaymode_call(10),
-            output=[q.selcut_presel_tau_dm_1_eq_10],
-        )
-        PreselTauDecayModeEq11_1 = Producer(
-            call=_decaymode_call(11),
-            output=[q.selcut_presel_tau_dm_1_eq_11],
-        )
-
-    PreselTauDecayMode_1 = ProducerGroup(
-        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''',
-        input=[
-            q.selcut_presel_tau_dm_1_eq_0,
-            q.selcut_presel_tau_dm_1_eq_1,
-            q.selcut_presel_tau_dm_1_eq_10,
-            q.selcut_presel_tau_dm_1_eq_11,
-        ],
+with defaults(scopes=["tt"]):
+    # tau_decaymode_1 is one of the modes listed in `tau_dms`, as above
+    PreselTauDecayMode_1 = Producer(
+        call='''event::quantity::InListFlag<{selection_decaymode_type}>({df}, {output}, {input}, {vec_open}{tau_dms}{vec_close})''',
+        input=[q.tau_decaymode_1],
         output=[q.selcut_presel_tau_dm_1],
-        subproducers=[
-            PreselTauDecayModeEq0_1,
-            PreselTauDecayModeEq1_1,
-            PreselTauDecayModeEq10_1,
-            PreselTauDecayModeEq11_1,
-        ],
     )
 
     PreselVsEleTauID_1 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
-        input=[_VSELE_1],
+        input=[pairquantities.VsEleTauIDFlag_1.output_group],
         output=[q.selcut_presel_vsele_1],
     )
     PreselVsMuTauID_1 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
-        input=[_VSMU_1],
+        input=[pairquantities.VsMuTauIDFlag_1.output_group],
         output=[q.selcut_presel_vsmu_1],
     )
 
@@ -182,7 +109,7 @@ with defaults(scopes=TT_SCOPES):
 # preselection: kinematics, trigger and jet veto map
 ##############################################################################
 
-with defaults(scopes=ALL_SCOPES):
+with defaults(scopes=["et", "mt", "tt", "em"]):
     # pt_1 > {presel_pt_1}  (light lepton in et/mt/em, leading tau in tt)
     PreselPt_1 = Producer(
         call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, {presel_pt_1})''',
@@ -226,11 +153,11 @@ with defaults(
         },
     )
     PreselTriggerFlag_tt = Producer(
-        scopes=TT_SCOPES,
+        scopes=["tt"],
         input=[triggers.TTGenerateDoubleTauTriggerFlags.output_group],
     )
     PreselTriggerFlag_tt_embedding = Producer(
-        scopes=TT_SCOPES,
+        scopes=["tt"],
         input=[triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group],
     )
 
@@ -239,7 +166,7 @@ with defaults(
 # lepton vetoes
 ##############################################################################
 
-with defaults(scopes=LTT_SCOPES):
+with defaults(scopes=["et", "mt", "tt"]):
     # `extraelec_veto < 0.5`, `extramuon_veto < 0.5`, `dilepton_veto < 0.5`
     with defaults(
         call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 1)'''
@@ -274,37 +201,37 @@ with defaults(scopes=LTT_SCOPES):
 # tau vs jet ID: isolated / non-isolated / anti-isolated legs
 ##############################################################################
 
-with defaults(scopes=LTT_SCOPES):
+with defaults(scopes=["et", "mt", "tt"]):
     TauIsoFlag_2 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
-        input=[_VSJET_2],
+        input=[pairquantities.VsJetTauIDFlag_2.output_group],
         output=[q.selcut_tau_iso_2],
     )
     TauNonIsoFlag_2 = Producer(
         call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
-        input=[_VSJET_2],
+        input=[pairquantities.VsJetTauIDFlag_2.output_group],
         output=[q.selcut_tau_noniso_2],
     )
     TauVVVLooseFlag_2 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_2", 1)''',
-        input=[_VSJET_ONLY_2],
+        input=[pairquantities.VsJetTauIDFlagOnly_2.output_group],
         output=[q.selcut_tau_vvvloose_2],
     )
 
-with defaults(scopes=TT_SCOPES):
+with defaults(scopes=["tt"]):
     TauIsoFlag_1 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
-        input=[_VSJET_1],
+        input=[pairquantities.VsJetTauIDFlag_1.output_group],
         output=[q.selcut_tau_iso_1],
     )
     TauNonIsoFlag_1 = Producer(
         call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
-        input=[_VSJET_1],
+        input=[pairquantities.VsJetTauIDFlag_1.output_group],
         output=[q.selcut_tau_noniso_1],
     )
     TauVVVLooseFlag_1 = Producer(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_1", 1)''',
-        input=[_VSJET_ONLY_1],
+        input=[pairquantities.VsJetTauIDFlagOnly_1.output_group],
         output=[q.selcut_tau_vvvloose_1],
     )
 
@@ -317,7 +244,7 @@ with defaults(scopes=TT_SCOPES):
 # comparison, in every era and both channels.
 ##############################################################################
 
-with defaults(scopes=LT_SCOPES, input=[q.iso_1]):
+with defaults(scopes=["et", "mt"], input=[q.iso_1]):
     # `iso_1 < {lep_iso_max}`
     LepIsoFlag = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
@@ -335,16 +262,11 @@ with defaults(scopes=LT_SCOPES, input=[q.iso_1]):
 # transverse mass and b-tagged jet multiplicity (et, mt)
 ##############################################################################
 
-with defaults(scopes=LT_SCOPES, input=[q.mt_1]):
+with defaults(scopes=["et", "mt"], input=[q.mt_1]):
     # `mt_1 < 70`: QCD, ttbar and process fraction regions
     MtBelow70Flag = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_mt_lt_70],
-    )
-    # `mt_1 > 0`: the W+jets DR-to-SR correction regions drop the mt cut
-    MtAboveZeroFlag = Producer(
-        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 0.0)''',
-        output=[q.selcut_mt_gt_0],
     )
     # `mt_1 >= 70`: the W+jets determination regions, in every era and channel
     WjetsMtFlag = Producer(
@@ -352,11 +274,7 @@ with defaults(scopes=LT_SCOPES, input=[q.mt_1]):
         output=[q.selcut_wjets_mt],
     )
 
-with defaults(scopes=LT_SCOPES, input=[q.nbtag]):
-    NBtagGeZeroFlag = Producer(
-        call='''event::quantity::MinFlag<int>({df}, {output}, {input}, 0)''',
-        output=[q.selcut_nbtag_ge_0],
-    )
+with defaults(scopes=["et", "mt"], input=[q.nbtag]):
     NBtagEqZeroFlag = Producer(
         call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
         output=[q.selcut_nbtag_eq_0],
@@ -372,7 +290,7 @@ with defaults(scopes=LT_SCOPES, input=[q.nbtag]):
 # tau pair charge
 ##############################################################################
 
-with defaults(scopes=ALL_SCOPES):
+with defaults(scopes=["et", "mt", "tt", "em"]):
     # `q_1 * q_2` as a single `double` column, shared by both sign flags. The
     # two legs can have different stored types (`int` for the light lepton,
     # `Short_t` for the hadronic tau), hence the two type parameters.
@@ -399,38 +317,176 @@ with defaults(scopes=ALL_SCOPES):
 
 
 ##############################################################################
-# masks and the opt-in preselection filter
+# region masks -- THE LITERAL REGION TABLE
+#
+# One `Producer` per mask, one line per region: the `input` list *is* the
+# definition of what the mask means. If a region changes, change it here.
+#
+# The masks are era independent; only the *scope* varies, hence the three
+# blocks below (et/mt share one table, tt has its own, em has only the
+# preselection). The public branch name is the `output` quantity, so the tt
+# variants can carry a `_tt` suffixed producer name while writing the same
+# branch name as their et/mt namesakes.
+#
+# Short aliases keep every region on a single line; they are the `selcut_*`
+# flags produced above.
+##############################################################################
+
+dm1, dm2 = q.selcut_presel_tau_dm_1, q.selcut_presel_tau_dm_2
+vse1, vse2 = q.selcut_presel_vsele_1, q.selcut_presel_vsele_2
+vsm1, vsm2 = q.selcut_presel_vsmu_1, q.selcut_presel_vsmu_2
+pt1, pt2 = q.selcut_presel_pt_1, q.selcut_presel_pt_2
+eta1 = q.selcut_presel_eta_1
+trg = q.selcut_presel_trigger
+jetveto = q.selcut_jet_veto
+
+veto = q.selcut_lepton_veto  # extraelec && extramuon && dilepton
+veto_inv = q.selcut_lepton_veto_inv  # !(the above)
+os_, ss_ = q.sel_os, q.sel_ss
+
+iso1, iso2 = q.selcut_tau_iso_1, q.selcut_tau_iso_2  # vsJet Medium > 0.5
+nis1, nis2 = q.selcut_tau_noniso_1, q.selcut_tau_noniso_2  # vsJet Medium < 0.5
+vvl1, vvl2 = q.selcut_tau_vvvloose_1, q.selcut_tau_vvvloose_2
+
+lep_iso = q.selcut_lep_iso  # iso_1 < 0.15
+lep_anti = q.selcut_lep_antiiso  # iso_1 >= 0.15
+
+mt70 = q.selcut_mt_lt_70  # mt_1 < 70
+w_mt = q.selcut_wjets_mt  # mt_1 >= 70
+nbeq0 = q.selcut_nbtag_eq_0  # nbtag == 0
+tt_nb = q.selcut_ttbar_nbtag  # nbtag >= 1
+
+anti = [vvl2, nis2]  # (vsJet VVVLoose > 0.5) && (vsJet Medium < 0.5)
+
+# ---------------------------------------------------------------------------
+# et and mt
+# ---------------------------------------------------------------------------
+
+with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
+    presel_mask = Producer(input=[dm2, vse2, vsm2, pt1, pt2, trg, jetveto],  output=[q.presel_mask])
+
+    # --- QCD fake factors ---
+    ff_qcd_SRlike = Producer(input=[iso2, lep_iso, mt70, veto, ss_],          output=[q.ff_qcd_SRlike])
+    ff_qcd_ARlike = Producer(input=[*anti, lep_iso, mt70, veto, ss_],         output=[q.ff_qcd_ARlike])
+
+    # --- W+jets fake factors (and their same-sign QCD estimation) ---
+    ff_wjets_SRlike = Producer(input=[iso2, lep_iso, w_mt, nbeq0, veto, os_],  output=[q.ff_wjets_SRlike])
+    ff_wjets_ARlike = Producer(input=[*anti, lep_iso, w_mt, nbeq0, veto, os_], output=[q.ff_wjets_ARlike])
+    ff_wjets_SRlike_ss = Producer(input=[iso2, lep_iso, w_mt, nbeq0, veto, ss_],  output=[q.ff_wjets_SRlike_ss])
+    ff_wjets_ARlike_ss = Producer(input=[*anti, lep_iso, w_mt, nbeq0, veto, ss_], output=[q.ff_wjets_ARlike_ss])
+
+    # --- ttbar fake factors: SR/AR (MC), SR-like/AR-like (inverted veto) ---
+    ff_ttbar_SR = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto, os_],          output=[q.ff_ttbar_SR])
+    ff_ttbar_AR = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto, os_],         output=[q.ff_ttbar_AR])
+    ff_ttbar_SRlike = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto_inv, os_],  output=[q.ff_ttbar_SRlike])
+    ff_ttbar_ARlike = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto_inv, os_], output=[q.ff_ttbar_ARlike])
+    ff_ttbar_SRlike_ss = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto_inv, ss_],  output=[q.ff_ttbar_SRlike_ss])
+    ff_ttbar_ARlike_ss = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto_inv, ss_], output=[q.ff_ttbar_ARlike_ss])
+
+    # --- process fractions ---
+    ff_fraction_SR = Producer(input=[iso2, lep_iso, mt70, veto, os_],   output=[q.ff_fraction_SR])
+    ff_fraction_AR = Producer(input=[*anti, lep_iso, mt70, veto, os_],  output=[q.ff_fraction_AR])
+
+    # --- QCD DR to SR corrections (lepton isolation inverted) ---
+    ff_qcd_DR_SR_SRlike = Producer(input=[iso2, lep_anti, mt70, veto, ss_],   output=[q.ff_qcd_DR_SR_SRlike])
+    ff_qcd_DR_SR_ARlike = Producer(input=[*anti, lep_anti, mt70, veto, ss_],  output=[q.ff_qcd_DR_SR_ARlike])
+    ff_qcd_AR_SR_SRlike = Producer(input=[iso2, lep_anti, mt70, veto, os_],   output=[q.ff_qcd_AR_SR_SRlike])
+    ff_qcd_AR_SR_ARlike = Producer(input=[*anti, lep_anti, mt70, veto, os_],  output=[q.ff_qcd_AR_SR_ARlike])
+
+    # --- W+jets DR to SR corrections (and their same-sign variants) ---
+    ff_wjets_DR_SR_SRlike = Producer(input=[iso2, lep_iso, nbeq0, veto, os_],   output=[q.ff_wjets_DR_SR_SRlike])
+    ff_wjets_DR_SR_ARlike = Producer(input=[*anti, lep_iso, nbeq0, veto, os_],  output=[q.ff_wjets_DR_SR_ARlike])
+    ff_wjets_DR_SR_SRlike_ss = Producer(input=[iso2, lep_iso, nbeq0, veto, ss_],   output=[q.ff_wjets_DR_SR_SRlike_ss])
+    ff_wjets_DR_SR_ARlike_ss = Producer(input=[*anti, lep_iso, nbeq0, veto, ss_],  output=[q.ff_wjets_DR_SR_ARlike_ss])
+    ff_wjets_AR_SR_SRlike = Producer(input=[iso2, lep_iso, mt70, veto, os_],    output=[q.ff_wjets_AR_SR_SRlike])
+    ff_wjets_AR_SR_ARlike = Producer(input=[*anti, lep_iso, mt70, veto, os_],   output=[q.ff_wjets_AR_SR_ARlike])
+    ff_wjets_AR_SR_SRlike_ss = Producer(input=[iso2, lep_iso, mt70, veto, ss_],    output=[q.ff_wjets_AR_SR_SRlike_ss])
+    ff_wjets_AR_SR_ARlike_ss = Producer(input=[*anti, lep_iso, mt70, veto, ss_],   output=[q.ff_wjets_AR_SR_ARlike_ss])
+
+#: the masks of the et and mt scopes, in table order
+LT_MASKS = [
+    presel_mask,
+    ff_qcd_SRlike, ff_qcd_ARlike,
+    ff_wjets_SRlike, ff_wjets_ARlike, ff_wjets_SRlike_ss, ff_wjets_ARlike_ss,
+    ff_ttbar_SR, ff_ttbar_AR,
+    ff_ttbar_SRlike, ff_ttbar_ARlike, ff_ttbar_SRlike_ss, ff_ttbar_ARlike_ss,
+    ff_fraction_SR, ff_fraction_AR,
+    ff_qcd_DR_SR_SRlike, ff_qcd_DR_SR_ARlike,
+    ff_qcd_AR_SR_SRlike, ff_qcd_AR_SR_ARlike,
+    ff_wjets_DR_SR_SRlike, ff_wjets_DR_SR_ARlike,
+    ff_wjets_DR_SR_SRlike_ss, ff_wjets_DR_SR_ARlike_ss,
+    ff_wjets_AR_SR_SRlike, ff_wjets_AR_SR_ARlike,
+    ff_wjets_AR_SR_SRlike_ss, ff_wjets_AR_SR_ARlike_ss,
+]
+
+
+# ---------------------------------------------------------------------------
+# tt
+# ---------------------------------------------------------------------------
+
+with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
+    presel_mask_tt = Producer(input=[dm1, dm2, vse1, vse2, vsm1, vsm2, pt1, pt2, trg, jetveto], output=[q.presel_mask])
+
+    # --- QCD fake factors, leading tau ---
+    ff_qcd_SRlike_tt = Producer(input=[iso1, iso2, veto, ss_],        output=[q.ff_qcd_SRlike])
+    ff_qcd_ARlike_tt = Producer(input=[vvl1, nis1, iso2, veto, ss_],  output=[q.ff_qcd_ARlike])
+
+    # --- QCD fake factors, subleading tau ---
+    ff_qcd_sub_SRlike_tt = Producer(input=[iso1, iso2, veto, ss_],        output=[q.ff_qcd_sub_SRlike])
+    ff_qcd_sub_ARlike_tt = Producer(input=[iso1, vvl2, nis2, veto, ss_],  output=[q.ff_qcd_sub_ARlike])
+
+    # --- process fractions ---
+    ff_fraction_SR_tt = Producer(input=[iso1, iso2, veto, os_],             output=[q.ff_fraction_SR])
+    ff_fraction_AR_tt = Producer(input=[vvl1, nis1, nis2, veto, os_],       output=[q.ff_fraction_AR])
+    ff_fraction_sub_SR_tt = Producer(input=[iso1, iso2, veto, os_],         output=[q.ff_fraction_sub_SR])
+    ff_fraction_sub_AR_tt = Producer(input=[nis1, vvl2, nis2, veto, os_],   output=[q.ff_fraction_sub_AR])
+
+    # --- DR to SR corrections, leading tau ---
+    ff_qcd_DR_SR_SRlike_tt = Producer(input=[iso1, nis2, veto, ss_],              output=[q.ff_qcd_DR_SR_SRlike])
+    ff_qcd_DR_SR_ARlike_tt = Producer(input=[vvl1, nis1, nis2, veto, ss_],        output=[q.ff_qcd_DR_SR_ARlike])
+    ff_qcd_AR_SR_SRlike_tt = Producer(input=[iso1, nis2, veto, os_],              output=[q.ff_qcd_AR_SR_SRlike])
+    ff_qcd_AR_SR_ARlike_tt = Producer(input=[vvl1, nis1, nis2, veto, os_],        output=[q.ff_qcd_AR_SR_ARlike])
+
+    # --- DR to SR corrections, subleading tau ---
+    ff_qcd_sub_DR_SR_SRlike_tt = Producer(input=[nis1, iso2, veto, ss_],          output=[q.ff_qcd_sub_DR_SR_SRlike])
+    ff_qcd_sub_DR_SR_ARlike_tt = Producer(input=[nis1, vvl2, nis2, veto, ss_],    output=[q.ff_qcd_sub_DR_SR_ARlike])
+    ff_qcd_sub_AR_SR_SRlike_tt = Producer(input=[nis1, iso2, veto, os_],          output=[q.ff_qcd_sub_AR_SR_SRlike])
+    ff_qcd_sub_AR_SR_ARlike_tt = Producer(input=[nis1, vvl2, nis2, veto, os_],    output=[q.ff_qcd_sub_AR_SR_ARlike])
+
+#: the masks of the tt scope, in table order
+TT_MASKS = [
+    presel_mask_tt,
+    ff_qcd_SRlike_tt, ff_qcd_ARlike_tt,
+    ff_qcd_sub_SRlike_tt, ff_qcd_sub_ARlike_tt,
+    ff_fraction_SR_tt, ff_fraction_AR_tt,
+    ff_fraction_sub_SR_tt, ff_fraction_sub_AR_tt,
+    ff_qcd_DR_SR_SRlike_tt, ff_qcd_DR_SR_ARlike_tt,
+    ff_qcd_AR_SR_SRlike_tt, ff_qcd_AR_SR_ARlike_tt,
+    ff_qcd_sub_DR_SR_SRlike_tt, ff_qcd_sub_DR_SR_ARlike_tt,
+    ff_qcd_sub_AR_SR_SRlike_tt, ff_qcd_sub_AR_SR_ARlike_tt,
+]
+
+
+# ---------------------------------------------------------------------------
+# em -- preselection only; the sign flags are written by the charge producers
+# ---------------------------------------------------------------------------
+
+with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
+    presel_mask_em = Producer(input=[eta1, pt1, pt2, trg, jetveto], output=[q.presel_mask])
+
+#: the masks of the em scope
+EM_MASKS = [presel_mask_em]
+
+#: scope -> the mask producers defined for it
+MASKS = {"et": LT_MASKS, "mt": LT_MASKS, "tt": TT_MASKS, "em": EM_MASKS}
+
+
+##############################################################################
+# the opt-in preselection filter
 ##############################################################################
 
 PreselectionFilter = BaseFilter(
     call='''event::filter::Flag({df}, "PreselectionFilter", {input})''',
     input=[q.presel_mask],
-    scopes=ALL_SCOPES,
+    scopes=["et", "mt", "tt", "em"],
 )
-
-
-def make_mask_producer(name, output_quantity, flags, scopes):
-    """Build the producer that ANDs a list of atomic selection flags.
-
-    Args:
-        name: name of the producer (used for logging and code generation)
-        output_quantity: the mask `Quantity` to be written
-        flags: list of `selcut_*` quantities that make up the region
-        scopes: scopes the mask is defined for
-
-    Returns:
-        A `Producer` evaluating `event::CombineFlags(..., "all_of")`.
-
-    Note:
-        The raw `code_generation.producer.Producer` is used instead of the
-        `CROWNWrapper` one because the wrapper derives the producer name from
-        the source line of the assignment, which does not work for producers
-        created inside a loop.
-    """
-    return _RawProducer(
-        name=name,
-        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
-        input=list(flags),
-        output=[output_quantity],
-        scopes=list(scopes),
-    )

@@ -515,16 +515,7 @@ is_2022preEE = Quantity()
 ##############################################################################
 
 # --- internal atomic cut flags: preselection ---------------------------------
-# one flag per accepted hadronic tau decay mode; they are OR-ed into
-# `selcut_presel_tau_dm_X` with `event::CombineFlags(..., "any_of")`
-selcut_presel_tau_dm_1_eq_0 = Quantity()
-selcut_presel_tau_dm_1_eq_1 = Quantity()
-selcut_presel_tau_dm_1_eq_10 = Quantity()
-selcut_presel_tau_dm_1_eq_11 = Quantity()
-selcut_presel_tau_dm_2_eq_0 = Quantity()
-selcut_presel_tau_dm_2_eq_1 = Quantity()
-selcut_presel_tau_dm_2_eq_10 = Quantity()
-selcut_presel_tau_dm_2_eq_11 = Quantity()
+# the decay mode is in the list of accepted modes (`tau_dms` config parameter)
 selcut_presel_tau_dm_1 = Quantity()
 selcut_presel_tau_dm_2 = Quantity()
 selcut_presel_vsele_1 = Quantity()
@@ -559,11 +550,9 @@ selcut_lep_antiiso = Quantity()  # iso_1 >= {lep_iso_max}
 
 # --- internal atomic cut flags: transverse mass ------------------------------
 selcut_mt_lt_70 = Quantity()  # mt_1 < 70
-selcut_mt_gt_0 = Quantity()  # mt_1 > 0
 selcut_wjets_mt = Quantity()  # mt_1 >= 70
 
 # --- internal atomic cut flags: b-tagged jets --------------------------------
-selcut_nbtag_ge_0 = Quantity()  # nbtag >= 0
 selcut_nbtag_eq_0 = Quantity()  # nbtag == 0
 selcut_ttbar_nbtag = Quantity()  # nbtag >= 1
 
