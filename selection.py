@@ -191,11 +191,12 @@ def _era_parameters(scope, era):
         else:
             variants["wjets_mt"] = selection.WjetsMtFlag_Inclusive
 
-        # ttbar determination region b-tag requirement
-        if scope == "mt":
-            parameters["ttbar_nbtag_min"] = 0 if is_2024plus else 1
-        else:  # et
-            parameters["ttbar_nbtag_min"] = 2 if era == "2022preEE" else 0
+        # ttbar determination region b-tag requirement: at least one b-tagged
+        # jet, in every era and both channels. The yaml files used to disagree
+        # here (et `>= 2` in 2022preEE, `>= 0` elsewhere; mt `>= 0` from 2024
+        # on), which was drift rather than intent -- the configs have been
+        # unified to `(nbtag >= 1)` alongside this.
+        parameters["ttbar_nbtag_min"] = 1
 
     # ---- fake factor regions (tt only) --------------------------------------
     if scope == "tt":
