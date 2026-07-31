@@ -19,12 +19,19 @@ Two kinds of objects live here:
     ``PreselectionFilter`` is the opt-in hard event filter on ``presel_mask``.
 
 Every cut is expressed with the generic CROWN core helpers only
-(``event::quantity::{Min,Greater,Max,MaxOrEqual,AbsMax,Equal}Flag``,
+(``event::quantity::{Min,Greater,Max,AbsMax,Equal}Flag``,
 ``event::quantity::Product``, ``event::CombineFlags`` and ``event::filter::``);
 there is no analysis specific C++ addon for the selection. Cuts that are not a
-single comparison (closed isolation intervals, the accepted tau decay mode
-list, their negations) are composed from those primitives with a
-``ProducerGroup`` writing intermediate ``selcut_*`` columns.
+single comparison (the accepted tau decay mode list, the combined lepton veto
+and its negation) are composed from those primitives with a ``ProducerGroup``
+writing intermediate ``selcut_*`` columns.
+
+The yaml files spell the boolean/flag columns out as ``col > 0.5`` ("pass") and
+``col < 0.5`` ("fail"). Those are reproduced here as ``MinFlag<T>(..., 1)`` and
+``MaxFlag<T>(..., 1)``, which are exactly equivalent for any non-negative
+integer or bool column and do not rely on the flag producers upstream only ever
+emitting 0 or 1. Genuine equality cuts (the tau decay modes, ``nbtag == 0``)
+use ``EqualFlag``.
 
 Columns that are leaves of a ``QuantityGroup`` (the tau ID working point flags
 ``id_tau_vsJet_Medium_2`` and the trigger flags ``trg_single_mu24``, ...) cannot
@@ -111,14 +118,14 @@ with defaults(scopes=LTT_SCOPES):
         ],
     )
 
-    # id_tau_vsEle_<WP>_2 == 1 and id_tau_vsMu_<WP>_2 == 1
+    # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
     PreselVsEleTauID_2 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
         input=[_VSELE_2],
         output=[q.selcut_presel_vsele_2],
     )
     PreselVsMuTauID_2 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
         input=[_VSMU_2],
         output=[q.selcut_presel_vsmu_2],
     )
@@ -160,12 +167,12 @@ with defaults(scopes=TT_SCOPES):
     )
 
     PreselVsEleTauID_1 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
         input=[_VSELE_1],
         output=[q.selcut_presel_vsele_1],
     )
     PreselVsMuTauID_1 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
         input=[_VSMU_1],
         output=[q.selcut_presel_vsmu_1],
     )
@@ -188,9 +195,9 @@ with defaults(scopes=ALL_SCOPES):
         input=[q.pt_2],
         output=[q.selcut_presel_pt_2],
     )
-    # jet_vetomap == 0
+    # jet_vetomap < 0.5
     JetVetoMapFlag = Producer(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
+        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 1)''',
         input=[q.jet_vetomap],
         output=[q.selcut_jet_veto],
     )
@@ -207,7 +214,7 @@ with defaults(scopes=["em"]):
 # scope dependent; for tt the group is swapped out for embedding samples, hence
 # the second producer plus the ReplaceProducer rule set up in selection.py.
 with defaults(
-    call='''event::quantity::EqualFlag<bool>({df}, {output}, "{presel_trigger_flag}", 1)''',
+    call='''event::quantity::MinFlag<bool>({df}, {output}, "{presel_trigger_flag}", 1)''',
     output=[q.selcut_presel_trigger],
 ):
     PreselTriggerFlag = Producer(
@@ -233,8 +240,9 @@ with defaults(
 ##############################################################################
 
 with defaults(scopes=LTT_SCOPES):
+    # `extraelec_veto < 0.5`, `extramuon_veto < 0.5`, `dilepton_veto < 0.5`
     with defaults(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)'''
+        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 1)'''
     ):
         NoExtraElectronFlag = Producer(
             input=[q.extraelec_veto], output=[q.selcut_no_extraelec]
@@ -252,19 +260,13 @@ with defaults(scopes=LTT_SCOPES):
         input=[q.selcut_no_extraelec, q.selcut_no_extramuon, q.selcut_no_dilepton],
         output=[q.selcut_lepton_veto],
     )
-    # !((extramuon_veto == 0) && (extraelec_veto == 0) && (dilepton_veto == 0))
-    # used by the ttbar signal-/application-like regions in et and mt
+    # !((extramuon_veto < 0.5) && (extraelec_veto < 0.5) && (dilepton_veto < 0.5))
+    # used by the ttbar signal-/application-like regions in et and mt. This is a
+    # genuine negation of an internal `bool` column, hence `EqualFlag<bool>`.
     LeptonVetoInvertedFlag = Producer(
         call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.selcut_lepton_veto],
         output=[q.selcut_lepton_veto_inv],
-    )
-    # (extramuon_veto < 0.5) && (extraelec_veto < 0.5), i.e. without the
-    # dilepton veto; used by the tt subleading process fraction regions
-    LeptonVetoNoDileptonFlag = Producer(
-        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
-        input=[q.selcut_no_extraelec, q.selcut_no_extramuon],
-        output=[q.selcut_lepton_veto_nodilep],
     )
 
 
@@ -274,34 +276,34 @@ with defaults(scopes=LTT_SCOPES):
 
 with defaults(scopes=LTT_SCOPES):
     TauIsoFlag_2 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
         input=[_VSJET_2],
         output=[q.selcut_tau_iso_2],
     )
     TauNonIsoFlag_2 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 0)''',
+        call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
         input=[_VSJET_2],
         output=[q.selcut_tau_noniso_2],
     )
     TauVVVLooseFlag_2 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_2", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_2", 1)''',
         input=[_VSJET_ONLY_2],
         output=[q.selcut_tau_vvvloose_2],
     )
 
 with defaults(scopes=TT_SCOPES):
     TauIsoFlag_1 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
         input=[_VSJET_1],
         output=[q.selcut_tau_iso_1],
     )
     TauNonIsoFlag_1 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 0)''',
+        call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
         input=[_VSJET_1],
         output=[q.selcut_tau_noniso_1],
     )
     TauVVVLooseFlag_1 = Producer(
-        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_1", 1)''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_1", 1)''',
         input=[_VSJET_ONLY_1],
         output=[q.selcut_tau_vvvloose_1],
     )
@@ -310,84 +312,22 @@ with defaults(scopes=TT_SCOPES):
 ##############################################################################
 # light lepton isolation (et, mt)
 #
-# Two variants per flag: the 2022/2023 configs use a closed interval
-# `((iso_1 >= lo) && (iso_1 <= hi))`, the 2024+ configs a plain `iso_1 < hi`.
-# selection.py books exactly one of them per era.
+# Every fake factor region uses `iso_1 < 0.15`; the QCD DR-to-SR / AR-to-SR
+# correction regions use its exact complement `iso_1 >= 0.15`. Both are a single
+# comparison, in every era and both channels.
 ##############################################################################
 
 with defaults(scopes=LT_SCOPES, input=[q.iso_1]):
-    # --- nominal signal-lepton isolation -------------------------------------
-    # `(iso_1 >= {lep_iso_min}) && (iso_1 <= {lep_iso_max})`
-    LepIsoLowerEdge = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {lep_iso_min})''',
-        output=[q.selcut_lep_iso_lo],
-    )
-    LepIsoUpperEdge = Producer(
-        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
-        output=[q.selcut_lep_iso_hi],
-    )
-    LepIsoFlag_Upper = Producer(
+    # `iso_1 < {lep_iso_max}`
+    LepIsoFlag = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
         output=[q.selcut_lep_iso],
     )
-
-    # --- isolation window of the QCD determination regions -------------------
-    # `(iso_1 >= {qcd_lep_iso_min}) && (iso_1 <= {qcd_lep_iso_max})`
-    QCDLepIsoLowerEdge = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min})''',
-        output=[q.selcut_qcd_lep_iso_lo],
-    )
-    QCDLepIsoUpperEdge = Producer(
-        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_iso_hi],
-    )
-    QCDLepIsoFlag_Upper = Producer(
-        call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_iso],
-    )
-
-    # --- complement of the QCD isolation window (DR to SR corrections) -------
-    # the window is recomputed into its own columns instead of reusing
-    # `selcut_qcd_lep_iso`, so that the inverted flag does not depend on the
-    # non-inverted producer being booked as well
-    QCDLepAntiIsoLowerEdge = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min})''',
-        output=[q.selcut_qcd_lep_antiiso_lo],
-    )
-    QCDLepAntiIsoUpperEdge = Producer(
-        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_antiiso_hi],
-    )
-    QCDLepAntiIsoFlag_Lower = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_antiiso],
-    )
-
-with defaults(scopes=LT_SCOPES):
-    LepIsoFlag_Interval = ProducerGroup(
-        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
-        input=[q.selcut_lep_iso_lo, q.selcut_lep_iso_hi],
-        output=[q.selcut_lep_iso],
-        subproducers=[LepIsoLowerEdge, LepIsoUpperEdge],
-    )
-    QCDLepIsoFlag_Interval = ProducerGroup(
-        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
-        input=[q.selcut_qcd_lep_iso_lo, q.selcut_qcd_lep_iso_hi],
-        output=[q.selcut_qcd_lep_iso],
-        subproducers=[QCDLepIsoLowerEdge, QCDLepIsoUpperEdge],
-    )
-    QCDLepAntiIsoWindow = ProducerGroup(
-        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
-        input=[q.selcut_qcd_lep_antiiso_lo, q.selcut_qcd_lep_antiiso_hi],
-        output=[q.selcut_qcd_lep_antiiso_win],
-        subproducers=[QCDLepAntiIsoLowerEdge, QCDLepAntiIsoUpperEdge],
-    )
-    # exactly the logical negation of `QCDLepAntiIsoWindow`
-    QCDLepAntiIsoFlag_Interval = ProducerGroup(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
-        input=[q.selcut_qcd_lep_antiiso_win],
-        output=[q.selcut_qcd_lep_antiiso],
-        subproducers=[QCDLepAntiIsoWindow],
+    # `iso_1 >= {lep_iso_max}`, the logical complement of `LepIsoFlag` by
+    # construction -- no negation producer needed
+    LepAntiIsoFlag = Producer(
+        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
+        output=[q.selcut_lep_antiiso],
     )
 
 
@@ -396,25 +336,18 @@ with defaults(scopes=LT_SCOPES):
 ##############################################################################
 
 with defaults(scopes=LT_SCOPES, input=[q.mt_1]):
-    MtBelow50Flag = Producer(
-        call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, 50.0)''',
-        output=[q.selcut_mt_lt_50],
-    )
+    # `mt_1 < 70`: QCD, ttbar and process fraction regions
     MtBelow70Flag = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_mt_lt_70],
     )
+    # `mt_1 > 0`: the W+jets DR-to-SR correction regions drop the mt cut
     MtAboveZeroFlag = Producer(
         call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 0.0)''',
         output=[q.selcut_mt_gt_0],
     )
-    # W+jets determination region: `mt_1 > 70` in mt for 2022/2023,
-    # `mt_1 >= 70` in et always and in mt from 2024 on
-    WjetsMtFlag_Strict = Producer(
-        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 70.0)''',
-        output=[q.selcut_wjets_mt],
-    )
-    WjetsMtFlag_Inclusive = Producer(
+    # `mt_1 >= 70`: the W+jets determination regions, in every era and channel
+    WjetsMtFlag = Producer(
         call='''event::quantity::MinFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_wjets_mt],
     )
@@ -428,10 +361,9 @@ with defaults(scopes=LT_SCOPES, input=[q.nbtag]):
         call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
         output=[q.selcut_nbtag_eq_0],
     )
-    # ttbar determination regions: nbtag >= 1 (mt) / >= 2 (et 2022preEE) /
-    # >= 0 (everything else), see selection.py
+    # ttbar determination regions: `nbtag >= 1`, in every era and channel
     TTbarNBtagFlag = Producer(
-        call='''event::quantity::MinFlag<int>({df}, {output}, {input}, {ttbar_nbtag_min})''',
+        call='''event::quantity::MinFlag<int>({df}, {output}, {input}, 1)''',
         output=[q.selcut_ttbar_nbtag],
     )
 

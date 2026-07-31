@@ -543,7 +543,6 @@ selcut_no_extramuon = Quantity()
 selcut_no_dilepton = Quantity()
 selcut_lepton_veto = Quantity()  # extraelec && extramuon && dilepton veto
 selcut_lepton_veto_inv = Quantity()  # !(combined lepton veto), ttbar SR/AR-like
-selcut_lepton_veto_nodilep = Quantity()  # extraelec && extramuon veto only
 
 # --- internal atomic cut flags: tau vs jet ID --------------------------------
 selcut_tau_iso_1 = Quantity()  # id_tau_vsJet_<WP>_1 > 0.5
@@ -554,30 +553,19 @@ selcut_tau_vvvloose_1 = Quantity()  # id_tau_vsJet_VVVLoose_1 > 0.5
 selcut_tau_vvvloose_2 = Quantity()  # id_tau_vsJet_VVVLoose_2 > 0.5
 
 # --- internal atomic cut flags: light lepton isolation -----------------------
-# the closed isolation windows `(iso_1 >= lo) && (iso_1 <= hi)` are assembled
-# from a lower and an upper edge flag with `event::CombineFlags(..., "all_of")`
-selcut_lep_iso_lo = Quantity()  # iso_1 >= {lep_iso_min}
-selcut_lep_iso_hi = Quantity()  # iso_1 <= {lep_iso_max}
-selcut_qcd_lep_iso_lo = Quantity()  # iso_1 >= {qcd_lep_iso_min}
-selcut_qcd_lep_iso_hi = Quantity()  # iso_1 <= {qcd_lep_iso_max}
-selcut_qcd_lep_antiiso_lo = Quantity()  # iso_1 >= {qcd_lep_iso_min}
-selcut_qcd_lep_antiiso_hi = Quantity()  # iso_1 <= {qcd_lep_iso_max}
-selcut_qcd_lep_antiiso_win = Quantity()  # the window that is inverted below
-
-selcut_lep_iso = Quantity()  # nominal signal-lepton isolation
-selcut_qcd_lep_iso = Quantity()  # QCD determination region isolation
-selcut_qcd_lep_antiiso = Quantity()  # complement of the QCD isolation window
+# a single threshold and its exact complement, identical in every era
+selcut_lep_iso = Quantity()  # iso_1 < {lep_iso_max}
+selcut_lep_antiiso = Quantity()  # iso_1 >= {lep_iso_max}
 
 # --- internal atomic cut flags: transverse mass ------------------------------
-selcut_mt_lt_50 = Quantity()
-selcut_mt_lt_70 = Quantity()
-selcut_mt_gt_0 = Quantity()
-selcut_wjets_mt = Quantity()  # mt_1 > 70 or mt_1 >= 70, era/scope dependent
+selcut_mt_lt_70 = Quantity()  # mt_1 < 70
+selcut_mt_gt_0 = Quantity()  # mt_1 > 0
+selcut_wjets_mt = Quantity()  # mt_1 >= 70
 
 # --- internal atomic cut flags: b-tagged jets --------------------------------
-selcut_nbtag_ge_0 = Quantity()
-selcut_nbtag_eq_0 = Quantity()
-selcut_ttbar_nbtag = Quantity()  # nbtag >= <era/scope dependent threshold>
+selcut_nbtag_ge_0 = Quantity()  # nbtag >= 0
+selcut_nbtag_eq_0 = Quantity()  # nbtag == 0
+selcut_ttbar_nbtag = Quantity()  # nbtag >= 1
 
 # --- internal quantity: tau pair charge product ------------------------------
 # `q_1 * q_2` as a `double` column, shared by `sel_os` and `sel_ss`

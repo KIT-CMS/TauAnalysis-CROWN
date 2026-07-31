@@ -9,9 +9,8 @@ three places the same cuts used to be written down.
 HOW TO READ THIS FILE
 ---------------------
 1. `_era_parameters()` collects *everything* that depends on the era (and on
-   the scope) in one place: thresholds, working points, trigger flag names and
-   the few cases where an era needs a structurally different cut (a closed
-   isolation interval instead of a simple upper bound, `>` instead of `>=`).
+   the scope) in one place: thresholds, working points and trigger flag names.
+   Only the *preselection* is era dependent at all -- see below.
 2. `_mask_composition()` is the literal region table: one line per mask,
    listing exactly the atomic cuts it consists of. This is the definition of
    what each mask means -- if a region changes, change it here.
@@ -27,6 +26,23 @@ WHAT THE MASKS CONTAIN
 applies `presel_mask` separately, exactly as it applies the preselection skim
 today) and they do NOT include the `split_categories` (njets/... ) binning or
 any category/DNN cut.
+
+WHICH TauFakeFactors CONFIGS THE `ff_*` MASKS COME FROM
+-------------------------------------------------------
+TauFakeFactors measures the fake factors on the pre- and post-halves of a year
+*together* and therefore reads ONE config per year, from the combined `2022/`
+and `2023/` directories. The per-half directories (`2022preEE/`, `2022postEE/`,
+`2023preBPix/`, `2023postBPix/`) are stale and unused; do not take cut values
+from them.
+
+The combined `2022/` and `2023/` configs and the `2024/`, `2025/` and `2026/`
+ones are IDENTICAL in every region cut, so:
+
+    THE FAKE FACTOR REGION MASKS ARE COMPLETELY ERA INDEPENDENT.
+
+The only era dependence left in this file is in the preselection: the tt double
+tau trigger path changed from the HPS to the PNet one in 2024, together with
+the offline tau pt threshold (40 -> 35 GeV).
 
 Naming conventions:
   `_ss`        same-sign variant, i.e. the region with `tau_pair_sign` flipped
@@ -83,11 +99,10 @@ SUPPORTED_SCOPES = ["et", "mt", "tt", "em"]
 
 
 def _era_parameters(scope, era):
-    """Return the config parameters and producer variants for a scope and era.
+    """Return the config parameters for a scope and era.
 
-    Returns a tuple ``(config_parameters, producer_variants)`` where
-    ``producer_variants`` maps a role to the producer that implements it for
-    this era, for the few cuts whose *form* (not only threshold) changes.
+    Only the preselection is era dependent (the tt double tau trigger and its
+    pt threshold changed in 2024); the fake factor regions are not.
     """
     is_2024plus = era in RUN3_2024_PLUS
 
@@ -105,7 +120,6 @@ def _era_parameters(scope, era):
         "charge_type_1": charge_types[0],
         "charge_type_2": charge_types[1],
     }
-    variants = {}
 
     # ---- preselection -------------------------------------------------------
     if scope in ("et", "mt", "tt"):
@@ -168,51 +182,15 @@ def _era_parameters(scope, era):
             }
         )
 
-    # ---- fake factor regions (et, mt only) ----------------------------------
+    # ---- fake factor regions -----------------------------------------------
+    # Era independent, see the module docstring. The single light lepton
+    # isolation threshold `iso_1 < 0.15` (and its complement `iso_1 >= 0.15`,
+    # used by the QCD DR-to-SR / AR-to-SR corrections) is shared by every
+    # region of et and mt.
     if scope in ("et", "mt"):
-        # light lepton isolation. 2022/2023 uses closed intervals, from 2024 on
-        # the lower edge was dropped in favour of a plain upper bound.
-        parameters["lep_iso_min"] = 0.0
         parameters["lep_iso_max"] = 0.15
-        parameters["qcd_lep_iso_min"] = 0.02 if scope == "et" else 0.05
-        parameters["qcd_lep_iso_max"] = 0.15
-        if is_2024plus:
-            variants["lep_iso"] = selection.LepIsoFlag_Upper
-            variants["qcd_lep_iso"] = selection.QCDLepIsoFlag_Upper
-            variants["qcd_lep_antiiso"] = selection.QCDLepAntiIsoFlag_Lower
-        else:
-            variants["lep_iso"] = selection.LepIsoFlag_Interval
-            variants["qcd_lep_iso"] = selection.QCDLepIsoFlag_Interval
-            variants["qcd_lep_antiiso"] = selection.QCDLepAntiIsoFlag_Interval
 
-        # W+jets determination region transverse mass. `mt_1 > 70` only in mt
-        # for 2022/2023, `mt_1 >= 70` everywhere else.
-        if scope == "mt" and not is_2024plus:
-            variants["wjets_mt"] = selection.WjetsMtFlag_Strict
-        else:
-            variants["wjets_mt"] = selection.WjetsMtFlag_Inclusive
-
-        # ttbar determination region b-tag requirement: at least one b-tagged
-        # jet, in every era and both channels. The yaml files used to disagree
-        # here (et `>= 2` in 2022preEE, `>= 0` elsewhere; mt `>= 0` from 2024
-        # on), which was drift rather than intent -- the configs have been
-        # unified to `(nbtag >= 1)` alongside this.
-        parameters["ttbar_nbtag_min"] = 1
-
-    # ---- fake factor regions (tt only) --------------------------------------
-    if scope == "tt":
-        # NOTE / known inconsistency in the upstream configs: the veto set of
-        # the *subleading* process fraction regions drops the dilepton veto in
-        # 2022preEE, 2023preBPix, 2024, 2025 and 2026, but keeps it in
-        # 2022postEE and 2023postBPix. This looks like drift in the yaml files
-        # rather than intent; it is reproduced faithfully here so that the
-        # masks match the configs bit for bit. Fix upstream first, then here.
-        if era in ("2022postEE", "2023postBPix"):
-            variants["fraction_sub_veto"] = q.selcut_lepton_veto
-        else:
-            variants["fraction_sub_veto"] = q.selcut_lepton_veto_nodilep
-
-    return parameters, variants
+    return parameters
 
 
 ##############################################################################
@@ -220,7 +198,7 @@ def _era_parameters(scope, era):
 ##############################################################################
 
 
-def _mask_composition(scope, variants):
+def _mask_composition(scope):
     """Literal table of the atomic cuts making up each mask of a scope."""
 
     # short aliases, purely to keep the table below readable
@@ -240,12 +218,11 @@ def _mask_composition(scope, variants):
     nis1, nis2 = q.selcut_tau_noniso_1, q.selcut_tau_noniso_2  # vsJet Medium < 0.5
     vvl1, vvl2 = q.selcut_tau_vvvloose_1, q.selcut_tau_vvvloose_2
 
-    lep_iso = q.selcut_lep_iso
-    qcd_iso = q.selcut_qcd_lep_iso
-    qcd_anti = q.selcut_qcd_lep_antiiso
+    lep_iso = q.selcut_lep_iso  # iso_1 < 0.15
+    lep_anti = q.selcut_lep_antiiso  # iso_1 >= 0.15
 
-    mt50, mt70 = q.selcut_mt_lt_50, q.selcut_mt_lt_70
-    mt0, w_mt = q.selcut_mt_gt_0, q.selcut_wjets_mt
+    mt70 = q.selcut_mt_lt_70  # mt_1 < 70
+    mt0, w_mt = q.selcut_mt_gt_0, q.selcut_wjets_mt  # mt_1 > 0, mt_1 >= 70
     nb0, nbeq0 = q.selcut_nbtag_ge_0, q.selcut_nbtag_eq_0
     tt_nb = q.selcut_ttbar_nbtag
 
@@ -253,9 +230,6 @@ def _mask_composition(scope, variants):
         return {q.presel_mask: [eta1, pt1, pt2, trg, jetveto]}
 
     if scope == "tt":
-        # veto set of the subleading process fraction regions, see the note in
-        # `_era_parameters`
-        sub_veto = variants["fraction_sub_veto"]
         return {
             q.presel_mask:              [dm1, dm2, vse1, vse2, vsm1, vsm2, pt1, pt2, trg, jetveto],
             # --- QCD fake factors, leading tau ---
@@ -267,8 +241,8 @@ def _mask_composition(scope, variants):
             # --- process fractions ---
             q.ff_fraction_SR:           [iso1, iso2, veto, os_],
             q.ff_fraction_AR:           [vvl1, nis1, nis2, veto, os_],
-            q.ff_fraction_sub_SR:       [iso1, iso2, sub_veto, os_],
-            q.ff_fraction_sub_AR:       [nis1, vvl2, nis2, sub_veto, os_],
+            q.ff_fraction_sub_SR:       [iso1, iso2, veto, os_],
+            q.ff_fraction_sub_AR:       [nis1, vvl2, nis2, veto, os_],
             # --- DR to SR corrections, leading tau ---
             q.ff_qcd_DR_SR_SRlike:      [iso1, nis2, veto, ss_],
             q.ff_qcd_DR_SR_ARlike:      [vvl1, nis1, nis2, veto, ss_],
@@ -282,17 +256,13 @@ def _mask_composition(scope, variants):
         }
 
     # --- et and mt -----------------------------------------------------------
-    # The W+jets DR-to-SR corrections override the lepton isolation. In et that
-    # override is the QCD isolation window, in mt it is identical to the
-    # nominal one; this holds for every supported era.
-    w_iso = qcd_iso if scope == "et" else lep_iso
     anti = [vvl2, nis2]  # (vsJet VVVLoose > 0.5) && (vsJet Medium < 0.5)
 
     return {
         q.presel_mask:                 [dm2, vse2, vsm2, pt1, pt2, trg, jetveto],
         # --- QCD fake factors ---
-        q.ff_qcd_SRlike:               [iso2, qcd_iso, mt50, nb0, veto, ss_],
-        q.ff_qcd_ARlike:      [*anti,  qcd_iso, mt50, nb0, veto, ss_],
+        q.ff_qcd_SRlike:               [iso2, lep_iso, mt70, nb0, veto, ss_],
+        q.ff_qcd_ARlike:      [*anti,  lep_iso, mt70, nb0, veto, ss_],
         # --- W+jets fake factors (and their same-sign QCD estimation) ---
         q.ff_wjets_SRlike:             [iso2, lep_iso, w_mt, nbeq0, veto, os_],
         q.ff_wjets_ARlike:    [*anti,  lep_iso, w_mt, nbeq0, veto, os_],
@@ -308,20 +278,20 @@ def _mask_composition(scope, variants):
         # --- process fractions ---
         q.ff_fraction_SR:              [iso2, lep_iso, mt70, nb0, veto, os_],
         q.ff_fraction_AR:     [*anti,  lep_iso, mt70, nb0, veto, os_],
-        # --- QCD DR to SR corrections (isolation window inverted) ---
-        q.ff_qcd_DR_SR_SRlike:         [iso2, qcd_anti, mt50, nb0, veto, ss_],
-        q.ff_qcd_DR_SR_ARlike:[*anti,  qcd_anti, mt50, nb0, veto, ss_],
-        q.ff_qcd_AR_SR_SRlike:         [iso2, qcd_anti, mt70, nb0, veto, os_],
-        q.ff_qcd_AR_SR_ARlike:[*anti,  qcd_anti, mt70, nb0, veto, os_],
+        # --- QCD DR to SR corrections (lepton isolation inverted) ---
+        q.ff_qcd_DR_SR_SRlike:         [iso2, lep_anti, mt70, nb0, veto, ss_],
+        q.ff_qcd_DR_SR_ARlike:[*anti,  lep_anti, mt70, nb0, veto, ss_],
+        q.ff_qcd_AR_SR_SRlike:         [iso2, lep_anti, mt70, nb0, veto, os_],
+        q.ff_qcd_AR_SR_ARlike:[*anti,  lep_anti, mt70, nb0, veto, os_],
         # --- W+jets DR to SR corrections (and their same-sign variants) ---
-        q.ff_wjets_DR_SR_SRlike:          [iso2, w_iso, mt0, nbeq0, veto, os_],
-        q.ff_wjets_DR_SR_ARlike: [*anti,  w_iso, mt0, nbeq0, veto, os_],
-        q.ff_wjets_DR_SR_SRlike_ss:       [iso2, w_iso, mt0, nbeq0, veto, ss_],
-        q.ff_wjets_DR_SR_ARlike_ss:[*anti, w_iso, mt0, nbeq0, veto, ss_],
-        q.ff_wjets_AR_SR_SRlike:          [iso2, w_iso, mt70, nb0, veto, os_],
-        q.ff_wjets_AR_SR_ARlike: [*anti,  w_iso, mt70, nb0, veto, os_],
-        q.ff_wjets_AR_SR_SRlike_ss:       [iso2, w_iso, mt70, nb0, veto, ss_],
-        q.ff_wjets_AR_SR_ARlike_ss:[*anti, w_iso, mt70, nb0, veto, ss_],
+        q.ff_wjets_DR_SR_SRlike:          [iso2, lep_iso, mt0, nbeq0, veto, os_],
+        q.ff_wjets_DR_SR_ARlike: [*anti,  lep_iso, mt0, nbeq0, veto, os_],
+        q.ff_wjets_DR_SR_SRlike_ss:       [iso2, lep_iso, mt0, nbeq0, veto, ss_],
+        q.ff_wjets_DR_SR_ARlike_ss:[*anti, lep_iso, mt0, nbeq0, veto, ss_],
+        q.ff_wjets_AR_SR_SRlike:          [iso2, lep_iso, mt70, nb0, veto, os_],
+        q.ff_wjets_AR_SR_ARlike: [*anti,  lep_iso, mt70, nb0, veto, os_],
+        q.ff_wjets_AR_SR_SRlike_ss:       [iso2, lep_iso, mt70, nb0, veto, ss_],
+        q.ff_wjets_AR_SR_ARlike_ss:[*anti, lep_iso, mt70, nb0, veto, ss_],
     }
 
 
@@ -330,7 +300,7 @@ def _mask_composition(scope, variants):
 ##############################################################################
 
 
-def _atomic_producers(scope, variants):
+def _atomic_producers(scope):
     """Producers evaluating the atomic cuts needed by the masks of a scope."""
     common = [
         selection.JetVetoMapFlag,
@@ -354,7 +324,6 @@ def _atomic_producers(scope, variants):
 
     if scope == "tt":
         return common + vetoes + [
-            selection.LeptonVetoNoDileptonFlag,
             selection.PreselTriggerFlag_tt,
             selection.PreselTauDecayMode_1,
             selection.PreselTauDecayMode_2,
@@ -380,16 +349,14 @@ def _atomic_producers(scope, variants):
         selection.TauIsoFlag_2,
         selection.TauNonIsoFlag_2,
         selection.TauVVVLooseFlag_2,
-        selection.MtBelow50Flag,
         selection.MtBelow70Flag,
         selection.MtAboveZeroFlag,
+        selection.WjetsMtFlag,
         selection.NBtagGeZeroFlag,
         selection.NBtagEqZeroFlag,
         selection.TTbarNBtagFlag,
-        variants["lep_iso"],
-        variants["qcd_lep_iso"],
-        variants["qcd_lep_antiiso"],
-        variants["wjets_mt"],
+        selection.LepIsoFlag,
+        selection.LepAntiIsoFlag,
     ]
 
 
@@ -425,11 +392,11 @@ def add_selection(
         return configuration
 
     for scope in selected:
-        parameters, variants = _era_parameters(scope, era)
+        parameters = _era_parameters(scope, era)
         configuration.add_config_parameters([scope], parameters)
-        configuration.add_producers([scope], _atomic_producers(scope, variants))
+        configuration.add_producers([scope], _atomic_producers(scope))
 
-        masks = _mask_composition(scope, variants)
+        masks = _mask_composition(scope)
         mask_producers = [
             selection.make_mask_producer(
                 name=mask.name,
@@ -493,8 +460,7 @@ def restrict_selection_shifts(configuration: Configuration, scopes) -> Configura
         return configuration
 
     for scope in [s for s in scopes if s in SUPPORTED_SCOPES]:
-        _, variants = _era_parameters(scope, era=configuration.era)
-        composition = _mask_composition(scope, variants)
+        composition = _mask_composition(scope)
 
         keep, drop = set(), set()
         # sub-flags that only feed other selcut_* flags and therefore never
