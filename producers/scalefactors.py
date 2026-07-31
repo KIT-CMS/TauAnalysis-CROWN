@@ -27,7 +27,7 @@ with defaults(scopes=["mt", "mm"], input=[q.pt_1, q.eta_1]):
         output=[q.iso_wgt_mu_1],
     )
     MTGenerateSingleMuonTriggerSF_MC = ExtendedVectorProducer(
-        call='''embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_trigger_sf}", "mc", "{mc_trg_extrapolation}")''',
+        call='''embedding::muon::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_muon_sf_file}", "{mc_trigger_sf}", "mc", {mc_trg_extrapolation})''',
         output="flagname",
         vec_config="singlemuon_trigger_sf_mc",
     )
