@@ -118,29 +118,21 @@ def _era_parameters(scope, era):
     """
     is_2024plus = era in RUN3_2024_PLUS
 
-    # ---- charge column types (differ per leg and scope) ---------------------
-    # q_1: electron/muon `int` in et/mt/em, tau `Short_t` in tt
-    # q_2: tau `Short_t` in et/mt/tt, muon `int` in em
-    charge_types = {
-        "et": ("int", "Short_t"),
-        "mt": ("int", "Short_t"),
-        "tt": ("Short_t", "Short_t"),
-        "em": ("int", "int"),
-    }[scope]
-
-    parameters = {
-        "charge_type_1": charge_types[0],
-        "charge_type_2": charge_types[1],
-    }
+    parameters = {}
 
     # ---- preselection -------------------------------------------------------
     if scope in ("et", "mt", "tt"):
         parameters.update(
             {
-                # stored column type of the hadronic tau decay mode; the
-                # accepted modes themselves come from the `tau_dms` config
-                # parameter, shared with the object level decay mode cut
-                "selection_decaymode_type": "UChar_t",
+                # Stored column type of the hadronic tau decay mode. It is
+                # `int`, NOT the `UChar_t` of the nanoAOD branch:
+                # `event::quantity::Get<T>` casts `UChar_t` and `Short_t`
+                # results to `int` (see include/event.hxx), so the template
+                # argument of `Get` is the type of the *input branch* while
+                # the column it writes is `int`. The accepted modes themselves
+                # come from the `tau_dms` config parameter, shared with the
+                # object level decay mode cut.
+                "selection_decaymode_type": "int",
                 # tau vs jet working points used by the fake factor regions
                 "ff_tau_iso_wp": "Medium",
                 "ff_tau_antiiso_wp": "VVVLoose",

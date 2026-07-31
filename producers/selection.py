@@ -291,11 +291,13 @@ with defaults(scopes=["et", "mt"], input=[q.nbtag]):
 ##############################################################################
 
 with defaults(scopes=["et", "mt", "tt", "em"]):
-    # `q_1 * q_2` as a single `double` column, shared by both sign flags. The
-    # two legs can have different stored types (`int` for the light lepton,
-    # `Short_t` for the hadronic tau), hence the two type parameters.
+    # `q_1 * q_2` as a single `double` column, shared by both sign flags.
+    # Both charges are read as `int` in every scope: the nanoAOD branches
+    # differ (`Int_t` for the light leptons, `Short_t` for `Tau_charge`), but
+    # `event::quantity::Get<T>` casts `Short_t` and `UChar_t` results to `int`
+    # (see include/event.hxx), so `q_1` and `q_2` are always `int` columns.
     ChargeProduct = Producer(
-        call='''event::quantity::Product<{charge_type_1}, {charge_type_2}>({df}, {output}, {input})''',
+        call='''event::quantity::Product<int, int>({df}, {output}, {input})''',
         input=[q.q_1, q.q_2],
         output=[q.selcut_q_prod],
     )
