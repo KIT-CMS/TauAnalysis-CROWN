@@ -111,8 +111,9 @@ def _era_parameters(scope, era):
     if scope in ("et", "mt", "tt"):
         parameters.update(
             {
-                # accepted hadronic tau decay modes and the stored column type
-                "selection_tau_decaymodes": "0, 1, 10, 11",
+                # stored column type of the hadronic tau decay mode; the
+                # accepted modes {0, 1, 10, 11} are one `EqualFlag` producer
+                # each, see `producers/selection.py`
                 "selection_decaymode_type": "UChar_t",
                 # tau vs jet working points used by the fake factor regions
                 "ff_tau_iso_wp": "Medium",
@@ -335,6 +336,8 @@ def _atomic_producers(scope, variants):
         selection.JetVetoMapFlag,
         selection.PreselPt_1,
         selection.PreselPt_2,
+        # `q_1 * q_2`, the shared input of both sign flags
+        selection.ChargeProduct,
         selection.OppositeSignFlag,
         selection.SameSignFlag,
     ]

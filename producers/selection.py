@@ -18,6 +18,14 @@ Two kinds of objects live here:
     ``selcut_*`` flags with ``event::CombineFlags(..., "all_of")``.
     ``PreselectionFilter`` is the opt-in hard event filter on ``presel_mask``.
 
+Every cut is expressed with the generic CROWN core helpers only
+(``event::quantity::{Min,Greater,Max,MaxOrEqual,AbsMax,Equal}Flag``,
+``event::quantity::Product``, ``event::CombineFlags`` and ``event::filter::``);
+there is no analysis specific C++ addon for the selection. Cuts that are not a
+single comparison (closed isolation intervals, the accepted tau decay mode
+list, their negations) are composed from those primitives with a
+``ProducerGroup`` writing intermediate ``selcut_*`` columns.
+
 Columns that are leaves of a ``QuantityGroup`` (the tau ID working point flags
 ``id_tau_vsJet_Medium_2`` and the trigger flags ``trg_single_mu24``, ...) cannot
 be passed as ordinary input quantities. They are referenced by name through a
@@ -29,7 +37,7 @@ the producer ordering places the flag producer after the group.
 from code_generation.producer import Producer as _RawProducer
 
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import BaseFilter, Producer, defaults
+from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, defaults
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
 
@@ -51,45 +59,113 @@ _VSMU_2 = pairquantities.VsMuTauIDFlag_2.output_group
 _VSMU_1 = pairquantities.VsMuTauIDFlag_1.output_group
 
 
+# The accepted hadronic tau decay modes are cut on one by one and OR-ed
+# together, so the value cannot come from a (scope-global) config parameter.
+def _decaymode_call(mode):
+    """`event::quantity::EqualFlag` call comparing the decay mode to `mode`."""
+    return (
+        "event::quantity::EqualFlag<{selection_decaymode_type}>"
+        "({df}, {output}, {input}, " + str(mode) + ")"
+    )
+
+
 ##############################################################################
 # preselection: hadronic tau requirements
 ##############################################################################
 
 with defaults(scopes=LTT_SCOPES):
-    # (tau_decaymode_X == 0) || (... == 1) || (... == 10) || (... == 11)
-    with defaults(
-        call='''selection::InListFlag<{selection_decaymode_type}>({df}, {output}, {input}, {vec_open}{selection_tau_decaymodes}{vec_close})''',
-    ):
-        PreselTauDecayMode_2 = Producer(
-            input=[q.tau_decaymode_2],
-            output=[q.selcut_presel_tau_dm_2],
+    # (tau_decaymode_2 == 0) || (... == 1) || (... == 10) || (... == 11),
+    # built as one `EqualFlag` per accepted decay mode plus an `any_of`
+    with defaults(input=[q.tau_decaymode_2]):
+        PreselTauDecayModeEq0_2 = Producer(
+            call=_decaymode_call(0),
+            output=[q.selcut_presel_tau_dm_2_eq_0],
+        )
+        PreselTauDecayModeEq1_2 = Producer(
+            call=_decaymode_call(1),
+            output=[q.selcut_presel_tau_dm_2_eq_1],
+        )
+        PreselTauDecayModeEq10_2 = Producer(
+            call=_decaymode_call(10),
+            output=[q.selcut_presel_tau_dm_2_eq_10],
+        )
+        PreselTauDecayModeEq11_2 = Producer(
+            call=_decaymode_call(11),
+            output=[q.selcut_presel_tau_dm_2_eq_11],
         )
 
-    # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
+    PreselTauDecayMode_2 = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''',
+        input=[
+            q.selcut_presel_tau_dm_2_eq_0,
+            q.selcut_presel_tau_dm_2_eq_1,
+            q.selcut_presel_tau_dm_2_eq_10,
+            q.selcut_presel_tau_dm_2_eq_11,
+        ],
+        output=[q.selcut_presel_tau_dm_2],
+        subproducers=[
+            PreselTauDecayModeEq0_2,
+            PreselTauDecayModeEq1_2,
+            PreselTauDecayModeEq10_2,
+            PreselTauDecayModeEq11_2,
+        ],
+    )
+
+    # id_tau_vsEle_<WP>_2 == 1 and id_tau_vsMu_<WP>_2 == 1
     PreselVsEleTauID_2 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
         input=[_VSELE_2],
         output=[q.selcut_presel_vsele_2],
     )
     PreselVsMuTauID_2 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
         input=[_VSMU_2],
         output=[q.selcut_presel_vsmu_2],
     )
 
 with defaults(scopes=TT_SCOPES):
-    PreselTauDecayMode_1 = Producer(
-        call='''selection::InListFlag<{selection_decaymode_type}>({df}, {output}, {input}, {vec_open}{selection_tau_decaymodes}{vec_close})''',
-        input=[q.tau_decaymode_1],
+    with defaults(input=[q.tau_decaymode_1]):
+        PreselTauDecayModeEq0_1 = Producer(
+            call=_decaymode_call(0),
+            output=[q.selcut_presel_tau_dm_1_eq_0],
+        )
+        PreselTauDecayModeEq1_1 = Producer(
+            call=_decaymode_call(1),
+            output=[q.selcut_presel_tau_dm_1_eq_1],
+        )
+        PreselTauDecayModeEq10_1 = Producer(
+            call=_decaymode_call(10),
+            output=[q.selcut_presel_tau_dm_1_eq_10],
+        )
+        PreselTauDecayModeEq11_1 = Producer(
+            call=_decaymode_call(11),
+            output=[q.selcut_presel_tau_dm_1_eq_11],
+        )
+
+    PreselTauDecayMode_1 = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''',
+        input=[
+            q.selcut_presel_tau_dm_1_eq_0,
+            q.selcut_presel_tau_dm_1_eq_1,
+            q.selcut_presel_tau_dm_1_eq_10,
+            q.selcut_presel_tau_dm_1_eq_11,
+        ],
         output=[q.selcut_presel_tau_dm_1],
+        subproducers=[
+            PreselTauDecayModeEq0_1,
+            PreselTauDecayModeEq1_1,
+            PreselTauDecayModeEq10_1,
+            PreselTauDecayModeEq11_1,
+        ],
     )
+
     PreselVsEleTauID_1 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
         input=[_VSELE_1],
         output=[q.selcut_presel_vsele_1],
     )
     PreselVsMuTauID_1 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
         input=[_VSMU_1],
         output=[q.selcut_presel_vsmu_1],
     )
@@ -102,19 +178,19 @@ with defaults(scopes=TT_SCOPES):
 with defaults(scopes=ALL_SCOPES):
     # pt_1 > {presel_pt_1}  (light lepton in et/mt/em, leading tau in tt)
     PreselPt_1 = Producer(
-        call='''selection::GreaterFlag<float>({df}, {output}, {input}, {presel_pt_1})''',
+        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, {presel_pt_1})''',
         input=[q.pt_1],
         output=[q.selcut_presel_pt_1],
     )
     # pt_2 > {presel_pt_2}  (hadronic tau in et/mt/tt, muon in em)
     PreselPt_2 = Producer(
-        call='''selection::GreaterFlag<float>({df}, {output}, {input}, {presel_pt_2})''',
+        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, {presel_pt_2})''',
         input=[q.pt_2],
         output=[q.selcut_presel_pt_2],
     )
-    # jet_vetomap < 0.5
+    # jet_vetomap == 0
     JetVetoMapFlag = Producer(
-        call='''selection::FailFlag<bool>({df}, {output}, {input})''',
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.jet_vetomap],
         output=[q.selcut_jet_veto],
     )
@@ -131,7 +207,7 @@ with defaults(scopes=["em"]):
 # scope dependent; for tt the group is swapped out for embedding samples, hence
 # the second producer plus the ReplaceProducer rule set up in selection.py.
 with defaults(
-    call='''selection::PassFlag<bool>({df}, {output}, "{presel_trigger_flag}")''',
+    call='''event::quantity::EqualFlag<bool>({df}, {output}, "{presel_trigger_flag}", 1)''',
     output=[q.selcut_presel_trigger],
 ):
     PreselTriggerFlag = Producer(
@@ -157,7 +233,9 @@ with defaults(
 ##############################################################################
 
 with defaults(scopes=LTT_SCOPES):
-    with defaults(call='''selection::FailFlag<bool>({df}, {output}, {input})'''):
+    with defaults(
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)'''
+    ):
         NoExtraElectronFlag = Producer(
             input=[q.extraelec_veto], output=[q.selcut_no_extraelec]
         )
@@ -174,10 +252,10 @@ with defaults(scopes=LTT_SCOPES):
         input=[q.selcut_no_extraelec, q.selcut_no_extramuon, q.selcut_no_dilepton],
         output=[q.selcut_lepton_veto],
     )
-    # !((extramuon_veto < 0.5) && (extraelec_veto < 0.5) && (dilepton_veto < 0.5))
+    # !((extramuon_veto == 0) && (extraelec_veto == 0) && (dilepton_veto == 0))
     # used by the ttbar signal-/application-like regions in et and mt
     LeptonVetoInvertedFlag = Producer(
-        call='''selection::InvertFlag({df}, {output}, {input})''',
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.selcut_lepton_veto],
         output=[q.selcut_lepton_veto_inv],
     )
@@ -196,34 +274,34 @@ with defaults(scopes=LTT_SCOPES):
 
 with defaults(scopes=LTT_SCOPES):
     TauIsoFlag_2 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 1)''',
         input=[_VSJET_2],
         output=[q.selcut_tau_iso_2],
     )
     TauNonIsoFlag_2 = Producer(
-        call='''selection::FailFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_2", 0)''',
         input=[_VSJET_2],
         output=[q.selcut_tau_noniso_2],
     )
     TauVVVLooseFlag_2 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_2")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_2", 1)''',
         input=[_VSJET_ONLY_2],
         output=[q.selcut_tau_vvvloose_2],
     )
 
 with defaults(scopes=TT_SCOPES):
     TauIsoFlag_1 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 1)''',
         input=[_VSJET_1],
         output=[q.selcut_tau_iso_1],
     )
     TauNonIsoFlag_1 = Producer(
-        call='''selection::FailFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_wp}_1", 0)''',
         input=[_VSJET_1],
         output=[q.selcut_tau_noniso_1],
     )
     TauVVVLooseFlag_1 = Producer(
-        call='''selection::PassFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_1")''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_wp}_1", 1)''',
         input=[_VSJET_ONLY_1],
         output=[q.selcut_tau_vvvloose_1],
     )
@@ -238,32 +316,78 @@ with defaults(scopes=TT_SCOPES):
 ##############################################################################
 
 with defaults(scopes=LT_SCOPES, input=[q.iso_1]):
-    # nominal signal-lepton isolation
-    LepIsoFlag_Interval = Producer(
-        call='''selection::InRangeFlag<float>({df}, {output}, {input}, {lep_iso_min}, {lep_iso_max})''',
-        output=[q.selcut_lep_iso],
+    # --- nominal signal-lepton isolation -------------------------------------
+    # `(iso_1 >= {lep_iso_min}) && (iso_1 <= {lep_iso_max})`
+    LepIsoLowerEdge = Producer(
+        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {lep_iso_min})''',
+        output=[q.selcut_lep_iso_lo],
+    )
+    LepIsoUpperEdge = Producer(
+        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
+        output=[q.selcut_lep_iso_hi],
     )
     LepIsoFlag_Upper = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
         output=[q.selcut_lep_iso],
     )
-    # isolation window of the QCD determination regions
-    QCDLepIsoFlag_Interval = Producer(
-        call='''selection::InRangeFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_iso],
+
+    # --- isolation window of the QCD determination regions -------------------
+    # `(iso_1 >= {qcd_lep_iso_min}) && (iso_1 <= {qcd_lep_iso_max})`
+    QCDLepIsoLowerEdge = Producer(
+        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min})''',
+        output=[q.selcut_qcd_lep_iso_lo],
+    )
+    QCDLepIsoUpperEdge = Producer(
+        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
+        output=[q.selcut_qcd_lep_iso_hi],
     )
     QCDLepIsoFlag_Upper = Producer(
         call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
         output=[q.selcut_qcd_lep_iso],
     )
-    # complement of the QCD isolation window (DR to SR corrections)
-    QCDLepAntiIsoFlag_Interval = Producer(
-        call='''selection::OutOfRangeFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min}, {qcd_lep_iso_max})''',
-        output=[q.selcut_qcd_lep_antiiso],
+
+    # --- complement of the QCD isolation window (DR to SR corrections) -------
+    # the window is recomputed into its own columns instead of reusing
+    # `selcut_qcd_lep_iso`, so that the inverted flag does not depend on the
+    # non-inverted producer being booked as well
+    QCDLepAntiIsoLowerEdge = Producer(
+        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_min})''',
+        output=[q.selcut_qcd_lep_antiiso_lo],
+    )
+    QCDLepAntiIsoUpperEdge = Producer(
+        call='''event::quantity::MaxOrEqualFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
+        output=[q.selcut_qcd_lep_antiiso_hi],
     )
     QCDLepAntiIsoFlag_Lower = Producer(
         call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {qcd_lep_iso_max})''',
         output=[q.selcut_qcd_lep_antiiso],
+    )
+
+with defaults(scopes=LT_SCOPES):
+    LepIsoFlag_Interval = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[q.selcut_lep_iso_lo, q.selcut_lep_iso_hi],
+        output=[q.selcut_lep_iso],
+        subproducers=[LepIsoLowerEdge, LepIsoUpperEdge],
+    )
+    QCDLepIsoFlag_Interval = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[q.selcut_qcd_lep_iso_lo, q.selcut_qcd_lep_iso_hi],
+        output=[q.selcut_qcd_lep_iso],
+        subproducers=[QCDLepIsoLowerEdge, QCDLepIsoUpperEdge],
+    )
+    QCDLepAntiIsoWindow = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[q.selcut_qcd_lep_antiiso_lo, q.selcut_qcd_lep_antiiso_hi],
+        output=[q.selcut_qcd_lep_antiiso_win],
+        subproducers=[QCDLepAntiIsoLowerEdge, QCDLepAntiIsoUpperEdge],
+    )
+    # exactly the logical negation of `QCDLepAntiIsoWindow`
+    QCDLepAntiIsoFlag_Interval = ProducerGroup(
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
+        input=[q.selcut_qcd_lep_antiiso_win],
+        output=[q.selcut_qcd_lep_antiiso],
+        subproducers=[QCDLepAntiIsoWindow],
     )
 
 
@@ -281,13 +405,13 @@ with defaults(scopes=LT_SCOPES, input=[q.mt_1]):
         output=[q.selcut_mt_lt_70],
     )
     MtAboveZeroFlag = Producer(
-        call='''selection::GreaterFlag<float>({df}, {output}, {input}, 0.0)''',
+        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 0.0)''',
         output=[q.selcut_mt_gt_0],
     )
     # W+jets determination region: `mt_1 > 70` in mt for 2022/2023,
     # `mt_1 >= 70` in et always and in mt from 2024 on
     WjetsMtFlag_Strict = Producer(
-        call='''selection::GreaterFlag<float>({df}, {output}, {input}, 70.0)''',
+        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_wjets_mt],
     )
     WjetsMtFlag_Inclusive = Producer(
@@ -316,17 +440,30 @@ with defaults(scopes=LT_SCOPES, input=[q.nbtag]):
 # tau pair charge
 ##############################################################################
 
-with defaults(scopes=ALL_SCOPES, input=[q.q_1, q.q_2]):
-    # (q_1 * q_2) < 0
-    OppositeSignFlag = Producer(
-        call='''selection::OppositeSignFlag<{charge_type_1}, {charge_type_2}>({df}, {output}, {input})''',
-        output=[q.sel_os],
+with defaults(scopes=ALL_SCOPES):
+    # `q_1 * q_2` as a single `double` column, shared by both sign flags. The
+    # two legs can have different stored types (`int` for the light lepton,
+    # `Short_t` for the hadronic tau), hence the two type parameters.
+    ChargeProduct = Producer(
+        call='''event::quantity::Product<{charge_type_1}, {charge_type_2}>({df}, {output}, {input})''',
+        input=[q.q_1, q.q_2],
+        output=[q.selcut_q_prod],
     )
-    # (q_1 * q_2) > 0
-    SameSignFlag = Producer(
-        call='''selection::SameSignFlag<{charge_type_1}, {charge_type_2}>({df}, {output}, {input})''',
-        output=[q.sel_ss],
-    )
+
+    # both sign flags read the same product column; `ChargeProduct` is booked
+    # once as an ordinary producer (see `_atomic_producers` in selection.py)
+    # instead of as a subproducer of both, so that it is defined exactly once
+    with defaults(input=[q.selcut_q_prod]):
+        # (q_1 * q_2) < 0
+        OppositeSignFlag = Producer(
+            call='''event::quantity::MaxFlag<double>({df}, {output}, {input}, 0.0)''',
+            output=[q.sel_os],
+        )
+        # (q_1 * q_2) > 0
+        SameSignFlag = Producer(
+            call='''event::quantity::GreaterFlag<double>({df}, {output}, {input}, 0.0)''',
+            output=[q.sel_ss],
+        )
 
 
 ##############################################################################

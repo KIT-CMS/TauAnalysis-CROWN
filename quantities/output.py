@@ -515,6 +515,16 @@ is_2022preEE = Quantity()
 ##############################################################################
 
 # --- internal atomic cut flags: preselection ---------------------------------
+# one flag per accepted hadronic tau decay mode; they are OR-ed into
+# `selcut_presel_tau_dm_X` with `event::CombineFlags(..., "any_of")`
+selcut_presel_tau_dm_1_eq_0 = Quantity()
+selcut_presel_tau_dm_1_eq_1 = Quantity()
+selcut_presel_tau_dm_1_eq_10 = Quantity()
+selcut_presel_tau_dm_1_eq_11 = Quantity()
+selcut_presel_tau_dm_2_eq_0 = Quantity()
+selcut_presel_tau_dm_2_eq_1 = Quantity()
+selcut_presel_tau_dm_2_eq_10 = Quantity()
+selcut_presel_tau_dm_2_eq_11 = Quantity()
 selcut_presel_tau_dm_1 = Quantity()
 selcut_presel_tau_dm_2 = Quantity()
 selcut_presel_vsele_1 = Quantity()
@@ -544,6 +554,16 @@ selcut_tau_vvvloose_1 = Quantity()  # id_tau_vsJet_VVVLoose_1 > 0.5
 selcut_tau_vvvloose_2 = Quantity()  # id_tau_vsJet_VVVLoose_2 > 0.5
 
 # --- internal atomic cut flags: light lepton isolation -----------------------
+# the closed isolation windows `(iso_1 >= lo) && (iso_1 <= hi)` are assembled
+# from a lower and an upper edge flag with `event::CombineFlags(..., "all_of")`
+selcut_lep_iso_lo = Quantity()  # iso_1 >= {lep_iso_min}
+selcut_lep_iso_hi = Quantity()  # iso_1 <= {lep_iso_max}
+selcut_qcd_lep_iso_lo = Quantity()  # iso_1 >= {qcd_lep_iso_min}
+selcut_qcd_lep_iso_hi = Quantity()  # iso_1 <= {qcd_lep_iso_max}
+selcut_qcd_lep_antiiso_lo = Quantity()  # iso_1 >= {qcd_lep_iso_min}
+selcut_qcd_lep_antiiso_hi = Quantity()  # iso_1 <= {qcd_lep_iso_max}
+selcut_qcd_lep_antiiso_win = Quantity()  # the window that is inverted below
+
 selcut_lep_iso = Quantity()  # nominal signal-lepton isolation
 selcut_qcd_lep_iso = Quantity()  # QCD determination region isolation
 selcut_qcd_lep_antiiso = Quantity()  # complement of the QCD isolation window
@@ -558,6 +578,10 @@ selcut_wjets_mt = Quantity()  # mt_1 > 70 or mt_1 >= 70, era/scope dependent
 selcut_nbtag_ge_0 = Quantity()
 selcut_nbtag_eq_0 = Quantity()
 selcut_ttbar_nbtag = Quantity()  # nbtag >= <era/scope dependent threshold>
+
+# --- internal quantity: tau pair charge product ------------------------------
+# `q_1 * q_2` as a `double` column, shared by `sel_os` and `sel_ss`
+selcut_q_prod = Quantity()
 
 # --- mask branches: all scopes ----------------------------------------------
 presel_mask = Quantity()
