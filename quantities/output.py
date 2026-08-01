@@ -153,7 +153,6 @@ prefiring_wgt = Quantity()
 #### MET 
 
 # MetBasics
-met_mask = Quantity()
 rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()

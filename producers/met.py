@@ -84,12 +84,6 @@ with defaults(scopes=["global"]):
         ],
     )
 
-    MetMask = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, 0)''',
-        input=[nanoAODv15.PuppiMET_ptUnclusteredUp],
-        output=[q.met_mask],
-    )
-
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     # PuppiMET with jet propagated
     # for run 3 v15

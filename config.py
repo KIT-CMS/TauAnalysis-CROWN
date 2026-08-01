@@ -1187,7 +1187,6 @@ def build_config(
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             met.MetBasics,
-            met.MetMask,
             event.EvenOddIDFlag,
         ],
     )
@@ -1489,7 +1488,6 @@ def build_config(
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
-            q.met_mask,
             q.jet_ID,
             q.jet_vetomap,
             ] + [p for scope in scopes for p in genparticles.GenMatching.get_outputs(scope)] + [

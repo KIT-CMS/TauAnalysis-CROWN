@@ -131,7 +131,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     )
     # jet_vetomap < 0.5
     JetVetoMapFlag = Producer(
-        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 1)''',
+        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.jet_vetomap],
         output=[q.selcut_jet_veto],
     )
@@ -139,7 +139,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
 with defaults(scopes=["em"]):
     # abs(eta_1) < 2.5
     PreselElectronEta_1 = Producer(
-        call='''event::quantity::AbsMaxFlag<float>({df}, {output}, {input}, {presel_abs_eta_1})''',
+        call='''event::quantity::AbsSmallerFlag<float>({df}, {output}, {input}, {presel_abs_eta_1})''',
         input=[q.eta_1],
         output=[q.selcut_presel_eta_1],
     )
@@ -176,7 +176,7 @@ with defaults(
 with defaults(scopes=["et", "mt", "tt"]):
     # `extraelec_veto < 0.5`, `extramuon_veto < 0.5`, `dilepton_veto < 0.5`
     with defaults(
-        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 1)'''
+        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)'''
     ):
         NoExtraElectronFlag = Producer(
             input=[q.extraelec_veto], output=[q.selcut_no_extraelec]
@@ -196,9 +196,10 @@ with defaults(scopes=["et", "mt", "tt"]):
     )
     # !((extramuon_veto < 0.5) && (extraelec_veto < 0.5) && (dilepton_veto < 0.5))
     # used by the ttbar signal-/application-like regions in et and mt. This is a
-    # genuine negation of an internal `bool` column, hence `EqualFlag<bool>`.
+    # genuine negation of an internal `bool` column, written -- like every other
+    # boolean negation in this file -- as `MaxFlag<bool>(..., 0)`, i.e. `<= 0`.
     LeptonVetoInvertedFlag = Producer(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
+        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.selcut_lepton_veto],
         output=[q.selcut_lepton_veto_inv],
     )
@@ -215,7 +216,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         output=[q.selcut_tau_iso_2],
     )
     TauNonIsoFlag_2 = Producer(
-        call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
+        call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
         input=[pairquantities.VsJetTauIDFlag_2.output_group],
         output=[q.selcut_tau_noniso_2],
     )
@@ -232,7 +233,7 @@ with defaults(scopes=["tt"]):
         output=[q.selcut_tau_iso_1],
     )
     TauNonIsoFlag_1 = Producer(
-        call='''event::quantity::MaxFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
+        call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
         input=[pairquantities.VsJetTauIDFlag_1.output_group],
         output=[q.selcut_tau_noniso_1],
     )
@@ -254,7 +255,7 @@ with defaults(scopes=["tt"]):
 with defaults(scopes=["et", "mt"], input=[q.iso_1]):
     # `iso_1 < {lep_iso_max}`
     LepIsoFlag = Producer(
-        call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
+        call='''event::quantity::SmallerFlag<float>({df}, {output}, {input}, {lep_iso_max})''',
         output=[q.selcut_lep_iso],
     )
     # `iso_1 >= {lep_iso_max}`, the logical complement of `LepIsoFlag` by
@@ -272,7 +273,7 @@ with defaults(scopes=["et", "mt"], input=[q.iso_1]):
 with defaults(scopes=["et", "mt"], input=[q.mt_1]):
     # `mt_1 < 70`: QCD, ttbar and process fraction regions
     MtBelow70Flag = Producer(
-        call='''event::quantity::MaxFlag<float>({df}, {output}, {input}, 70.0)''',
+        call='''event::quantity::SmallerFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_mt_lt_70],
     )
     # `mt_1 >= 70`: the W+jets determination regions, in every era and channel
@@ -315,7 +316,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     with defaults(input=[q.selcut_q_prod]):
         # (q_1 * q_2) < 0
         OppositeSignFlag = Producer(
-            call='''event::quantity::MaxFlag<double>({df}, {output}, {input}, 0.0)''',
+            call='''event::quantity::SmallerFlag<double>({df}, {output}, {input}, 0.0)''',
             output=[q.sel_os],
         )
         # (q_1 * q_2) > 0

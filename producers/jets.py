@@ -214,19 +214,19 @@ with defaults(scopes=["global"]):
         JetEnergyCorrection_data = ProducerGroup(subproducers=[JetPtCorrection_data, JetMassCorrection])
 
     with defaults(output=[]):
-        JetPtCut = Producer(call="physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt})", input=[q.jet_pt_corrected])
-        JetPtCut_loose = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_loose})''', input=[q.jet_pt_corrected], output=[q.jet_pt_mask_loose])
-        JetPtCut_tight = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_jet_pt_tight})''', input=[q.jet_pt_corrected])
+        JetPtCut = Producer(call="physicsobject::CutGreater<float>({df}, {output}, {input}, {min_jet_pt})", input=[q.jet_pt_corrected])
+        JetPtCut_loose = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_jet_pt_loose})''', input=[q.jet_pt_corrected], output=[q.jet_pt_mask_loose])
+        JetPtCut_tight = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_jet_pt_tight})''', input=[q.jet_pt_corrected])
         
-        JetEtaCut = Producer(call="physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_jet_eta})", input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Max2 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Max3 = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {jet_eta_3})''', input=[nanoAODv15.Jet_eta], output=[q.jet_eta_mask_max])
+        JetEtaCut = Producer(call="physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_jet_eta})", input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsGreater<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsGreater<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Max2 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Max3 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_3})''', input=[nanoAODv15.Jet_eta], output=[q.jet_eta_mask_max])
 
-        BJetPtCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_bjet_pt})''', input=[q.jet_pt_corrected])
-        BJetEtaCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_bjet_eta})''', input=[nanoAODv15.Jet_eta])
+        BJetPtCut = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_bjet_pt})''', input=[q.jet_pt_corrected])
+        BJetEtaCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_bjet_eta})''', input=[nanoAODv15.Jet_eta])
         BTagCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {btag_cut})''', input=[q.jet_BTag])
 
 

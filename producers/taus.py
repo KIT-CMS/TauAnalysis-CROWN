@@ -5,15 +5,15 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProduc
 
 with defaults(scopes=["global"], output=[]):
     TauPtCut = Producer(
-        call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_tau_pt})''',
+        call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_tau_pt})''',
         input=[q.tau_pt_corrected],
     )
     TauEtaCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_eta})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_eta})''',
         input=[nanoAODv15.Tau_eta],
     )
     TauDzCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_dz})''',
         input=[nanoAODv15.Tau_dz],
     )
 
@@ -406,15 +406,15 @@ with defaults(scopes=["et", "mt", "tt"]):
 
     with defaults(output=[]):
         GoodTauPtCut = Producer(
-            call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_tau_pt})''',
+            call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_tau_pt})''',
             input=[q.tau_pt_corrected],
         )
         GoodTauEtaCut = Producer(
-            call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_eta})''',
+            call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_eta})''',
             input=[nanoAODv15.Tau_eta],
         )
         GoodTauDzCut = Producer(
-            call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})''',
+            call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_dz})''',
             input=[nanoAODv15.Tau_dz],
         )
         GoodTauDMCut = Producer(
