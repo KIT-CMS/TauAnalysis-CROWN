@@ -91,7 +91,7 @@ with defaults(scopes=["et", "mt", "tt"]):
 
     # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
         output=[q.selcut_presel_vsele_2],
     ):
         PreselVsEleTauID_2 = Producer(
@@ -99,7 +99,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         PreselVsEleTauID_2_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
         output=[q.selcut_presel_vsmu_2],
     ):
         PreselVsMuTauID_2 = Producer(
@@ -117,7 +117,7 @@ with defaults(scopes=["tt"]):
     )
 
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
         output=[q.selcut_presel_vsele_1],
     ):
         PreselVsEleTauID_1 = Producer(
@@ -125,7 +125,7 @@ with defaults(scopes=["tt"]):
         )
         PreselVsEleTauID_1_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
         output=[q.selcut_presel_vsmu_1],
     ):
         PreselVsMuTauID_1 = Producer(
@@ -153,7 +153,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     )
     # jet_vetomap < 0.5
     JetVetoMapFlag = Producer(
-        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)''',
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.jet_vetomap],
         output=[q.selcut_jet_veto],
     )
@@ -170,7 +170,7 @@ with defaults(scopes=["em"]):
 # scope dependent; for tt the group is swapped out for embedding samples, hence
 # the second producer plus the ReplaceProducer rule set up in selection_config.py.
 with defaults(
-    call='''event::quantity::MinFlag<bool>({df}, {output}, "{presel_trigger_flag}", 1)''',
+    call='''event::quantity::EqualFlag<bool>({df}, {output}, "{presel_trigger_flag}", 1)''',
     output=[q.selcut_presel_trigger],
 ):
     PreselTriggerFlag = Producer(
@@ -200,7 +200,7 @@ with defaults(
 with defaults(scopes=["et", "mt", "tt"]):
     # `extraelec_veto < 0.5`, `extramuon_veto < 0.5`, `dilepton_veto < 0.5`
     with defaults(
-        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)'''
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)'''
     ):
         NoExtraElectronFlag = Producer(
             input=[q.extraelec_veto], output=[q.selcut_no_extraelec]
@@ -221,9 +221,9 @@ with defaults(scopes=["et", "mt", "tt"]):
     # !((extramuon_veto < 0.5) && (extraelec_veto < 0.5) && (dilepton_veto < 0.5))
     # used by the ttbar signal-/application-like regions in et and mt. This is a
     # genuine negation of an internal `bool` column, written -- like every other
-    # boolean negation in this file -- as `MaxFlag<bool>(..., 0)`, i.e. `<= 0`.
+    # boolean negation in this file -- as `EqualFlag<bool>(..., 0)`.
     LeptonVetoInvertedFlag = Producer(
-        call='''event::quantity::MaxFlag<bool>({df}, {output}, {input}, 0)''',
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 0)''',
         input=[q.selcut_lepton_veto],
         output=[q.selcut_lepton_veto_inv],
     )
@@ -235,19 +235,19 @@ with defaults(scopes=["et", "mt", "tt"]):
 
 with defaults(scopes=["et", "mt", "tt"]):
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
         output=[q.selcut_tau_iso_2],
     ):
         TauIsoFlag_2 = Producer(input=[pairquantities.VsJetTauIDFlag_2.output_group])
         TauIsoFlag_2_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 0)''',
         output=[q.selcut_tau_noniso_2],
     ):
         TauNonIsoFlag_2 = Producer(input=[pairquantities.VsJetTauIDFlag_2.output_group])
         TauNonIsoFlag_2_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2", 1)''',
         output=[q.selcut_tau_vvvloose_2],
     ):
         TauVVVLooseFlag_2 = Producer(
@@ -257,19 +257,19 @@ with defaults(scopes=["et", "mt", "tt"]):
 
 with defaults(scopes=["tt"]):
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
         output=[q.selcut_tau_iso_1],
     ):
         TauIsoFlag_1 = Producer(input=[pairquantities.VsJetTauIDFlag_1.output_group])
         TauIsoFlag_1_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 0)''',
         output=[q.selcut_tau_noniso_1],
     ):
         TauNonIsoFlag_1 = Producer(input=[pairquantities.VsJetTauIDFlag_1.output_group])
         TauNonIsoFlag_1_friend = Producer(input=[])
     with defaults(
-        call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1", 1)''',
+        call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1", 1)''',
         output=[q.selcut_tau_vvvloose_1],
     ):
         TauVVVLooseFlag_1 = Producer(

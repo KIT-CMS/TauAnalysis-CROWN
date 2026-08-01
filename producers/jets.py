@@ -219,8 +219,8 @@ with defaults(scopes=["global"]):
         JetPtCut_tight = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_jet_pt_tight})''', input=[q.jet_pt_corrected])
         
         JetEtaCut = Producer(call="physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_jet_eta})", input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsGreater<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
-        JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsGreater<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Min1 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
+        JetEtaCut_Min2 = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max2 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max3 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_3})''', input=[nanoAODv15.Jet_eta], output=[q.jet_eta_mask_max])
@@ -249,20 +249,20 @@ with defaults(scopes=["global"]):
         output=[q.loose_jets_mask_loweta],
         subproducers=[JetEtaCut_Max1],
     )
-    # pt>30 &  3 < |eta| < 4.7 & id
+    # pt>30 & 3 <= |eta| < 4.7 & id
     LooseJets_HighEta = ProducerGroup(
         call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.jet_id_mask, q.jet_pt_mask_loose, q.jet_eta_mask_max],
         output=[q.loose_jets_mask_higheta],
         subproducers=[JetEtaCut_Min2],
     )
-    # pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id
+    # pt>30 & (|eta| < 2.5 || 3 <= |eta| < 4.7) & id
     GoodJets_loose = Producer(
         call='''physicsobject::CombineMasks({df}, {output}, {input}, "any_of")''',
         input=[q.loose_jets_mask_loweta, q.loose_jets_mask_higheta],
         output=[q.good_jets_mask_loose],
     )
-    # pt>50 & 2.5<|eta|<3/4.7 (2022 and 2023) & id
+    # pt>50 & 2.5 <= |eta| < 3/4.7 (2022 and 2023) & id
     GoodJets_tight = ProducerGroup(
         call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
         input=[q.jet_id_mask],
@@ -271,7 +271,7 @@ with defaults(scopes=["global"]):
     )
     
     with defaults(call='''physicsobject::CombineMasks({df}, {output}, {input}, "any_of")'''):
-        # (pt>30 & (|eta|<2.5 || 3<|eta|<4.7) & id) || (pt>50 & 2.5<|eta|<3/4.7 (2022 and 2023) & id) for run 3
+        # (pt>30 & (|eta| < 2.5 || 3 <= |eta| < 4.7) & id) || (pt>50 & 2.5 <= |eta| < 3/4.7 (2022 and 2023) & id) for run 3
         GoodJets = Producer(
             input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
             output=[q.good_jets_mask],
