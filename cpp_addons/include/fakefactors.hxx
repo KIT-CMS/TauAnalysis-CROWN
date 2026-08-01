@@ -8,13 +8,6 @@
 #include <string>
 #include <vector>
 
-#include "ROOT/RDataFrame.hxx"
-#include "correction.h"
-#include "../../../../include/utility/CorrectionManager.hxx"
-
-#include <string>
-#include <vector>
-
 namespace fakefactors {
 
 // Builds a std::vector<float> column from scalar columns.

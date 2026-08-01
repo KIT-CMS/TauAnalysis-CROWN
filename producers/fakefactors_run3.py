@@ -33,7 +33,7 @@ with defaults(scopes=["mt", "et"]):
                 q.tau_decaymode_2_float,
                 q.mass_2,
                 q.eta_2,
-                q.pt_ttjj,
+                # q.pt_ttjj,
                 q.njets_float,
             ],
             output=[q.ff_input_nc_lt]
@@ -106,7 +106,7 @@ with defaults(scopes=["tt"]):
                 q.tau_decaymode_1_float,
                 q.mass_1,
                 q.eta_1,
-                q.pt_ttjj,
+                # q.pt_ttjj,
                 q.njets_float,
             ],
             output=[q.ff_input_nc_qcd_tt]
@@ -116,7 +116,7 @@ with defaults(scopes=["tt"]):
                 q.tau_decaymode_2_float,
                 q.mass_2,
                 q.eta_2,
-                q.pt_ttjj,
+                # q.pt_ttjj,
                 q.njets_float,
             ],
             output=[q.ff_input_nc_qcdsub_tt]

@@ -1,9 +1,9 @@
 # from code_generation.quantity import Quantity
 from ..scripts.CROWNWrapper import Quantity
+from ..scripts.CROWNWrapper import NanoAODQuantity
 
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
-
 
 # run dependent denitions
 tau_IDvsEle = Quantity()
@@ -153,6 +153,9 @@ prefiring_wgt = Quantity()
 
 #### MET 
 
+PuppiMET_pt_nanoAOD_ref = NanoAODQuantity("PuppiMET_pt")
+PuppiMET_phi_nanoAOD_ref = NanoAODQuantity("PuppiMET_phi")
+
 # MetBasics
 met_mask = Quantity()
 rawmet_p4 = Quantity()
@@ -165,6 +168,7 @@ puppimet_p4_leptoncorrected = Quantity()
 puppimet_p4_jetcorrected = Quantity()
 puppimet_p4_jetcorrected_1 = Quantity()
 puppimet_p4_recoilcorrected = Quantity()
+puppimet_p4_unclustered_corrected = Quantity()
 puppimet = Quantity()
 puppimetphi = Quantity()
 metSumEt = Quantity()
@@ -223,6 +227,7 @@ base_photons_mask = Quantity()
 # BaseMuons
 base_muons_mask = Quantity()
 good_muons_mask = Quantity()
+muon_pt_corrected = Quantity()
 _MuonEtaCut = Quantity()
 _MuonDxyCut = Quantity()
 _MuonDzCut = Quantity()
@@ -520,3 +525,14 @@ ff_input_nc_qcdsub_tt = Quantity()
 nn_output_vector = Quantity()
 nn_predicted_class = Quantity()
 nn_predicted_max_value = Quantity()
+# era flags for nn
+is_2025 = Quantity()
+is_2024 = Quantity()
+is_2023postBPix = Quantity()
+is_2023preBPix = Quantity()
+is_2022postEE = Quantity()
+is_2022preEE = Quantity()
+is_2018 = Quantity()
+is_2017 = Quantity()
+is_2016postVFP = Quantity()
+is_2016preVFP = Quantity()
