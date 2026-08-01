@@ -24,6 +24,12 @@ from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 
+#: the hadronic tau decay modes the analysis accepts. Written down once because
+#: the selection masks cut on the very same list, and they are also produced
+#: without this config, as a friend tree (`selection_friends.py`).
+TAU_DECAY_MODES = "0,1,10,11"
+
+
 def build_config(
     era: str,
     sample: str,
@@ -748,7 +754,7 @@ def build_config(
             ),
             "tau_vsjet_sf_dependence": "dm",
             #decay modes
-            "tau_dms": "0,1,10,11",
+            "tau_dms": TAU_DECAY_MODES,
             #energy scale
             "tau_ES_json_name": "tau_energy_scale",
             # genuine tau 

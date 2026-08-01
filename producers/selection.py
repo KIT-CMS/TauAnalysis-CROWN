@@ -52,7 +52,17 @@ Columns that are leaves of a ``QuantityGroup`` (the tau ID working point flags
 be passed as ordinary input quantities. They are referenced by name through a
 quoted config-parameter placeholder inside the call, while the corresponding
 ``ExtendedVectorProducer.output_group`` is declared as ``input`` purely so that
-the producer ordering places the flag producer after the group.
+the producer ordering places the flag producer after the group. Each of those
+producers therefore has a ``*_friend`` twin with no input at all: in a friend
+production the group producer does not run and the column is read from the input
+ntuple. The twins share call, thresholds and output column with the originals
+through the ``with defaults(...)`` block they are defined in, and the
+``FRIEND_FLAGS`` mapping at the bottom of the file says which is which.
+
+The two tables at the bottom -- ``FLAGS`` (the atomic flags per scope) and
+``MASKS`` (the regions per scope) -- are what both production paths book:
+``selection_config.py`` for the masks inside the main ntuple and
+``selection_friends.py`` for the masks as a friend tree.
 """
 
 from ..quantities import output as q
@@ -80,16 +90,22 @@ with defaults(scopes=["et", "mt", "tt"]):
     )
 
     # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
-    PreselVsEleTauID_2 = Producer(
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
-        input=[pairquantities.VsEleTauIDFlag_2.output_group],
         output=[q.selcut_presel_vsele_2],
-    )
-    PreselVsMuTauID_2 = Producer(
+    ):
+        PreselVsEleTauID_2 = Producer(
+            input=[pairquantities.VsEleTauIDFlag_2.output_group]
+        )
+        PreselVsEleTauID_2_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
-        input=[pairquantities.VsMuTauIDFlag_2.output_group],
         output=[q.selcut_presel_vsmu_2],
-    )
+    ):
+        PreselVsMuTauID_2 = Producer(
+            input=[pairquantities.VsMuTauIDFlag_2.output_group]
+        )
+        PreselVsMuTauID_2_friend = Producer(input=[])
 
 with defaults(scopes=["tt"]):
     # tau_decaymode_1 is one of the modes listed in `tau_dms`, and the column is
@@ -100,16 +116,22 @@ with defaults(scopes=["tt"]):
         output=[q.selcut_presel_tau_dm_1],
     )
 
-    PreselVsEleTauID_1 = Producer(
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
-        input=[pairquantities.VsEleTauIDFlag_1.output_group],
         output=[q.selcut_presel_vsele_1],
-    )
-    PreselVsMuTauID_1 = Producer(
+    ):
+        PreselVsEleTauID_1 = Producer(
+            input=[pairquantities.VsEleTauIDFlag_1.output_group]
+        )
+        PreselVsEleTauID_1_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
-        input=[pairquantities.VsMuTauIDFlag_1.output_group],
         output=[q.selcut_presel_vsmu_1],
-    )
+    ):
+        PreselVsMuTauID_1 = Producer(
+            input=[pairquantities.VsMuTauIDFlag_1.output_group]
+        )
+        PreselVsMuTauID_1_friend = Producer(input=[])
 
 
 ##############################################################################
@@ -159,10 +181,12 @@ with defaults(
             "em": [triggers.EMGenerateSingleMuonTriggerFlags.output_group],
         },
     )
+    PreselTriggerFlag_friend = Producer(scopes=["et", "mt", "em"], input=[])
     PreselTriggerFlag_tt = Producer(
         scopes=["tt"],
         input=[triggers.TTGenerateDoubleTauTriggerFlags.output_group],
     )
+    PreselTriggerFlag_tt_friend = Producer(scopes=["tt"], input=[])
     PreselTriggerFlag_tt_embedding = Producer(
         scopes=["tt"],
         input=[triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group],
@@ -210,38 +234,48 @@ with defaults(scopes=["et", "mt", "tt"]):
 ##############################################################################
 
 with defaults(scopes=["et", "mt", "tt"]):
-    TauIsoFlag_2 = Producer(
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
-        input=[pairquantities.VsJetTauIDFlag_2.output_group],
         output=[q.selcut_tau_iso_2],
-    )
-    TauNonIsoFlag_2 = Producer(
+    ):
+        TauIsoFlag_2 = Producer(input=[pairquantities.VsJetTauIDFlag_2.output_group])
+        TauIsoFlag_2_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
-        input=[pairquantities.VsJetTauIDFlag_2.output_group],
         output=[q.selcut_tau_noniso_2],
-    )
-    TauVVVLooseFlag_2 = Producer(
+    ):
+        TauNonIsoFlag_2 = Producer(input=[pairquantities.VsJetTauIDFlag_2.output_group])
+        TauNonIsoFlag_2_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2", 1)''',
-        input=[pairquantities.VsJetTauIDFlagOnly_2.output_group],
         output=[q.selcut_tau_vvvloose_2],
-    )
+    ):
+        TauVVVLooseFlag_2 = Producer(
+            input=[pairquantities.VsJetTauIDFlagOnly_2.output_group]
+        )
+        TauVVVLooseFlag_2_friend = Producer(input=[])
 
 with defaults(scopes=["tt"]):
-    TauIsoFlag_1 = Producer(
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
-        input=[pairquantities.VsJetTauIDFlag_1.output_group],
         output=[q.selcut_tau_iso_1],
-    )
-    TauNonIsoFlag_1 = Producer(
+    ):
+        TauIsoFlag_1 = Producer(input=[pairquantities.VsJetTauIDFlag_1.output_group])
+        TauIsoFlag_1_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::SmallerFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
-        input=[pairquantities.VsJetTauIDFlag_1.output_group],
         output=[q.selcut_tau_noniso_1],
-    )
-    TauVVVLooseFlag_1 = Producer(
+    ):
+        TauNonIsoFlag_1 = Producer(input=[pairquantities.VsJetTauIDFlag_1.output_group])
+        TauNonIsoFlag_1_friend = Producer(input=[])
+    with defaults(
         call='''event::quantity::MinFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1", 1)''',
-        input=[pairquantities.VsJetTauIDFlagOnly_1.output_group],
         output=[q.selcut_tau_vvvloose_1],
-    )
+    ):
+        TauVVVLooseFlag_1 = Producer(
+            input=[pairquantities.VsJetTauIDFlagOnly_1.output_group]
+        )
+        TauVVVLooseFlag_1_friend = Producer(input=[])
 
 
 ##############################################################################
@@ -857,6 +891,121 @@ with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}
         ],
         output=[q.presel_mask],
     )
+
+
+# ---------------------------------------------------------------------------
+# scope -> the atomic flag producers it needs, in dependency order
+#
+# Together with `MASKS` below this drives the booking in `selection_config.py`:
+# a scope gets exactly these flags and exactly those masks. The order is the
+# order the producers are booked in, and it is a valid dependency order (the
+# combined lepton veto after the three single vetoes, the charge product before
+# the sign flags), because a friend production takes the producer order straight
+# from the configuration instead of optimizing it.
+# ---------------------------------------------------------------------------
+
+FLAGS = {
+    "et": [
+        JetVetoMapFlag,
+        PreselPt_1,
+        PreselPt_2,
+        # `q_1 * q_2`, the shared input of both sign flags
+        ChargeProduct,
+        OppositeSignFlag,
+        SameSignFlag,
+        NoExtraElectronFlag,
+        NoExtraMuonFlag,
+        NoDileptonFlag,
+        LeptonVetoFlag,
+        LeptonVetoInvertedFlag,
+        PreselTriggerFlag,
+        PreselTauDecayMode_2,
+        PreselVsEleTauID_2,
+        PreselVsMuTauID_2,
+        TauIsoFlag_2,
+        TauNonIsoFlag_2,
+        TauVVVLooseFlag_2,
+        MtBelow70Flag,
+        WjetsMtFlag,
+        NBtagEqZeroFlag,
+        TTbarNBtagFlag,
+        LepIsoFlag,
+        LepAntiIsoFlag,
+    ],
+    "tt": [
+        JetVetoMapFlag,
+        PreselPt_1,
+        PreselPt_2,
+        ChargeProduct,
+        OppositeSignFlag,
+        SameSignFlag,
+        NoExtraElectronFlag,
+        NoExtraMuonFlag,
+        NoDileptonFlag,
+        LeptonVetoFlag,
+        PreselTriggerFlag_tt,
+        # both tau legs, hence every tau flag twice
+        PreselTauDecayMode_1,
+        PreselTauDecayMode_2,
+        PreselVsEleTauID_1,
+        PreselVsEleTauID_2,
+        PreselVsMuTauID_1,
+        PreselVsMuTauID_2,
+        TauIsoFlag_1,
+        TauIsoFlag_2,
+        TauNonIsoFlag_1,
+        TauNonIsoFlag_2,
+        TauVVVLooseFlag_1,
+        TauVVVLooseFlag_2,
+    ],
+    "em": [
+        JetVetoMapFlag,
+        PreselPt_1,
+        PreselPt_2,
+        ChargeProduct,
+        OppositeSignFlag,
+        SameSignFlag,
+        PreselElectronEta_1,
+        PreselTriggerFlag,
+    ],
+}
+
+#: mt needs exactly the same flags as et -- one list, written down once above
+FLAGS["mt"] = FLAGS["et"]
+
+
+# ---------------------------------------------------------------------------
+# main production producer -> the variant to use in a friend production
+#
+# The listed producers read a column that is a leaf of an
+# `ExtendedVectorProducer.output_group` (the tau ID working point flags, the
+# trigger flags). They reference that column *by name* inside their call and
+# only declare the group as `input` so that the producer ordering of the main
+# production puts them after the group. In a friend production the group does
+# not run at all and the column comes from the input ntuple, so the friend
+# variants declare no input; everything else about them -- call, thresholds,
+# output column -- is literally the same object, shared through the surrounding
+# `with defaults(...)` block where they are defined.
+#
+# `PreselTriggerFlag_tt_embedding` has no entry: it exists only to follow the
+# embedding trigger group, and its friend variant would be identical to
+# `PreselTriggerFlag_tt_friend`, which the embedding samples use as well.
+# ---------------------------------------------------------------------------
+
+FRIEND_FLAGS = {
+    PreselTriggerFlag: PreselTriggerFlag_friend,
+    PreselTriggerFlag_tt: PreselTriggerFlag_tt_friend,
+    PreselVsEleTauID_1: PreselVsEleTauID_1_friend,
+    PreselVsEleTauID_2: PreselVsEleTauID_2_friend,
+    PreselVsMuTauID_1: PreselVsMuTauID_1_friend,
+    PreselVsMuTauID_2: PreselVsMuTauID_2_friend,
+    TauIsoFlag_1: TauIsoFlag_1_friend,
+    TauIsoFlag_2: TauIsoFlag_2_friend,
+    TauNonIsoFlag_1: TauNonIsoFlag_1_friend,
+    TauNonIsoFlag_2: TauNonIsoFlag_2_friend,
+    TauVVVLooseFlag_1: TauVVVLooseFlag_1_friend,
+    TauVVVLooseFlag_2: TauVVVLooseFlag_2_friend,
+}
 
 
 # ---------------------------------------------------------------------------

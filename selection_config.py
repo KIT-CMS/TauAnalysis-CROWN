@@ -8,7 +8,10 @@ three places the same cuts used to be written down.
 
 HOW TO READ THIS FILE
 ---------------------
-`add_selection()` is the single entry point, called from `config.py`, and is
+`add_selection()` is the single entry point. It is called from `config.py` for
+the masks inside the main ntuple, and from `selection_friends.py` (with
+`friend=True`) for the very same masks as a friend tree on top of an existing
+ntuple, so that the two paths cannot drift apart. It is
 written in the same idiom as `config.py` itself: literal
 `configuration.add_config_parameters([...scopes...], {...})` and
 `add_producers([...scopes...], [...])` blocks under banner comments, with
@@ -17,10 +20,10 @@ built is decided by `config.py`, not re-validated here.
 
 The literal region table -- one `Producer` per mask, one flag per line, listing
 exactly the atomic cuts it consists of -- is NOT here: it is at the bottom of
-`producers/selection.py`, together with the `MASKS` mapping that says which
-masks each scope gets. **If you want to know or change what a mask means, look
-there.** The masks of a scope come from that mapping alone, so a scope with no
-entry in it (ee, mm) simply gets no masks.
+`producers/selection.py`, together with the `FLAGS` and `MASKS` mappings that
+say which flags and which masks each scope gets. **If you want to know or change
+what a mask means, look there.** The masks of a scope come from that mapping
+alone, so a scope with no entry in it (ee, mm) simply gets no masks.
 
 WHAT THE MASKS CONTAIN
 ----------------------
@@ -105,6 +108,7 @@ def add_selection(
     era: str,
     sample: str,
     apply_preselection_filter=None,
+    friend=False,
 ) -> Configuration:
     """Book the selection mask producers, parameters and outputs.
 
@@ -116,6 +120,13 @@ def add_selection(
         apply_preselection_filter: if True, additionally drop every event that
             fails `presel_mask`. Defaults to the module constant
             `APPLY_PRESELECTION_FILTER`.
+        friend: if True, book the masks for a friend tree production on an
+            existing CROWN ntuple (`selection_friends.py`) instead of for the
+            main ntuple. Everything -- parameters, regions, output branches --
+            is the same; only the flag producers that read a column out of an
+            `output_group` are swapped for their input-less twins, and the
+            producer rules that would reorder the producers are skipped. The
+            main production path never passes this.
 
     Returns:
         The configuration, with the selection masks added.
@@ -205,78 +216,17 @@ def add_selection(
     # Producers of the atomic cuts
     #########################
 
-    configuration.add_producers(
-        ["et", "mt"],
-        [
-            selection.JetVetoMapFlag,
-            selection.PreselPt_1,
-            selection.PreselPt_2,
-            # `q_1 * q_2`, the shared input of both sign flags
-            selection.ChargeProduct,
-            selection.OppositeSignFlag,
-            selection.SameSignFlag,
-            selection.NoExtraElectronFlag,
-            selection.NoExtraMuonFlag,
-            selection.NoDileptonFlag,
-            selection.LeptonVetoFlag,
-            selection.LeptonVetoInvertedFlag,
-            selection.PreselTriggerFlag,
-            selection.PreselTauDecayMode_2,
-            selection.PreselVsEleTauID_2,
-            selection.PreselVsMuTauID_2,
-            selection.TauIsoFlag_2,
-            selection.TauNonIsoFlag_2,
-            selection.TauVVVLooseFlag_2,
-            selection.MtBelow70Flag,
-            selection.WjetsMtFlag,
-            selection.NBtagEqZeroFlag,
-            selection.TTbarNBtagFlag,
-            selection.LepIsoFlag,
-            selection.LepAntiIsoFlag,
-        ],
-    )
-    configuration.add_producers(
-        ["tt"],
-        [
-            selection.JetVetoMapFlag,
-            selection.PreselPt_1,
-            selection.PreselPt_2,
-            selection.ChargeProduct,
-            selection.OppositeSignFlag,
-            selection.SameSignFlag,
-            selection.NoExtraElectronFlag,
-            selection.NoExtraMuonFlag,
-            selection.NoDileptonFlag,
-            selection.LeptonVetoFlag,
-            selection.PreselTriggerFlag_tt,
-            # both tau legs, hence every tau flag twice
-            selection.PreselTauDecayMode_1,
-            selection.PreselTauDecayMode_2,
-            selection.PreselVsEleTauID_1,
-            selection.PreselVsEleTauID_2,
-            selection.PreselVsMuTauID_1,
-            selection.PreselVsMuTauID_2,
-            selection.TauIsoFlag_1,
-            selection.TauIsoFlag_2,
-            selection.TauNonIsoFlag_1,
-            selection.TauNonIsoFlag_2,
-            selection.TauVVVLooseFlag_1,
-            selection.TauVVVLooseFlag_2,
-        ],
-    )
-    configuration.add_producers(
-        ["em"],
-        [
-            selection.JetVetoMapFlag,
-            selection.PreselPt_1,
-            selection.PreselPt_2,
-            selection.ChargeProduct,
-            selection.OppositeSignFlag,
-            selection.SameSignFlag,
-            selection.PreselElectronEta_1,
-            selection.PreselTriggerFlag,
-        ],
-    )
+    # driven by the `FLAGS` table of `producers/selection.py`, the same way the
+    # masks below are driven by `MASKS`. In a friend production the handful of
+    # flag producers that declare their `output_group` only to be ordered after
+    # it are swapped for their input-less `*_friend` twins, since in a friend job
+    # that group does not run and the column comes from the input ntuple.
+    friend_flags = selection.FRIEND_FLAGS if friend else {}
+    for scope, flag_producers in selection.FLAGS.items():
+        configuration.add_producers(
+            [scope],
+            [friend_flags.get(producer, producer) for producer in flag_producers],
+        )
 
     #########################
     # The masks and their output branches
@@ -298,17 +248,22 @@ def add_selection(
     ################################
 
     # tt embedding samples read the double tau trigger flags from a different
-    # `output_group`, so the trigger flag producer has to follow that one
-    configuration.add_modification_rule(
-        "tt",
-        ReplaceProducer(
-            producers=[
-                selection.PreselTriggerFlag_tt,
-                selection.PreselTriggerFlag_tt_embedding,
-            ],
-            samples=["embedding"],
-        ),
-    )
+    # `output_group`, so the trigger flag producer has to follow that one. A
+    # friend production has no trigger group to follow and already uses the
+    # input-less twin for every sample, so it needs no rule -- and must not get
+    # one, because a rule appends the replacement at the end of the producer
+    # list, and a friend production runs the producers in exactly that order.
+    if not friend:
+        configuration.add_modification_rule(
+            "tt",
+            ReplaceProducer(
+                producers=[
+                    selection.PreselTriggerFlag_tt,
+                    selection.PreselTriggerFlag_tt_embedding,
+                ],
+                samples=["embedding"],
+            ),
+        )
 
     # the opt-in hard filter on the preselection
     if apply_preselection_filter:
