@@ -334,76 +334,51 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
 # flags produced above.
 ##############################################################################
 
-dm1, dm2 = q.selcut_presel_tau_dm_1, q.selcut_presel_tau_dm_2
-vse1, vse2 = q.selcut_presel_vsele_1, q.selcut_presel_vsele_2
-vsm1, vsm2 = q.selcut_presel_vsmu_1, q.selcut_presel_vsmu_2
-pt1, pt2 = q.selcut_presel_pt_1, q.selcut_presel_pt_2
-eta1 = q.selcut_presel_eta_1
-trg = q.selcut_presel_trigger
-jetveto = q.selcut_jet_veto
-
-veto = q.selcut_lepton_veto  # extraelec && extramuon && dilepton
-veto_inv = q.selcut_lepton_veto_inv  # !(the above)
-os_, ss_ = q.sel_os, q.sel_ss
-
-iso1, iso2 = q.selcut_tau_iso_1, q.selcut_tau_iso_2  # vsJet Medium > 0.5
-nis1, nis2 = q.selcut_tau_noniso_1, q.selcut_tau_noniso_2  # vsJet Medium < 0.5
-vvl1, vvl2 = q.selcut_tau_vvvloose_1, q.selcut_tau_vvvloose_2
-
-lep_iso = q.selcut_lep_iso  # iso_1 < 0.15
-lep_anti = q.selcut_lep_antiiso  # iso_1 >= 0.15
-
-mt70 = q.selcut_mt_lt_70  # mt_1 < 70
-w_mt = q.selcut_wjets_mt  # mt_1 >= 70
-nbeq0 = q.selcut_nbtag_eq_0  # nbtag == 0
-tt_nb = q.selcut_ttbar_nbtag  # nbtag >= 1
-
-anti = [vvl2, nis2]  # (vsJet VVVLoose > 0.5) && (vsJet Medium < 0.5)
 
 # ---------------------------------------------------------------------------
 # et and mt
 # ---------------------------------------------------------------------------
 
 with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
-    presel_mask = Producer(input=[dm2, vse2, vsm2, pt1, pt2, trg, jetveto],  output=[q.presel_mask])
+    presel_mask = Producer(input=[q.selcut_presel_tau_dm_2, q.selcut_presel_vsele_2, q.selcut_presel_vsmu_2, q.selcut_presel_pt_1, q.selcut_presel_pt_2, q.selcut_presel_trigger, q.selcut_jet_veto],  output=[q.presel_mask])
 
     # --- QCD fake factors ---
-    ff_qcd_SRlike = Producer(input=[iso2, lep_iso, mt70, veto, ss_],          output=[q.ff_qcd_SRlike])
-    ff_qcd_ARlike = Producer(input=[*anti, lep_iso, mt70, veto, ss_],         output=[q.ff_qcd_ARlike])
+    ff_qcd_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],          output=[q.ff_qcd_SRlike])
+    ff_qcd_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],         output=[q.ff_qcd_ARlike])
 
     # --- W+jets fake factors (and their same-sign QCD estimation) ---
-    ff_wjets_SRlike = Producer(input=[iso2, lep_iso, w_mt, nbeq0, veto, os_],  output=[q.ff_wjets_SRlike])
-    ff_wjets_ARlike = Producer(input=[*anti, lep_iso, w_mt, nbeq0, veto, os_], output=[q.ff_wjets_ARlike])
-    ff_wjets_SRlike_ss = Producer(input=[iso2, lep_iso, w_mt, nbeq0, veto, ss_],  output=[q.ff_wjets_SRlike_ss])
-    ff_wjets_ARlike_ss = Producer(input=[*anti, lep_iso, w_mt, nbeq0, veto, ss_], output=[q.ff_wjets_ARlike_ss])
+    ff_wjets_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_wjets_mt, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_os],  output=[q.ff_wjets_SRlike])
+    ff_wjets_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_wjets_mt, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_os], output=[q.ff_wjets_ARlike])
+    ff_wjets_SRlike_ss = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_wjets_mt, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_ss],  output=[q.ff_wjets_SRlike_ss])
+    ff_wjets_ARlike_ss = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_wjets_mt, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_ss], output=[q.ff_wjets_ARlike_ss])
 
     # --- ttbar fake factors: SR/AR (MC), SR-like/AR-like (inverted veto) ---
-    ff_ttbar_SR = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto, os_],          output=[q.ff_ttbar_SR])
-    ff_ttbar_AR = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto, os_],         output=[q.ff_ttbar_AR])
-    ff_ttbar_SRlike = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto_inv, os_],  output=[q.ff_ttbar_SRlike])
-    ff_ttbar_ARlike = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto_inv, os_], output=[q.ff_ttbar_ARlike])
-    ff_ttbar_SRlike_ss = Producer(input=[iso2, lep_iso, mt70, tt_nb, veto_inv, ss_],  output=[q.ff_ttbar_SRlike_ss])
-    ff_ttbar_ARlike_ss = Producer(input=[*anti, lep_iso, mt70, tt_nb, veto_inv, ss_], output=[q.ff_ttbar_ARlike_ss])
+    ff_ttbar_SR = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto, q.sel_os],          output=[q.ff_ttbar_SR])
+    ff_ttbar_AR = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto, q.sel_os],         output=[q.ff_ttbar_AR])
+    ff_ttbar_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto_inv, q.sel_os],  output=[q.ff_ttbar_SRlike])
+    ff_ttbar_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto_inv, q.sel_os], output=[q.ff_ttbar_ARlike])
+    ff_ttbar_SRlike_ss = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto_inv, q.sel_ss],  output=[q.ff_ttbar_SRlike_ss])
+    ff_ttbar_ARlike_ss = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_ttbar_nbtag, q.selcut_lepton_veto_inv, q.sel_ss], output=[q.ff_ttbar_ARlike_ss])
 
     # --- process fractions ---
-    ff_fraction_SR = Producer(input=[iso2, lep_iso, mt70, veto, os_],   output=[q.ff_fraction_SR])
-    ff_fraction_AR = Producer(input=[*anti, lep_iso, mt70, veto, os_],  output=[q.ff_fraction_AR])
+    ff_fraction_SR = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],   output=[q.ff_fraction_SR])
+    ff_fraction_AR = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],  output=[q.ff_fraction_AR])
 
     # --- QCD DR to SR corrections (lepton isolation inverted) ---
-    ff_qcd_DR_SR_SRlike = Producer(input=[iso2, lep_anti, mt70, veto, ss_],   output=[q.ff_qcd_DR_SR_SRlike])
-    ff_qcd_DR_SR_ARlike = Producer(input=[*anti, lep_anti, mt70, veto, ss_],  output=[q.ff_qcd_DR_SR_ARlike])
-    ff_qcd_AR_SR_SRlike = Producer(input=[iso2, lep_anti, mt70, veto, os_],   output=[q.ff_qcd_AR_SR_SRlike])
-    ff_qcd_AR_SR_ARlike = Producer(input=[*anti, lep_anti, mt70, veto, os_],  output=[q.ff_qcd_AR_SR_ARlike])
+    ff_qcd_DR_SR_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_antiiso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],   output=[q.ff_qcd_DR_SR_SRlike])
+    ff_qcd_DR_SR_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_antiiso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],  output=[q.ff_qcd_DR_SR_ARlike])
+    ff_qcd_AR_SR_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_antiiso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],   output=[q.ff_qcd_AR_SR_SRlike])
+    ff_qcd_AR_SR_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_antiiso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],  output=[q.ff_qcd_AR_SR_ARlike])
 
     # --- W+jets DR to SR corrections (and their same-sign variants) ---
-    ff_wjets_DR_SR_SRlike = Producer(input=[iso2, lep_iso, nbeq0, veto, os_],   output=[q.ff_wjets_DR_SR_SRlike])
-    ff_wjets_DR_SR_ARlike = Producer(input=[*anti, lep_iso, nbeq0, veto, os_],  output=[q.ff_wjets_DR_SR_ARlike])
-    ff_wjets_DR_SR_SRlike_ss = Producer(input=[iso2, lep_iso, nbeq0, veto, ss_],   output=[q.ff_wjets_DR_SR_SRlike_ss])
-    ff_wjets_DR_SR_ARlike_ss = Producer(input=[*anti, lep_iso, nbeq0, veto, ss_],  output=[q.ff_wjets_DR_SR_ARlike_ss])
-    ff_wjets_AR_SR_SRlike = Producer(input=[iso2, lep_iso, mt70, veto, os_],    output=[q.ff_wjets_AR_SR_SRlike])
-    ff_wjets_AR_SR_ARlike = Producer(input=[*anti, lep_iso, mt70, veto, os_],   output=[q.ff_wjets_AR_SR_ARlike])
-    ff_wjets_AR_SR_SRlike_ss = Producer(input=[iso2, lep_iso, mt70, veto, ss_],    output=[q.ff_wjets_AR_SR_SRlike_ss])
-    ff_wjets_AR_SR_ARlike_ss = Producer(input=[*anti, lep_iso, mt70, veto, ss_],   output=[q.ff_wjets_AR_SR_ARlike_ss])
+    ff_wjets_DR_SR_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_os],   output=[q.ff_wjets_DR_SR_SRlike])
+    ff_wjets_DR_SR_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_os],  output=[q.ff_wjets_DR_SR_ARlike])
+    ff_wjets_DR_SR_SRlike_ss = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_ss],   output=[q.ff_wjets_DR_SR_SRlike_ss])
+    ff_wjets_DR_SR_ARlike_ss = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_nbtag_eq_0, q.selcut_lepton_veto, q.sel_ss],  output=[q.ff_wjets_DR_SR_ARlike_ss])
+    ff_wjets_AR_SR_SRlike = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],    output=[q.ff_wjets_AR_SR_SRlike])
+    ff_wjets_AR_SR_ARlike = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_os],   output=[q.ff_wjets_AR_SR_ARlike])
+    ff_wjets_AR_SR_SRlike_ss = Producer(input=[q.selcut_tau_iso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],    output=[q.ff_wjets_AR_SR_SRlike_ss])
+    ff_wjets_AR_SR_ARlike_ss = Producer(input=[q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lep_iso, q.selcut_mt_lt_70, q.selcut_lepton_veto, q.sel_ss],   output=[q.ff_wjets_AR_SR_ARlike_ss])
 
 #: the masks of the et and mt scopes, in table order
 LT_MASKS = [
@@ -427,33 +402,33 @@ LT_MASKS = [
 # ---------------------------------------------------------------------------
 
 with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
-    presel_mask_tt = Producer(input=[dm1, dm2, vse1, vse2, vsm1, vsm2, pt1, pt2, trg, jetveto], output=[q.presel_mask])
+    presel_mask_tt = Producer(input=[q.selcut_presel_tau_dm_1, q.selcut_presel_tau_dm_2, q.selcut_presel_vsele_1, q.selcut_presel_vsele_2, q.selcut_presel_vsmu_1, q.selcut_presel_vsmu_2, q.selcut_presel_pt_1, q.selcut_presel_pt_2, q.selcut_presel_trigger, q.selcut_jet_veto], output=[q.presel_mask])
 
     # --- QCD fake factors, leading tau ---
-    ff_qcd_SRlike_tt = Producer(input=[iso1, iso2, veto, ss_],        output=[q.ff_qcd_SRlike])
-    ff_qcd_ARlike_tt = Producer(input=[vvl1, nis1, iso2, veto, ss_],  output=[q.ff_qcd_ARlike])
+    ff_qcd_SRlike_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_ss],        output=[q.ff_qcd_SRlike])
+    ff_qcd_ARlike_tt = Producer(input=[q.selcut_tau_vvvloose_1, q.selcut_tau_noniso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_ss],  output=[q.ff_qcd_ARlike])
 
     # --- QCD fake factors, subleading tau ---
-    ff_qcd_sub_SRlike_tt = Producer(input=[iso1, iso2, veto, ss_],        output=[q.ff_qcd_sub_SRlike])
-    ff_qcd_sub_ARlike_tt = Producer(input=[iso1, vvl2, nis2, veto, ss_],  output=[q.ff_qcd_sub_ARlike])
+    ff_qcd_sub_SRlike_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_ss],        output=[q.ff_qcd_sub_SRlike])
+    ff_qcd_sub_ARlike_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_ss],  output=[q.ff_qcd_sub_ARlike])
 
     # --- process fractions ---
-    ff_fraction_SR_tt = Producer(input=[iso1, iso2, veto, os_],             output=[q.ff_fraction_SR])
-    ff_fraction_AR_tt = Producer(input=[vvl1, nis1, nis2, veto, os_],       output=[q.ff_fraction_AR])
-    ff_fraction_sub_SR_tt = Producer(input=[iso1, iso2, veto, os_],         output=[q.ff_fraction_sub_SR])
-    ff_fraction_sub_AR_tt = Producer(input=[nis1, vvl2, nis2, veto, os_],   output=[q.ff_fraction_sub_AR])
+    ff_fraction_SR_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_os],             output=[q.ff_fraction_SR])
+    ff_fraction_AR_tt = Producer(input=[q.selcut_tau_vvvloose_1, q.selcut_tau_noniso_1, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_os],       output=[q.ff_fraction_AR])
+    ff_fraction_sub_SR_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_os],         output=[q.ff_fraction_sub_SR])
+    ff_fraction_sub_AR_tt = Producer(input=[q.selcut_tau_noniso_1, q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_os],   output=[q.ff_fraction_sub_AR])
 
     # --- DR to SR corrections, leading tau ---
-    ff_qcd_DR_SR_SRlike_tt = Producer(input=[iso1, nis2, veto, ss_],              output=[q.ff_qcd_DR_SR_SRlike])
-    ff_qcd_DR_SR_ARlike_tt = Producer(input=[vvl1, nis1, nis2, veto, ss_],        output=[q.ff_qcd_DR_SR_ARlike])
-    ff_qcd_AR_SR_SRlike_tt = Producer(input=[iso1, nis2, veto, os_],              output=[q.ff_qcd_AR_SR_SRlike])
-    ff_qcd_AR_SR_ARlike_tt = Producer(input=[vvl1, nis1, nis2, veto, os_],        output=[q.ff_qcd_AR_SR_ARlike])
+    ff_qcd_DR_SR_SRlike_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_ss],              output=[q.ff_qcd_DR_SR_SRlike])
+    ff_qcd_DR_SR_ARlike_tt = Producer(input=[q.selcut_tau_vvvloose_1, q.selcut_tau_noniso_1, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_ss],        output=[q.ff_qcd_DR_SR_ARlike])
+    ff_qcd_AR_SR_SRlike_tt = Producer(input=[q.selcut_tau_iso_1, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_os],              output=[q.ff_qcd_AR_SR_SRlike])
+    ff_qcd_AR_SR_ARlike_tt = Producer(input=[q.selcut_tau_vvvloose_1, q.selcut_tau_noniso_1, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_os],        output=[q.ff_qcd_AR_SR_ARlike])
 
     # --- DR to SR corrections, subleading tau ---
-    ff_qcd_sub_DR_SR_SRlike_tt = Producer(input=[nis1, iso2, veto, ss_],          output=[q.ff_qcd_sub_DR_SR_SRlike])
-    ff_qcd_sub_DR_SR_ARlike_tt = Producer(input=[nis1, vvl2, nis2, veto, ss_],    output=[q.ff_qcd_sub_DR_SR_ARlike])
-    ff_qcd_sub_AR_SR_SRlike_tt = Producer(input=[nis1, iso2, veto, os_],          output=[q.ff_qcd_sub_AR_SR_SRlike])
-    ff_qcd_sub_AR_SR_ARlike_tt = Producer(input=[nis1, vvl2, nis2, veto, os_],    output=[q.ff_qcd_sub_AR_SR_ARlike])
+    ff_qcd_sub_DR_SR_SRlike_tt = Producer(input=[q.selcut_tau_noniso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_ss],          output=[q.ff_qcd_sub_DR_SR_SRlike])
+    ff_qcd_sub_DR_SR_ARlike_tt = Producer(input=[q.selcut_tau_noniso_1, q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_ss],    output=[q.ff_qcd_sub_DR_SR_ARlike])
+    ff_qcd_sub_AR_SR_SRlike_tt = Producer(input=[q.selcut_tau_noniso_1, q.selcut_tau_iso_2, q.selcut_lepton_veto, q.sel_os],          output=[q.ff_qcd_sub_AR_SR_SRlike])
+    ff_qcd_sub_AR_SR_ARlike_tt = Producer(input=[q.selcut_tau_noniso_1, q.selcut_tau_vvvloose_2, q.selcut_tau_noniso_2, q.selcut_lepton_veto, q.sel_os],    output=[q.ff_qcd_sub_AR_SR_ARlike])
 
 #: the masks of the tt scope, in table order
 TT_MASKS = [
@@ -474,7 +449,7 @@ TT_MASKS = [
 # ---------------------------------------------------------------------------
 
 with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
-    presel_mask_em = Producer(input=[eta1, pt1, pt2, trg, jetveto], output=[q.presel_mask])
+    presel_mask_em = Producer(input=[q.selcut_presel_eta_1, q.selcut_presel_pt_1, q.selcut_presel_pt_2, q.selcut_presel_trigger, q.selcut_jet_veto], output=[q.presel_mask])
 
 #: the masks of the em scope
 EM_MASKS = [presel_mask_em]
