@@ -16,7 +16,7 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .selection import add_selection, restrict_selection_shifts
+from .selection_config import add_selection, restrict_selection_shifts
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -1721,7 +1721,12 @@ def build_config(
     #########################
     # Selection masks
     #########################
-    configuration = add_selection(configuration, scopes, era, sample)
+    # Run 3 only: the masks are built on the Run 3 producers, in particular on
+    # the jet veto map, which is removed above for the nanoAODv9 based Run 2
+    # configurations. The selections themselves have never been written down in
+    # the form used here for Run 2.
+    if int(era[:4]) >= 2022:
+        configuration = add_selection(configuration, scopes, era, sample)
 
     #########################
     # Systematics shifts
@@ -1730,7 +1735,8 @@ def build_config(
 
     # the masks that are only consumed on nominal ntuples do not need a copy
     # per systematic shift, this has to run after the shifts were added
-    configuration = restrict_selection_shifts(configuration, scopes)
+    if int(era[:4]) >= 2022:
+        configuration = restrict_selection_shifts(configuration, scopes)
 
     #########################
     # Finalize and validate the configuration

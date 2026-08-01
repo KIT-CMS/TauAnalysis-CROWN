@@ -505,9 +505,10 @@ is_2022preEE = Quantity()
 # so that downstream tools (TauKITFlow shapes, TauFakeFactors) can filter on a
 # single branch instead of re-composing cut strings.
 #
-# Composition and meaning of every mask are defined in
-# `analysis_configurations/tau/selection.py`; the atomic flags are produced by
-# `analysis_configurations/tau/producers/selection.py`.
+# Composition and meaning of every mask are defined in the region table of
+# `analysis_configurations/tau/producers/selection.py`, which also produces the
+# atomic flags; the booking lives in
+# `analysis_configurations/tau/selection_config.py`.
 #
 # `selcut_*` quantities are *internal* single-cut flags. They are not written
 # to the ntuple, they only exist so that the region masks can be assembled
