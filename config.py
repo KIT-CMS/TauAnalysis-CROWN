@@ -24,9 +24,8 @@ from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 
-#: the hadronic tau decay modes the analysis accepts. Written down once because
-#: the selection masks cut on the very same list, and they are also produced
-#: without this config, as a friend tree (`selection_friends.py`).
+# hadronic tau decay modes the analysis accepts
+# the selection masks cut on the very same list
 TAU_DECAY_MODES = "0,1,10,11"
 
 
@@ -1723,20 +1722,17 @@ def build_config(
     configuration = add_diTauTriggerSetup(configuration)
 
     #########################
-    # Selection masks
-    #########################
-    # Run 3 only: the masks are built on the Run 3 producers, in particular on
-    # the jet veto map, which is removed above for the nanoAODv9 based Run 2
-    # configurations. The selections themselves have never been written down in
-    # the form used here for Run 2.
-    if int(era[:4]) >= 2022:
-        configuration = add_selection(configuration, scopes, era, sample)
-
-    #########################
     # Systematics shifts
     #########################
     configuration = add_Variations(configuration, sample, era)
 
+    #########################
+    # Selection masks
+    #########################
+    # Run 3 only at the moment, Run 2 TO DO
+    if int(era[:4]) >= 2022:
+        configuration = add_selection(configuration, scopes, era, sample)
+    
     # the masks that are only consumed on nominal ntuples do not need a copy
     # per systematic shift, this has to run after the shifts were added
     if int(era[:4]) >= 2022:
