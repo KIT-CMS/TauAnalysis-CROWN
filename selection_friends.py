@@ -1,14 +1,22 @@
 """The selection masks as a friend tree of an existing CROWN ntuple.
 
-This is the second of the two ways to get the mask branches of
-`producers/selection.py`; both are supported:
+This is the second of the two places the mask branches of
+`producers/selection.py` can be produced; both are supported:
 
   * `config.py` writes them into the main ntuple as it is produced. Use this
     when the ntuples are produced (or re-produced) anyway.
-  * this config writes exactly the same branches into a friend tree next to an
-    existing ntuple. Use this to add the masks to ntuples that are already on
-    disk, or to change a region definition without re-running the full ntuple
-    production.
+  * this config writes them into a friend tree next to an existing ntuple. Use
+    this to add masks to ntuples that are already on disk, or to change a
+    region definition without re-running the full ntuple production.
+
+Which of the two produces which group of masks is decided in one place,
+`NTUPLE_MASK_GROUPS` of `selection_config.py`: this config books exactly the
+groups the main ntuple does not carry (`FRIEND_MASK_GROUPS`), so the two can
+neither double-book nor drop a mask. The three resulting modes -- everything in
+the ntuple, everything here, or preselection filter in the ntuple plus the
+`ff_*` region masks here -- are documented there; with the filter on, this
+friend is produced from the filtered ntuple. In the default mode this config
+books nothing at all and refuses to build.
 
 Nothing about the selection is written down again here. The regions, the atomic
 cuts, the thresholds, the working points and the output branches all come from
@@ -23,7 +31,11 @@ replacement at the end of the producer list, whereas a friend production runs
 the producers in exactly the order the configuration lists them.
 
 The friend tree is produced per scope (`et`, `mt`, `tt`, `em`), one executable
-each, as the friend machinery requires. Nominal only: the mask branches that
+each, as the friend machinery requires. A scope with no mask in the booked
+groups has nothing to produce and CROWN refuses to build it: in the mode where
+only the `ff_*` regions are produced here, that is `em`, which has the
+preselection and nothing else, so build the friend for `et,mt,tt` only.
+Nominal only: the mask branches that
 downstream consumes per shift (`presel_mask`, `sel_os`, `sel_ss`) are the ones
 the main production already keeps shifted copies of, and a shifted mask cannot
 be built here anyway, because the shifted input columns of the ID and trigger
@@ -42,7 +54,7 @@ from typing import List, Union
 from code_generation.friend_trees import FriendTreeConfiguration
 
 from .config import TAU_DECAY_MODES
-from .selection_config import add_selection
+from .selection_config import FRIEND_MASK_GROUPS, add_selection
 
 
 def build_config(
@@ -99,6 +111,13 @@ def build_config(
     # The selection masks, exactly as the main production defines them
     #########################
 
+    if not FRIEND_MASK_GROUPS:
+        raise ValueError(
+            "`NTUPLE_MASK_GROUPS` of `selection_config.py` already covers every "
+            "mask group, so there is nothing left for a friend tree. Drop a "
+            "group there to produce it here instead."
+        )
+
     configuration = add_selection(
         configuration,
         scopes,
@@ -107,9 +126,12 @@ def build_config(
         # a friend tree has to have one entry per entry of the ntuple it is a
         # friend of, so the optional hard filter on the preselection is not
         # available here -- the whole point of `presel_mask` is that filtering
-        # is left to the consumer
+        # is left to the consumer, and where the filter *is* on it has already
+        # been applied to the ntuple this friend is built from
         apply_preselection_filter=False,
         friend=True,
+        # exactly the groups the main ntuple production does not carry
+        groups=FRIEND_MASK_GROUPS,
     )
 
     #########################

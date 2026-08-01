@@ -6,12 +6,43 @@ branch. Downstream tools then filter on a single branch instead of
 re-composing cut strings, which removes the main source of drift between the
 three places the same cuts used to be written down.
 
+WHERE THE MASKS ARE PRODUCED -- THE THREE MODES
+-----------------------------------------------
+The masks come in two groups: **"preselection"** (`presel_mask` and the two
+sign flags `sel_os` / `sel_ss`, i.e. what shape production needs, and exactly
+the trio that carries systematic shifts) and **"regions"** (the `ff_*` region
+masks, i.e. what TauFakeFactors needs). `NTUPLE_MASK_GROUPS` below says which
+of the two the MAIN ntuple production carries; `selection_friends.py` books
+whatever is left over, so the two paths can neither double-book nor drop a
+mask. Together with `APPLY_PRESELECTION_FILTER` this gives three modes:
+
+  1. everything in the main ntuple (the default, and the historical behaviour)::
+
+        NTUPLE_MASK_GROUPS = ("preselection", "regions")
+        APPLY_PRESELECTION_FILTER = False
+
+  2. everything as a friend tree, nothing in the ntuple::
+
+        NTUPLE_MASK_GROUPS = ()
+        APPLY_PRESELECTION_FILTER = False
+
+  3. the preselection applied as a hard FILTER at ntuple production, the region
+     masks as a friend on top of the filtered ntuple::
+
+        NTUPLE_MASK_GROUPS = ("preselection",)
+        APPLY_PRESELECTION_FILTER = True
+
+In every mode the union of the main and the friend production is the very same
+complete set of mask branches; only the file they end up in changes. Friends
+align by entry index, so in mode 3 every friend of an ntuple (xsec, fake
+factors, DNN and this selection friend) is produced from the filtered ntuple.
+
 HOW TO READ THIS FILE
 ---------------------
 `add_selection()` is the single entry point. It is called from `config.py` for
 the masks inside the main ntuple, and from `selection_friends.py` (with
-`friend=True`) for the very same masks as a friend tree on top of an existing
-ntuple, so that the two paths cannot drift apart. It is
+`friend=True`) for the complementary masks as a friend tree on top of an
+existing ntuple, so that the two paths cannot drift apart. It is
 written in the same idiom as `config.py` itself: literal
 `configuration.add_config_parameters([...scopes...], {...})` and
 `add_producers([...scopes...], [...])` blocks under banner comments, with
@@ -93,13 +124,89 @@ from .tau_triggersetup import DOUBLETAU_HPS_ERAS, DOUBLETAU_TRIGGER_FLAG
 
 #: If True, events failing `presel_mask` are dropped from the ntuple instead of
 #: only being flagged. Off by default: keeping every event means a change of
-#: the preselection does not require a re-production.
+#: the preselection does not require a re-production. Only available where the
+#: "preselection" group is produced, i.e. in the main ntuple.
 APPLY_PRESELECTION_FILTER = False
 
 #: Only these masks get shifted copies. The `ff_*` masks are only consumed by
 #: TauFakeFactors, which runs on nominal ntuples; giving them a copy per
 #: systematic shift would add thousands of unused branches per file.
+#:
+#: This is at the same time the definition of the "preselection" group: it is
+#: exactly `presel_mask` plus the two sign flags, so the group split needs no
+#: second list of mask names that could drift away from this one.
 MASKS_WITH_SHIFTS = ["presel_mask", "sel_os", "sel_ss"]
+
+#: Which mask groups the MAIN ntuple production carries. The friend production
+#: (`selection_friends.py`) automatically books exactly the groups left over,
+#: so the two can never double-book or drop a mask. See the module docstring
+#: for the three modes this expresses.
+NTUPLE_MASK_GROUPS = ("preselection", "regions")
+
+#: The complement, i.e. what `selection_friends.py` produces. Derived, never
+#: set by hand.
+FRIEND_MASK_GROUPS = tuple(
+    group for group in ("preselection", "regions") if group not in NTUPLE_MASK_GROUPS
+)
+
+
+def group_producers(scope: str, groups):
+    """Split the tables of `producers/selection.py` into the requested groups.
+
+    The two groups are read off the tables themselves instead of from a second
+    list of names: a producer that writes a public branch belongs to
+    "preselection" if that branch is one of `MASKS_WITH_SHIFTS` -- `presel_mask`
+    and the two sign flags, which are written by flag producers rather than by
+    the region table -- and to "regions" otherwise, which leaves exactly the
+    `ff_*` masks.
+
+    The atomic `selcut_*` flags are then derived from the `input` lists of the
+    booked producers, followed through the flag table until nothing new turns
+    up, so that a regions-only production does not compute the preselection
+    flags it never reads (and the other way round). The walk deliberately stops
+    at a column another group writes: in a split production `sel_os`/`sel_ss`
+    are produced by the main ntuple and read back from it, so their producers
+    must not be booked a second time in the friend.
+
+    Args:
+        scope: the scope to book, e.g. "mt"
+        groups: the mask groups to book, a subset of ("preselection", "regions")
+
+    Returns:
+        `(public, flags)`: the producers writing an output branch, and the
+        atomic flag producers they need, both in the order of the tables.
+    """
+    masks = list(selection.MASKS.get(scope, []))
+    flags = list(selection.FLAGS.get(scope, []))
+
+    group_of = {
+        producer: (
+            "preselection"
+            if producer.output[0].name in MASKS_WITH_SHIFTS
+            else "regions"
+        )
+        for producer in masks + flags
+        if producer in masks or producer.output[0].name in MASKS_WITH_SHIFTS
+    }
+    public = [
+        producer for producer in masks + flags if group_of.get(producer) in groups
+    ]
+
+    written_by = {
+        producer.output[0]: producer for producer in flags if producer not in group_of
+    }
+    needed, pending = set(), [
+        quantity for producer in public for quantity in producer.input[scope]
+    ]
+    while pending:
+        producer = written_by.get(pending.pop())
+        if producer is not None and producer not in needed:
+            needed.add(producer)
+            pending.extend(producer.input[scope])
+
+    return public, [
+        producer for producer in flags if producer in needed or producer in public
+    ]
 
 
 def add_selection(
@@ -109,6 +216,7 @@ def add_selection(
     sample: str,
     apply_preselection_filter=None,
     friend=False,
+    groups=None,
 ) -> Configuration:
     """Book the selection mask producers, parameters and outputs.
 
@@ -120,6 +228,9 @@ def add_selection(
         apply_preselection_filter: if True, additionally drop every event that
             fails `presel_mask`. Defaults to the module constant
             `APPLY_PRESELECTION_FILTER`.
+        groups: the mask groups to book, a subset of `("preselection",
+            "regions")`. Defaults to `NTUPLE_MASK_GROUPS`, the main ntuple
+            share; `selection_friends.py` passes the complement.
         friend: if True, book the masks for a friend tree production on an
             existing CROWN ntuple (`selection_friends.py`) instead of for the
             main ntuple. Everything -- parameters, regions, output branches --
@@ -133,6 +244,15 @@ def add_selection(
     """
     if apply_preselection_filter is None:
         apply_preselection_filter = APPLY_PRESELECTION_FILTER
+    if groups is None:
+        groups = NTUPLE_MASK_GROUPS
+    if apply_preselection_filter and "preselection" not in groups:
+        raise ValueError(
+            "The preselection filter needs the `preselection` mask group, which "
+            f"this production does not carry (booked groups: {tuple(groups)})."
+        )
+    if not groups:
+        return configuration
 
     ###########################
     ####### Parameters ########
@@ -216,13 +336,16 @@ def add_selection(
     # Producers of the atomic cuts
     #########################
 
-    # driven by the `FLAGS` table of `producers/selection.py`, the same way the
-    # masks below are driven by `MASKS`. In a friend production the handful of
-    # flag producers that declare their `output_group` only to be ordered after
-    # it are swapped for their input-less `*_friend` twins, since in a friend job
-    # that group does not run and the column comes from the input ntuple.
+    # driven by the `FLAGS` and `MASKS` tables of `producers/selection.py`,
+    # split into the requested groups by `group_producers()` above: a scope gets
+    # exactly the masks of the booked groups and exactly the atomic flags those
+    # masks read. In a friend production the handful of flag producers that
+    # declare their `output_group` only to be ordered after it are swapped for
+    # their input-less `*_friend` twins, since in a friend job that group does
+    # not run and the column comes from the input ntuple.
     friend_flags = selection.FRIEND_FLAGS if friend else {}
-    for scope, flag_producers in selection.FLAGS.items():
+    booked = {scope: group_producers(scope, groups) for scope in selection.MASKS}
+    for scope, (public_producers, flag_producers) in booked.items():
         configuration.add_producers(
             [scope],
             [friend_flags.get(producer, producer) for producer in flag_producers],
@@ -232,15 +355,21 @@ def add_selection(
     # The masks and their output branches
     #########################
 
-    # driven entirely by the `MASKS` table of `producers/selection.py`: every
-    # mask producer writes exactly one public branch, and a scope gets the masks
-    # listed for it there and nothing else. `sel_os` / `sel_ss` are written
-    # directly by the charge producers, so they are outputs without being masks.
-    for scope, mask_producers in selection.MASKS.items():
-        configuration.add_producers([scope], list(mask_producers))
-        configuration.add_outputs(
+    # every producer of a booked group writes exactly one public branch: the
+    # masks of the region table, plus `sel_os` / `sel_ss`, which belong to the
+    # preselection group but are written directly by the charge flag producers
+    # and are therefore outputs without being masks.
+    for scope, (public_producers, flag_producers) in booked.items():
+        configuration.add_producers(
             [scope],
-            [producer.output[0] for producer in mask_producers] + [q.sel_os, q.sel_ss],
+            [
+                producer
+                for producer in public_producers
+                if producer in selection.MASKS[scope]
+            ],
+        )
+        configuration.add_outputs(
+            [scope], [producer.output[0] for producer in public_producers]
         )
 
     ################################
@@ -253,7 +382,9 @@ def add_selection(
     # input-less twin for every sample, so it needs no rule -- and must not get
     # one, because a rule appends the replacement at the end of the producer
     # list, and a friend production runs the producers in exactly that order.
-    if not friend:
+    # A production without the preselection group has no trigger flag producer
+    # to replace either.
+    if not friend and selection.PreselTriggerFlag_tt in booked["tt"][1]:
         configuration.add_modification_rule(
             "tt",
             ReplaceProducer(
