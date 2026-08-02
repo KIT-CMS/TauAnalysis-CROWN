@@ -1,11 +1,12 @@
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import Producer, BaseFilter, defaults
+from ..scripts.CROWNWrapper import Producer, Quantity, BaseFilter, defaults
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
 
 # a `_friend` producer reads its column from the input ntuple, where the
-# `output_group` that writes it in the main production does not run.
-# `selection_friends.py` names that column and pairs the variants up.
+# `output_group` that writes it in the main production does not run. Its
+# input spells the column the way the call of its main variant does;
+# `selection_friends.py` fills the parameters in and pairs the variants up.
 
 
 ##############################################################################
@@ -22,13 +23,13 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
             input=[pairquantities.VsEleTauIDFlag_2.output_group],
         )
-        PreselVsEleTauID_2_friend = Producer(input=[])
+        PreselVsEleTauID_2_friend = Producer(input=[Quantity("id_tau_vsEle_{presel_vsele_wp}_2")])
     with defaults(output=[q.selcut_presel_vsmu_2]):
         PreselVsMuTauID_2 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
             input=[pairquantities.VsMuTauIDFlag_2.output_group],
         )
-        PreselVsMuTauID_2_friend = Producer(input=[])
+        PreselVsMuTauID_2_friend = Producer(input=[Quantity("id_tau_vsMu_{presel_vsmu_wp}_2")])
 
 with defaults(
     scopes=["tt"],
@@ -39,13 +40,13 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
             input=[pairquantities.VsEleTauIDFlag_1.output_group],
         )
-        PreselVsEleTauID_1_friend = Producer(input=[])
+        PreselVsEleTauID_1_friend = Producer(input=[Quantity("id_tau_vsEle_{presel_vsele_wp}_1")])
     with defaults(output=[q.selcut_presel_vsmu_1]):
         PreselVsMuTauID_1 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
             input=[pairquantities.VsMuTauIDFlag_1.output_group],
         )
-        PreselVsMuTauID_1_friend = Producer(input=[])
+        PreselVsMuTauID_1_friend = Producer(input=[Quantity("id_tau_vsMu_{presel_vsmu_wp}_1")])
 
 
 ##############################################################################
@@ -90,11 +91,16 @@ with defaults(output=[q.selcut_presel_trigger]):
             input=[triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group],
         )
     with defaults(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 1)''',
-        input=[],
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 1)'''
     ):
-        PreselTriggerFlag_friend = Producer(scopes=["et", "mt", "em"])
-        PreselTriggerFlag_tt_friend = Producer(scopes=["tt"])
+        PreselTriggerFlag_friend = Producer(
+            scopes=["et", "mt", "em"],
+            input=[Quantity("{presel_trigger_flag}")],
+        )
+        PreselTriggerFlag_tt_friend = Producer(
+            scopes=["tt"],
+            input=[Quantity("{presel_trigger_flag}")],
+        )
 
 
 ##############################################################################
@@ -142,7 +148,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2")],
         )
     with defaults(output=[q.selcut_tau_noniso_2]):
         TauNonIsoFlag_2 = Producer(
@@ -151,7 +157,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauNonIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2")],
         )
     with defaults(output=[q.selcut_tau_vvvloose_2]):
         TauVVVLooseFlag_2 = Producer(
@@ -160,7 +166,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauVVVLooseFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2")],
         )
 
 with defaults(scopes=["tt"]):
@@ -171,7 +177,7 @@ with defaults(scopes=["tt"]):
         )
         TauIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1")],
         )
     with defaults(output=[q.selcut_tau_noniso_1]):
         TauNonIsoFlag_1 = Producer(
@@ -180,7 +186,7 @@ with defaults(scopes=["tt"]):
         )
         TauNonIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1")],
         )
     with defaults(output=[q.selcut_tau_vvvloose_1]):
         TauVVVLooseFlag_1 = Producer(
@@ -189,7 +195,7 @@ with defaults(scopes=["tt"]):
         )
         TauVVVLooseFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[],
+            input=[Quantity("id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1")],
         )
 
 

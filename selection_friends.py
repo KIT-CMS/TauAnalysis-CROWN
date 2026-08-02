@@ -30,41 +30,27 @@ FRIEND_FLAGS = {
     selection.TauVVVLooseFlag_2: selection.TauVVVLooseFlag_2_friend,
 }
 
-# the column each friend variant reads, as the call of its main variant writes
-# it. `friend_flags` fills in the working points and the era dependent ditau
-# flag from the configuration parameters.
-FRIEND_COLUMNS = {
-    selection.PreselTriggerFlag_friend: "{presel_trigger_flag}",
-    selection.PreselTriggerFlag_tt_friend: "{presel_trigger_flag}",
-    selection.PreselVsEleTauID_1_friend: "id_tau_vsEle_{presel_vsele_wp}_1",
-    selection.PreselVsEleTauID_2_friend: "id_tau_vsEle_{presel_vsele_wp}_2",
-    selection.PreselVsMuTauID_1_friend: "id_tau_vsMu_{presel_vsmu_wp}_1",
-    selection.PreselVsMuTauID_2_friend: "id_tau_vsMu_{presel_vsmu_wp}_2",
-    selection.TauIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
-    selection.TauIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
-    selection.TauNonIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
-    selection.TauNonIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
-    selection.TauVVVLooseFlag_1_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1",
-    selection.TauVVVLooseFlag_2_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2",
-}
-
-
 def friend_flags(configuration, scope: str):
-    """Point the friend variants at the columns the parameters of `scope` name.
+    """Resolve the columns of the friend variants for `scope`.
 
-    Their input is what this production matches against the shift map of the
-    ntuple, so it has to be a quantity carrying the resolved column name, which
-    is only known once `add_selection` added the parameters. Handed to
-    `add_selection`, which calls this once the parameters are in.
+    Each of them spells its column with the parameters of the call of its main
+    variant, `id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2` and the like. The values are
+    only known once `add_selection` added the parameters, so it is what calls
+    this, and the resolved name is what this production matches against the
+    shift map of the ntuple.
     """
     parameters = configuration.config_parameters[scope]
-    for producer, template in FRIEND_COLUMNS.items():
+    for producer in FRIEND_FLAGS.values():
         if scope not in producer.scopes:
             continue
-        column = Quantity(template.format(**parameters))
-        for output_quantity in producer.output:
-            column.adopt(output_quantity, scope)
-        producer.input[scope] = [column]
+        # a new quantity per scope, the template one is shared between them
+        producer.input[scope] = [
+            Quantity(template.name.format(**parameters))
+            for template in producer.input[scope]
+        ]
+        for column in producer.input[scope]:
+            for output_quantity in producer.output:
+                column.adopt(output_quantity, scope)
     return FRIEND_FLAGS
 
 
