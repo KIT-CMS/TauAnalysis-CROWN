@@ -20,39 +20,6 @@ FRIEND_MASK_GROUPS = tuple(
     group for group in ("preselection", "regions") if group not in NTUPLE_MASK_GROUPS
 )
 
-# tau vs jet working points of the fake factor regions
-FF_TAU_ISO_VSJET_WP = "Medium"
-FF_TAU_ANTIISO_VSJET_WP = "VVVLoose"
-
-# light lepton isolation of the fake factor regions
-LEP_ISO_MAX = 0.15
-
-# tau ID working points of the preselection
-PRESEL_VSELE_WP = {"et": "Tight", "mt": "VVLoose", "tt": "VVLoose"}
-PRESEL_VSMU_WP = {"et": "VLoose_Tight", "mt": "Tight_VVLoose", "tt": "VLoose_VVLoose"}
-
-# trigger flag of the preselection. `tt` is era dependent and resolved from
-# `DOUBLETAU_TRIGGER_FLAG` instead.
-PRESEL_TRIGGER_FLAG = {
-    "et": "trg_single_ele30",
-    "mt": "trg_single_mu24",
-    "em": "trg_single_mu24",
-}
-
-# electron pt of the em preselection
-PRESEL_PT_1_EM = 25.0
-
-
-##############################################################################
-# which quantities are evaluated on shifted ntuples
-#
-# Only the preselection is: `presel_mask` and the flags it is built from get a
-# copy per shift, everything listed below stays nominal. The fake factor
-# regions are derived on nominal events, so a shifted copy of them would just
-# be dead weight (and in a friend tree it would pull in shifted inputs that
-# nobody consumes).
-##############################################################################
-
 NOMINAL_ONLY_QUANTITIES = (
     # the atomic flags of the regions
     q.selcut_no_extraelec,
@@ -113,105 +80,6 @@ NOMINAL_ONLY_QUANTITIES = (
 )
 
 
-def friend_variants(scope: str, era: str):
-    """Replacements for the flags that read an `output_group` leaf by name.
-
-    In a friend production those groups do not run, the column comes from the
-    input ntuple and has to be declared as a proper input, see `ColumnFlag` in
-    `producers/selection.py`.
-    """
-    trigger_flag = (
-        DOUBLETAU_TRIGGER_FLAG.apply(era)
-        if scope == "tt"
-        else PRESEL_TRIGGER_FLAG[scope]
-    )
-    variants = {
-        selection.PreselTriggerFlag_tt
-        if scope == "tt"
-        else selection.PreselTriggerFlag: selection.ColumnFlag(
-            f"PreselTriggerFlag_{scope}_friend",
-            [scope],
-            trigger_flag,
-            q.selcut_presel_trigger,
-            dtype="bool",
-        ),
-    }
-    if scope in PRESEL_VSELE_WP:
-        vsele, vsmu = PRESEL_VSELE_WP[scope], PRESEL_VSMU_WP[scope]
-        variants.update(
-            {
-                selection.PreselVsEleTauID_2: selection.ColumnFlag(
-                    f"PreselVsEleTauID_2_{scope}_friend",
-                    [scope],
-                    f"id_tau_vsEle_{vsele}_2",
-                    q.selcut_presel_vsele_2,
-                ),
-                selection.PreselVsMuTauID_2: selection.ColumnFlag(
-                    f"PreselVsMuTauID_2_{scope}_friend",
-                    [scope],
-                    f"id_tau_vsMu_{vsmu}_2",
-                    q.selcut_presel_vsmu_2,
-                ),
-                selection.TauIsoFlag_2: selection.ColumnFlag(
-                    f"TauIsoFlag_2_{scope}_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_2",
-                    q.selcut_tau_iso_2,
-                ),
-                selection.TauNonIsoFlag_2: selection.ColumnFlag(
-                    f"TauNonIsoFlag_2_{scope}_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_2",
-                    q.selcut_tau_noniso_2,
-                    value=0,
-                ),
-                selection.TauVVVLooseFlag_2: selection.ColumnFlag(
-                    f"TauVVVLooseFlag_2_{scope}_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ANTIISO_VSJET_WP}_2",
-                    q.selcut_tau_vvvloose_2,
-                ),
-            }
-        )
-    if scope == "tt":
-        variants.update(
-            {
-                selection.PreselVsEleTauID_1: selection.ColumnFlag(
-                    "PreselVsEleTauID_1_tt_friend",
-                    [scope],
-                    f"id_tau_vsEle_{PRESEL_VSELE_WP[scope]}_1",
-                    q.selcut_presel_vsele_1,
-                ),
-                selection.PreselVsMuTauID_1: selection.ColumnFlag(
-                    "PreselVsMuTauID_1_tt_friend",
-                    [scope],
-                    f"id_tau_vsMu_{PRESEL_VSMU_WP[scope]}_1",
-                    q.selcut_presel_vsmu_1,
-                ),
-                selection.TauIsoFlag_1: selection.ColumnFlag(
-                    "TauIsoFlag_1_tt_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_1",
-                    q.selcut_tau_iso_1,
-                ),
-                selection.TauNonIsoFlag_1: selection.ColumnFlag(
-                    "TauNonIsoFlag_1_tt_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_1",
-                    q.selcut_tau_noniso_1,
-                    value=0,
-                ),
-                selection.TauVVVLooseFlag_1: selection.ColumnFlag(
-                    "TauVVVLooseFlag_1_tt_friend",
-                    [scope],
-                    f"id_tau_vsJet_{FF_TAU_ANTIISO_VSJET_WP}_1",
-                    q.selcut_tau_vvvloose_1,
-                ),
-            }
-        )
-    return variants
-
-
 def add_selection(
     configuration: Configuration,
     scopes,
@@ -241,8 +109,8 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            "ff_tau_iso_vsjet_wp": FF_TAU_ISO_VSJET_WP,
-            "ff_tau_antiiso_vsjet_wp": FF_TAU_ANTIISO_VSJET_WP,
+            "ff_tau_iso_vsjet_wp": "Medium",
+            "ff_tau_antiiso_vsjet_wp": "VVVLoose",
         },
     )
 
@@ -250,38 +118,42 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt"],
         {
-            "lep_iso_max": LEP_ISO_MAX,
+            "lep_iso_max": 0.15,
         },
     )
 
     # preselection tau ID working points and trigger flag names. The pt and eta
     # thresholds live in `tau_triggersetup.py` and in the object selection of
     # `config.py`
-    for scope in ["et", "mt", "tt"]:
-        configuration.add_config_parameters(
-            [scope],
-            {
-                "presel_vsele_wp": PRESEL_VSELE_WP[scope],
-                "presel_vsmu_wp": PRESEL_VSMU_WP[scope],
-            },
-        )
-    for scope in ["et", "mt", "em"]:
-        configuration.add_config_parameters(
-            [scope],
-            {
-                "presel_trigger_flag": PRESEL_TRIGGER_FLAG[scope],
-            },
-        )
+    configuration.add_config_parameters(
+        ["et"],
+        {
+            "presel_vsele_wp": "Tight",
+            "presel_vsmu_wp": "VLoose_Tight",
+            "presel_trigger_flag": "trg_single_ele30",
+        },
+    )
+    configuration.add_config_parameters(
+        ["mt"],
+        {
+            "presel_vsele_wp": "VVLoose",
+            "presel_vsmu_wp": "Tight_VVLoose",
+            "presel_trigger_flag": "trg_single_mu24",
+        },
+    )
     configuration.add_config_parameters(
         ["tt"],
         {
+            "presel_vsele_wp": "VVLoose",
+            "presel_vsmu_wp": "VLoose_VVLoose",
             "presel_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
         },
     )
     configuration.add_config_parameters(
         ["em"],
         {
-            "presel_pt_1": PRESEL_PT_1_EM,  # electron pt
+            "presel_pt_1": 25.0,  # electron pt
+            "presel_trigger_flag": "trg_single_mu24",
         },
     )
 
@@ -290,7 +162,11 @@ def add_selection(
     #########################
 
     for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
-        variants = friend_variants(scope, era) if friend else {}
+        variants = dict(selection.FRIEND_FLAGS) if friend else {}
+        if friend and scope == "tt":
+            variants[selection.PreselTriggerFlag_tt] = (
+                selection.FRIEND_TRIGGER_FLAGS_TT[DOUBLETAU_TRIGGER_FLAG.apply(era)]
+            )
 
         def pick(*producers):
             return [variants.get(producer, producer) for producer in producers]
@@ -488,8 +364,7 @@ def add_selection(
     ######### Modifications ########
     ################################
 
-    # `tau_embedding_settings.py` only swaps in the embedding ditau trigger
-    # group for Run 2; from 2022 on embedding uses the same flags as MC
+    # only Run 2 swaps in the embedding ditau trigger group, see tau_embedding_settings.py
     if (
         not friend
         and "preselection" in groups
