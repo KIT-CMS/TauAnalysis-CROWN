@@ -1,3 +1,5 @@
+from code_generation.producer import Producer as _RawProducer
+
 from ..quantities import output as q
 from ..scripts.CROWNWrapper import BaseFilter, Producer, Quantity, defaults
 from ..producers import pairquantities as pairquantities
@@ -41,8 +43,13 @@ from ..producers import triggers as triggers
 
 
 def ColumnFlag(name, scopes, column, output, value=1, dtype="int"):
-    """`output = (column == value)`, reading `column` straight from the ntuple."""
-    return Producer(
+    """`output = (column == value)`, reading `column` straight from the ntuple.
+
+    Built from the raw `Producer`, because the wrapper of `CROWNWrapper` infers
+    the producer name from the assignment it is written in and there is none
+    here.
+    """
+    return _RawProducer(
         name=name,
         call=f"""event::quantity::EqualFlag<{dtype}>({{df}}, {{output}}, {{input}}, {value})""",
         input=[Quantity(column)],
