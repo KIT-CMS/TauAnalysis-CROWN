@@ -20,15 +20,6 @@ FRIEND_MASK_GROUPS = tuple(
     group for group in ("preselection", "regions") if group not in NTUPLE_MASK_GROUPS
 )
 
-
-##############################################################################
-# thresholds and working points
-#
-# These are the single source of truth for the cut values: they are handed to
-# CROWN as configuration parameters below, and they spell out the column names
-# the friend variants of the flags have to read.
-##############################################################################
-
 # tau vs jet working points of the fake factor regions
 FF_TAU_ISO_VSJET_WP = "Medium"
 FF_TAU_ANTIISO_VSJET_WP = "VVVLoose"
@@ -48,8 +39,7 @@ PRESEL_TRIGGER_FLAG = {
     "em": "trg_single_mu24",
 }
 
-# electron pt of the em preselection. The em channel triggers on the muon, so
-# unlike every other leg this threshold is not implied by the trigger flag.
+# electron pt of the em preselection
 PRESEL_PT_1_EM = 25.0
 
 
@@ -266,7 +256,7 @@ def add_selection(
 
     # preselection tau ID working points and trigger flag names. The pt and eta
     # thresholds live in `tau_triggersetup.py` and in the object selection of
-    # `config.py`, see the note at the top of `producers/selection.py`.
+    # `config.py`
     for scope in ["et", "mt", "tt"]:
         configuration.add_config_parameters(
             [scope],
@@ -296,12 +286,7 @@ def add_selection(
     )
 
     #########################
-    # Producers of the cuts and of the full masks
-    #
-    # The order is a valid dependency order (the combined lepton veto after the
-    # three single vetoes, the charge product before the sign flags, every flag
-    # before the mask that combines it), because a friend production takes the
-    # producer order straight from the configuration instead of optimizing it.
+    # Producers 
     #########################
 
     for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
@@ -503,7 +488,14 @@ def add_selection(
     ######### Modifications ########
     ################################
 
-    if not friend and "preselection" in groups and "tt" in scopes:
+    # `tau_embedding_settings.py` only swaps in the embedding ditau trigger
+    # group for Run 2; from 2022 on embedding uses the same flags as MC
+    if (
+        not friend
+        and "preselection" in groups
+        and "tt" in scopes
+        and int(era[:4]) < 2022
+    ):
         configuration.add_modification_rule(
             "tt",
             ReplaceProducer(
@@ -529,12 +521,7 @@ def add_selection(
 
 
 def restrict_selection_shifts(configuration: Configuration, scopes, shifts=None) -> Configuration:
-    """Keep the fake factor regions on nominal only.
-
-    `shifts` are the shift names that are going to be added later on. A main
-    production has already added its shifts when this runs and needs none, a
-    friend production adds them in `optimize()` and has to announce them here.
-    """
+    # Keep the fake factor regions on nominal only.
     announced = list(shifts or [])
     for scope in scopes:
         for quantity in NOMINAL_ONLY_QUANTITIES:
