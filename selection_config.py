@@ -162,11 +162,9 @@ def add_selection(
     #########################
 
     for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
-        variants = dict(selection.FRIEND_FLAGS) if friend else {}
-        if friend and scope == "tt":
-            variants[selection.PreselTriggerFlag_tt] = (
-                selection.FRIEND_TRIGGER_FLAGS_TT[DOUBLETAU_TRIGGER_FLAG.apply(era)]
-            )
+        variants = selection.FRIEND_FLAGS if friend else {}
+        if friend:
+            selection.set_friend_columns(configuration, scope)
 
         def pick(*producers):
             return [variants.get(producer, producer) for producer in producers]

@@ -3,12 +3,6 @@ from ..scripts.CROWNWrapper import Producer, Quantity, BaseFilter, defaults
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
 
-# The cuts the trigger flags and the object good flags already apply are
-# deliberately absent: the trigger helpers test the pt and eta of the *offline*
-# object, `taus.GoodTauDMCut` restricts the decay modes, `min_tau_pt` the
-# trailing tau of et/mt and `max_ele_eta` the electron of em. Only the em
-# electron pt is left, which the single muon trigger of that channel misses.
-
 # a `_friend` producer reads its column from the input ntuple, where the
 # `output_group` that writes it in the main production does not run. It has to
 # name the column as a real input, otherwise a friend production neither checks
@@ -30,25 +24,13 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
             input=[pairquantities.VsEleTauIDFlag_2.output_group],
         )
-        PreselVsEleTauID_2_friend = Producer(
-            input={
-                "et": [Quantity("id_tau_vsEle_Tight_2")],
-                "mt": [Quantity("id_tau_vsEle_VVLoose_2")],
-                "tt": [Quantity("id_tau_vsEle_VVLoose_2")],
-            },
-        )
+        PreselVsEleTauID_2_friend = Producer(input=[])
     with defaults(output=[q.selcut_presel_vsmu_2]):
         PreselVsMuTauID_2 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
             input=[pairquantities.VsMuTauIDFlag_2.output_group],
         )
-        PreselVsMuTauID_2_friend = Producer(
-            input={
-                "et": [Quantity("id_tau_vsMu_VLoose_Tight_2")],
-                "mt": [Quantity("id_tau_vsMu_Tight_VVLoose_2")],
-                "tt": [Quantity("id_tau_vsMu_VLoose_VVLoose_2")],
-            },
-        )
+        PreselVsMuTauID_2_friend = Producer(input=[])
 
 with defaults(
     scopes=["tt"],
@@ -59,17 +41,13 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
             input=[pairquantities.VsEleTauIDFlag_1.output_group],
         )
-        PreselVsEleTauID_1_friend = Producer(
-            input=[Quantity("id_tau_vsEle_VVLoose_1")],
-        )
+        PreselVsEleTauID_1_friend = Producer(input=[])
     with defaults(output=[q.selcut_presel_vsmu_1]):
         PreselVsMuTauID_1 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
             input=[pairquantities.VsMuTauIDFlag_1.output_group],
         )
-        PreselVsMuTauID_1_friend = Producer(
-            input=[Quantity("id_tau_vsMu_VLoose_VVLoose_1")],
-        )
+        PreselVsMuTauID_1_friend = Producer(input=[])
 
 
 ##############################################################################
@@ -113,26 +91,12 @@ with defaults(output=[q.selcut_presel_trigger]):
             scopes=["tt"],
             input=[triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group],
         )
-    # the ditau flag is era dependent, `DOUBLETAU_TRIGGER_FLAG` picks the column
     with defaults(
-        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 1)'''
+        call='''event::quantity::EqualFlag<bool>({df}, {output}, {input}, 1)''',
+        input=[],
     ):
-        PreselTriggerFlag_friend = Producer(
-            scopes=["et", "mt", "em"],
-            input={
-                "et": [Quantity("trg_single_ele30")],
-                "mt": [Quantity("trg_single_mu24")],
-                "em": [Quantity("trg_single_mu24")],
-            },
-        )
-        PreselTriggerFlag_tt_hps_friend = Producer(
-            scopes=["tt"],
-            input=[Quantity("trg_double_tau35_mediumiso_hps")],
-        )
-        PreselTriggerFlag_tt_pnet_friend = Producer(
-            scopes=["tt"],
-            input=[Quantity("trg_double_tau30_mediumiso_pnet")],
-        )
+        PreselTriggerFlag_friend = Producer(scopes=["et", "mt", "em"])
+        PreselTriggerFlag_tt_friend = Producer(scopes=["tt"])
 
 
 ##############################################################################
@@ -180,7 +144,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[Quantity("id_tau_vsJet_Medium_2")],
+            input=[],
         )
     with defaults(output=[q.selcut_tau_noniso_2]):
         TauNonIsoFlag_2 = Producer(
@@ -189,7 +153,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauNonIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
-            input=[Quantity("id_tau_vsJet_Medium_2")],
+            input=[],
         )
     with defaults(output=[q.selcut_tau_vvvloose_2]):
         TauVVVLooseFlag_2 = Producer(
@@ -198,7 +162,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         TauVVVLooseFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[Quantity("id_tau_vsJet_VVVLoose_2")],
+            input=[],
         )
 
 with defaults(scopes=["tt"]):
@@ -209,7 +173,7 @@ with defaults(scopes=["tt"]):
         )
         TauIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[Quantity("id_tau_vsJet_Medium_1")],
+            input=[],
         )
     with defaults(output=[q.selcut_tau_noniso_1]):
         TauNonIsoFlag_1 = Producer(
@@ -218,7 +182,7 @@ with defaults(scopes=["tt"]):
         )
         TauNonIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
-            input=[Quantity("id_tau_vsJet_Medium_1")],
+            input=[],
         )
     with defaults(output=[q.selcut_tau_vvvloose_1]):
         TauVVVLooseFlag_1 = Producer(
@@ -227,7 +191,7 @@ with defaults(scopes=["tt"]):
         )
         TauVVVLooseFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
-            input=[Quantity("id_tau_vsJet_VVVLoose_1")],
+            input=[],
         )
 
 
@@ -278,10 +242,6 @@ with defaults(scopes=["et", "mt"], input=[q.nbtag]):
 
 ##############################################################################
 # tau pair charge
-#
-# `selcut_os` / `selcut_ss` are internal flags of the fake factor regions
-# below, not ntuple columns: `q_1` and `q_2` are written out anyway, so an
-# analysis downstream can form the sign itself.
 ##############################################################################
 
 with defaults(scopes=["et", "mt", "tt", "em"]):
@@ -811,6 +771,7 @@ with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}
 
 FRIEND_FLAGS = {
     PreselTriggerFlag: PreselTriggerFlag_friend,
+    PreselTriggerFlag_tt: PreselTriggerFlag_tt_friend,
     PreselVsEleTauID_1: PreselVsEleTauID_1_friend,
     PreselVsEleTauID_2: PreselVsEleTauID_2_friend,
     PreselVsMuTauID_1: PreselVsMuTauID_1_friend,
@@ -823,11 +784,40 @@ FRIEND_FLAGS = {
     TauVVVLooseFlag_2: TauVVVLooseFlag_2_friend,
 }
 
-# the ditau trigger flag column of the era -> the friend producer reading it
-FRIEND_TRIGGER_FLAGS_TT = {
-    "trg_double_tau35_mediumiso_hps": PreselTriggerFlag_tt_hps_friend,
-    "trg_double_tau30_mediumiso_pnet": PreselTriggerFlag_tt_pnet_friend,
+# the column each friend variant reads, as the call of its main variant writes
+# it. `set_friend_columns` fills in the working points and the era dependent
+# ditau flag from the configuration parameters.
+FRIEND_COLUMNS = {
+    PreselTriggerFlag_friend: "{presel_trigger_flag}",
+    PreselTriggerFlag_tt_friend: "{presel_trigger_flag}",
+    PreselVsEleTauID_1_friend: "id_tau_vsEle_{presel_vsele_wp}_1",
+    PreselVsEleTauID_2_friend: "id_tau_vsEle_{presel_vsele_wp}_2",
+    PreselVsMuTauID_1_friend: "id_tau_vsMu_{presel_vsmu_wp}_1",
+    PreselVsMuTauID_2_friend: "id_tau_vsMu_{presel_vsmu_wp}_2",
+    TauIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
+    TauIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
+    TauNonIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
+    TauNonIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
+    TauVVVLooseFlag_1_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1",
+    TauVVVLooseFlag_2_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2",
 }
+
+
+def set_friend_columns(configuration, scope: str) -> None:
+    """Point the friend variants at the columns the parameters of `scope` name.
+
+    Their input is what a friend production matches against the shift map of
+    the ntuple, so it has to be a quantity carrying the resolved column name,
+    which is only known once `add_config_parameters` ran.
+    """
+    parameters = configuration.config_parameters[scope]
+    for producer, template in FRIEND_COLUMNS.items():
+        if scope not in producer.scopes:
+            continue
+        column = Quantity(template.format(**parameters))
+        for output_quantity in producer.output:
+            column.adopt(output_quantity, scope)
+        producer.input[scope] = [column]
 
 
 ##############################################################################
