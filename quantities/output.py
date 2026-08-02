@@ -497,75 +497,42 @@ is_2023postBPix = Quantity()
 is_2023preBPix = Quantity()
 is_2022postEE = Quantity()
 is_2022preEE = Quantity()
-##############################################################################
-# selection masks
-#
-# Boolean branches that encode the analysis event selections once, in CROWN,
-# so that downstream tools (TauKITFlow shapes, TauFakeFactors) can filter on a
-# single branch instead of re-composing cut strings.
-#
-# Composition and meaning of every mask are defined in the region table of
-# `analysis_configurations/tau/producers/selection.py`, which also produces the
-# atomic flags; the booking lives in
-# `analysis_configurations/tau/selection_config.py`.
-#
-# `selcut_*` quantities are *internal* single-cut flags. They are not written
-# to the ntuple, they only exist so that the region masks can be assembled
-# with `event::CombineFlags(..., "all_of")`.
-##############################################################################
+is_2018 = Quantity()
+is_2017 = Quantity()
+is_2016postVFP = Quantity()
+is_2016preVFP = Quantity()
 
-# --- internal atomic cut flags: preselection ---------------------------------
-# the decay mode is in the list of accepted modes (`tau_dms` config parameter)
-selcut_presel_tau_dm_1 = Quantity()
-selcut_presel_tau_dm_2 = Quantity()
+# seelctions
 selcut_presel_vsele_1 = Quantity()
 selcut_presel_vsele_2 = Quantity()
 selcut_presel_vsmu_1 = Quantity()
 selcut_presel_vsmu_2 = Quantity()
 selcut_presel_pt_1 = Quantity()
-selcut_presel_pt_2 = Quantity()
-selcut_presel_eta_1 = Quantity()
 selcut_presel_trigger = Quantity()
 selcut_jet_veto = Quantity()
-
-# --- internal atomic cut flags: lepton vetoes --------------------------------
 selcut_no_extraelec = Quantity()
 selcut_no_extramuon = Quantity()
 selcut_no_dilepton = Quantity()
-selcut_lepton_veto = Quantity()  # extraelec && extramuon && dilepton veto
-selcut_lepton_veto_inv = Quantity()  # !(combined lepton veto), ttbar SR/AR-like
-
-# --- internal atomic cut flags: tau vs jet ID --------------------------------
-selcut_tau_iso_1 = Quantity()  # id_tau_vsJet_<WP>_1 > 0.5
-selcut_tau_iso_2 = Quantity()  # id_tau_vsJet_<WP>_2 > 0.5
-selcut_tau_noniso_1 = Quantity()  # id_tau_vsJet_<WP>_1 < 0.5
-selcut_tau_noniso_2 = Quantity()  # id_tau_vsJet_<WP>_2 < 0.5
-selcut_tau_vvvloose_1 = Quantity()  # id_tau_vsJet_VVVLoose_1 > 0.5
-selcut_tau_vvvloose_2 = Quantity()  # id_tau_vsJet_VVVLoose_2 > 0.5
-
-# --- internal atomic cut flags: light lepton isolation -----------------------
-# a single threshold and its exact complement, identical in every era
-selcut_lep_iso = Quantity()  # iso_1 < {lep_iso_max}
-selcut_lep_antiiso = Quantity()  # iso_1 >= {lep_iso_max}
-
-# --- internal atomic cut flags: transverse mass ------------------------------
-selcut_mt_lt_70 = Quantity()  # mt_1 < 70
-selcut_wjets_mt = Quantity()  # mt_1 >= 70
-
-# --- internal atomic cut flags: b-tagged jets --------------------------------
-selcut_nbtag_eq_0 = Quantity()  # nbtag == 0
-selcut_ttbar_nbtag = Quantity()  # nbtag >= 1
-
-# --- internal quantity: tau pair charge product ------------------------------
-# `q_1 * q_2` as a `double` column, shared by `sel_os` and `sel_ss`
+selcut_lepton_veto = Quantity()
+selcut_lepton_veto_inv = Quantity()
+selcut_tau_iso_1 = Quantity() 
+selcut_tau_iso_2 = Quantity()
+selcut_tau_noniso_1 = Quantity()
+selcut_tau_noniso_2 = Quantity()
+selcut_tau_vvvloose_1 = Quantity()
+selcut_tau_vvvloose_2 = Quantity()
+selcut_lep_iso = Quantity()
+selcut_lep_antiiso = Quantity()
+selcut_mt_lt_70 = Quantity()
+selcut_wjets_mt = Quantity()
+selcut_nbtag_eq_0 = Quantity()
+selcut_ttbar_nbtag = Quantity()
 selcut_q_prod = Quantity()
+selcut_os = Quantity()
+selcut_ss = Quantity()
 
-# --- mask branches: all scopes ----------------------------------------------
 presel_mask = Quantity()
-sel_os = Quantity()
-sel_ss = Quantity()
 
-# --- mask branches: fake factor regions, et and mt ---------------------------
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()
 ff_wjets_SRlike = Quantity()
@@ -592,9 +559,6 @@ ff_wjets_AR_SR_SRlike = Quantity()
 ff_wjets_AR_SR_ARlike = Quantity()
 ff_wjets_AR_SR_SRlike_ss = Quantity()
 ff_wjets_AR_SR_ARlike_ss = Quantity()
-
-# --- mask branches: fake factor regions, tt ----------------------------------
-# `_sub` denotes the subleading (second tau) variant of a region.
 ff_qcd_sub_SRlike = Quantity()
 ff_qcd_sub_ARlike = Quantity()
 ff_fraction_sub_SR = Quantity()

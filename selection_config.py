@@ -1,212 +1,225 @@
-"""Selection masks: the analysis event selections, defined once, in CROWN.
-
-Every selection used downstream (TauKITFlow shape production, TauFakeFactors
-fake factor and correction measurements) is written to the ntuple as a boolean
-branch. Downstream tools then filter on a single branch instead of
-re-composing cut strings, which removes the main source of drift between the
-three places the same cuts used to be written down.
-
-WHERE THE MASKS ARE PRODUCED -- THE THREE MODES
------------------------------------------------
-The masks come in two groups: **"preselection"** (`presel_mask` and the two
-sign flags `sel_os` / `sel_ss`, i.e. what shape production needs, and exactly
-the trio that carries systematic shifts) and **"regions"** (the `ff_*` region
-masks, i.e. what TauFakeFactors needs). `NTUPLE_MASK_GROUPS` below says which
-of the two the MAIN ntuple production carries; `selection_friends.py` books
-whatever is left over, so the two paths can neither double-book nor drop a
-mask. Together with `APPLY_PRESELECTION_FILTER` this gives three modes:
-
-  1. everything in the main ntuple (the default, and the historical behaviour)::
-
-        NTUPLE_MASK_GROUPS = ("preselection", "regions")
-        APPLY_PRESELECTION_FILTER = False
-
-  2. everything as a friend tree, nothing in the ntuple::
-
-        NTUPLE_MASK_GROUPS = ()
-        APPLY_PRESELECTION_FILTER = False
-
-  3. the preselection applied as a hard FILTER at ntuple production, the region
-     masks as a friend on top of the filtered ntuple::
-
-        NTUPLE_MASK_GROUPS = ("preselection",)
-        APPLY_PRESELECTION_FILTER = True
-
-In every mode the union of the main and the friend production is the very same
-complete set of mask branches; only the file they end up in changes. Friends
-align by entry index, so in mode 3 every friend of an ntuple (xsec, fake
-factors, DNN and this selection friend) is produced from the filtered ntuple.
-
-HOW TO READ THIS FILE
----------------------
-`add_selection()` is the single entry point. It is called from `config.py` for
-the masks inside the main ntuple, and from `selection_friends.py` (with
-`friend=True`) for the complementary masks as a friend tree on top of an
-existing ntuple, so that the two paths cannot drift apart. It is
-written in the same idiom as `config.py` itself: literal
-`configuration.add_config_parameters([...scopes...], {...})` and
-`add_producers([...scopes...], [...])` blocks under banner comments, with
-`EraModifier` for the (few) era dependent values. Which eras and scopes are
-built is decided by `config.py`, not re-validated here.
-
-The literal region table -- one `Producer` per mask, one flag per line, listing
-exactly the atomic cuts it consists of -- is NOT here: it is at the bottom of
-`producers/selection.py`, together with the `FLAGS` and `MASKS` mappings that
-say which flags and which masks each scope gets. **If you want to know or change
-what a mask means, look there.** The masks of a scope come from that mapping
-alone, so a scope with no entry in it (ee, mm) simply gets no masks.
-
-WHAT THE MASKS CONTAIN
-----------------------
-`presel_mask` is the per-channel `preselection:` block of
-`TauKITFlow/config/cuts.yaml`. The `ff_*` masks are the *region* cut sets of
-`TauFakeFactors/configs/smhtt_ul/{era}/fake_factors_{ch}.yaml` and
-`corrections_{ch}.yaml`; they do NOT include the preselection (downstream
-applies `presel_mask` separately, exactly as it applies the preselection skim
-today) and they do NOT include the `split_categories` (njets/... ) binning or
-any category/DNN cut.
-
-WHICH TauFakeFactors CONFIGS THE `ff_*` MASKS COME FROM
--------------------------------------------------------
-TauFakeFactors measures the fake factors on the pre- and post-halves of a year
-*together* and therefore reads ONE config per year, from the combined `2022/`
-and `2023/` directories. The per-half directories (`2022preEE/`, `2022postEE/`,
-`2023preBPix/`, `2023postBPix/`) are stale and unused; do not take cut values
-from them.
-
-The combined `2022/` and `2023/` configs and the `2024/`, `2025/` and `2026/`
-ones are IDENTICAL in every region cut, so:
-
-    THE FAKE FACTOR REGION MASKS ARE COMPLETELY ERA INDEPENDENT.
-
-The only era dependence left in this file is in the preselection: the tt double
-tau trigger path changed from the HPS to the PNet one in 2024, together with
-the offline tau pt threshold (40 -> 35 GeV).
-
-Naming conventions:
-  `_ss`        same-sign variant, i.e. the region with `tau_pair_sign` flipped
-               to `(q_1*q_2) > 0`. These correspond to the in-code QCD
-               estimation overrides in `FF_Wjets.py` and `FF_ttbar.py`.
-  `DR_SR_*`    the region after merging the `DR_SR` `SRlike_cuts`/`ARlike_cuts`
-               overrides of `corrections_{ch}.yaml` (`modify_config`,
-               `to_AR_SR=False`).
-  `AR_SR_*`    the same but with the `AR_SR_cuts` block applied on top of both
-               the SR-like and the AR-like variant (`to_AR_SR=True`).
-  `_sub`       the subleading-tau variant of a tt region.
-
-The masks encode the `nbtag` cuts exactly as written in the yaml files, even
-though the current TauFakeFactors `apply_region_filters` silently skips them.
-This is a deliberate, signed-off difference; see the validation notes of the
-selection-mask work.
-
-TWO YAML CUTS ARE INTENTIONALLY OMITTED
----------------------------------------
-`nbtag: (nbtag >= 0)` (the QCD, process fraction and `AR_SR` regions) and
-`lep_mt: (mt_1 > 0)` (the W+jets `DR_SR` regions) are NOT part of any mask.
-Both are unconditionally true -- `nbtag` is a jet multiplicity and `mt_1` a
-transverse mass, so neither can ever be negative -- and dropping them leaves
-every mask semantically identical while saving two columns per event. A
-cut-by-cut diff of the masks against the yaml files will show these two as
-missing; that is expected and is the only such difference.
-"""
-
 from code_generation.configuration import Configuration
-from code_generation.modifiers import EraModifier
 from code_generation.rules import AppendProducer, ReplaceProducer
 
 from .producers import selection as selection
 from .quantities import output as q
-from .tau_triggersetup import DOUBLETAU_HPS_ERAS, DOUBLETAU_TRIGGER_FLAG
+from .tau_triggersetup import DOUBLETAU_TRIGGER_FLAG
 
 ##############################################################################
 # module level switches
 ##############################################################################
 
-#: If True, events failing `presel_mask` are dropped from the ntuple instead of
-#: only being flagged. Off by default: keeping every event means a change of
-#: the preselection does not require a re-production. Only available where the
-#: "preselection" group is produced, i.e. in the main ntuple.
+# If True, events failing `presel_mask` are dropped from the ntuple instead of only being flagged
 APPLY_PRESELECTION_FILTER = False
 
-#: Only these masks get shifted copies. The `ff_*` masks are only consumed by
-#: TauFakeFactors, which runs on nominal ntuples; giving them a copy per
-#: systematic shift would add thousands of unused branches per file.
-#:
-#: This is at the same time the definition of the "preselection" group: it is
-#: exactly `presel_mask` plus the two sign flags, so the group split needs no
-#: second list of mask names that could drift away from this one.
-MASKS_WITH_SHIFTS = ["presel_mask", "sel_os", "sel_ss"]
-
-#: Which mask groups the MAIN ntuple production carries. The friend production
-#: (`selection_friends.py`) automatically books exactly the groups left over,
-#: so the two can never double-book or drop a mask. See the module docstring
-#: for the three modes this expresses.
+# Which mask groups the ntuple production carries
 NTUPLE_MASK_GROUPS = ("preselection", "regions")
 
-#: The complement, i.e. what `selection_friends.py` produces. Derived, never
-#: set by hand.
+# The complement, i.e. what `selection_friends.py` produces
 FRIEND_MASK_GROUPS = tuple(
     group for group in ("preselection", "regions") if group not in NTUPLE_MASK_GROUPS
 )
 
 
-def group_producers(scope: str, groups):
-    """Split the tables of `producers/selection.py` into the requested groups.
+##############################################################################
+# thresholds and working points
+#
+# These are the single source of truth for the cut values: they are handed to
+# CROWN as configuration parameters below, and they spell out the column names
+# the friend variants of the flags have to read.
+##############################################################################
 
-    The two groups are read off the tables themselves instead of from a second
-    list of names: a producer that writes a public branch belongs to
-    "preselection" if that branch is one of `MASKS_WITH_SHIFTS` -- `presel_mask`
-    and the two sign flags, which are written by flag producers rather than by
-    the region table -- and to "regions" otherwise, which leaves exactly the
-    `ff_*` masks.
+# tau vs jet working points of the fake factor regions
+FF_TAU_ISO_VSJET_WP = "Medium"
+FF_TAU_ANTIISO_VSJET_WP = "VVVLoose"
 
-    The atomic `selcut_*` flags are then derived from the `input` lists of the
-    booked producers, followed through the flag table until nothing new turns
-    up, so that a regions-only production does not compute the preselection
-    flags it never reads (and the other way round). The walk deliberately stops
-    at a column another group writes: in a split production `sel_os`/`sel_ss`
-    are produced by the main ntuple and read back from it, so their producers
-    must not be booked a second time in the friend.
+# light lepton isolation of the fake factor regions
+LEP_ISO_MAX = 0.15
 
-    Args:
-        scope: the scope to book, e.g. "mt"
-        groups: the mask groups to book, a subset of ("preselection", "regions")
+# tau ID working points of the preselection
+PRESEL_VSELE_WP = {"et": "Tight", "mt": "VVLoose", "tt": "VVLoose"}
+PRESEL_VSMU_WP = {"et": "VLoose_Tight", "mt": "Tight_VVLoose", "tt": "VLoose_VVLoose"}
 
-    Returns:
-        `(public, flags)`: the producers writing an output branch, and the
-        atomic flag producers they need, both in the order of the tables.
+# trigger flag of the preselection. `tt` is era dependent and resolved from
+# `DOUBLETAU_TRIGGER_FLAG` instead.
+PRESEL_TRIGGER_FLAG = {
+    "et": "trg_single_ele30",
+    "mt": "trg_single_mu24",
+    "em": "trg_single_mu24",
+}
+
+# electron pt of the em preselection. The em channel triggers on the muon, so
+# unlike every other leg this threshold is not implied by the trigger flag.
+PRESEL_PT_1_EM = 25.0
+
+
+##############################################################################
+# which quantities are evaluated on shifted ntuples
+#
+# Only the preselection is: `presel_mask` and the flags it is built from get a
+# copy per shift, everything listed below stays nominal. The fake factor
+# regions are derived on nominal events, so a shifted copy of them would just
+# be dead weight (and in a friend tree it would pull in shifted inputs that
+# nobody consumes).
+##############################################################################
+
+NOMINAL_ONLY_QUANTITIES = (
+    # the atomic flags of the regions
+    q.selcut_no_extraelec,
+    q.selcut_no_extramuon,
+    q.selcut_no_dilepton,
+    q.selcut_lepton_veto,
+    q.selcut_lepton_veto_inv,
+    q.selcut_tau_iso_1,
+    q.selcut_tau_iso_2,
+    q.selcut_tau_noniso_1,
+    q.selcut_tau_noniso_2,
+    q.selcut_tau_vvvloose_1,
+    q.selcut_tau_vvvloose_2,
+    q.selcut_lep_iso,
+    q.selcut_lep_antiiso,
+    q.selcut_mt_lt_70,
+    q.selcut_wjets_mt,
+    q.selcut_nbtag_eq_0,
+    q.selcut_ttbar_nbtag,
+    q.selcut_q_prod,
+    q.selcut_os,
+    q.selcut_ss,
+    # the region masks themselves
+    q.ff_qcd_SRlike,
+    q.ff_qcd_ARlike,
+    q.ff_qcd_sub_SRlike,
+    q.ff_qcd_sub_ARlike,
+    q.ff_wjets_SRlike,
+    q.ff_wjets_ARlike,
+    q.ff_wjets_SRlike_ss,
+    q.ff_wjets_ARlike_ss,
+    q.ff_ttbar_SR,
+    q.ff_ttbar_AR,
+    q.ff_ttbar_SRlike,
+    q.ff_ttbar_ARlike,
+    q.ff_ttbar_SRlike_ss,
+    q.ff_ttbar_ARlike_ss,
+    q.ff_fraction_SR,
+    q.ff_fraction_AR,
+    q.ff_fraction_sub_SR,
+    q.ff_fraction_sub_AR,
+    q.ff_qcd_DR_SR_SRlike,
+    q.ff_qcd_DR_SR_ARlike,
+    q.ff_qcd_AR_SR_SRlike,
+    q.ff_qcd_AR_SR_ARlike,
+    q.ff_qcd_sub_DR_SR_SRlike,
+    q.ff_qcd_sub_DR_SR_ARlike,
+    q.ff_qcd_sub_AR_SR_SRlike,
+    q.ff_qcd_sub_AR_SR_ARlike,
+    q.ff_wjets_DR_SR_SRlike,
+    q.ff_wjets_DR_SR_ARlike,
+    q.ff_wjets_DR_SR_SRlike_ss,
+    q.ff_wjets_DR_SR_ARlike_ss,
+    q.ff_wjets_AR_SR_SRlike,
+    q.ff_wjets_AR_SR_ARlike,
+    q.ff_wjets_AR_SR_SRlike_ss,
+    q.ff_wjets_AR_SR_ARlike_ss,
+)
+
+
+def friend_variants(scope: str, era: str):
+    """Replacements for the flags that read an `output_group` leaf by name.
+
+    In a friend production those groups do not run, the column comes from the
+    input ntuple and has to be declared as a proper input, see `ColumnFlag` in
+    `producers/selection.py`.
     """
-    masks = list(selection.MASKS.get(scope, []))
-    flags = list(selection.FLAGS.get(scope, []))
-
-    group_of = {
-        producer: (
-            "preselection"
-            if producer.output[0].name in MASKS_WITH_SHIFTS
-            else "regions"
+    trigger_flag = (
+        DOUBLETAU_TRIGGER_FLAG.apply(era)
+        if scope == "tt"
+        else PRESEL_TRIGGER_FLAG[scope]
+    )
+    variants = {
+        selection.PreselTriggerFlag_tt
+        if scope == "tt"
+        else selection.PreselTriggerFlag: selection.ColumnFlag(
+            f"PreselTriggerFlag_{scope}_friend",
+            [scope],
+            trigger_flag,
+            q.selcut_presel_trigger,
+            dtype="bool",
+        ),
+    }
+    if scope in PRESEL_VSELE_WP:
+        vsele, vsmu = PRESEL_VSELE_WP[scope], PRESEL_VSMU_WP[scope]
+        variants.update(
+            {
+                selection.PreselVsEleTauID_2: selection.ColumnFlag(
+                    f"PreselVsEleTauID_2_{scope}_friend",
+                    [scope],
+                    f"id_tau_vsEle_{vsele}_2",
+                    q.selcut_presel_vsele_2,
+                ),
+                selection.PreselVsMuTauID_2: selection.ColumnFlag(
+                    f"PreselVsMuTauID_2_{scope}_friend",
+                    [scope],
+                    f"id_tau_vsMu_{vsmu}_2",
+                    q.selcut_presel_vsmu_2,
+                ),
+                selection.TauIsoFlag_2: selection.ColumnFlag(
+                    f"TauIsoFlag_2_{scope}_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_2",
+                    q.selcut_tau_iso_2,
+                ),
+                selection.TauNonIsoFlag_2: selection.ColumnFlag(
+                    f"TauNonIsoFlag_2_{scope}_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_2",
+                    q.selcut_tau_noniso_2,
+                    value=0,
+                ),
+                selection.TauVVVLooseFlag_2: selection.ColumnFlag(
+                    f"TauVVVLooseFlag_2_{scope}_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ANTIISO_VSJET_WP}_2",
+                    q.selcut_tau_vvvloose_2,
+                ),
+            }
         )
-        for producer in masks + flags
-        if producer in masks or producer.output[0].name in MASKS_WITH_SHIFTS
-    }
-    public = [
-        producer for producer in masks + flags if group_of.get(producer) in groups
-    ]
-
-    written_by = {
-        producer.output[0]: producer for producer in flags if producer not in group_of
-    }
-    needed, pending = set(), [
-        quantity for producer in public for quantity in producer.input[scope]
-    ]
-    while pending:
-        producer = written_by.get(pending.pop())
-        if producer is not None and producer not in needed:
-            needed.add(producer)
-            pending.extend(producer.input[scope])
-
-    return public, [
-        producer for producer in flags if producer in needed or producer in public
-    ]
+    if scope == "tt":
+        variants.update(
+            {
+                selection.PreselVsEleTauID_1: selection.ColumnFlag(
+                    "PreselVsEleTauID_1_tt_friend",
+                    [scope],
+                    f"id_tau_vsEle_{PRESEL_VSELE_WP[scope]}_1",
+                    q.selcut_presel_vsele_1,
+                ),
+                selection.PreselVsMuTauID_1: selection.ColumnFlag(
+                    "PreselVsMuTauID_1_tt_friend",
+                    [scope],
+                    f"id_tau_vsMu_{PRESEL_VSMU_WP[scope]}_1",
+                    q.selcut_presel_vsmu_1,
+                ),
+                selection.TauIsoFlag_1: selection.ColumnFlag(
+                    "TauIsoFlag_1_tt_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_1",
+                    q.selcut_tau_iso_1,
+                ),
+                selection.TauNonIsoFlag_1: selection.ColumnFlag(
+                    "TauNonIsoFlag_1_tt_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ISO_VSJET_WP}_1",
+                    q.selcut_tau_noniso_1,
+                    value=0,
+                ),
+                selection.TauVVVLooseFlag_1: selection.ColumnFlag(
+                    "TauVVVLooseFlag_1_tt_friend",
+                    [scope],
+                    f"id_tau_vsJet_{FF_TAU_ANTIISO_VSJET_WP}_1",
+                    q.selcut_tau_vvvloose_1,
+                ),
+            }
+        )
+    return variants
 
 
 def add_selection(
@@ -218,30 +231,6 @@ def add_selection(
     friend=False,
     groups=None,
 ) -> Configuration:
-    """Book the selection mask producers, parameters and outputs.
-
-    Args:
-        configuration: the configuration being built
-        scopes: the scopes selected for this production
-        era: the era being produced
-        sample: the sample group being produced
-        apply_preselection_filter: if True, additionally drop every event that
-            fails `presel_mask`. Defaults to the module constant
-            `APPLY_PRESELECTION_FILTER`.
-        groups: the mask groups to book, a subset of `("preselection",
-            "regions")`. Defaults to `NTUPLE_MASK_GROUPS`, the main ntuple
-            share; `selection_friends.py` passes the complement.
-        friend: if True, book the masks for a friend tree production on an
-            existing CROWN ntuple (`selection_friends.py`) instead of for the
-            main ntuple. Everything -- parameters, regions, output branches --
-            is the same; only the flag producers that read a column out of an
-            `output_group` are swapped for their input-less twins, and the
-            producer rules that would reorder the producers are skipped. The
-            main production path never passes this.
-
-    Returns:
-        The configuration, with the selection masks added.
-    """
     if apply_preselection_filter is None:
         apply_preselection_filter = APPLY_PRESELECTION_FILTER
     if groups is None:
@@ -258,133 +247,263 @@ def add_selection(
     ####### Parameters ########
     ###########################
 
-    # tau vs jet working points of the fake factor regions. Era independent,
-    # see the module docstring: the isolated leg is `id_tau_vsJet_Medium_*`,
-    # the anti-isolated one `id_tau_vsJet_VVVLoose_*`.
+    # tau vs jet working points of the fake factor regions
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            "ff_tau_iso_vsjet_wp": "Medium",
-            "ff_tau_antiiso_vsjet_wp": "VVVLoose",
+            "ff_tau_iso_vsjet_wp": FF_TAU_ISO_VSJET_WP,
+            "ff_tau_antiiso_vsjet_wp": FF_TAU_ANTIISO_VSJET_WP,
         },
     )
 
-    # light lepton isolation of the fake factor regions, era independent as
-    # well: the single threshold `iso_1 < 0.15` (and its complement
-    # `iso_1 >= 0.15`, used by the QCD DR-to-SR / AR-to-SR corrections) is
-    # shared by every region of et and mt
+    # light lepton isolation of the fake factor regions
     configuration.add_config_parameters(
         ["et", "mt"],
         {
-            "lep_iso_max": 0.15,
+            "lep_iso_max": LEP_ISO_MAX,
         },
     )
 
-    # preselection thresholds, tau ID working points and trigger flag names
-    configuration.add_config_parameters(
-        ["et"],
-        {
-            "presel_vsele_wp": "Tight",
-            "presel_vsmu_wp": "VLoose_Tight",
-            "presel_pt_1": 32.0,  # electron pt
-            "presel_pt_2": 20.0,  # tau pt
-            "presel_trigger_flag": "trg_single_ele30",
-        },
-    )
-    configuration.add_config_parameters(
-        ["mt"],
-        {
-            "presel_vsele_wp": "VVLoose",
-            "presel_vsmu_wp": "Tight_VVLoose",
-            "presel_pt_1": 26.0,  # muon pt
-            "presel_pt_2": 20.0,  # tau pt
-            "presel_trigger_flag": "trg_single_mu24",
-        },
-    )
+    # preselection tau ID working points and trigger flag names. The pt and eta
+    # thresholds live in `tau_triggersetup.py` and in the object selection of
+    # `config.py`, see the note at the top of `producers/selection.py`.
+    for scope in ["et", "mt", "tt"]:
+        configuration.add_config_parameters(
+            [scope],
+            {
+                "presel_vsele_wp": PRESEL_VSELE_WP[scope],
+                "presel_vsmu_wp": PRESEL_VSMU_WP[scope],
+            },
+        )
+    for scope in ["et", "mt", "em"]:
+        configuration.add_config_parameters(
+            [scope],
+            {
+                "presel_trigger_flag": PRESEL_TRIGGER_FLAG[scope],
+            },
+        )
     configuration.add_config_parameters(
         ["tt"],
         {
-            "presel_vsele_wp": "VVLoose",
-            "presel_vsmu_wp": "VLoose_VVLoose",
-            # the only era dependence of the whole selection: the double tau
-            # trigger changed from the HPS to the PNet path in 2024, together
-            # with the offline tau pt threshold (40 -> 35 GeV). The flag name is
-            # the very one the tt pair is triggered on, so it is taken straight
-            # from the trigger setup instead of being spelled out again.
-            "presel_pt_1": EraModifier(
-                {hps_era: 40.0 for hps_era in DOUBLETAU_HPS_ERAS},
-                default=35.0,  # 2024, 2025, 2026
-            ),
-            "presel_pt_2": EraModifier(
-                {hps_era: 40.0 for hps_era in DOUBLETAU_HPS_ERAS},
-                default=35.0,  # 2024, 2025, 2026
-            ),
             "presel_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
         },
     )
     configuration.add_config_parameters(
         ["em"],
         {
-            "presel_abs_eta_1": 2.5,  # electron eta
-            "presel_pt_1": 25.0,  # electron pt
-            "presel_pt_2": 26.0,  # muon pt
-            "presel_trigger_flag": "trg_single_mu24",
+            "presel_pt_1": PRESEL_PT_1_EM,  # electron pt
         },
     )
 
     #########################
-    # Producers of the atomic cuts
+    # Producers of the cuts and of the full masks
+    #
+    # The order is a valid dependency order (the combined lepton veto after the
+    # three single vetoes, the charge product before the sign flags, every flag
+    # before the mask that combines it), because a friend production takes the
+    # producer order straight from the configuration instead of optimizing it.
     #########################
 
-    # driven by the `FLAGS` and `MASKS` tables of `producers/selection.py`,
-    # split into the requested groups by `group_producers()` above: a scope gets
-    # exactly the masks of the booked groups and exactly the atomic flags those
-    # masks read. In a friend production the handful of flag producers that
-    # declare their `output_group` only to be ordered after it are swapped for
-    # their input-less `*_friend` twins, since in a friend job that group does
-    # not run and the column comes from the input ntuple.
-    friend_flags = selection.FRIEND_FLAGS if friend else {}
-    booked = {scope: group_producers(scope, groups) for scope in selection.MASKS}
-    for scope, (public_producers, flag_producers) in booked.items():
-        configuration.add_producers(
-            [scope],
-            [friend_flags.get(producer, producer) for producer in flag_producers],
-        )
+    for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
+        variants = friend_variants(scope, era) if friend else {}
 
-    #########################
-    # The masks and their output branches
-    #########################
+        def pick(*producers):
+            return [variants.get(producer, producer) for producer in producers]
 
-    # every producer of a booked group writes exactly one public branch: the
-    # masks of the region table, plus `sel_os` / `sel_ss`, which belong to the
-    # preselection group but are written directly by the charge flag producers
-    # and are therefore outputs without being masks.
-    for scope, (public_producers, flag_producers) in booked.items():
-        configuration.add_producers(
-            [scope],
-            [
-                producer
-                for producer in public_producers
-                if producer in selection.MASKS[scope]
-            ],
-        )
-        configuration.add_outputs(
-            [scope], [producer.output[0] for producer in public_producers]
-        )
+        if "preselection" in groups:
+            if scope in ["et", "mt"]:
+                configuration.add_producers(
+                    [scope],
+                    pick(
+                        selection.JetVetoMapFlag,
+                        selection.PreselTriggerFlag,
+                        selection.PreselVsEleTauID_2,
+                        selection.PreselVsMuTauID_2,
+                        selection.presel_mask,
+                    ),
+                )
+            elif scope == "tt":
+                configuration.add_producers(
+                    [scope],
+                    pick(
+                        selection.JetVetoMapFlag,
+                        selection.PreselTriggerFlag_tt,
+                        # both tau legs, hence every tau flag twice
+                        selection.PreselVsEleTauID_1,
+                        selection.PreselVsEleTauID_2,
+                        selection.PreselVsMuTauID_1,
+                        selection.PreselVsMuTauID_2,
+                        selection.presel_mask_tt,
+                    ),
+                )
+            elif scope == "em":
+                configuration.add_producers(
+                    [scope],
+                    pick(
+                        selection.JetVetoMapFlag,
+                        selection.PreselTriggerFlag,
+                        selection.PreselPt_1,
+                        selection.presel_mask_em,
+                    ),
+                )
+            configuration.add_outputs([scope], [q.presel_mask])
+
+        if "regions" in groups:
+            if scope in ["et", "mt"]:
+                configuration.add_producers(
+                    [scope],
+                    pick(
+                        # `q_1 * q_2`, the shared input of both sign flags
+                        selection.ChargeProduct,
+                        selection.OppositeSignFlag,
+                        selection.SameSignFlag,
+                        selection.NoExtraElectronFlag,
+                        selection.NoExtraMuonFlag,
+                        selection.NoDileptonFlag,
+                        selection.LeptonVetoFlag,
+                        selection.LeptonVetoInvertedFlag,
+                        selection.TauIsoFlag_2,
+                        selection.TauNonIsoFlag_2,
+                        selection.TauVVVLooseFlag_2,
+                        selection.MtBelow70Flag,
+                        selection.WjetsMtFlag,
+                        selection.NBtagEqZeroFlag,
+                        selection.TTbarNBtagFlag,
+                        selection.LepIsoFlag,
+                        selection.LepAntiIsoFlag,
+                        # QCD
+                        selection.ff_qcd_SRlike,
+                        selection.ff_qcd_ARlike,
+                        # W+jets
+                        selection.ff_wjets_SRlike,
+                        selection.ff_wjets_ARlike,
+                        selection.ff_wjets_SRlike_ss,
+                        selection.ff_wjets_ARlike_ss,
+                        # ttbar
+                        selection.ff_ttbar_SR,
+                        selection.ff_ttbar_AR,
+                        selection.ff_ttbar_SRlike,
+                        selection.ff_ttbar_ARlike,
+                        selection.ff_ttbar_SRlike_ss,
+                        selection.ff_ttbar_ARlike_ss,
+                        # process fractions
+                        selection.ff_fraction_SR,
+                        selection.ff_fraction_AR,
+                        # QCD DR/AR to SR corrections
+                        selection.ff_qcd_DR_SR_SRlike,
+                        selection.ff_qcd_DR_SR_ARlike,
+                        selection.ff_qcd_AR_SR_SRlike,
+                        selection.ff_qcd_AR_SR_ARlike,
+                        # W+jets DR/AR to SR corrections
+                        selection.ff_wjets_DR_SR_SRlike,
+                        selection.ff_wjets_DR_SR_ARlike,
+                        selection.ff_wjets_DR_SR_SRlike_ss,
+                        selection.ff_wjets_DR_SR_ARlike_ss,
+                        selection.ff_wjets_AR_SR_SRlike,
+                        selection.ff_wjets_AR_SR_ARlike,
+                        selection.ff_wjets_AR_SR_SRlike_ss,
+                        selection.ff_wjets_AR_SR_ARlike_ss,
+                    ),
+                )
+                configuration.add_outputs(
+                    [scope],
+                    [
+                        q.ff_qcd_SRlike,
+                        q.ff_qcd_ARlike,
+                        q.ff_wjets_SRlike,
+                        q.ff_wjets_ARlike,
+                        q.ff_wjets_SRlike_ss,
+                        q.ff_wjets_ARlike_ss,
+                        q.ff_ttbar_SR,
+                        q.ff_ttbar_AR,
+                        q.ff_ttbar_SRlike,
+                        q.ff_ttbar_ARlike,
+                        q.ff_ttbar_SRlike_ss,
+                        q.ff_ttbar_ARlike_ss,
+                        q.ff_fraction_SR,
+                        q.ff_fraction_AR,
+                        q.ff_qcd_DR_SR_SRlike,
+                        q.ff_qcd_DR_SR_ARlike,
+                        q.ff_qcd_AR_SR_SRlike,
+                        q.ff_qcd_AR_SR_ARlike,
+                        q.ff_wjets_DR_SR_SRlike,
+                        q.ff_wjets_DR_SR_ARlike,
+                        q.ff_wjets_DR_SR_SRlike_ss,
+                        q.ff_wjets_DR_SR_ARlike_ss,
+                        q.ff_wjets_AR_SR_SRlike,
+                        q.ff_wjets_AR_SR_ARlike,
+                        q.ff_wjets_AR_SR_SRlike_ss,
+                        q.ff_wjets_AR_SR_ARlike_ss,
+                    ],
+                )
+            elif scope == "tt":
+                configuration.add_producers(
+                    [scope],
+                    pick(
+                        selection.ChargeProduct,
+                        selection.OppositeSignFlag,
+                        selection.SameSignFlag,
+                        selection.NoExtraElectronFlag,
+                        selection.NoExtraMuonFlag,
+                        selection.NoDileptonFlag,
+                        selection.LeptonVetoFlag,
+                        selection.TauIsoFlag_1,
+                        selection.TauIsoFlag_2,
+                        selection.TauNonIsoFlag_1,
+                        selection.TauNonIsoFlag_2,
+                        selection.TauVVVLooseFlag_1,
+                        selection.TauVVVLooseFlag_2,
+                        # QCD, leading tau
+                        selection.ff_qcd_SRlike_tt,
+                        selection.ff_qcd_ARlike_tt,
+                        # QCD, subleading tau
+                        selection.ff_qcd_sub_SRlike_tt,
+                        selection.ff_qcd_sub_ARlike_tt,
+                        # process fractions
+                        selection.ff_fraction_SR_tt,
+                        selection.ff_fraction_AR_tt,
+                        selection.ff_fraction_sub_SR_tt,
+                        selection.ff_fraction_sub_AR_tt,
+                        # DR/AR to SR corrections, leading tau
+                        selection.ff_qcd_DR_SR_SRlike_tt,
+                        selection.ff_qcd_DR_SR_ARlike_tt,
+                        selection.ff_qcd_AR_SR_SRlike_tt,
+                        selection.ff_qcd_AR_SR_ARlike_tt,
+                        # DR/AR to SR corrections, subleading tau
+                        selection.ff_qcd_sub_DR_SR_SRlike_tt,
+                        selection.ff_qcd_sub_DR_SR_ARlike_tt,
+                        selection.ff_qcd_sub_AR_SR_SRlike_tt,
+                        selection.ff_qcd_sub_AR_SR_ARlike_tt,
+                    ),
+                )
+                configuration.add_outputs(
+                    [scope],
+                    [
+                        q.ff_qcd_SRlike,
+                        q.ff_qcd_ARlike,
+                        q.ff_qcd_sub_SRlike,
+                        q.ff_qcd_sub_ARlike,
+                        q.ff_fraction_SR,
+                        q.ff_fraction_AR,
+                        q.ff_fraction_sub_SR,
+                        q.ff_fraction_sub_AR,
+                        q.ff_qcd_DR_SR_SRlike,
+                        q.ff_qcd_DR_SR_ARlike,
+                        q.ff_qcd_AR_SR_SRlike,
+                        q.ff_qcd_AR_SR_ARlike,
+                        q.ff_qcd_sub_DR_SR_SRlike,
+                        q.ff_qcd_sub_DR_SR_ARlike,
+                        q.ff_qcd_sub_AR_SR_SRlike,
+                        q.ff_qcd_sub_AR_SR_ARlike,
+                    ],
+                )
+            # em has no fake factor regions yet
 
     ################################
     ######### Modifications ########
     ################################
 
-    # tt embedding samples read the double tau trigger flags from a different
-    # `output_group`, so the trigger flag producer has to follow that one. A
-    # friend production has no trigger group to follow and already uses the
-    # input-less twin for every sample, so it needs no rule -- and must not get
-    # one, because a rule appends the replacement at the end of the producer
-    # list, and a friend production runs the producers in exactly that order.
-    # A production without the preselection group has no trigger flag producer
-    # to replace either.
-    if not friend and selection.PreselTriggerFlag_tt in booked["tt"][1]:
+    if not friend and "preselection" in groups and "tt" in scopes:
         configuration.add_modification_rule(
             "tt",
             ReplaceProducer(
@@ -399,11 +518,9 @@ def add_selection(
     # the opt-in hard filter on the preselection
     if apply_preselection_filter:
         configuration.add_modification_rule(
-            list(selection.MASKS),
+            [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes],
             AppendProducer(
                 producers=[selection.PreselectionFilter],
-                # the filter applies to every sample; a ProducerRule insists on
-                # an explicit sample list, so pass all of them
                 samples=list(configuration.available_sample_types),
             ),
         )
@@ -411,52 +528,17 @@ def add_selection(
     return configuration
 
 
-def restrict_selection_shifts(configuration: Configuration, scopes) -> Configuration:
-    """Drop the systematic copies of the masks that are only used on nominal.
+def restrict_selection_shifts(configuration: Configuration, scopes, shifts=None) -> Configuration:
+    """Keep the fake factor regions on nominal only.
 
-    Must be called *after* the systematic shifts have been added, because
-    shifts propagate from the shifted inputs (tau energy scale, MET, jets, ...)
-    down to every mask at `add_shift` time.
-
-    Only `MASKS_WITH_SHIFTS` keep their shifted copies; without this, each of
-    the ~26 fake factor masks of et/mt would be duplicated once per systematic
-    variation, adding thousands of branches that no consumer reads. The
-    internal `selcut_*` flags that feed exclusively into those masks are
-    trimmed as well, so that no unused shifted column is computed at all.
-
-    `Quantity.get_shifts` does not consult `ignored_shifts`, so the already
-    collected shifts have to be dropped explicitly; `ignore_shift` is called in
-    addition to keep any later propagation from re-adding them.
+    `shifts` are the shift names that are going to be added later on. A main
+    production has already added its shifts when this runs and needs none, a
+    friend production adds them in `optimize()` and has to announce them here.
     """
+    announced = list(shifts or [])
     for scope in scopes:
-        if scope not in selection.MASKS:
-            continue
-        keep, drop = set(), set()
-        # sub-flags that only feed other selcut_* flags and therefore never
-        # appear in the region table itself
-        if scope != "em":
-            drop.update(
-                [
-                    q.selcut_no_extraelec,
-                    q.selcut_no_extramuon,
-                    q.selcut_no_dilepton,
-                ]
-            )
-        for producer in selection.MASKS[scope]:
-            mask, flags = producer.output[0], producer.input[scope]
-            if mask.name in MASKS_WITH_SHIFTS:
-                keep.update(flags)
-            else:
-                drop.add(mask)
-                drop.update(flags)
-        drop = {
-            quantity
-            for quantity in drop
-            if quantity not in keep and quantity.name not in MASKS_WITH_SHIFTS
-        }
-
-        for quantity in drop:
-            for shift in list(quantity.shifts.get(scope, set())):
+        for quantity in NOMINAL_ONLY_QUANTITIES:
+            for shift in list(quantity.shifts.get(scope, set())) + announced:
                 quantity.ignore_shift(shift, scope)
             quantity.shifts[scope] = set()
 
