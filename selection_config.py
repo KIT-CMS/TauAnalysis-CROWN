@@ -86,7 +86,7 @@ def add_selection(
     era: str,
     sample: str,
     apply_preselection_filter=None,
-    friend=False,
+    friend_flags=None,
     groups=None,
 ) -> Configuration:
     if apply_preselection_filter is None:
@@ -162,9 +162,7 @@ def add_selection(
     #########################
 
     for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
-        variants = selection.FRIEND_FLAGS if friend else {}
-        if friend:
-            selection.set_friend_columns(configuration, scope)
+        variants = friend_flags(configuration, scope) if friend_flags else {}
 
         def pick(*producers):
             return [variants.get(producer, producer) for producer in producers]
@@ -364,7 +362,7 @@ def add_selection(
 
     # only Run 2 swaps in the embedding ditau trigger group, see tau_embedding_settings.py
     if (
-        not friend
+        not friend_flags
         and "preselection" in groups
         and "tt" in scopes
         and int(era[:4]) < 2022

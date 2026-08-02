@@ -1,12 +1,11 @@
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import Producer, Quantity, BaseFilter, defaults
+from ..scripts.CROWNWrapper import Producer, BaseFilter, defaults
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
 
 # a `_friend` producer reads its column from the input ntuple, where the
-# `output_group` that writes it in the main production does not run. It has to
-# name the column as a real input, otherwise a friend production neither checks
-# that it is there nor swaps in its shifted copy.
+# `output_group` that writes it in the main production does not run.
+# `selection_friends.py` names that column and pairs the variants up.
 
 
 ##############################################################################
@@ -17,7 +16,6 @@ with defaults(
     scopes=["et", "mt", "tt"],
     call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
 ):
-    # id_tau_vsEle_<WP>_2 > 0.5 and id_tau_vsMu_<WP>_2 > 0.5
     # non tau vsJet iso/wp in preselection since ff don't use this
     with defaults(output=[q.selcut_presel_vsele_2]):
         PreselVsEleTauID_2 = Producer(
@@ -763,61 +761,6 @@ with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}
         ],
         output=[q.presel_mask],
     )
-
-
-##############################################################################
-# main production producer -> the variant a friend production uses instead
-##############################################################################
-
-FRIEND_FLAGS = {
-    PreselTriggerFlag: PreselTriggerFlag_friend,
-    PreselTriggerFlag_tt: PreselTriggerFlag_tt_friend,
-    PreselVsEleTauID_1: PreselVsEleTauID_1_friend,
-    PreselVsEleTauID_2: PreselVsEleTauID_2_friend,
-    PreselVsMuTauID_1: PreselVsMuTauID_1_friend,
-    PreselVsMuTauID_2: PreselVsMuTauID_2_friend,
-    TauIsoFlag_1: TauIsoFlag_1_friend,
-    TauIsoFlag_2: TauIsoFlag_2_friend,
-    TauNonIsoFlag_1: TauNonIsoFlag_1_friend,
-    TauNonIsoFlag_2: TauNonIsoFlag_2_friend,
-    TauVVVLooseFlag_1: TauVVVLooseFlag_1_friend,
-    TauVVVLooseFlag_2: TauVVVLooseFlag_2_friend,
-}
-
-# the column each friend variant reads, as the call of its main variant writes
-# it. `set_friend_columns` fills in the working points and the era dependent
-# ditau flag from the configuration parameters.
-FRIEND_COLUMNS = {
-    PreselTriggerFlag_friend: "{presel_trigger_flag}",
-    PreselTriggerFlag_tt_friend: "{presel_trigger_flag}",
-    PreselVsEleTauID_1_friend: "id_tau_vsEle_{presel_vsele_wp}_1",
-    PreselVsEleTauID_2_friend: "id_tau_vsEle_{presel_vsele_wp}_2",
-    PreselVsMuTauID_1_friend: "id_tau_vsMu_{presel_vsmu_wp}_1",
-    PreselVsMuTauID_2_friend: "id_tau_vsMu_{presel_vsmu_wp}_2",
-    TauIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
-    TauIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
-    TauNonIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
-    TauNonIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
-    TauVVVLooseFlag_1_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1",
-    TauVVVLooseFlag_2_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2",
-}
-
-
-def set_friend_columns(configuration, scope: str) -> None:
-    """Point the friend variants at the columns the parameters of `scope` name.
-
-    Their input is what a friend production matches against the shift map of
-    the ntuple, so it has to be a quantity carrying the resolved column name,
-    which is only known once `add_config_parameters` ran.
-    """
-    parameters = configuration.config_parameters[scope]
-    for producer, template in FRIEND_COLUMNS.items():
-        if scope not in producer.scopes:
-            continue
-        column = Quantity(template.format(**parameters))
-        for output_quantity in producer.output:
-            column.adopt(output_quantity, scope)
-        producer.input[scope] = [column]
 
 
 ##############################################################################

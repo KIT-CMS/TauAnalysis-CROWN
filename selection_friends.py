@@ -2,11 +2,70 @@ from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
 
+from .producers import selection as selection
+from .scripts.CROWNWrapper import Quantity
 from .selection_config import (
     FRIEND_MASK_GROUPS,
     add_selection,
     restrict_selection_shifts,
 )
+
+
+##############################################################################
+# main production producer -> the variant this production uses instead
+##############################################################################
+
+FRIEND_FLAGS = {
+    selection.PreselTriggerFlag: selection.PreselTriggerFlag_friend,
+    selection.PreselTriggerFlag_tt: selection.PreselTriggerFlag_tt_friend,
+    selection.PreselVsEleTauID_1: selection.PreselVsEleTauID_1_friend,
+    selection.PreselVsEleTauID_2: selection.PreselVsEleTauID_2_friend,
+    selection.PreselVsMuTauID_1: selection.PreselVsMuTauID_1_friend,
+    selection.PreselVsMuTauID_2: selection.PreselVsMuTauID_2_friend,
+    selection.TauIsoFlag_1: selection.TauIsoFlag_1_friend,
+    selection.TauIsoFlag_2: selection.TauIsoFlag_2_friend,
+    selection.TauNonIsoFlag_1: selection.TauNonIsoFlag_1_friend,
+    selection.TauNonIsoFlag_2: selection.TauNonIsoFlag_2_friend,
+    selection.TauVVVLooseFlag_1: selection.TauVVVLooseFlag_1_friend,
+    selection.TauVVVLooseFlag_2: selection.TauVVVLooseFlag_2_friend,
+}
+
+# the column each friend variant reads, as the call of its main variant writes
+# it. `friend_flags` fills in the working points and the era dependent ditau
+# flag from the configuration parameters.
+FRIEND_COLUMNS = {
+    selection.PreselTriggerFlag_friend: "{presel_trigger_flag}",
+    selection.PreselTriggerFlag_tt_friend: "{presel_trigger_flag}",
+    selection.PreselVsEleTauID_1_friend: "id_tau_vsEle_{presel_vsele_wp}_1",
+    selection.PreselVsEleTauID_2_friend: "id_tau_vsEle_{presel_vsele_wp}_2",
+    selection.PreselVsMuTauID_1_friend: "id_tau_vsMu_{presel_vsmu_wp}_1",
+    selection.PreselVsMuTauID_2_friend: "id_tau_vsMu_{presel_vsmu_wp}_2",
+    selection.TauIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
+    selection.TauIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
+    selection.TauNonIsoFlag_1_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1",
+    selection.TauNonIsoFlag_2_friend: "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2",
+    selection.TauVVVLooseFlag_1_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1",
+    selection.TauVVVLooseFlag_2_friend: "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2",
+}
+
+
+def friend_flags(configuration, scope: str):
+    """Point the friend variants at the columns the parameters of `scope` name.
+
+    Their input is what this production matches against the shift map of the
+    ntuple, so it has to be a quantity carrying the resolved column name, which
+    is only known once `add_selection` added the parameters. Handed to
+    `add_selection`, which calls this once the parameters are in.
+    """
+    parameters = configuration.config_parameters[scope]
+    for producer, template in FRIEND_COLUMNS.items():
+        if scope not in producer.scopes:
+            continue
+        column = Quantity(template.format(**parameters))
+        for output_quantity in producer.output:
+            column.adopt(output_quantity, scope)
+        producer.input[scope] = [column]
+    return FRIEND_FLAGS
 
 
 def build_config(
@@ -30,10 +89,7 @@ def build_config(
         quantities_map,
     )
 
-    # Every shift the input ntuple carries is propagated to the preselection:
-    # the flags read their columns from the ntuple, so `optimize()` swaps in the
-    # shifted copy of each of them and `presel_mask` inherits the shift. The
-    # fake factor regions are frozen to nominal below.
+    # Every shift the input ntuple carries is propagated to the preselection
     shifts_to_add = [
         "__" + shift
         for scope in configuration.selected_scopes
@@ -58,7 +114,7 @@ def build_config(
         era,
         sample,
         apply_preselection_filter=False,
-        friend=True,
+        friend_flags=friend_flags,
         groups=FRIEND_MASK_GROUPS,
     )
 
