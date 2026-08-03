@@ -1,9 +1,17 @@
 from code_generation.configuration import Configuration
+from code_generation.modifiers import EraModifier
 from code_generation.rules import AppendProducer, ReplaceProducer
 
 from .producers import selection as selection
+from .producers import triggers as triggers
 from .quantities import output as q
-from .tau_triggersetup import DOUBLETAU_TRIGGER_FLAG
+from .tau_triggersetup import (
+    DOUBLETAU_TRIGGER_FLAG,
+    RUN2_ERAS,
+    singlemuon_trigger_flags,
+    singleelectron_trigger_flags,
+    doubletau_trigger_flags,
+)
 
 ##############################################################################
 # module level switches
@@ -35,6 +43,9 @@ NOMINAL_ONLY_QUANTITIES = (
     q.selcut_tau_vvvloose_2,
     q.selcut_lep_iso,
     q.selcut_lep_antiiso,
+    q.selcut_lep_iso_qcd_run2,
+    q.selcut_lep_iso_min_qcd_run2,
+    q.selcut_mt_lt_50_qcd_run2,
     q.selcut_mt_lt_70,
     q.selcut_wjets_mt,
     q.selcut_nbtag_eq_0,
@@ -105,12 +116,19 @@ def add_selection(
     ####### Parameters ########
     ###########################
 
-    # tau vs jet working points of the fake factor regions
+    # tau vs jet working points of the fake factor regions. Run 2 (smhtt_ul's
+    # fake_factors_{mt,et,tt}.yaml) uses Tight/VLoose instead of Run 3's
+    # Medium/VVVLoose; the region logic itself (selection.py's ff_* producers)
+    # is unchanged and shared between eras.
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            "ff_tau_iso_vsjet_wp": "Medium",
-            "ff_tau_antiiso_vsjet_wp": "VVVLoose",
+            "ff_tau_iso_vsjet_wp": EraModifier(
+                {era: "Tight" for era in RUN2_ERAS}, default="Medium"
+            ),
+            "ff_tau_antiiso_vsjet_wp": EraModifier(
+                {era: "VLoose" for era in RUN2_ERAS}, default="VVVLoose"
+            ),
         },
     )
 
@@ -120,6 +138,19 @@ def add_selection(
         {
             "lep_iso_max": 0.15,
         },
+    )
+
+    # Run 2 QCD region: fake_factors_{mt,et}.yaml narrow the lepton isolation
+    # window on the low side too (mt: [0.05, 0.15], et: [0.02, 0.15]), unlike
+    # Run 3 and unlike the other Run 2 regions (Wjets/ttbar/fractions), which
+    # just cut `iso_1 < lep_iso_max`.
+    configuration.add_config_parameters(
+        ["mt"],
+        {"lep_iso_min_qcd": EraModifier({era: 0.05 for era in RUN2_ERAS}, default=0.0)},
+    )
+    configuration.add_config_parameters(
+        ["et"],
+        {"lep_iso_min_qcd": EraModifier({era: 0.02 for era in RUN2_ERAS}, default=0.0)},
     )
 
     # preselection tau ID working points and trigger flag names. The pt and eta
@@ -164,8 +195,57 @@ def add_selection(
     for scope in [scope for scope in ["et", "mt", "tt", "em"] if scope in scopes]:
         variants = friend_flags(configuration, scope) if friend_flags else {}
 
+        # Run 2 differs from Run 3 in a few places that are not just a config
+        # parameter: there is no jet veto map (removed for Run 2 in
+        # config.py), and the QCD/ttbar region producers have a different
+        # shape (see selection.py). `None` means "drop this producer".
+        run2_swaps = {}
+        if not friend_flags and int(era[:4]) < 2022:
+            run2_swaps[selection.JetVetoMapFlag] = None
+            if scope in ["et", "mt"]:
+                run2_swaps.update(
+                    {
+                        selection.presel_mask: selection.presel_mask_Run2,
+                        selection.PreselVsEleTauID_2: selection.PreselVsEleTauID_2_Run2,
+                        selection.PreselVsMuTauID_2: selection.PreselVsMuTauID_2_Run2,
+                        selection.TauIsoFlag_2: selection.TauIsoFlag_2_Run2,
+                        selection.TauNonIsoFlag_2: selection.TauNonIsoFlag_2_Run2,
+                        selection.TauVVVLooseFlag_2: selection.TauVVVLooseFlag_2_Run2,
+                        selection.ff_qcd_SRlike: selection.ff_qcd_SRlike_Run2,
+                        selection.ff_qcd_ARlike: selection.ff_qcd_ARlike_Run2,
+                        selection.ff_ttbar_SR: selection.ff_ttbar_SR_Run2,
+                        selection.ff_ttbar_AR: selection.ff_ttbar_AR_Run2,
+                        selection.ff_ttbar_SRlike: selection.ff_ttbar_SRlike_Run2,
+                        selection.ff_ttbar_ARlike: selection.ff_ttbar_ARlike_Run2,
+                    }
+                )
+            elif scope == "tt":
+                run2_swaps.update(
+                    {
+                        selection.presel_mask_tt: selection.presel_mask_tt_Run2,
+                        selection.PreselVsEleTauID_1: selection.PreselVsEleTauID_1_Run2,
+                        selection.PreselVsEleTauID_2: selection.PreselVsEleTauID_2_Run2,
+                        selection.PreselVsMuTauID_1: selection.PreselVsMuTauID_1_Run2,
+                        selection.PreselVsMuTauID_2: selection.PreselVsMuTauID_2_Run2,
+                        selection.TauIsoFlag_1: selection.TauIsoFlag_1_Run2,
+                        selection.TauIsoFlag_2: selection.TauIsoFlag_2_Run2,
+                        selection.TauNonIsoFlag_1: selection.TauNonIsoFlag_1_Run2,
+                        selection.TauNonIsoFlag_2: selection.TauNonIsoFlag_2_Run2,
+                        selection.TauVVVLooseFlag_1: selection.TauVVVLooseFlag_1_Run2,
+                        selection.TauVVVLooseFlag_2: selection.TauVVVLooseFlag_2_Run2,
+                    }
+                )
+            elif scope == "em":
+                run2_swaps[selection.presel_mask_em] = selection.presel_mask_em_Run2
+
         def pick(*producers):
-            return [variants.get(producer, producer) for producer in producers]
+            result = []
+            for p in producers:
+                swapped = run2_swaps.get(p, p)
+                if swapped is None:
+                    continue
+                result.append(variants.get(swapped, swapped))
+            return result
 
         if "preselection" in groups:
             if scope in ["et", "mt"]:
@@ -228,6 +308,11 @@ def add_selection(
                         selection.TTbarNBtagFlag,
                         selection.LepIsoFlag,
                         selection.LepAntiIsoFlag,
+                        *(
+                            [selection.LepIsoQCDWindowFlag_Run2, selection.MtBelow50Flag_Run2]
+                            if run2_swaps
+                            else []
+                        ),
                         # QCD
                         selection.ff_qcd_SRlike,
                         selection.ff_qcd_ARlike,
@@ -377,6 +462,57 @@ def add_selection(
                 samples=["embedding"],
             ),
         )
+
+    # Run 2: the hard-coded single-name `presel_trigger_flag` config
+    # parameter above only works for Run 3, where a single HLT path is
+    # sufficient. Run 2 needs an OR of several paths per era/channel,
+    # matching smhtt_ul's channel_selection.py; swap the preselection trigger
+    # flag producer for one that ORs the right flags together. Only applied
+    # to the main ntuple production (friends do not exist for Run 2 yet).
+    if not friend_flags and "preselection" in groups and int(era[:4]) < 2022:
+        run2_singlelepton_trigger = {
+            "mt": (triggers.MTGenerateSingleMuonTriggerFlags, singlemuon_trigger_flags),
+            "et": (triggers.ETGenerateSingleElectronTriggerFlags, singleelectron_trigger_flags),
+        }
+        for scope, (source_producer, flagnames_fn) in run2_singlelepton_trigger.items():
+            if scope not in scopes:
+                continue
+            try:
+                flagnames = flagnames_fn(scope, era)
+            except NotImplementedError:
+                # not every Run 2 era has a trigger defined in smhtt_ul either;
+                # leave the (broken) Run 3 default alone rather than guess
+                continue
+            configuration.add_modification_rule(
+                scope,
+                ReplaceProducer(
+                    producers=[
+                        selection.PreselTriggerFlag,
+                        selection.build_trigger_or_flag(
+                            scope, flagnames, [q.selcut_presel_trigger], source_producer
+                        ),
+                    ],
+                    samples=list(configuration.available_sample_types),
+                ),
+            )
+        # tt: only 2018 has a trigger defined in smhtt_ul (2016/2017 are
+        # unimplemented there too); embedding keeps its own swap above.
+        if "tt" in scopes and era == "2018":
+            configuration.add_modification_rule(
+                "tt",
+                ReplaceProducer(
+                    producers=[
+                        selection.PreselTriggerFlag_tt,
+                        selection.build_trigger_or_flag(
+                            "tt",
+                            doubletau_trigger_flags(era),
+                            [q.selcut_presel_trigger],
+                            triggers.TTGenerateDoubleTauTriggerFlags,
+                        ),
+                    ],
+                    exclude_samples=["embedding"],
+                ),
+            )
 
     # the opt-in hard filter on the preselection
     if apply_preselection_filter:

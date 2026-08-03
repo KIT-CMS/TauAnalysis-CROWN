@@ -64,6 +64,80 @@ DOUBLETAU_TRIGGER_SF_NAME = EraModifier(
 )
 
 
+# ----------------------------------------------------------------------------
+# hard OR-of-flags trigger requirements, mirroring smhtt_ul's
+# config/shapes/channel_selection.py. Unlike the SF machinery above (single
+# named flag per era, used for the trigger scale factor lookup), the actual
+# preselection sometimes needs an OR of several HLT paths per era; the ptcut
+# per flag above already encodes the offline pt threshold, so no separate
+# pt cut is added here.
+# ----------------------------------------------------------------------------
+
+
+def singlemuon_trigger_flags(channel: str, era: str) -> list:
+    """flag names to OR for a hard single muon trigger requirement"""
+    run2_table = {
+        "mt": {
+            "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+            "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+            "2017": ["trg_single_mu27"],
+            "2018": ["trg_single_mu24", "trg_single_mu27"],
+        },
+        "mm": {
+            "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+            "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+            "2017": ["trg_single_mu27"],
+            "2018": ["trg_single_mu27"],
+        },
+    }
+    if channel not in run2_table:
+        raise ValueError(f"No single muon trigger definition for channel {channel}")
+    if era in run2_table[channel]:
+        return run2_table[channel][era]
+    if int(era[:4]) < 2022:
+        raise NotImplementedError(f"{channel} single muon trigger not implemented for {era} (matches smhtt_ul)")
+    return ["trg_single_mu24"]  # Run 3 default, shared by mt/mm/em
+
+
+def singleelectron_trigger_flags(channel: str, era: str) -> list:
+    """flag names to OR for a hard single electron trigger requirement"""
+    run2_table = {
+        "et": {
+            "2017": ["trg_single_ele32", "trg_single_ele35"],
+            "2018": ["trg_single_ele32", "trg_single_ele35"],
+        },
+        "ee": {
+            "2016preVFP": ["trg_single_ele25"],
+            "2016postVFP": ["trg_single_ele25"],
+            "2017": ["trg_single_ele35"],
+            "2018": ["trg_single_ele32", "trg_single_ele35"],
+        },
+    }
+    if channel not in run2_table:
+        raise ValueError(f"No single electron trigger definition for channel {channel}")
+    if era in run2_table[channel]:
+        return run2_table[channel][era]
+    if int(era[:4]) < 2022:
+        raise NotImplementedError(f"{channel} single electron trigger not implemented for {era} (matches smhtt_ul)")
+    return ["trg_single_ele30"]  # Run 3 default, shared by et/em/ee
+
+
+def doubletau_trigger_flags(era: str) -> list:
+    """flag names to OR for a hard double tau trigger requirement (tt channel).
+
+    Only covers Run 2 (only 2018 is implemented in smhtt_ul); Run 3 keeps using
+    the single-flag `DOUBLETAU_TRIGGER_FLAG` mechanism already in place.
+    """
+    if era == "2018":
+        return [
+            "trg_double_tau35_tightiso_tightid",
+            "trg_double_tau35_mediumiso_hps",
+            "trg_double_tau40_mediumiso_tightid",
+            "trg_double_tau40_tightiso",
+        ]
+    raise NotImplementedError(f"tt double tau trigger not implemented for {era} (matches smhtt_ul)")
+
+
 def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
 
     #######################
@@ -973,7 +1047,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     configuration.add_config_parameters(
         ["ee"],
         {
-            "doubleelectron_trigger": doubleelectron_trigger_defaults,
+            "doubleelectron_trigger": [doubleelectron_trigger_defaults],
         },
     )
 

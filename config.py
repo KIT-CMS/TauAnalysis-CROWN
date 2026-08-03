@@ -12,12 +12,17 @@ from .producers import muons as muons
 from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
+from .producers import selection as selection
 from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
 from .selection_config import add_selection, restrict_selection_shifts
-from .tau_triggersetup import add_diTauTriggerSetup
+from .tau_triggersetup import (
+    add_diTauTriggerSetup,
+    singlemuon_trigger_flags,
+    singleelectron_trigger_flags,
+)
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
@@ -1015,6 +1020,9 @@ def build_config(
                 "max_muon_iso": 0.3,
                 "max_ele_iso": 0.3,
                 "jet_reapplyJES": False,
+                # Run 2 jet selection (GoodJets_Run2): no horn treatment, pt>30 and |eta|<4.7
+                "min_jet_pt": 30,
+                "max_jet_eta": 4.7,
             }
         )
         configuration.add_config_parameters(
@@ -1153,6 +1161,13 @@ def build_config(
         ]:
             configuration.add_config_parameters(chs, params)
 
+    # ee/mm carry no fake factor regions, so unlike et/mt/tt there is no need
+    # for a looser baseline object selection plus a separate anti-iso region:
+    # tighten the lepton isolation object cut directly, for both Run 2 and
+    # Run 3 (applied last so it wins over the Run 2 block above).
+    configuration.add_config_parameters(["mm"], {"max_muon_iso": 0.15})
+    configuration.add_config_parameters(["ee"], {"max_ele_iso": 0.15})
+
     ############################
     ######## Producers #########
     ############################
@@ -1257,6 +1272,14 @@ def build_config(
             genparticles.MuMuGenPairQuantities,
             scalefactors.MuonIDIso_SF,
             triggers.MuMuGenerateSingleMuonTriggerFlags,
+            selection.ChargeProduct,
+            selection.OppositeSignFlag,
+            selection.OppositeSignFilter_mm,
+            selection.build_trigger_or_filter(
+                "mm",
+                singlemuon_trigger_flags("mm", era),
+                triggers.MuMuGenerateSingleMuonTriggerFlags,
+            ),
         ],
     )
     configuration.add_producers(
@@ -1307,6 +1330,14 @@ def build_config(
             scalefactors.EleID_SF,
             triggers.ElElGenerateSingleElectronTriggerFlags,
             triggers.ElElGenerateDoubleMuonTriggerFlags,
+            selection.ChargeProduct,
+            selection.OppositeSignFlag,
+            selection.OppositeSignFilter_ee,
+            selection.build_trigger_or_filter(
+                "ee",
+                singleelectron_trigger_flags("ee", era),
+                triggers.ElElGenerateSingleElectronTriggerFlags,
+            ),
         ],
     )
     configuration.add_producers(
@@ -1729,14 +1760,11 @@ def build_config(
     #########################
     # Selection masks
     #########################
-    # Run 3 only at the moment, Run 2 TO DO
-    if int(era[:4]) >= 2022:
-        configuration = add_selection(configuration, scopes, era, sample)
-    
+    configuration = add_selection(configuration, scopes, era, sample)
+
     # the masks that are only consumed on nominal ntuples do not need a copy
     # per systematic shift, this has to run after the shifts were added
-    if int(era[:4]) >= 2022:
-        configuration = restrict_selection_shifts(configuration, scopes)
+    configuration = restrict_selection_shifts(configuration, scopes)
 
     #########################
     # Finalize and validate the configuration

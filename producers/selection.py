@@ -1,13 +1,8 @@
 from ..quantities import output as q
-from ..scripts.CROWNWrapper import Producer, Quantity, BaseFilter, defaults
+from ..scripts.CROWNWrapper import Producer, ProducerGroup, Quantity, BaseFilter, defaults
+from code_generation.producer import Producer as _RawProducer, BaseFilter as _RawBaseFilter
 from ..producers import pairquantities as pairquantities
 from ..producers import triggers as triggers
-
-# a `_friend` producer reads its column from the input ntuple, where the
-# `output_group` that writes it in the main production does not run. Its
-# input spells the column the way the call of its main variant does;
-# `selection_friends.py` fills the parameters in and pairs the variants up.
-
 
 ##############################################################################
 # preselection: hadronic tau requirements
@@ -23,11 +18,20 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
             input=[pairquantities.VsEleTauIDFlag_2.output_group],
         )
+        # Run 2 (nanoAODv9)
+        PreselVsEleTauID_2_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_2", 1)''',
+            input=[pairquantities.VsEleTauIDFlag_2_v9.output_group],
+        )
         PreselVsEleTauID_2_friend = Producer(input=[Quantity("id_tau_vsEle_{presel_vsele_wp}_2")])
     with defaults(output=[q.selcut_presel_vsmu_2]):
         PreselVsMuTauID_2 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
             input=[pairquantities.VsMuTauIDFlag_2.output_group],
+        )
+        PreselVsMuTauID_2_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_2", 1)''',
+            input=[pairquantities.VsMuTauIDFlag_2_v9.output_group],
         )
         PreselVsMuTauID_2_friend = Producer(input=[Quantity("id_tau_vsMu_{presel_vsmu_wp}_2")])
 
@@ -40,11 +44,19 @@ with defaults(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
             input=[pairquantities.VsEleTauIDFlag_1.output_group],
         )
+        PreselVsEleTauID_1_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsEle_{presel_vsele_wp}_1", 1)''',
+            input=[pairquantities.VsEleTauIDFlag_1_v9.output_group],
+        )
         PreselVsEleTauID_1_friend = Producer(input=[Quantity("id_tau_vsEle_{presel_vsele_wp}_1")])
     with defaults(output=[q.selcut_presel_vsmu_1]):
         PreselVsMuTauID_1 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
             input=[pairquantities.VsMuTauIDFlag_1.output_group],
+        )
+        PreselVsMuTauID_1_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsMu_{presel_vsmu_wp}_1", 1)''',
+            input=[pairquantities.VsMuTauIDFlag_1_v9.output_group],
         )
         PreselVsMuTauID_1_friend = Producer(input=[Quantity("id_tau_vsMu_{presel_vsmu_wp}_1")])
 
@@ -146,6 +158,11 @@ with defaults(scopes=["et", "mt", "tt"]):
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
             input=[pairquantities.VsJetTauIDFlag_2.output_group],
         )
+        # Run 2 (nanoAODv9): see `PreselVsEleTauID_2_Run2` above
+        TauIsoFlag_2_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 1)''',
+            input=[pairquantities.VsJetTauIDFlag_2_v9.output_group],
+        )
         TauIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
             input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2")],
@@ -155,6 +172,10 @@ with defaults(scopes=["et", "mt", "tt"]):
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 0)''',
             input=[pairquantities.VsJetTauIDFlag_2.output_group],
         )
+        TauNonIsoFlag_2_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2", 0)''',
+            input=[pairquantities.VsJetTauIDFlag_2_v9.output_group],
+        )
         TauNonIsoFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
             input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_2")],
@@ -163,6 +184,10 @@ with defaults(scopes=["et", "mt", "tt"]):
         TauVVVLooseFlag_2 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2", 1)''',
             input=[pairquantities.VsJetTauIDFlagOnly_2.output_group],
+        )
+        TauVVVLooseFlag_2_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_2", 1)''',
+            input=[pairquantities.VsJetTauIDFlagOnly_2_v9.output_group],
         )
         TauVVVLooseFlag_2_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
@@ -175,6 +200,10 @@ with defaults(scopes=["tt"]):
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
             input=[pairquantities.VsJetTauIDFlag_1.output_group],
         )
+        TauIsoFlag_1_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 1)''',
+            input=[pairquantities.VsJetTauIDFlag_1_v9.output_group],
+        )
         TauIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
             input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1")],
@@ -184,6 +213,10 @@ with defaults(scopes=["tt"]):
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 0)''',
             input=[pairquantities.VsJetTauIDFlag_1.output_group],
         )
+        TauNonIsoFlag_1_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1", 0)''',
+            input=[pairquantities.VsJetTauIDFlag_1_v9.output_group],
+        )
         TauNonIsoFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 0)''',
             input=[Quantity("id_tau_vsJet_{ff_tau_iso_vsjet_wp}_1")],
@@ -192,6 +225,10 @@ with defaults(scopes=["tt"]):
         TauVVVLooseFlag_1 = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1", 1)''',
             input=[pairquantities.VsJetTauIDFlagOnly_1.output_group],
+        )
+        TauVVVLooseFlag_1_Run2 = Producer(
+            call='''event::quantity::EqualFlag<int>({df}, {output}, "id_tau_vsJet_{ff_tau_antiiso_vsjet_wp}_1", 1)''',
+            input=[pairquantities.VsJetTauIDFlagOnly_1_v9.output_group],
         )
         TauVVVLooseFlag_1_friend = Producer(
             call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''',
@@ -215,16 +252,34 @@ with defaults(scopes=["et", "mt"], input=[q.iso_1]):
         output=[q.selcut_lep_antiiso],
     )
 
+    # Run 2 QCD region only: `iso_1 >= {lep_iso_min_qcd}` && `iso_1 < {lep_iso_max}`
+    LepIsoMinQCDFlag_Run2 = Producer(
+        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, {lep_iso_min_qcd})''',
+        output=[q.selcut_lep_iso_min_qcd_run2],
+    )
+    LepIsoQCDWindowFlag_Run2 = ProducerGroup(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[q.selcut_lep_iso], 
+        output=[q.selcut_lep_iso_qcd_run2],
+        subproducers=[LepIsoMinQCDFlag_Run2],
+    )
+
 
 ##############################################################################
 # transverse mass and b-tagged jet multiplicity (et, mt)
 ##############################################################################
 
 with defaults(scopes=["et", "mt"], input=[q.mt_1]):
-    # `mt_1 < 70`: QCD, ttbar and process fraction regions
+    # `mt_1 < 70`: QCD (Run 3 only, see `MtBelow50Flag_Run2` below), ttbar and
+    # process fraction regions
     MtBelow70Flag = Producer(
         call='''event::quantity::SmallerFlag<float>({df}, {output}, {input}, 70.0)''',
         output=[q.selcut_mt_lt_70],
+    )
+    # Run 2 QCD region only: `mt_1 < 50` 
+    MtBelow50Flag_Run2 = Producer(
+        call='''event::quantity::SmallerFlag<float>({df}, {output}, {input}, 50.0)''',
+        output=[q.selcut_mt_lt_50_qcd_run2],
     )
     # `mt_1 >= 70`: the W+jets determination regions
     WjetsMtFlag = Producer(
@@ -248,7 +303,7 @@ with defaults(scopes=["et", "mt"], input=[q.nbtag]):
 # tau pair charge
 ##############################################################################
 
-with defaults(scopes=["et", "mt", "tt", "em"]):
+with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     ChargeProduct = Producer(
         call='''event::quantity::Product<int, int>({df}, {output}, {input})''',
         input=[q.q_1, q.q_2],
@@ -279,6 +334,15 @@ with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {
             q.selcut_presel_vsmu_2,
             q.selcut_presel_trigger,
             q.selcut_jet_veto,
+        ],
+        output=[q.presel_mask],
+    )
+    # Run 2 has no jet veto map
+    presel_mask_Run2 = Producer(
+        input=[
+            q.selcut_presel_vsele_2,
+            q.selcut_presel_vsmu_2,
+            q.selcut_presel_trigger,
         ],
         output=[q.presel_mask],
     )
@@ -578,6 +642,73 @@ with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {
         output=[q.ff_wjets_AR_SR_ARlike_ss],
     )
 
+    # --- Run 2 QCD fake factors: narrower lep iso window, see above ---
+    ff_qcd_SRlike_Run2 = Producer(
+        input=[
+            q.selcut_tau_iso_2,
+            q.selcut_lep_iso_qcd_run2,
+            q.selcut_mt_lt_50_qcd_run2,
+            q.selcut_lepton_veto,
+            q.selcut_ss,
+        ],
+        output=[q.ff_qcd_SRlike],
+    )
+    ff_qcd_ARlike_Run2 = Producer(
+        input=[
+            q.selcut_tau_vvvloose_2,
+            q.selcut_tau_noniso_2,
+            q.selcut_lep_iso_qcd_run2,
+            q.selcut_mt_lt_50_qcd_run2,
+            q.selcut_lepton_veto,
+            q.selcut_ss,
+        ],
+        output=[q.ff_qcd_ARlike],
+    )
+
+    # --- Run 2 ttbar fake factors: no nbtag requirement
+    ff_ttbar_SR_Run2 = Producer(
+        input=[
+            q.selcut_tau_iso_2,
+            q.selcut_lep_iso,
+            q.selcut_mt_lt_70,
+            q.selcut_lepton_veto,
+            q.selcut_os,
+        ],
+        output=[q.ff_ttbar_SR],
+    )
+    ff_ttbar_AR_Run2 = Producer(
+        input=[
+            q.selcut_tau_vvvloose_2,
+            q.selcut_tau_noniso_2,
+            q.selcut_lep_iso,
+            q.selcut_mt_lt_70,
+            q.selcut_lepton_veto,
+            q.selcut_os,
+        ],
+        output=[q.ff_ttbar_AR],
+    )
+    ff_ttbar_SRlike_Run2 = Producer(
+        input=[
+            q.selcut_tau_iso_2,
+            q.selcut_lep_iso,
+            q.selcut_mt_lt_70,
+            q.selcut_lepton_veto_inv,
+            q.selcut_os,
+        ],
+        output=[q.ff_ttbar_SRlike],
+    )
+    ff_ttbar_ARlike_Run2 = Producer(
+        input=[
+            q.selcut_tau_vvvloose_2,
+            q.selcut_tau_noniso_2,
+            q.selcut_lep_iso,
+            q.selcut_mt_lt_70,
+            q.selcut_lepton_veto_inv,
+            q.selcut_os,
+        ],
+        output=[q.ff_ttbar_ARlike],
+    )
+
 with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
     presel_mask_tt = Producer(
         input=[
@@ -587,6 +718,17 @@ with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}
             q.selcut_presel_vsmu_2,
             q.selcut_presel_trigger,
             q.selcut_jet_veto,
+        ],
+        output=[q.presel_mask],
+    )
+    # Run 2: no jet veto map
+    presel_mask_tt_Run2 = Producer(
+        input=[
+            q.selcut_presel_vsele_1,
+            q.selcut_presel_vsele_2,
+            q.selcut_presel_vsmu_1,
+            q.selcut_presel_vsmu_2,
+            q.selcut_presel_trigger,
         ],
         output=[q.presel_mask],
     )
@@ -767,6 +909,60 @@ with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}
         ],
         output=[q.presel_mask],
     )
+    # Run 2: no jet veto map
+    presel_mask_em_Run2 = Producer(
+        input=[
+            q.selcut_presel_pt_1,
+            q.selcut_presel_trigger,
+        ],
+        output=[q.presel_mask],
+    )
+
+
+##############################################################################
+# ee, mm: hard OS + trigger cuts
+#
+# ee/mm carry no fake factor regions (there is no jet->tau fake background to
+# measure), so unlike et/mt/tt there is no need to keep the anti-OS / anti-
+# trigger / anti-iso events around behind a soft mask: the cuts are baked in
+# directly as event filters. The era-dependent flag lists live in
+# tau_triggersetup.py; the lepton isolation tightening is a plain config
+# parameter change in config.py, not a producer.
+##############################################################################
+
+
+def _quoted_flag_list(flagnames):
+    return ", ".join(f'"{name}"' for name in flagnames)
+
+
+def build_trigger_or_flag(scope, flagnames, output, source_producer):
+    call = 'event::CombineFlags({{df}}, {{output}}, {cols}, "any_of")'.format(
+        cols=_quoted_flag_list(flagnames)
+    )
+    return _RawProducer(
+        name=f"PreselTriggerFlagAnyOf_{scope}",
+        call=call,
+        input=[source_producer.output_group],
+        output=output,
+        scopes=[scope],
+    )
+
+
+def build_trigger_or_filter(scope, flagnames, source_producer):
+    call = 'event::filter::Flags({{df}}, "TriggerFilter_{scope}", {cols}, "any_of")'.format(
+        scope=scope, cols=_quoted_flag_list(flagnames)
+    )
+    return _RawBaseFilter(
+        name=f"TriggerFilter_{scope}",
+        call=call,
+        input=[source_producer.output_group],
+        scopes=[scope],
+    )
+
+
+with defaults(call='''event::filter::Flags({df}, "OppositeSignFilter", {input}, "all_of")''', input=[q.selcut_os]):
+    OppositeSignFilter_mm = BaseFilter(scopes=["mm"])
+    OppositeSignFilter_ee = BaseFilter(scopes=["ee"])
 
 
 ##############################################################################

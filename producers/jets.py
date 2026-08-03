@@ -279,9 +279,9 @@ with defaults(scopes=["global"]):
     # run 2 without horn selection, pt>30 and eta<4.7
     GoodJets_Run2 = ProducerGroup(
         call='physicsobject::CombineMasks({df}, {output}, {input}, "all_of")',
-        input=[],
+        input=[q.jet_id_mask],  # JetIDCut is already run standalone in the global producer list
         output=[q.good_jets_mask],
-        subproducers=[JetPtCut, JetEtaCut, JetIDCut, JetPUIDCut],
+        subproducers=[JetPtCut, JetEtaCut, JetPUIDCut],
     )
 
     GoodBJets = ProducerGroup(
