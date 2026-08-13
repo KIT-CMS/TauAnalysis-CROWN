@@ -48,7 +48,7 @@ def build_config(
     )
     
     run2_v15 = True
-    measure_btag_efficiency = True
+    measure_btag_efficiency = False
     # define Tau energy correction producers, id, and variation scheme
     if int(era[:4]) < 2022:
         if not run2_v15:
@@ -1074,9 +1074,9 @@ def build_config(
             jets.BJetCollection,
             jets.BasicBJetQuantities,
             met.MetCorrections, 
-            met.PFMetCorrections,
+            #met.PFMetCorrections,
             pairquantities.DiTauPairMETQuantities,
-            pairquantities.DiObjectAngleQuantities,
+            #pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
             # scalefactors.btaggingWP_SF,
         ],
@@ -1600,13 +1600,13 @@ def build_config(
                     exclude_samples=["fake_era"],
                 ),
             )
-        configuration.add_modification_rule(
-            scopes,
-            ReplaceProducer(
-                producers=[met.PFMetCorrections, met.PFMetCorrections_Run2],
-                exclude_samples=["fake_era"],
-            ),
-        )
+        # configuration.add_modification_rule(
+        #     scopes,
+        #     ReplaceProducer(
+        #         producers=[met.PFMetCorrections, met.PFMetCorrections_Run2],
+        #         exclude_samples=["fake_era"],
+        #     ),
+        # )
         # configuration.add_modification_rule(
         #     ["mt"],
         #     AppendProducer(
@@ -1815,7 +1815,7 @@ def build_config(
             q.dimuon_veto,
             q.dilepton_veto,
             q.dielectron_veto,
-            ] + [p for scope in scopes for p in pairquantities.DiObjectAngleQuantities.get_outputs(scope)
+            #] + [p for scope in scopes for p in pairquantities.DiObjectAngleQuantities.get_outputs(scope)
             ] + [p for scope in scopes for p in met.MetCorrections.get_outputs(scope)
         ],
     )
