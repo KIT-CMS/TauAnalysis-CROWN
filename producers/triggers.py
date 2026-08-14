@@ -1,9 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import (
-    ExtendedVectorProducer as EVP,
-    defaults,
-)
+from code_generation.helpers import defaults
+from code_generation.producer import ExtendedVectorProducer as EVP
 
 TrigObj_collection = [
     nanoAOD.TrigObj_pt,

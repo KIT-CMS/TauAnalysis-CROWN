@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
-from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorProducer, defaults
+from code_generation.helpers import defaults
+from code_generation.producer import BaseFilter, Producer, ProducerGroup, VectorProducer
 from ..producers import electrons as electrons
 from ..producers import muons as muons
 from ..producers import genparticles as genparticles
