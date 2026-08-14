@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, defaults
-
+from code_generation.helpers import defaults
+from code_generation.producer import Producer
 class Inputs:
     raw_fakefactor_lt = [
         q.pt_2, 

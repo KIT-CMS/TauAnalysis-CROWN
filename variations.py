@@ -13,8 +13,8 @@ from .producers import muons as muons
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
-from .scripts.CROWNWrapper import (defaults,
-                                   get_adjusted_add_shift_SystematicShift)
+from code_generation.helpers import defaults
+from code_generation.systematics import get_add_shift
 from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
 
 # Map internal era names to JERC JSON era names for JERC sources
@@ -33,7 +33,7 @@ ERA_MAP = {
 }
 
 def add_Variations(configuration: Configuration, sample: str, era: str) -> Configuration:
-    add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+    add_shift = get_add_shift(configuration)
     era_tag = ERA_MAP[era]  
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
     

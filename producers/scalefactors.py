@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
 from code_generation.producer import SwitchProducer
 
 
@@ -229,7 +230,7 @@ with defaults(
     scopes=["et", "mt"],
     input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
     output="tau_2_vsjet_sf_outputname",
-    vec_configs="vsjet_tau_id",
+    vec_config="vsjet_tau_id",
 ):
     Tau_2_VsJetTauID_lt_SF_Run2 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsJet_lt(

@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, Filter, defaults
-
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, Filter
 ####################
 # Set of producers used for contruction of MT good pairs and the coressponding lorentz vectors
 ####################

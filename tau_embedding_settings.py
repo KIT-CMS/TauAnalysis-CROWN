@@ -13,7 +13,8 @@ from .producers import electrons as electrons
 from code_generation.configuration import Configuration
 from code_generation.systematics import SystematicShift
 from code_generation.modifiers import EraModifier
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from code_generation.helpers import defaults
+from code_generation.systematics import get_add_shift
 from .scripts.SpecialSetups import ES_ID_SCHEME
 
 measure_tauES = False
@@ -1401,7 +1402,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
 
         # and add the variations for it
         # !!! The corresponding producer has to be picked in taus.py, either the pt inclusive or exclusive one. They are named the same !!!
-        add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+        add_shift = get_add_shift(configuration)
         with defaults(shift_map={"Up": "up", "Down": "down"}):
             with defaults(scopes=("et", "mt")):
                 with defaults(producers=[es_id_scheme.embedding.producerID]):
