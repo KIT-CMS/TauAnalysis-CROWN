@@ -5,7 +5,7 @@ from code_generation.modifiers import EraModifier
 
 from .producers import selection as selection
 from .quantities import output as q
-from .scripts.CROWNWrapper import Quantity
+from code_generation.quantity import Quantity
 from code_generation.rules import AppendProducer, RemoveProducer
 from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
 
