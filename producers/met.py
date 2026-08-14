@@ -3,6 +3,7 @@ from code_generation.quantity import NanoAODQuantity
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of producers used for contruction of met related quantities
@@ -78,12 +79,6 @@ with defaults(scopes=["global"]):
             MetCov11_v12,
             MetSumEt,
         ],
-    )
-
-    MetMask = Producer(
-        call='''event::quantity::MinFlag<float>({df}, {output}, {input}, 0)''',
-        input=[nanoAODv15.PuppiMET_ptUnclusteredUp],
-        output=[q.met_mask],
     )
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
@@ -164,7 +159,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
             output=[q.pfmet_p4_recoilcorrected],
         )
 
-    with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}",, {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
+    with defaults(call='''met::RecoilCorrection({df}, {output}, {input}, "{recoil_corrections_file}", "{recoil_systematics_file}", {applyRecoilCorrections}, {apply_recoil_resolution_systematic}, {apply_recoil_response_systematic}, "{recoil_systematic_shift_up}", "{recoil_systematic_shift_down}", {is_wjets})'''):
         ApplyRecoilCorrections_Run2 = Producer(
             input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.jet_pt_corrected],
             output=[q.puppimet_p4_recoilcorrected],
@@ -245,3 +240,19 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 PFMetPhi,
             ],
         )
+
+    class MetCorrectionsSwitch(SwitchProducer):
+        run2 = MetCorrections_Run2
+        class run3:
+            v12 = MetCorrections_v12
+            v15 = MetCorrections
+
+    class PFMetCorrectionsSwitch(SwitchProducer):
+        run2 = PFMetCorrections_Run2
+        run3 = PFMetCorrections
+
+class MetBasicsSwitch(SwitchProducer):
+    run2 = MetBasics_v12
+    class run3:
+        v12 = MetBasics_v12
+        v15 = MetBasics

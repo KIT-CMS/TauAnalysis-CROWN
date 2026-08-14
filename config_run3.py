@@ -16,12 +16,17 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .tau_triggersetup import add_diTauTriggerSetup
+from .tau_triggersetup import add_diTauTriggerSetup, RUN2_ERAS
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
+
+# hadronic tau decay modes the analysis accepts
+# the selection masks cut on the very same list
+TAU_DECAY_MODES = "0,1,10,11"
+
 
 def build_config(
     era: str,
@@ -184,10 +189,6 @@ def build_config(
             # muon scale and resolution
             "muon_sr_file": EraModifier(
                 {
-                    "2016preVFP": "data/jsonpog-integration/POG/MUO/2016preVFP_UL/muon_scalesmearing.json.gz",
-                    "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_scalesmearing.json.gz",
-                    "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_scalesmearing.json.gz",
-                    "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_scalesmearing.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-18/muon_scalesmearing.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-18/muon_scalesmearing.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23CSep23-Summer23-NanoAODv12/2026-06-18/muon_scalesmearing.json.gz",
@@ -195,7 +196,8 @@ def build_config(
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-06-18/muon_scalesmearing.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-25Prompt-Summer24-NanoAODv15/2026-04-28/muon_scalesmearing.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-25Prompt-Summer24-NanoAODv15/2026-04-28/muon_scalesmearing.json.gz",
-                }
+                },
+                default='""',  # not used for Run 2
             ),
             "muon_sr_shift": "nom", # or ScaleUp, ScaleDown, ResoUp, ResoDown
             
@@ -277,8 +279,8 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetid.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetid.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetid.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-14/jetid.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-14/jetid.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetid.json.gz",
                 },
                 default='""',  # not used for Run 2
@@ -294,8 +296,8 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jet_jerc.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jet_jerc.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jet_jerc.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-14/jet_jerc.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-14/jet_jerc.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jet_jerc.json.gz",
                 }
             ),
@@ -310,8 +312,8 @@ def build_config(
                     "2022postEE": "Summer22EE_22Sep2023_V4_DATA" if sample in ["embedding", "data"] else "Summer22EE_22Sep2023_V4_MC",
                     "2023preBPix": "Summer23Prompt23_V4_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V4_MC",
                     "2023postBPix": "Summer23BPixPrompt23_V4_DATA" if sample in ["embedding", "data"] else "Summer23BPixPrompt23_V4_MC",
-                    "2024": "Summer24Prompt24_V4_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V4_MC",
-                    "2025": "Summer24Prompt25_V2_DATA" if sample in ["embedding", "data"] else "Summer24Prompt25_V2_MC",
+                    "2024": "Summer24Prompt24_V5_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V5_MC",
+                    "2025": "Summer24Prompt25_V3_DATA" if sample in ["embedding", "data"] else "Summer24Prompt25_V3_MC",
                     "2026": "Summer24Prompt26_V1_DATA" if sample in ["embedding", "data"] else "Summer24Prompt26_V1_MC",
                 }
             ),
@@ -355,8 +357,8 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-14/jetvetomaps.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-14/jetvetomaps.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetvetomaps.json.gz",
                 }
             ),
@@ -747,7 +749,7 @@ def build_config(
             ),
             "tau_vsjet_sf_dependence": "dm",
             #decay modes
-            "tau_dms": "0,1,10,11",
+            "tau_dms": TAU_DECAY_MODES,
             #energy scale
             "tau_ES_json_name": "tau_energy_scale",
             # genuine tau 
@@ -795,6 +797,9 @@ def build_config(
             "tau_elefake_es_DM1_endcap": "nom",
             "tau_elefake_es_DM10_endcap": "nom",
             "tau_elefake_es_DM11_endcap": "nom",
+            # vs ele id (Run2, non-DM-binned)
+            "tau_id_vsele_barrel": "nom",
+            "tau_id_vsele_endcap": "nom",
             # vs ele id
             "tau_id_vsele_DM0_barrel": "nom",
             "tau_id_vsele_DM1_barrel": "nom",
@@ -1009,6 +1014,9 @@ def build_config(
                 "max_muon_iso": 0.3,
                 "max_ele_iso": 0.3,
                 "jet_reapplyJES": False,
+                # Run 2 jet selection (GoodJets_Run2): no horn treatment, pt>30 and |eta|<4.7
+                "min_jet_pt": 30,
+                "max_jet_eta": 4.7,
             }
         )
         configuration.add_config_parameters(
@@ -1147,6 +1155,13 @@ def build_config(
         ]:
             configuration.add_config_parameters(chs, params)
 
+    # ee/mm carry no fake factor regions, so unlike et/mt/tt there is no need
+    # for a looser baseline object selection plus a separate anti-iso region:
+    # tighten the lepton isolation object cut directly, for both Run 2 and
+    # Run 3 (applied last so it wins over the Run 2 block above).
+    configuration.add_config_parameters(["mm"], {"max_muon_iso": 0.15})
+    configuration.add_config_parameters(["ee"], {"max_ele_iso": 0.15})
+
     ############################
     ######## Producers #########
     ############################
@@ -1164,29 +1179,28 @@ def build_config(
             event.PS_weight,
             muons.MuonPtCorrection,
             muons.BaseMuons,
-            electrons.ElectronPtCorrectionMC,
+            electrons.ElectronPtCorrectionMCSwitch.get(era),
             electrons.BaseElectrons,
             jets.GenJet,
             jets.JetSmearingSeed,
-            jets.JetBTagUParT,
-            jets.JetRho,
-            jets.JetID, 
+            jets.JetBTagSwitch.get(era),
+            jets.JetRhoSwitch.get(era),
+            jets.JetIDSwitch.get(era),
             jets.JetVetoMapVeto,
             jets.JetIDCut,
-            jets.JetEnergyCorrection,
+            jets.JetEnergyCorrectionSwitch.get(era),
             jets.JetPtCut_loose,
             jets.JetEtaCut_Max3,
             jets.LooseJets_LowEta,
             jets.LooseJets_HighEta,
             jets.GoodJets_loose,
             jets.GoodJets_tight,
-            jets.GoodJets,
-            jets.GoodBJets,
-            event.DiLeptonVeto,
+            jets.GoodJetsSwitch.get(era),
+            jets.GoodBJetsSwitch.get(era),
+            event.DiLeptonVetoSwitch.get(era),
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
-            met.MetBasics,
-            met.MetMask,
+            met.MetBasicsSwitch.get(era),
             event.EvenOddIDFlag,
         ],
     )
@@ -1197,12 +1211,12 @@ def build_config(
             jets.BasicJetQuantities, 
             jets.BJetCollection,
             jets.BasicBJetQuantities,
-            met.MetCorrections, 
-            met.PFMetCorrections,
+            met.MetCorrectionsSwitch.get(era),
+            met.PFMetCorrectionsSwitch.get(era),
             pairquantities.DiTauPairMETQuantities,
             pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
-            scalefactors.btaggingWP_SF,
+            scalefactors.btaggingWP_SFSwitch.get(era),
         ],
     )
     configuration.add_producers(
@@ -1212,21 +1226,21 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrection,
-            taus.BaseTaus,
-            taus.GoodTaus,
+            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.BaseTausSwitch.get(era),
+            taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
-            electrons.ExtraElectronsVeto, 
+            electrons.ExtraElectronsVeto,
             pairselection.MTPairSelection,
             pairselection.GoodMTPairFilter,
             pairselection.LVMu1,
             pairselection.LVTau2,
             pairselection.LVMu1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.MTDiTauPairQuantities,
+            pairquantities.MTDiTauPairQuantitiesSwitch.get(era),
             genparticles.MTGenDiTauPairQuantities,
             scalefactors.MuonIDIso_SF,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SFSwitch.get(era),
             triggers.MTGenerateSingleMuonTriggerFlags,
             #triggers.MTGenerateCrossTriggerFlags,
             #triggers.GenerateSingleTrailingTauTriggerFlags,
@@ -1258,9 +1272,9 @@ def build_config(
         "et",
         [
             electrons.GoodElectrons,
-            taus.TauEnergyCorrection,
-            taus.BaseTaus,
-            taus.GoodTaus,
+            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.BaseTausSwitch.get(era),
+            taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
@@ -1272,9 +1286,9 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVEl1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.ETDiTauPairQuantities,
+            pairquantities.ETDiTauPairQuantitiesSwitch.get(era),
             genparticles.ETGenDiTauPairQuantities,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SFSwitch.get(era),
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
             #triggers.ETGenerateCrossTriggerFlags,
@@ -1336,9 +1350,9 @@ def build_config(
         [   
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrection,
-            taus.BaseTaus,
-            taus.GoodTaus,
+            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.BaseTausSwitch.get(era),
+            taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
             pairselection.TTPairSelection,
             pairselection.GoodTTPairFilter,
@@ -1346,9 +1360,9 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVTau1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.TTDiTauPairQuantities,
+            pairquantities.TTDiTauPairQuantitiesSwitch.get(era),
             genparticles.TTGenDiTauPairQuantities,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SFSwitch.get(era),
             triggers.TTGenerateDoubleTauTriggerFlags,
             scalefactors.DoubleTauTriggerSF,
         ],
@@ -1358,18 +1372,18 @@ def build_config(
     ######### Modifications ########
     ################################
 
-    MC_ONLY = ["data", "embedding", "embedding_mc"]
+    DATA_ONLY = ["data", "embedding", "embedding_mc"]
     
     for mod_scopes, rule_cls, producers, sample_filter in [
-        ("global", RemoveProducer, [event.npartons], 
+        ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
-        ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": MC_ONLY}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": MC_ONLY + ["diboson"]}),
-        (scopes, RemoveProducer, [scalefactors.btaggingWP_SF], {"samples": MC_ONLY}),
-        (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": MC_ONLY}),
-        (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SF], {"samples": MC_ONLY}),
-        (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": MC_ONLY}),
-        (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"samples": MC_ONLY}),
+        ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
+        (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": DATA_ONLY}),
+        (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"samples": DATA_ONLY}),
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
         (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
         (["et"], RemoveProducer, [genparticles.ETGenDiTauPairQuantities], {"samples": ["data"]}),
@@ -1377,91 +1391,54 @@ def build_config(
         (["ee"], RemoveProducer, [genparticles.ElElGenPairQuantities], {"samples": ["data"]}),
         (["tt"], RemoveProducer, [genparticles.TTGenDiTauPairQuantities], {"samples": ["data"]}),
 
-        ("global", AppendProducer, [event.JSONFilter], {"samples": MC_ONLY}),
+        ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
         (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
         (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
-        (scopes, AppendProducer, [event.TopPtReweighting], {"samples": ["ttbar"]}),
-                
-        ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": MC_ONLY}),
-        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrection, taus.TauEnergyCorrection_data], {"samples": MC_ONLY}),
-        
+        (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
+
+        ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
+        ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
+        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
-    if int(era[:4]) < 2022:
-        for mod_scopes, rule_cls, producers, sample_filter in [
-            ("global", RemoveProducer, [jets.JetVetoMapVeto], {"exclude_samples": ["fake_era"]}),
-            (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"exclude_samples": MC_ONLY}),
-            (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"exclude_samples": MC_ONLY}),
-            (["mt"], RemoveProducer, [scalefactors.SingleMuTriggerSF], {"exclude_samples": ["fake_era"]}),
-            (["et"], RemoveProducer, [scalefactors.SingleEleTriggerSF], {"exclude_samples": ["fake_era"]}),
-            (["tt"], RemoveProducer, [scalefactors.DoubleTauTriggerSF], {"exclude_samples": ["fake_era"]}),
+    # Era specific modifications
+    for mod_scopes, rule_cls, producers, rule_filter in [
+        ("global", RemoveProducer, [jets.JetVetoMapVeto], {"eras": RUN2_ERAS}),
+        (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["mt"], RemoveProducer, [scalefactors.SingleMuTriggerSF], {"eras": RUN2_ERAS}),
+        (["et"], RemoveProducer, [scalefactors.SingleEleTriggerSF], {"eras": RUN2_ERAS}),
+        (["tt"], RemoveProducer, [scalefactors.DoubleTauTriggerSF], {"eras": RUN2_ERAS}),
 
-            # cross triggers and embedding triggers      
-            (["mt"], AppendProducer, [triggers.MTGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"exclude_samples": ["fake_era"]}),
-            (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": MC_ONLY}),
-            (["et"], AppendProducer, [triggers.ETGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"exclude_samples": ["fake_era"]}),
-            (["et"], AppendProducer, [scalefactors.ETGenerateSingleElectronTriggerSF_MC, scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC], {"exclude_samples": MC_ONLY}),
-            (["tt"], AppendProducer, [triggers.GenerateSingleTrailingTauTriggerFlags, triggers.GenerateSingleLeadingTauTriggerFlags], {"exclude_samples": ["fake_era"]}),
-            (["em"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC], {"exclude_samples": MC_ONLY}),
-            (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": MC_ONLY}),
-            (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": MC_ONLY}),
-                        
-            ("global", ReplaceProducer, [electrons.ElectronIDCut, electrons.ElectronIDCut_v9], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [event.TopPtReweighting, event.TopPtReweighting_Run2], {"samples": ["ttbar"]}),
-            ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionMC_v9], {"exclude_samples": MC_ONLY}),
-            ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMC, electrons.RenameElectronPt], {"samples": MC_ONLY}),
-            ("global", ReplaceProducer, [event.DiLeptonVeto, event.DiLeptonVeto_v9], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.JetEnergyCorrection, jets.JetEnergyCorrection_Run2], {"exclude_samples": MC_ONLY}),
-            ("global", ReplaceProducer, [jets.JetEnergyCorrection, jets.JetEnergyCorrection_data], {"samples": MC_ONLY}),
-            ("global", ReplaceProducer, [jets.JetID, jets.JetID_rename], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.JetBTagUParT, jets.JetBTagDeep], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.JetRho, jets.JetRho_v9], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.GoodJets, jets.GoodJets_Run2], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.GoodBJets, jets.GoodBJets_Run2], {"exclude_samples": ["fake_era"]}),
-            (scopes, ReplaceProducer, [scalefactors.btaggingWP_SF, scalefactors.btagging_SF], {"exclude_samples": MC_ONLY}),
-            (scopes, ReplaceProducer, [met.MetCorrections, met.MetCorrections_Run2], {"exclude_samples": ["fake_era"]}),
-            (scopes, ReplaceProducer, [met.PFMetCorrections, met.PFMetCorrections_Run2], {"exclude_samples": ["fake_era"]}),
-            (["mt", "et", "tt"], ReplaceProducer, [taus.BaseTaus, taus.BaseTaus_v9], {"exclude_samples": ["fake_era"]}),
-            (["mt", "et", "tt"], ReplaceProducer, [taus.GoodTaus, taus.GoodTaus_v9], {"exclude_samples": ["fake_era"]}),
-            (["mt", "et", "tt"], ReplaceProducer, [scalefactors.TauID_SF, scalefactors.TauID_SF_v9], {"exclude_samples": MC_ONLY}),
-            (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrection, taus.TauEnergyCorrection_ES_dm_pt_binned], {"exclude_samples": MC_ONLY}),
-            (["tt"], ReplaceProducer, [pairquantities.TTDiTauPairQuantities, pairquantities.TTDiTauPairQuantities_v9], {"exclude_samples": ["fake_era"]}),
-            (["mt"], ReplaceProducer, [pairquantities.MTDiTauPairQuantities, pairquantities.MTDiTauPairQuantities_v9], {"exclude_samples": ["fake_era"]}),
-            (["et"], ReplaceProducer, [pairquantities.ETDiTauPairQuantities, pairquantities.ETDiTauPairQuantities_v9], {"exclude_samples": ["fake_era"]}),
-        ]:
-            configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
+        # cross triggers and embedding triggers
+        (["mt"], AppendProducer, [triggers.MTGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
+        (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["et"], AppendProducer, [triggers.ETGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
+        (["et"], AppendProducer, [scalefactors.ETGenerateSingleElectronTriggerSF_MC, scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["tt"], AppendProducer, [triggers.GenerateSingleTrailingTauTriggerFlags, triggers.GenerateSingleLeadingTauTriggerFlags], {"eras": RUN2_ERAS}),
+        (["em"], AppendProducer, [triggers.EMGenerateCrossTriggerFlags], {"eras": RUN2_ERAS}),
+        (["em"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
-        if era != "2018":
-            configuration.add_modification_rule("global", AppendProducer(producers=event.PrefireWeight, exclude_samples=["fake_era"],),)
+        ("global", ReplaceProducer, [electrons.ElectronIDCut, electrons.ElectronIDCut_v9], {"eras": RUN2_ERAS}),
+        ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        ("global", ReplaceProducer, [muons.MuonPtCorrection, muons.MuonPtCorrection_Run2], {"eras": RUN2_ERAS}),
+
+        ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
-        if "2016" not in era:
-            configuration.add_modification_rule(scopes, AppendProducer(producers=event.ZPtReweighting_Run2, samples=["dyjets", "electroweak_boson"]),)
-    else:
-        configuration.add_modification_rule("global", ReplaceProducer(producers=[electrons.ElectronPtCorrectionMC, electrons.ElectronPtCorrectionData], samples=MC_ONLY,),)
+        (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
-    if 2022 <= int(era[:4]) < 2024:
-        for mod_scopes, rule_cls, producers, sample_filter in [
-            ("global", ReplaceProducer, [jets.JetBTagUParT, jets.JetBTagPNet], {"exclude_samples": ["fake_era"]}),
-            ("global", ReplaceProducer, [jets.JetID, jets.JetIDRun3NanoV12Corrected], {"exclude_samples": ["fake_era"]}),
-            (scopes, ReplaceProducer, [met.MetCorrections, met.MetCorrections_v12], {"exclude_samples": ["fake_era"]}),
-            (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrection, taus.TauEnergyCorrection_v12], {"exclude_samples": MC_ONLY}),
-            (["mt", "et", "tt"], ReplaceProducer, [scalefactors.TauID_SF, scalefactors.TauID_SF_v12], {"exclude_samples": MC_ONLY}),
-        ]:
-            configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
-    
-    if int(era[:4]) < 2024:
-        configuration.add_modification_rule("global", ReplaceProducer(producers=[met.MetBasics, met.MetBasics_v12], exclude_samples=["fake_era"],),)
+        # separate MC for 2024 and 2025 by even/odd event number
+        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+    ]:
+        configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
-    # separate MC for 2024 and 2025 by even/odd event number
-    if era == "2024":
-        configuration.add_modification_rule("global", AppendProducer(producers=[event.EvenIDFilter], exclude_samples=MC_ONLY,),)
-    if era == "2025" or era == "2026":
-        configuration.add_modification_rule("global", AppendProducer(producers=[event.OddIDFilter], exclude_samples=["data", "embedding"],),)
-    
 
     #########################
     ######## OUTPUTS ########
@@ -1488,7 +1465,6 @@ def build_config(
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
-            q.met_mask,
             q.jet_ID,
             q.jet_vetomap,
             ] + [p for scope in scopes for p in genparticles.GenMatching.get_outputs(scope)] + [
@@ -1500,7 +1476,7 @@ def build_config(
             q.dilepton_veto,
             q.dielectron_veto,
             ] + [p for scope in scopes for p in pairquantities.DiObjectAngleQuantities.get_outputs(scope)
-            ] + [p for scope in scopes for p in met.MetCorrections.get_outputs(scope)
+            ] + [p for scope in scopes for p in met.MetCorrectionsSwitch.get(era).get_outputs(scope)
         ],
     )
     # add genWeight for everything but data
@@ -1525,7 +1501,7 @@ def build_config(
             q.dimuon_veto,
             q.extraelec_veto,
             ] + [p for p in genparticles.MTGenDiTauPairQuantities.get_outputs("mt")
-            ] + [p for p in scalefactors.TauID_SF.get_outputs("mt")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")
         ],
     )
     configuration.add_outputs(
@@ -1547,7 +1523,7 @@ def build_config(
             q.dimuon_veto,
             q.extraelec_veto,
             ] + [p for p in genparticles.ETGenDiTauPairQuantities.get_outputs("et")
-            ] + [p for p in scalefactors.TauID_SF.get_outputs("et")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("et")
         ],
     )
     configuration.add_outputs(
@@ -1587,14 +1563,15 @@ def build_config(
             q.dimuon_veto,
             q.extraelec_veto,
             ] + [p for p in genparticles.TTGenDiTauPairQuantities.get_outputs("tt")
-            ] + [p for p in scalefactors.TauID_SF.get_outputs("tt")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("tt")
         ],
     )
 
-    if int(era[:4]) < 2024:
-        configuration.add_outputs("global", [p for p in met.MetBasics_v12.get_outputs("global")],)
-    else:
-        configuration.add_outputs("global", [p for p in met.MetBasics.get_outputs("global")],)
+    configuration.add_outputs("global", [p for p in met.MetBasicsSwitch.get(era).get_outputs("global")],)
+
+    configuration.add_outputs("mt", [p for p in pairquantities.MTDiTauPairQuantitiesSwitch.get(era).get_outputs("mt")],)
+    configuration.add_outputs("et", [p for p in pairquantities.ETDiTauPairQuantitiesSwitch.get(era).get_outputs("et")],)
+    configuration.add_outputs("tt", [p for p in pairquantities.TTDiTauPairQuantitiesSwitch.get(era).get_outputs("tt")],)
 
     if int(era[:4]) < 2022:
         configuration.add_outputs(
@@ -1602,7 +1579,6 @@ def build_config(
             [
                 triggers.MTGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.MTDiTauPairQuantities_v9.get_outputs("mt")
             ],
         )
         configuration.add_outputs(
@@ -1610,7 +1586,6 @@ def build_config(
             [
                 triggers.ETGenerateCrossTriggerFlags.output_group,
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.ETDiTauPairQuantities_v9.get_outputs("et")
             ],
         )
         configuration.add_outputs(
@@ -1624,7 +1599,6 @@ def build_config(
             [
                 triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
-                ] + [p for p in pairquantities.TTDiTauPairQuantities_v9.get_outputs("tt")
             ],
         )
     else:
@@ -1633,7 +1607,6 @@ def build_config(
             [
                 scalefactors.SingleMuTriggerSF.output_group,
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("mt")
-                ] + [p for p in pairquantities.MTDiTauPairQuantities.get_outputs("mt")
             ],
         )
         configuration.add_outputs(
@@ -1641,15 +1614,11 @@ def build_config(
             [
                 scalefactors.SingleEleTriggerSF.output_group,
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("et")
-                ] + [p for p in pairquantities.ETDiTauPairQuantities.get_outputs("et")
             ],
         )
         configuration.add_outputs(
             "tt",
-            [
-                p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")
-                ] + [p for p in pairquantities.TTDiTauPairQuantities.get_outputs("tt")
-            ],
+            [p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")],
         )
         configuration.add_outputs(
             "em",
