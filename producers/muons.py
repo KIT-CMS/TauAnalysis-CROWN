@@ -12,6 +12,11 @@ with defaults(scopes=["global"]):
         input=[nanoAOD.Muon_pt, nanoAOD.Muon_eta, nanoAOD.Muon_phi, nanoAOD.Muon_charge, nanoAOD.Muon_nTrackerLayers, nanoAOD.luminosityBlock, nanoAOD.event],
         output=[q.muon_pt_corrected]
     )
+    MuonPtCorrection_Run2 = Producer(
+        call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
+        input=[nanoAOD.Muon_pt],
+        output=[q.muon_pt_corrected]
+    )
 
     MuonPtCut = Producer(
         call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_muon_pt})''',

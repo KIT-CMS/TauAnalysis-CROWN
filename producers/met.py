@@ -3,6 +3,7 @@ from code_generation.quantity import NanoAODQuantity
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of producers used for contruction of met related quantities
@@ -243,3 +244,19 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 PFMetPhi,
             ],
         )
+
+    class MetCorrectionsSwitch(SwitchProducer):
+        run2 = MetCorrections_Run2
+        class run3:
+            v12 = MetCorrections_v12
+            v15 = MetCorrections
+
+    class PFMetCorrectionsSwitch(SwitchProducer):
+        run2 = PFMetCorrections_Run2
+        run3 = PFMetCorrections
+
+class MetBasicsSwitch(SwitchProducer):
+    run2 = MetBasics_v12
+    class run3:
+        v12 = MetBasics_v12
+        v15 = MetBasics

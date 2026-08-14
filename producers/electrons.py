@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of producers used for loosest selection of electrons
@@ -40,6 +41,14 @@ with defaults(scopes=["global"]):
             call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAODv15.Electron_pt],
         )
+
+    class ElectronPtCorrectionMCSwitch(SwitchProducer):
+        run2 = ElectronPtCorrectionMC_v9
+        run3 = ElectronPtCorrectionMC
+
+    class ElectronPtCorrectionDataSwitch(SwitchProducer):
+        run2 = RenameElectronPt
+        run3 = ElectronPtCorrectionData
 
     ElectronEtaCut = Producer(
         call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_ele_eta})''',

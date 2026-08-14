@@ -4,6 +4,7 @@ from ..scripts.CROWNWrapper import BaseFilter, Producer, ProducerGroup, VectorPr
 from ..producers import electrons as electrons
 from ..producers import muons as muons
 from ..producers import genparticles as genparticles
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of general producers for event quantities
@@ -30,7 +31,10 @@ with defaults(scopes=["global"]):
             output=[q.dilepton_veto],
             subproducers=[electrons.DiElectronVeto_v9, muons.DiMuonVeto],
         )
-        # ---
+        class DiLeptonVetoSwitch(SwitchProducer):
+            run2 = DiLeptonVeto_v9
+            run3 = DiLeptonVeto
+            
         SampleFlags_ProducerCollection = [
             is_data := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_data})''', output=[q.is_data]),
             is_embedding := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_embedding})''', output=[q.is_embedding]),
@@ -121,7 +125,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     # Run 2
     ZPtReweighting_Run2 = Producer(
-        call='''event::reweighting::ZPtMass({df}, {output}, {input}, "{zptmass_file}", "{zptmass_functor}", "{zptmass_arguments}")''',
+        call='''event::reweighting::ZPtMass({df}, {output}, {input}, "{zpt_file}", "{zptmass_functor}", "{zptmass_arguments}")''',
         input=[q.genboson_p4],
         output=[q.ZPtMassReweightWeight],
     )
@@ -134,6 +138,10 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         ],
         output=[q.topPtReweightWeight],
     )
+
+    class TopPtReweightingSwitch(SwitchProducer):
+        run2 = TopPtReweighting_Run2
+        run3 = TopPtReweighting
 
     GGH_NNLO_Reweighting = Producer(
         call='''htxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})''',

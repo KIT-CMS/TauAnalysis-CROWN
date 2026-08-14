@@ -27,7 +27,6 @@ def run(args):
         "wjets_amcatnlo",
         "data",
         "electroweak_boson",
-        "fake_era",
     ]
     available_eras = [
         "2016preVFP", "2016postVFP", "2017", "2018", 

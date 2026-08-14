@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of producers used for selection possible good jets
@@ -296,6 +297,34 @@ with defaults(scopes=["global"]):
         output=[q.good_bjets_mask],
         subproducers=[BJetPtCut, BJetEtaCut, BTagCut],
     )
+
+class JetBTagSwitch(SwitchProducer):
+    run2 = JetBTagDeep
+    class run3:
+        v12 = JetBTagPNet
+        v15 = JetBTagUParT
+
+class JetRhoSwitch(SwitchProducer):
+    run2 = JetRho_v9
+    run3 = JetRho
+
+class JetIDSwitch(SwitchProducer):
+    run2 = JetID_rename
+    class run3:
+        v12 = JetIDRun3NanoV12Corrected
+        v15 = JetID
+
+class JetEnergyCorrectionSwitch(SwitchProducer):
+    run2 = JetEnergyCorrection_Run2
+    run3 = JetEnergyCorrection
+
+class GoodJetsSwitch(SwitchProducer):
+    run2 = GoodJets_Run2
+    run3 = GoodJets
+
+class GoodBJetsSwitch(SwitchProducer):
+    run2 = GoodBJets_Run2
+    run3 = GoodBJets
 
 ####################
 # Set of producers to apply a veto of jets overlapping with ditaupair candidates and ordering jets by their pt
