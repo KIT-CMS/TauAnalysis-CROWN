@@ -34,7 +34,7 @@ with defaults(scopes=["global"]):
         class DiLeptonVetoSwitch(SwitchProducer):
             run2 = DiLeptonVeto_v9
             run3 = DiLeptonVeto
-            
+
         SampleFlags_ProducerCollection = [
             is_data := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_data})''', output=[q.is_data]),
             is_embedding := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_embedding})''', output=[q.is_embedding]),

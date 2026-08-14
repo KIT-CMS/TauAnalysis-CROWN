@@ -416,7 +416,7 @@ with defaults(call=None, input=None, output=None):
     class ETDiTauPairQuantitiesSwitch(SwitchProducer):
         run2 = ETDiTauPairQuantities_v9
         run3 = ETDiTauPairQuantities
-        
+
     MuMuPairQuantities = ProducerGroup(
         scopes=["mm"],
         subproducers=[

@@ -9,14 +9,10 @@ from code_generation.producer import SwitchProducer
 # Set of producers used for contruction of met related quantities
 ####################
 
-PuppiMET_pt_nominal_ref = NanoAODQuantity("PuppiMET_pt")
-PuppiMET_phi_nominal_ref = NanoAODQuantity("PuppiMET_phi")
-
 with defaults(scopes=["global"]):
     with defaults(call='''lorentzvector::BuildMET({df}, {output}, {input})'''):
         BuildMetVector = Producer(input=[nanoAODv15.PuppiMET_pt, nanoAODv15.PuppiMET_phi], output=[q.puppimet_p4])
         BuildRawMetVector = Producer(input=[nanoAODv15.RawPuppiMET_pt, nanoAODv15.RawPuppiMET_phi], output=[q.rawmet_p4])
-
         with defaults(output=[q.pfmet_p4]):
             BuildPFMetVector = Producer(input=[nanoAODv15.PFMET_pt, nanoAODv15.PFMET_phi])
             BuildPFMetVector_v12 = Producer(input=[nanoAODv12.MET_pt, nanoAODv12.MET_phi])
@@ -177,8 +173,8 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         call='''met::PropagateUnclusteredEnergyToMET({df}, {output}, {input})''',
         input=[
             q.puppimet_p4_recoilcorrected,
-            PuppiMET_pt_nominal_ref,
-            PuppiMET_phi_nominal_ref,
+            q.PuppiMET_pt_nanoAOD_ref,
+            q.PuppiMET_phi_nanoAOD_ref,
             nanoAODv15.PuppiMET_pt,
             nanoAODv15.PuppiMET_phi,
         ],

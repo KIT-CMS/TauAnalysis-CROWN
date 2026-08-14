@@ -230,7 +230,6 @@ with defaults(scopes=["global"]):
         BJetEtaCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_bjet_eta})''', input=[nanoAODv15.Jet_eta])
         BTagCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {btag_cut})''', input=[q.jet_BTag])
 
-
     JetIDCut = Producer(
         call='''physicsobject::CutMin<int>({df}, {output}, {input}, {jet_id})''',
         input=[q.jet_ID],
