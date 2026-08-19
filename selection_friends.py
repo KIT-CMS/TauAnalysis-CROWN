@@ -345,6 +345,7 @@ def add_selection(
                 selection.TTbarNBtagFlag,
                 # the signal region
                 selection.SRMaskSwitch.get(era),
+                selection.SRMaskSsSwitch.get(era),
                 # QCD
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
@@ -384,6 +385,7 @@ def add_selection(
             [
                 q.presel_mask,
                 q.SR_mask,
+                q.SR_mask_ss,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_wjets_SRlike,
@@ -446,6 +448,7 @@ def add_selection(
                 selection.TTbarNBtagFlag,
                 # the signal region
                 selection.SRMaskSwitch.get(era),
+                selection.SRMaskSsSwitch.get(era),
                 # QCD
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
@@ -485,6 +488,7 @@ def add_selection(
             [
                 q.presel_mask,
                 q.SR_mask,
+                q.SR_mask_ss,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_wjets_SRlike,
@@ -542,6 +546,7 @@ def add_selection(
                 selection.TauVVVLooseFlag_2,
                 # the signal region
                 selection.SRMaskTTSwitch.get(era),
+                selection.SRMaskSsTTSwitch.get(era),
                 # QCD, leading tau
                 selection.ff_qcd_SRlike_tt,
                 selection.ff_qcd_ARlike_tt,
@@ -570,6 +575,7 @@ def add_selection(
             [
                 q.presel_mask,
                 q.SR_mask,
+                q.SR_mask_ss,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_qcd_sub_SRlike,
@@ -601,6 +607,7 @@ def add_selection(
                 *([] if era in RUN2_ERAS else [selection.PreselLepPt_1, selection.PreselLepPt_2]),
                 selection.ChargeProduct,
                 selection.OppositeSignFlag,
+                selection.SameSignFlag,
                 selection.NoExtraElectronFlag,
                 selection.NoExtraMuonFlag,
                 selection.NoDileptonFlag,
@@ -608,9 +615,10 @@ def add_selection(
                 selection.EleIsoFlag_em,
                 selection.MuonIsoFlag_em,
                 selection.SRMaskEMSwitch.get(era),
+                selection.SRMaskSsEMSwitch.get(era),
             ],
         )
-        configuration.add_outputs(["em"], [q.SR_mask])
+        configuration.add_outputs(["em"], [q.SR_mask, q.SR_mask_ss])
 
     # only used as control for Run 2 so far
     if "mm" in scopes:

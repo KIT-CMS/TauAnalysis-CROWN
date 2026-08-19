@@ -572,6 +572,10 @@ selcut_ss = Quantity()
 
 presel_mask = Quantity()
 SR_mask = Quantity()
+# SR_mask with the OS requirement swapped for SS -- the QCD same-sign control
+# region, kept shift-aware (unlike the FF masks below) since shape production
+# needs the QCD estimate to follow systematic variations too.
+SR_mask_ss = Quantity()
 
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()
