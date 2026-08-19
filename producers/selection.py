@@ -276,6 +276,16 @@ with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {
     ]
     SR_mask_Run2 = Producer(input=_region_inputs_Run2, output=[q.SR_mask])
 
+    # --- the same fully shifted signal region, but same-sign: shape
+    # production's QCD control-region shapes (used to be recomposed as
+    # literal cut strings with `os` swapped for `ss`) -- kept shift-aware
+    # like SR_mask itself, unlike the FF masks below which are nominal-only.
+    _region_inputs_ss = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs]
+    SR_mask_ss = Producer(input=_region_inputs_ss, output=[q.SR_mask_ss])
+
+    _region_inputs_ss_Run2 = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_Run2]
+    SR_mask_ss_Run2 = Producer(input=_region_inputs_ss_Run2, output=[q.SR_mask_ss])
+
     # --- QCD fake factors ---
     ff_qcd_SRlike = Producer(
         input=[
@@ -687,6 +697,13 @@ with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}
     ]
     SR_mask_tt_Run2 = Producer(input=_region_inputs_tt_Run2, output=[q.SR_mask])
 
+    # --- same-sign QCD control-region variant of SR_mask_tt, shift-aware ---
+    _region_inputs_tt_ss = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_tt]
+    SR_mask_ss_tt = Producer(input=_region_inputs_tt_ss, output=[q.SR_mask_ss])
+
+    _region_inputs_tt_ss_Run2 = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_tt_Run2]
+    SR_mask_ss_tt_Run2 = Producer(input=_region_inputs_tt_ss_Run2, output=[q.SR_mask_ss])
+
     # --- QCD fake factors, leading tau ---
     ff_qcd_SRlike_tt = Producer(
         input=[
@@ -876,6 +893,13 @@ with defaults(scopes=["em"], call='''event::CombineFlags({df}, {output}, {input}
     ]
     SR_mask_em_Run2 = Producer(input=_region_inputs_em_Run2, output=[q.SR_mask])
 
+    # --- same-sign QCD control-region variant of SR_mask_em, shift-aware ---
+    _region_inputs_em_ss = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_em]
+    SR_mask_ss_em = Producer(input=_region_inputs_em_ss, output=[q.SR_mask_ss])
+
+    _region_inputs_em_ss_Run2 = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_em_Run2]
+    SR_mask_ss_em_Run2 = Producer(input=_region_inputs_em_ss_Run2, output=[q.SR_mask_ss])
+
 # era-dependent (run2/run3) SwitchProducers, used by selection_friends.py via `.get(era)`
 class PreselMaskSwitch(SwitchProducer):
     run2 = presel_mask_Run2
@@ -884,6 +908,10 @@ class PreselMaskSwitch(SwitchProducer):
 class SRMaskSwitch(SwitchProducer):
     run2 = SR_mask_Run2
     run3 = SR_mask
+
+class SRMaskSsSwitch(SwitchProducer):
+    run2 = SR_mask_ss_Run2
+    run3 = SR_mask_ss
 
 class FFQcdSRlikeSwitch(SwitchProducer):
     run2 = ff_qcd_SRlike_Run2
@@ -917,9 +945,17 @@ class SRMaskTTSwitch(SwitchProducer):
     run2 = SR_mask_tt_Run2
     run3 = SR_mask_tt
 
+class SRMaskSsTTSwitch(SwitchProducer):
+    run2 = SR_mask_ss_tt_Run2
+    run3 = SR_mask_ss_tt
+
 class SRMaskEMSwitch(SwitchProducer):
     run2 = SR_mask_em_Run2
     run3 = SR_mask_em
+
+class SRMaskSsEMSwitch(SwitchProducer):
+    run2 = SR_mask_ss_em_Run2
+    run3 = SR_mask_ss_em
 
 
 def build_trigger_pt_or_flag(scope, flagnames, output, pt1_max_by_flag=None, pt2_min_param=None):
