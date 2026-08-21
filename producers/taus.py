@@ -139,7 +139,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             ],
         )
         TauPtCorrection_genTau_dm_pt_binned = Producer(
-            call='''physicsobject::tau::PtCorrectionMC_genuineTau(
+            call='''physicsobject::tau::PtCorrectionMC_genuineTau_v15(
                 {df},
                 correctionManager,
                 {output},
@@ -147,6 +147,8 @@ with defaults(scopes=["et", "mt", "tt"]):
                 "{tau_sf_file}",
                 "{tau_ES_json_name}",
                 "{tau_id_algorithm}",
+                "{tau_vsjet_wp}",
+                "{tau_vsele_wp}",
                 "{tau_ES_shift_DM0_20to40}",
                 "{tau_ES_shift_DM0_40toInf}",
                 "{tau_ES_shift_DM1_20to40}",
@@ -186,7 +188,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             ],
         )
         TauPtCorrection_emb_genTau_dm_pt_binned = Producer(
-            call='''physicsobject::tau::PtCorrectionMC_genuineTau(
+            call='''physicsobject::tau::PtCorrectionMC_genuineTau_v15(
                 {df},
                 correctionManager,
                 {output},

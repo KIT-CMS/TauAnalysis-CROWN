@@ -54,7 +54,7 @@ def build_config(
         if not run2_v15:
             configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_pt_binned")
         else:
-            configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_binned")
+            configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_pt_binned")
     else:
         configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_binned_run3")
 

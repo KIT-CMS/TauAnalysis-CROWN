@@ -39,10 +39,10 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         EmbeddingQuantities = ProducerGroup(
             subproducers=[
                 EmbeddingGenWeight,
-                TauEmbeddingInitialMETEt,
-                TauEmbeddingInitialMETphi,
-                TauEmbeddingInitialPuppiMETEt,
-                TauEmbeddingInitialPuppiMETphi,
+                # TauEmbeddingInitialMETEt,
+                # TauEmbeddingInitialMETphi,
+                # TauEmbeddingInitialPuppiMETEt,
+                # TauEmbeddingInitialPuppiMETphi,
                 TauEmbeddingIsMediumLeadingMuon,
                 TauEmbeddingIsMediumTrailingMuon,
                 TauEmbeddingIsTightLeadingMuon,
