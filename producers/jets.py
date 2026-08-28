@@ -1,8 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup
-from code_generation.producer import SwitchProducer
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 ####################
 # Set of producers used for selection possible good jets

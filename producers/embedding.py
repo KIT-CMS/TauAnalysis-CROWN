@@ -132,7 +132,7 @@ with defaults(scopes=["tt"]):
 # Tau ID/Iso/Trigger SFS
 ###############################
 
-with defaults(vec_configs="vsjet_tau_id_sf_embedding"):
+with defaults(vec_config="vsjet_tau_id_sf_embedding"):
     with defaults(input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2], output="tau_2_vsjet_sf_outputname"):
         with defaults(scopes=["et", "mt"]):
             Tau_2_VsJetTauID_lt_SF_dm_binned = ExtendedVectorProducer(
