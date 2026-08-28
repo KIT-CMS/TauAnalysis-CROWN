@@ -1177,10 +1177,10 @@ def build_config(
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
-            muons.MuonPtCorrection,
+            muons.MuonPtCorrectionSwitch.get(era),
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMCSwitch.get(era),
-            electrons.BaseElectrons,
+            electrons.BaseElectronsSwitch.get(era),
             jets.GenJet,
             jets.JetSmearingSeed,
             jets.JetBTagSwitch.get(era),
@@ -1425,9 +1425,7 @@ def build_config(
         (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
-        ("global", ReplaceProducer, [electrons.ElectronIDCut, electrons.ElectronIDCut_v9], {"eras": RUN2_ERAS}),
         ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        ("global", ReplaceProducer, [muons.MuonPtCorrection, muons.MuonPtCorrection_Run2], {"eras": RUN2_ERAS}),
 
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!

@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 ####################
 # Set of producers used for loosest selection of muons
@@ -18,6 +18,9 @@ with defaults(scopes=["global"]):
         input=[nanoAOD.Muon_pt],
         output=[q.muon_pt_corrected]
     )
+    class MuonPtCorrectionSwitch(SwitchProducer):
+        run2=MuonPtCorrection_Run2
+        run3=MuonPtCorrection
 
     MuonPtCut = Producer(
         call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_muon_pt})''',
