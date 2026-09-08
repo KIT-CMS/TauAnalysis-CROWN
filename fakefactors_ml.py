@@ -9,12 +9,12 @@ from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 from code_generation.systematics import SystematicShift
 
-from .fakefactors import NonClosureGranularity
+from .sm_fake_factors_run2 import NonClosureGranularity
 from .producers import fakefactors_ml as fakefactors_ml
 from .producers import nn_output as nn_output
 from .quantities import output as q
-from .scripts.CROWNWrapper import (defaults,
-                                   get_adjusted_add_shift_SystematicShift)
+from code_generation.systematics import get_add_shift
+from code_generation.helpers import defaults
 
 
 def build_config(
@@ -33,7 +33,7 @@ def build_config(
     )
 
     non_closure_granularity = NonClosureGranularity("coarse")
-    add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+    add_shift = get_add_shift(configuration)
     USE_SPLIT_INFO_PRODUCER = False
 
     def ff_process_name(name: str) -> str:

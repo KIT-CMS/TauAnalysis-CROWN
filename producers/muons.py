@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 ####################
 # Set of producers used for loosest selection of muons
@@ -12,24 +13,32 @@ with defaults(scopes=["global"]):
         input=[nanoAOD.Muon_pt, nanoAOD.Muon_eta, nanoAOD.Muon_phi, nanoAOD.Muon_charge, nanoAOD.Muon_nTrackerLayers, nanoAOD.luminosityBlock, nanoAOD.event],
         output=[q.muon_pt_corrected]
     )
+    MuonPtCorrection_Run2 = Producer(
+        call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
+        input=[nanoAOD.Muon_pt],
+        output=[q.muon_pt_corrected]
+    )
+    class MuonPtCorrectionSwitch(SwitchProducer):
+        run2=MuonPtCorrection_Run2
+        run3=MuonPtCorrection
 
     MuonPtCut = Producer(
-        call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_muon_pt})''',
+        call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_muon_pt})''',
         input=[q.muon_pt_corrected],
         output=[q._MuonPtCut],
     )
     MuonEtaCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_eta})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_eta})''',
         input=[nanoAOD.Muon_eta],
         output=[q._MuonEtaCut],
     )
     MuonDxyCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dxy})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_dxy})''',
         input=[nanoAOD.Muon_dxy],
         output=[q._MuonDxyCut],
     )
     MuonDzCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dz})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_dz})''',
         input=[nanoAOD.Muon_dz],
         output=[q._MuonDzCut],
     )
@@ -39,13 +48,13 @@ with defaults(scopes=["global"]):
         output=[q._MuonIDCut],
     )
     MuonIsoCut = Producer(
-        call='''physicsobject::CutMax<float>({df}, {output}, {input}, {max_muon_iso})''',
+        call='''physicsobject::CutSmaller<float>({df}, {output}, {input}, {max_muon_iso})''',
         input=[nanoAOD.Muon_pfRelIso04_all],
         output=[q._MuonIsoCut],
     )
 
     with defaults(output=[]):
-        DiMuonVetoPtCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_dimuonveto_pt})''', input=[q.muon_pt_corrected])
+        DiMuonVetoPtCut = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_dimuonveto_pt})''', input=[q.muon_pt_corrected])
         DiMuonVetoIDCut = Producer(call='''physicsobject::CutEqual<bool>({df}, {output}, {input}, true)''', input=[nanoAOD.Muon_looseId])
         DiMuonVetoMuons = ProducerGroup(
             call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
@@ -85,11 +94,11 @@ with defaults(scopes=["global"]):
 
 with defaults(scopes=["em", "mt", "mm"]):
     with defaults(output=[]):
-        GoodMuonPtCut = Producer(call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_muon_pt})''', input=[q.muon_pt_corrected])
-        GoodMuonEtaCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_eta})''', input=[nanoAOD.Muon_eta])
-        GoodMuonIsoCut = Producer(call='''physicsobject::CutMax<float>({df}, {output}, {input}, {max_muon_iso})''', input=[nanoAOD.Muon_pfRelIso04_all])
-        GoodMuonDzCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dz})''', input=[nanoAOD.Muon_dz])
-        GoodMuonDxyCut = Producer(call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_muon_dxy})''', input=[nanoAOD.Muon_dxy])
+        GoodMuonPtCut = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_muon_pt})''', input=[q.muon_pt_corrected])
+        GoodMuonEtaCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_eta})''', input=[nanoAOD.Muon_eta])
+        GoodMuonIsoCut = Producer(call='''physicsobject::CutSmaller<float>({df}, {output}, {input}, {max_muon_iso})''', input=[nanoAOD.Muon_pfRelIso04_all])
+        GoodMuonDzCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_dz})''', input=[nanoAOD.Muon_dz])
+        GoodMuonDxyCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_muon_dxy})''', input=[nanoAOD.Muon_dxy])
 
     with defaults(
         call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',

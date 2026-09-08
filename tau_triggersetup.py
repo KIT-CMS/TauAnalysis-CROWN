@@ -1,68 +1,8 @@
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 
-MUTAU_CROSS_TRIGGER_FLAG = EraModifier(
-    {
-        "2016preVFP": "trg_cross_mu20tau27_hps",
-        "2016postVFP": "trg_cross_mu20tau27_hps",
-        "2017": "trg_cross_mu20tau27_hps",
-        "2018": "trg_cross_mu20tau27_hps",
-        "2022preEE": "trg_cross_mu20tau27_hps",
-        "2022postEE": "trg_cross_mu20tau27_hps",
-        "2023preBPix": "trg_cross_mu20tau27_hps",
-        "2023postBPix": "trg_cross_mu20tau27_hps",
-        "2024": "trg_cross_mu20tau27_hps",
-        "2025": "trg_cross_mu20tau27_pnet",
-        "2026": "trg_cross_mu20tau27_pnet",
-    }
-)
-
-ELETAU_CROSS_TRIGGER_FLAG = EraModifier(
-    {
-        "2016preVFP": "trg_cross_ele24tau30_hps",
-        "2016postVFP": "trg_cross_ele24tau30_hps",
-        "2017": "trg_cross_ele24tau30_hps",
-        "2018": "trg_cross_ele24tau30_hps",
-        "2022preEE": "trg_cross_ele24tau30_hps",
-        "2022postEE": "trg_cross_ele24tau30_hps",
-        "2023preBPix": "trg_cross_ele24tau30_hps",
-        "2023postBPix": "trg_cross_ele24tau30_hps",
-        "2024": "trg_cross_ele24tau30_hps",
-        "2025": "trg_cross_ele24tau30_pnet",
-        "2026": "trg_cross_ele24tau30_pnet",
-    }
-)
-
 RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 DOUBLETAU_HPS_ERAS = ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix"]
-
-# hps->pnet transition in 2025, shared by both legs and by nominal/shifted ditau SF blocks
-DOUBLETAU_TRIGGER_LEG1_FLAGNAME = EraModifier(
-    {
-        **{era: '""' for era in RUN2_ERAS},
-        **{era: "trg_wgt_doubletau35_leg1" for era in DOUBLETAU_HPS_ERAS},
-    },
-    default="trg_wgt_doubletau30_leg1",  # 2024, 2025, 2026
-)
-DOUBLETAU_TRIGGER_LEG2_FLAGNAME = EraModifier(
-    {
-        **{era: '""' for era in RUN2_ERAS},
-        **{era: "trg_wgt_doubletau35_leg2" for era in DOUBLETAU_HPS_ERAS},
-    },
-    default="trg_wgt_doubletau30_leg2",  # 2024, 2025, 2026
-)
-DOUBLETAU_TRIGGER_FLAG = EraModifier(
-    {
-        **{era: '""' for era in RUN2_ERAS},
-        **{era: "trg_double_tau35_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
-    },
-    default="trg_double_tau30_mediumiso_pnet",  # 2024, 2025, 2026
-)
-DOUBLETAU_TRIGGER_SF_NAME = EraModifier(
-    {era: '""' for era in RUN2_ERAS},
-    default="ditau",  # all Run 3 eras
-)
-
 
 def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
 
@@ -727,7 +667,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         {
                             "flagname": "trg_cross_mu23ele12",
                             "hlt_path": "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
-                            "p1_ptcut": 12,
+                            # p1_ptcut raised from the HLT-native 12 to 15: the offline em preselection (matches smhtt_ul) needs at least 15 on the electron leg
+                            "p1_ptcut": 15,
                             "p2_ptcut": 24,
                             **elmu_cross_trigger_defaults,
                         },
@@ -735,7 +676,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "flagname": "trg_cross_mu8ele23",
                             "hlt_path": "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ",
                             "p1_ptcut": 24,
-                            "p2_ptcut": 8,
+                            # p2_ptcut raised from the HLT-native 8 to 15: the offline em preselection (matches smhtt_ul) needs at least 15 on the muon leg
+                            "p2_ptcut": 15,
                             **elmu_cross_trigger_defaults,
                         },
                     ],
@@ -973,7 +915,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     configuration.add_config_parameters(
         ["ee"],
         {
-            "doubleelectron_trigger": doubleelectron_trigger_defaults,
+            "doubleelectron_trigger": [doubleelectron_trigger_defaults],
         },
     )
 
@@ -1016,7 +958,11 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "mutau_trigger_leg1_sf": [
                 {
                     "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                    "mutau_cross_trigger_flag": MUTAU_CROSS_TRIGGER_FLAG,
+                    "mutau_cross_trigger_flag": EraModifier(
+                        {"2025": "trg_cross_mu20tau27_pnet", 
+                         "2026": "trg_cross_mu20tau27_pnet"},
+                        default="trg_cross_mu20tau27_hps",
+                    ),
                     "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
                     "mutau_cross_trigger_leg1_variation": "nominal",
                 },
@@ -1024,7 +970,11 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "mutau_trigger_leg2_sf": [
                 {
                     "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
-                    "mutau_cross_trigger_flag": MUTAU_CROSS_TRIGGER_FLAG,
+                    "mutau_cross_trigger_flag": EraModifier(
+                        {"2025": "trg_cross_mu20tau27_pnet", 
+                         "2026": "trg_cross_mu20tau27_pnet"},
+                        default="trg_cross_mu20tau27_hps",
+                    ),
                     "mutau_cross_trigger_leg2_sf_name": "mutau",
                     "mutau_cross_trigger_leg2_variation": "nom",
                 },
@@ -1083,7 +1033,11 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             ),
             "eletau_cross_trigger_leg1_sf": [
                 {
-                    "eletau_cross_trigger_flag": ELETAU_CROSS_TRIGGER_FLAG,
+                    "eletau_cross_trigger_flag": EraModifier(
+                        {"2025": "trg_cross_ele24tau30_pnet", 
+                         "2026": "trg_cross_ele24tau30_pnet"},
+                        default="trg_cross_ele24tau30_hps",
+                    ),
                     "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
                     "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
                     "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
@@ -1093,7 +1047,11 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
             "eletau_cross_trigger_leg2_sf": [
                 {
                     "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                    "eletau_cross_trigger_flag": ELETAU_CROSS_TRIGGER_FLAG,
+                    "eletau_cross_trigger_flag": EraModifier(
+                        {"2025": "trg_cross_ele24tau30_pnet", 
+                         "2026": "trg_cross_ele24tau30_pnet"},
+                        default="trg_cross_ele24tau30_hps",
+                    ),
                     "eletau_cross_trigger_leg2_sf_name": "etau",
                     "eletau_cross_trigger_leg2_variation": "nom",
                 },
@@ -1107,17 +1065,41 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         {
             "doubletau_trigger_leg1_sf": [
                 {
-                    "doubletau_trigger_leg1_flagname": DOUBLETAU_TRIGGER_LEG1_FLAGNAME,
-                    "doubletau_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
-                    "doubletau_trigger_leg1_sf_name": DOUBLETAU_TRIGGER_SF_NAME,
+                    "doubletau_trigger_leg1_flagname": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_wgt_doubletau35_leg1" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_wgt_doubletau30_leg1",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_trigger_flag": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_double_tau35_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_double_tau30_mediumiso_pnet",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_trigger_leg1_sf_name": "ditau",
                     "doubletau_trigger_leg1_variation": "nom",
                 },
             ],
             "doubletau_trigger_leg2_sf": [
                 {
-                    "doubletau_trigger_leg2_flagname": DOUBLETAU_TRIGGER_LEG2_FLAGNAME,
-                    "doubletau_trigger_flag": DOUBLETAU_TRIGGER_FLAG,
-                    "doubletau_trigger_leg2_sf_name": DOUBLETAU_TRIGGER_SF_NAME,
+                    "doubletau_trigger_leg2_flagname": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_wgt_doubletau35_leg2" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_wgt_doubletau30_leg2",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_trigger_flag": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_double_tau35_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_double_tau30_mediumiso_pnet",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_trigger_leg2_sf_name": "ditau",
                     "doubletau_trigger_leg2_variation": "nom",
                 },
             ],

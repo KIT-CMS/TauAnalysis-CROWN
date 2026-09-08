@@ -1,11 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
-from ..scripts.CROWNWrapper import (
-    Producer,
-    ProducerGroup,
-    ExtendedVectorProducer,
-    defaults,
-)
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer, SwitchProducer
 
 
 ####################
@@ -403,6 +399,19 @@ with defaults(call=None, input=None, output=None):
         scopes=["et"],
         subproducers=[UnrollElLV1, UnrollTauLV2_v9, tau_decaymode_1_notau] + DiTauPairQuantitiesCollection + Flag_Collection_2_v9,
     )
+
+    class TTDiTauPairQuantitiesSwitch(SwitchProducer):
+        run2 = TTDiTauPairQuantities_v9
+        run3 = TTDiTauPairQuantities
+
+    class MTDiTauPairQuantitiesSwitch(SwitchProducer):
+        run2 = MTDiTauPairQuantities_v9
+        run3 = MTDiTauPairQuantities
+
+    class ETDiTauPairQuantitiesSwitch(SwitchProducer):
+        run2 = ETDiTauPairQuantities_v9
+        run3 = ETDiTauPairQuantities
+
     MuMuPairQuantities = ProducerGroup(
         scopes=["mm"],
         subproducers=[

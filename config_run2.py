@@ -16,13 +16,13 @@ from .producers import triggers as triggers
 from .quantities import nanoAODv9 as nanoAOD
 from .quantities import output as q
 from .tau_triggersetup import add_diTauTriggerSetup
-from .jet_variations import add_jetVariations
+from .variations import add_jetVariations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-from .scripts.CROWNWrapper import defaults, get_adjusted_add_shift_SystematicShift
+from code_generation.systematics import get_add_shift, SystematicShiftByQuantity
+from code_generation.helpers import defaults
 from .scripts.SpecialSetups import ES_ID_SCHEME
 
 
@@ -1486,7 +1486,7 @@ def build_config(
     #########################
     # LHE Scale Weight variations
     #########################
-    add_shift = get_adjusted_add_shift_SystematicShift(configuration)
+    add_shift = get_add_shift(configuration)
     if any([it in sample for it in ["ggh", "qqh", "vbf"]]):
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):

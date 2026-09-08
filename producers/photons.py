@@ -1,6 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup
 
 ####################
 # Set of producers used for loosest selection of photons
@@ -9,11 +10,11 @@ from ..scripts.CROWNWrapper import Producer, ProducerGroup, defaults
 with defaults(scopes=["global"]):
     with defaults(output=[]):
         PhotonPtCut = Producer(
-            call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_photon_pt})''',
+            call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_photon_pt})''',
             input=[nanoAOD.Photon_pt],
         )
         PhotonEtaCut = Producer(
-            call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_photon_eta})''',
+            call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_photon_eta})''',
             input=[nanoAOD.Photon_eta],
         )
         PhotonElectronVeto = Producer(

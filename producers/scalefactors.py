@@ -1,7 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
-
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer, SwitchProducer
 
 ############################
 # Muon ID, ISO SF
@@ -228,7 +228,7 @@ with defaults(
     scopes=["et", "mt"],
     input=[q.pt_2, q.tau_decaymode_2, q.gen_match_2],
     output="tau_2_vsjet_sf_outputname",
-    vec_configs="vsjet_tau_id",
+    vec_config="vsjet_tau_id",
 ):
     Tau_2_VsJetTauID_lt_SF_Run2 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsJet_lt(
@@ -520,7 +520,7 @@ with defaults(scopes=["ee"], input=[q.pt_2, q.eta_2, q.phi_2]):
     )
 
 ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(  # --- from our measurement ---
-    call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_trigger_sf}", "mc", "{mc_trg_extrapolation}")''',
+    call='''embedding::electron::Scalefactor({df}, correctionManager, {output}, {input}, "{mc_electron_sf_file}", "{mc_trigger_sf}", "mc", {mc_trg_extrapolation})''',
     input=[q.pt_1, q.eta_1],
     output="flagname",
     scopes=["et", "ee"],
@@ -812,3 +812,14 @@ with defaults(call=None, input=None, output=None):
             "et": [Ele_1_IDWP90_SF, Ele_1_IDWP80_SF],
         },
     )
+
+# need to keep the group producers since they are referenced individually too for variations and such
+class TauID_SFSwitch(SwitchProducer):
+    run2 = TauID_SF_v9
+    class run3:
+        v12 = TauID_SF_v12
+        v15 = TauID_SF
+
+class btaggingWP_SFSwitch(SwitchProducer):
+    run2 = btagging_SF
+    run3 = btaggingWP_SF

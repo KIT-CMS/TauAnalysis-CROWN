@@ -1,19 +1,19 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
-from ..scripts.CROWNWrapper import Producer, ProducerGroup, ExtendedVectorProducer, defaults
-
+from code_generation.helpers import defaults
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 with defaults(scopes=["global"], output=[]):
     TauPtCut = Producer(
-        call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_tau_pt})''',
+        call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_tau_pt})''',
         input=[q.tau_pt_corrected],
     )
     TauEtaCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_eta})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_eta})''',
         input=[nanoAODv15.Tau_eta],
     )
     TauDzCut = Producer(
-        call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})''',
+        call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_dz})''',
         input=[nanoAODv15.Tau_dz],
     )
 
@@ -406,15 +406,15 @@ with defaults(scopes=["et", "mt", "tt"]):
 
     with defaults(output=[]):
         GoodTauPtCut = Producer(
-            call='''physicsobject::CutMin<float>({df}, {output}, {input}, {min_tau_pt})''',
+            call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_tau_pt})''',
             input=[q.tau_pt_corrected],
         )
         GoodTauEtaCut = Producer(
-            call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_eta})''',
+            call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_eta})''',
             input=[nanoAODv15.Tau_eta],
         )
         GoodTauDzCut = Producer(
-            call='''physicsobject::CutAbsMax<float>({df}, {output}, {input}, {max_tau_dz})''',
+            call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_tau_dz})''',
             input=[nanoAODv15.Tau_dz],
         )
         GoodTauDMCut = Producer(
@@ -487,3 +487,18 @@ with defaults(scopes=["et", "mt", "tt"]):
         input=[q.good_taus_mask],
         output=[q.ntaus],
     )
+
+# need to keep group producers because of variations changing them differently and other methods
+class BaseTausSwitch(SwitchProducer):
+    run2 = BaseTaus_v9
+    run3 = BaseTaus
+
+class GoodTausSwitch(SwitchProducer):
+    run2 = GoodTaus_v9
+    run3 = GoodTaus
+
+class TauEnergyCorrectionSwitch(SwitchProducer):
+    run2 = TauEnergyCorrection_ES_dm_pt_binned
+    class run3:
+        v12 = TauEnergyCorrection_v12
+        v15 = TauEnergyCorrection
