@@ -7,7 +7,6 @@ from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
 
-from .jet_variations import add_jetVariations
 from .producers import (
     electrons,
     event,
@@ -29,6 +28,7 @@ from .tau_embedding_settings_SFs import setup_embedding
 from .tau_triggersetup import add_diTauTriggerSetup
 from .tau_variations import add_tauVariations
 
+from .variations import add_Variations
 
 def build_config(
     era: str,
@@ -1309,8 +1309,8 @@ def build_config(
     #########################
     # Jet energy resolution and jet energy scale and btag uncertainties
     #########################
-    configuration = add_jetVariations(configuration, era, run2_v15)
-
+    # configuration = add_jetVariations(configuration, era, run2_v15)
+    configuration = add_Variations(configuration, sample, era)
     #########################
     # Finalize and validate the configuration
     #########################
