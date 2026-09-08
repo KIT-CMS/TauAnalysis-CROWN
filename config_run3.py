@@ -1,27 +1,30 @@
 from __future__ import annotations
 
-from typing import List
 from itertools import product
 
-from .producers import electrons as electrons
-from .producers import event as event
-from .producers import genparticles as genparticles
-from .producers import jets as jets
-from .producers import met as met
-from .producers import muons as muons
-from .producers import pairquantities as pairquantities
-from .producers import pairselection as pairselection
-from .producers import scalefactors as scalefactors
-from .producers import taus as taus
-from .producers import triggers as triggers
-from .quantities import nanoAODv15
-from .quantities import output as q
-from .tau_triggersetup import add_diTauTriggerSetup, RUN2_ERAS
-from .variations import add_Variations
-from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
+
+from .producers import (
+    electrons,
+    event,
+    genparticles,
+    jets,
+    met,
+    muons,
+    pairquantities,
+    pairselection,
+    scalefactors,
+    taus,
+    triggers,
+)
+
+from .quantities import nanoAODv15
+from .quantities import output as q
+from .tau_embedding_settings import setup_embedding
+from .tau_triggersetup import RUN2_ERAS, add_diTauTriggerSetup
+from .variations import add_Variations
 
 # hadronic tau decay modes the analysis accepts
 # the selection masks cut on the very same list
@@ -31,11 +34,11 @@ TAU_DECAY_MODES = "0,1,10,11"
 def build_config(
     era: str,
     sample: str,
-    scopes: List[str],
-    shifts: List[str],
-    available_sample_types: List[str],
-    available_eras: List[str],
-    available_scopes: List[str],
+    scopes: list[str],
+    shifts: list[str],
+    available_sample_types: list[str],
+    available_eras: list[str],
+    available_scopes: list[str],
 ) -> Configuration:
     configuration = Configuration(
         era,
@@ -669,11 +672,11 @@ def build_config(
             "tau_id_algorithm": "DeepTau2018v2p5",
             "vsjet_tau_id": [
                 {
-                    "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
-                    "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
-                    "vsjet_tau_id_WP": "{wp}".format(wp=wp),
-                    "tau_1_vsjet_id_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                    "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                    "tau_1_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_2",
+                    "vsjet_tau_id_WP": f"{wp}",
+                    "tau_1_vsjet_id_outputname": f"id_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_id_outputname": f"id_tau_vsJet_{wp}_2",
                     "vsjet_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
@@ -686,11 +689,11 @@ def build_config(
             ],
             "vsele_tau_id": [
                 {
-                    "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
-                    "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
-                    "vsele_tau_id_WP": "{wp}".format(wp=wp),
-                    "tau_1_vsele_id_outputname": "id_tau_vsEle_{wp}_1".format(wp=wp),
-                    "tau_2_vsele_id_outputname": "id_tau_vsEle_{wp}_2".format(wp=wp),
+                    "tau_1_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_1",
+                    "tau_2_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_2",
+                    "vsele_tau_id_WP": f"{wp}",
+                    "tau_1_vsele_id_outputname": f"id_tau_vsEle_{wp}_1",
+                    "tau_2_vsele_id_outputname": f"id_tau_vsEle_{wp}_2",
                     "vsele_tau_id_WPbit": bit,
                 }
                 for wp, bit in {
@@ -705,13 +708,13 @@ def build_config(
             ],
             "vsmu_tau_id": [
                 {
-                    "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
-                    "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
-                    "vsmu_tau_id_WP": "{wp}".format(wp=wp),
-                    "vsele_tau_id_WP": "{wp_ele}".format(wp_ele=wp_ele),
+                    "tau_1_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_{wp_ele}_1",
+                    "tau_2_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_{wp_ele}_2",
+                    "vsmu_tau_id_WP": f"{wp}",
+                    "vsele_tau_id_WP": f"{wp_ele}",
                     "vsjet_tau_id_WP": "Medium", #eventually add more if available and used
-                    "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
-                    "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
+                    "tau_1_vsmu_id_outputname": f"id_tau_vsMu_{wp}_{wp_ele}_1",
+                    "tau_2_vsmu_id_outputname": f"id_tau_vsMu_{wp}_{wp_ele}_2",
                     "vsmu_tau_id_WPbit": bit,
                 }
                 for (wp, bit), wp_ele in product(
@@ -735,8 +738,8 @@ def build_config(
             "vsjet_tau_id_wp_bit": [
                 {
                     "vsjet_tau_id_WPbit": bit,
-                    "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                    "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                    "tau_1_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_1",
+                    "tau_2_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_2",
                 }
                 for wp, bit in dict(
                     VVVLoose = 1,
@@ -1050,8 +1053,8 @@ def build_config(
                 "vsjet_tau_id_wp_bit": [
                         {
                             "vsjet_tau_id_WPbit": bit,
-                            "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                            "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                            "tau_1_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_1",
+                            "tau_2_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_2",
                         }
                         for wp, bit in dict(
                             VVLoose=2,
@@ -1060,11 +1063,11 @@ def build_config(
                     ],
                 "vsjet_tau_id": [
                         {
-                            "tau_1_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_1".format(wp=wp),
-                            "tau_2_vsjet_sf_outputname": "id_wgt_tau_vsJet_{wp}_2".format(wp=wp),
-                            "vsjet_tau_id_WP": "{wp}".format(wp=wp),
-                            "tau_1_vsjet_id_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
-                            "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
+                            "tau_1_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_1",
+                            "tau_2_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_2",
+                            "vsjet_tau_id_WP": f"{wp}",
+                            "tau_1_vsjet_id_outputname": f"id_tau_vsJet_{wp}_1",
+                            "tau_2_vsjet_id_outputname": f"id_tau_vsJet_{wp}_2",
                             "vsjet_tau_id_WPbit": bit,
                         }
                         for wp, bit in {
@@ -1076,11 +1079,11 @@ def build_config(
                     ],
                 "vsele_tau_id": [
                     {
-                        "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
-                        "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
-                        "vsele_tau_id_WP": "{wp}".format(wp=wp),
-                        "tau_1_vsele_id_outputname": "id_tau_vsEle_{wp}_1".format(wp=wp),
-                        "tau_2_vsele_id_outputname": "id_tau_vsEle_{wp}_2".format(wp=wp),
+                        "tau_1_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_1",
+                        "tau_2_vsele_sf_outputname": f"id_wgt_tau_vsEle_{wp}_2",
+                        "vsele_tau_id_WP": f"{wp}",
+                        "tau_1_vsele_id_outputname": f"id_tau_vsEle_{wp}_1",
+                        "tau_2_vsele_id_outputname": f"id_tau_vsEle_{wp}_2",
                         "vsele_tau_id_WPbit": bit,
                     }
                     for wp, bit in {
@@ -1096,13 +1099,13 @@ def build_config(
                 # remove dependency on vs ele wp for consistency since it's not needed in run2
                 "vsmu_tau_id": [
                     {
-                        "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_1".format(wp=wp),
-                        "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_2".format(wp=wp),
-                        "vsmu_tau_id_WP": "{wp}".format(wp=wp),
+                        "tau_1_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_1",
+                        "tau_2_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_2",
+                        "vsmu_tau_id_WP": f"{wp}",
                         "vsele_tau_id_WP": '""',
                         "vsjet_tau_id_WP": '""', 
-                        "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_1".format(wp=wp),
-                        "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_2".format(wp=wp),
+                        "tau_1_vsmu_id_outputname": f"id_tau_vsMu_{wp}_1",
+                        "tau_2_vsmu_id_outputname": f"id_tau_vsMu_{wp}_2",
                         "vsmu_tau_id_WPbit": bit,
                     }
                     for wp, bit in {
