@@ -49,9 +49,9 @@ def build_config(
         available_scopes,
     )
     
-    run2_v15 = True
+    run2_v15 = False #für Run3_v15
     # define Tau energy correction producers, id, and variation scheme
-    configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_pt_binned")
+    configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_binned_run3")# wie in config_run3 , nicht mehr p_T getrennt 
 
     ###########################
     ####### Parameters ########
@@ -68,19 +68,15 @@ def build_config(
     
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_3_2022_and_2023_data_and_MC
     default_met_filters = [
-        "Flag_goodVertices",
-        "Flag_globalSuperTightHalo2016Filter",
-        "Flag_EcalDeadCellTriggerPrimitiveFilter",
-        "Flag_BadPFMuonFilter",
-        "Flag_BadPFMuonDzFilter",  # only since nanoAODv9 available
-        "Flag_eeBadScFilter",
+    "Flag_goodVertices",
+    "Flag_globalSuperTightHalo2016Filter",
+    "Flag_EcalDeadCellTriggerPrimitiveFilter",
+    "Flag_BadPFMuonFilter",
+    "Flag_BadPFMuonDzFilter",
+    "Flag_eeBadScFilter",
+    "Flag_ecalBadCalibFilter",
+    "Flag_hfNoisyHitsFilter",
     ]
-    
-    default_met_filters.extend(["Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter"])
-    if sample in ["embedding", "embedding_mc"]:
-        default_met_filters.remove("Flag_BadPFMuonDzFilter") # not available in nanoAOD of embedding
-    if int(era[:4]) >= 2017:
-        default_met_filters.append("Flag_ecalBadCalibFilter")
         
     configuration.add_config_parameters(
         "global",
@@ -108,6 +104,7 @@ def build_config(
                     "2016postVFP": "data/golden_json/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt",
                     "2017": "data/golden_json/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt",
                     "2018": "data/golden_json/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+                    "2024": "data/golden_json/Cert_Collisions2024_378981_386951_Golden.json",
                 }
             ),
             
@@ -118,6 +115,7 @@ def build_config(
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run2-2016postVFP-UL-NanoAODv9/2021-09-10/puWeights.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run2-2017-UL-NanoAODv9/2021-09-10/puWeights.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run2-2018-UL-NanoAODv9/2021-09-10/puWeights.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/puWeights_BCDEFGHI.json.gz",
                 }
             ),
             "PU_reweighting_file_data": EraModifier(
@@ -126,6 +124,7 @@ def build_config(
                     "2016postVFP": "Missing or non existent",
                     "2017": "Missing or non existent",
                     "2018": "Missing or non existent",
+                    "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -134,6 +133,7 @@ def build_config(
                     "2016postVFP": "Missing or non existent",
                     "2017": "Missing or non existent",
                     "2018": "Missing or non existent",
+                    "2024": "data/root_pileup/MC_PileUp_2024.root",
                 }
             ),
             "PU_reweighting_era": EraModifier(
@@ -142,6 +142,7 @@ def build_config(
                     "2016postVFP": "Collisions16_UltraLegacy_goldenJSON",
                     "2017": "Collisions17_UltraLegacy_goldenJSON",
                     "2018": "Collisions18_UltraLegacy_goldenJSON",
+                    "2024": "Collisions24_BCDEFGHI_goldenJSON",
                 }
             ),
             "PU_reweighting_variation": "nominal",
@@ -171,6 +172,7 @@ def build_config(
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run2-2016postVFP-UL-NanoAODv15/2025-12-05/electronSS_EtDependent.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run2-2017-UL-NanoAODv15/2025-12-05/electronSS_EtDependent.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run2-2018-UL-NanoAODv15/2025-12-05/electronSS_EtDependent.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-15/electronSS_EtDependent.json.gz",
                 }
             ),
             "ele_es_variation": "nom",
@@ -185,6 +187,7 @@ def build_config(
                     "2016postVFP": 4.7,
                     "2017": 4.7,
                     "2018": 4.7,
+                    "2024": 3.0, #aus config_run3.py
                 }
             ),
             "jet_eta_3": 4.7, # This is used for JetEtaCut producer for run2 now !!
@@ -199,6 +202,7 @@ def build_config(
                     "2016postVFP": 0.2489,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
                     "2017": 0.3040,
                     "2018": 0.2783,
+                    "2024": 0.1272,  # UParT Medium, aus config_run3.py
                 }
             ),
             # jet puID
@@ -208,6 +212,7 @@ def build_config(
                     "2016postVFP": 1,  # 0==fail, 1==pass(loose), 3==pass(loose,medium), 7==pass(loose,medium,tight)
                     "2017": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
                     "2018": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
+                    "2024": 0,  # in der Run-3-Referenz nicht verwendet
                 }
             ),
             "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
@@ -218,15 +223,17 @@ def build_config(
                     "2016postVFP": "Missing or non existent",
                     "2017": "Missing or non existent",
                     "2018": "Missing or non existent",
+                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
                 }
             ),
-            "jet_collection_name":"AK4PUPPI", #only used for jet ID so not relevant for run 2
+            "jet_collection_name":'"AK4PUPPI"', #only used for jet ID so not relevant for run 2
             "jet_jec_file": EraModifier( 
                 {
                     "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz",
                 }
             ),
             "jet_jer_master_seed": 42,
@@ -236,6 +243,7 @@ def build_config(
                     "2016postVFP": "Summer20UL16NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16NanoV15_V1_MC",
                     "2017": "Summer20UL17NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL17NanoV15_V1_MC",
                     "2018": "Summer20UL18NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL18NanoV15_V1_MC",
+                    "2024": "Summer24Prompt24_V2_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V2_MC",
                 }
             ),
             # jet resolution correction
@@ -249,6 +257,7 @@ def build_config(
                     "2016postVFP": "Summer20UL16_JRV5_MC",
                     "2017": "Summer19UL17_JRV4_MC",
                     "2018": "Summer19UL18_JRV3_MC",
+                    "2024": "Summer23BPixPrompt23_RunD_JRV1_MC", #steht so in configrun3 aber eig 23..
                 }
             ),
             "jet_jec_algo": EraModifier(
@@ -257,6 +266,7 @@ def build_config(
                     "2016postVFP": "AK4PFPuppi",
                     "2017": "AK4PFPuppi",
                     "2018": "AK4PFPuppi",
+                    "2024": "AK4PFPuppi",
                 }
             ),
             # jet veto configuration
@@ -266,6 +276,7 @@ def build_config(
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
                 }
             ),
             "jet_veto_map_name": EraModifier(
@@ -274,6 +285,7 @@ def build_config(
                     "2016postVFP": "Summer19UL16_V1",
                     "2017": "Summer19UL17_V1",
                     "2018": "Summer19UL18_V1",
+                    "2024": "Summer24Prompt24_RunBCDEFGHI_V1",
                 },
             ),
             "jet_veto_map_type": "jetvetomap",
@@ -300,6 +312,7 @@ def build_config(
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run2-2016postVFP-UL-NanoAODv15/2026-06-18/btagging.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run2-2017-UL-NanoAODv15/2026-06-18/btagging.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run2-2018-UL-NanoAODv15/2026-06-18/btagging.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
                 }
             ),
             "btag_sf_variation": "central",
@@ -309,6 +322,7 @@ def build_config(
                     "2016postVFP": "UParTAK4_comb",
                     "2017": "UParTAK4_comb",
                     "2018": "UParTAK4_comb",
+                    "2024": "UParTAK4_comb",
                 }
             ),
             "btag_wp":"M",
@@ -329,6 +343,7 @@ def build_config(
                     "2016postVFP": "data/recoil_corrections/Type1_PuppiMET_2016.root",  # These are likely from Legacy data sets, therefore no difference in pre and postVFP
                     "2017": "data/recoil_corrections/Type1_PuppiMET_2017.root",
                     "2018": "data/recoil_corrections/Type1_PuppiMET_2018.root",
+                    "2024": "data/hleprare/RecoilCorrlib/Recoil_corrections_2024_v5.json.gz",
                 }
             ),
             "recoil_systematics_file": EraModifier(
@@ -337,6 +352,7 @@ def build_config(
                     "2016postVFP": "data/recoil_corrections/PuppiMETSys_2016.root",  # These are likely from Legacy data sets, therefore no difference in pre and postVFP
                     "2017": "data/recoil_corrections/PuppiMETSys_2017.root",
                     "2018": "data/recoil_corrections/PuppiMETSys_2018.root",
+                    "2024": '""',
                 }
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
@@ -373,6 +389,7 @@ def build_config(
                     "2016postVFP": "data/zpt/htt_scalefactors_legacy_2017.root",  # ToDO: Measured in legacy, therefore the same for pre- and postVFP for now
                     "2017": "data/zpt/htt_scalefactors_legacy_2017.root",
                     "2018": "data/zpt/htt_scalefactors_legacy_2018.root",
+                    "2024": "data/hleprare/DYweightCorrlib/DY_pTll_weights_2024_v5.json.gz",
                 }
             ),
             "zptmass_functor": "zptmass_weight_nom",
@@ -384,6 +401,7 @@ def build_config(
             "zpt_variation": "nom",
         },
     )
+    ####################bis hier hin alles easy #################################
     ###### scope Specifics ######
     configuration.add_config_parameters(
         ["mt"],
@@ -409,6 +427,7 @@ def build_config(
             ],
             "vsele_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSe",
                     "tau_1_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_1".format(wp=wp),
                     "tau_2_vsele_sf_outputname": "id_wgt_tau_vsEle_{wp}_2".format(wp=wp),
                     "vsele_tau_id_WP": "{wp}".format(wp=wp),
@@ -428,6 +447,7 @@ def build_config(
             ],
             "vsmu_tau_id": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSmu",
                     "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
@@ -451,12 +471,13 @@ def build_config(
                 )
             ],
             # wp for tau pt correction
-            "tau_vsjet_wp": "Loose", ##change again to Loose if it becomes available
+            "tau_vsjet_wp": "Medium", ##change again to Loose if it becomes available
             "tau_vsele_wp": "VVLoose",
             # ID flags where scalefactors do not exist or are requiered withouth them
             # for Run 3 new TAU corrections, only the Medium wp sf are provided
             "vsjet_tau_id_wp_bit": [
                 {
+                    "tau_id_discriminator": "DeepTau2018v2p5VSjet",
                     "vsjet_tau_id_WPbit": bit,
                     "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
@@ -604,6 +625,18 @@ def build_config(
             "tau_sf_vsjet_DM11": "nom",
             "tau_sf_vsjet_DM11_20to40": "nom",
             "tau_sf_vsjet_DM11_40toInf": "nom",
+            "tau_sf_vsjet_1prong0pizero20to40": "nom",
+            "tau_sf_vsjet_1prong0pizero40toInf": "nom",
+            "tau_sf_vsjet_1prong1pizero20to40": "nom",
+            "tau_sf_vsjet_1prong1pizero40toInf": "nom",
+            "tau_sf_vsjet_3prong0pizero20to40": "nom",
+            "tau_sf_vsjet_3prong0pizero40toInf": "nom",
+            "tau_sf_vsjet_3prong1pizero20to40": "nom",
+            "tau_sf_vsjet_3prong1pizero40toInf": "nom",
+            "tau_sf_vsjet_1prong0pizero": "nom",
+            "tau_sf_vsjet_1prong1pizero": "nom",
+            "tau_sf_vsjet_3prong0pizero": "nom",
+            "tau_sf_vsjet_3prong1pizero": "nom",
             "tau_vsjet_sf_dependence": "dm",
         },
     )
@@ -626,46 +659,46 @@ def build_config(
             "tau_vsjet_vseleWP": "VVLoose",
         },
     )
+    if int(era[:4]) < 2022:
+        configuration.add_config_parameters(
+            "global",
+            {
+                "max_muon_iso": 0.3,
+                "max_ele_iso": 0.3,
+                "jet_reapplyJES": False,
+            }
+        )
+        configuration.add_config_parameters(
+            scopes,
+            {
+                "propagateJets": SampleModifier(
+                    {"data": False},
+                    default=True,
+                ),
+            }
+        )
     
-    configuration.add_config_parameters(
-        "global",
-        {
-            "max_muon_iso": 0.3,
-            "max_ele_iso": 0.3,
-            "jet_reapplyJES": False,
-        }
-    )
-    configuration.add_config_parameters(
-        scopes,
-        {
-            "propagateJets": SampleModifier(
-                {"data": False},
-                default=True,
-            ),
-        }
-    )
-    
-    configuration.add_config_parameters(
-        ["mt", "mm"],
-        {
-            "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
-        }
-    )
-    configuration.add_config_parameters(
-        ["mt"],
-        {
-            "max_muon_eta": 2.1,
-            "max_muon_iso": 0.3,
-        }
-    )
-    configuration.add_config_parameters(
-        ["mm"],
-        {
-            "min_muon_pt": 20.0,
-            "max_muon_eta": 2.1,
-            "max_muon_iso": 0.15,
-        }
-    )
+        configuration.add_config_parameters(
+            ["mt", "mm"],
+            {
+                "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
+            }
+        )
+        configuration.add_config_parameters(
+            ["mt"],
+            {
+                "max_muon_eta": 2.1,
+                "max_muon_iso": 0.3,
+            }
+        )
+        configuration.add_config_parameters(
+            ["mm"],
+            {
+                "min_muon_pt": 20.0,
+                "max_muon_eta": 2.1,
+                "max_muon_iso": 0.15,
+            }
+        )
 
     ############################
     ######## Producers #########
@@ -689,9 +722,9 @@ def build_config(
             jets.JetSmearingSeed,
             jets.JetBTagUParT,
             jets.JetRho,
-            # jets.JetID, # ToDo: json files in progress, do pseudo producer instead !!!
-            jets.JetID_pseudo,
+            jets.JetID,
             jets.JetVetoMapVeto,
+            jets.JetIDCut,
             # jets.JetIDCut, For run2_v15 in GoodJets_Run2_v15
             jets.JetEnergyCorrection_Run3,
             jets.JetPtCut_loose,
@@ -705,6 +738,7 @@ def build_config(
             event.DiLeptonVeto,
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
+            met.BuildRawMetVector,
             met.MetBasics_v15,
             met.MetMask,
             event.EvenOddIDFlag,
@@ -768,7 +802,32 @@ def build_config(
     ################################
     ######### Modifications ########
     ################################
-
+    if era == "2024":
+        # separate MC for 2024 and 2025 by even/odd event number
+        configuration.add_modification_rule(
+            "global",
+            AppendProducer(
+                producers=[event.EvenIDFilter],
+                exclude_samples=["data", "embedding"],
+            ),
+        )
+    if era == "2025":
+        # temporary root pileup for data 2025 by tau fw group, 23/03/2026
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[event.PUweights, event.PUweights_root],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
+        # separate MC for 2024 and 2025 by even/odd event number
+        configuration.add_modification_rule(
+            "global",
+            AppendProducer(
+                producers=[event.OddIDFilter],
+                exclude_samples=["data", "embedding"],
+            ),
+        )
     configuration.add_modification_rule(
         "global",
         RemoveProducer(
@@ -892,54 +951,54 @@ def build_config(
             samples=["data"],
         ),
     )
-
-    configuration.add_modification_rule(
-        "global",
-        ReplaceProducer(
-            producers=[jets.GoodJets, jets.GoodJets_Run2_v15],
-            exclude_samples=["fake_era"],
-        ),
-    )
-    configuration.add_modification_rule(
-            scopes,
-            ReplaceProducer(
-                producers=[met.MetCorrections, met.MetCorrections_Run2],
-                exclude_samples=["fake_era"],
-            ),
-        )
-    configuration.add_modification_rule(
-        ["mt"],
-        AppendProducer(
-            producers=[
-                scalefactors.MTGenerateSingleMuonTriggerSF_MC,
-                scalefactors.PrivateMuonIDSF_1_MC,
-                scalefactors.PrivateMuonIsoSF_1_MC,
-            ],
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mm"],
-        AppendProducer(
-            producers=[
-                scalefactors.PrivateMuonIDSF_1_MC,
-                scalefactors.PrivateMuonIsoSF_1_MC,
-                scalefactors.PrivateMuonIDSF_2_MC,
-                scalefactors.PrivateMuonIsoSF_2_MC,
-                scalefactors.MTGenerateSingleMuonTriggerSF_MC,
-            ],
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    
-    if era != "2018":
+    if int(era[:4]) < 2022:
         configuration.add_modification_rule(
             "global",
-            AppendProducer(
-                producers=event.PrefireWeight,
+            ReplaceProducer(
+                producers=[jets.GoodJets, jets.GoodJets_Run2_v15],
                 exclude_samples=["fake_era"],
             ),
         )
+        configuration.add_modification_rule(
+                scopes,
+                ReplaceProducer(
+                    producers=[met.MetCorrections, met.MetCorrections_Run2],
+                    exclude_samples=["fake_era"],
+                ),
+        )
+        configuration.add_modification_rule(
+            ["mt"],
+            AppendProducer(
+                producers=[
+                    scalefactors.MTGenerateSingleMuonTriggerSF_MC,
+                    scalefactors.PrivateMuonIDSF_1_MC,
+                    scalefactors.PrivateMuonIsoSF_1_MC,
+                ],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
+        configuration.add_modification_rule(
+            ["mm"],
+            AppendProducer(
+                producers=[
+                    scalefactors.PrivateMuonIDSF_1_MC,
+                    scalefactors.PrivateMuonIsoSF_1_MC,
+                    scalefactors.PrivateMuonIDSF_2_MC,
+                    scalefactors.PrivateMuonIsoSF_2_MC,
+                    scalefactors.MTGenerateSingleMuonTriggerSF_MC,
+                ],
+                exclude_samples=["data", "embedding", "embedding_mc"],
+            ),
+        )
+    
+        if era != "2018":
+            configuration.add_modification_rule(
+                "global",
+                AppendProducer(
+                    producers=event.PrefireWeight,
+                    exclude_samples=["fake_era"],
+                ),
+            )
 
 
     #########################
@@ -1149,31 +1208,48 @@ def build_config(
     #########################
     # MET Recoil Shifts
     #########################
-    with defaults(
-        scopes=("mt", "mm"),
-        producers=[met.ApplyRecoilCorrections_Run2],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-        shift_key=[
-            "apply_recoil_resolution_systematic",  # set either to True or False
-            "apply_recoil_response_systematic",  # set either to True or False
-            "recoil_systematic_shift_up",  # set either to True or False upon variation
-            "recoil_systematic_shift_down",  # set either to True or False upon variation
-        ]
-    ):
-        add_shift(
-            name="metRecoilResponse",
-            shift_map={
-                "Up": [False, True, True, False],
-                "Down": [False, True, False, True],
-            }
-        )
-        add_shift(
-            name="metRecoilResolution",
-            shift_map={
-                "Up": [True, False, True, False],
-                "Down": [True, False, False, True],
-            },
-        )
+    if int(era[:4]) < 2022:
+        with defaults(
+            scopes=("et", "mt", "tt", "em", "ee", "mm"),
+            producers=[met.ApplyRecoilCorrections_Run2],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+            shift_key=[
+                "apply_recoil_resolution_systematic",  # set either to True or False
+                "apply_recoil_response_systematic",  # set either to True or False
+                "recoil_systematic_shift_up",  # set either to True or False upon variation
+                "recoil_systematic_shift_down",  # set either to True or False upon variation
+            ]
+        ):
+            add_shift(
+                name="metRecoilResponse",
+                shift_map={
+                    "Up": [False, True, True, False],
+                    "Down": [False, True, False, True],
+                }
+            )
+            add_shift(
+                name="metRecoilResolution",
+                shift_map={
+                    "Up": [True, False, True, False],
+                    "Down": [True, False, False, True],
+                },
+            )
+    else: 
+        with defaults(
+            scopes=("et", "mt", "tt", "em", "ee", "mm"),
+            producers=[met.ApplyRecoilCorrections],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+            shift_key=["recoil_method", "recoil_variation"]
+        ):
+            add_shift(
+                name="metRecoilResponse",
+                shift_map={"Up": ["Uncertainty", "RespUp"], "Down": ["Uncertainty", "RespDown"]}
+            )
+            add_shift(
+                name="metRecoilResolution",
+                shift_map={"Up": ["Uncertainty", "ResolUp"], "Down": ["Uncertainty", "ResolDown"]}
+            )
+
 
     #########################
     # Pileup Shifts
@@ -1190,7 +1266,7 @@ def build_config(
     #########################
     # Prefiring Shifts
     #########################
-    if int(era[:4]) < 2018:
+    if era != "2018" and int(era[:4]) < 2022:
         configuration.add_shift(
             SystematicShiftByQuantity(
                 name="prefiringDown",
