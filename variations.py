@@ -1,21 +1,17 @@
-from __future__ import annotations 
-from typing import List
+from __future__ import annotations
 
 from code_generation.configuration import Configuration
-from code_generation.modifiers import EraModifier
-from code_generation.systematics import SystematicShift, SystematicShiftByQuantity
-
-from .producers import electrons as electrons
-from .producers import event as event
-from .producers import jets as jets
-from .producers import met as met
-from .producers import muons as muons
-from .producers import scalefactors as scalefactors
-from .producers import taus as taus
-from .quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.systematics import get_add_shift
-from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
+from code_generation.modifiers import EraModifier
+from code_generation.systematics import (
+    SystematicShift,
+    SystematicShiftByQuantity,
+    get_add_shift,
+)
+
+from .producers import electrons, event, jets, met, muons, scalefactors, taus
+from .quantities import nanoAODv9, nanoAODv15
+from .tau_triggersetup import DOUBLETAU_HPS_ERAS, RUN2_ERAS
 
 # Map internal era names to JERC JSON era names for JERC sources
 ERA_MAP = {
@@ -33,6 +29,8 @@ ERA_MAP = {
 }
 
 def add_Variations(configuration: Configuration, sample: str, era: str) -> Configuration:
+
+    year = int(era[:4])
     add_shift = get_add_shift(configuration)
     era_tag = ERA_MAP[era]  
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
@@ -45,7 +43,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         "vbf": ["qqH"],
         "rem": ["VH", "ttH"],
     }
-    lhe_scale_postfixes: List[str] = next(
+    lhe_scale_postfixes: list[str] = next(
         (postfixes for tag, postfixes in lhe_scale_production_mode_postfixes.items() if tag in sample),
         [],
     )
@@ -87,7 +85,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Prefiring Shifts
     #########################
-    if int(era[:4]) < 2018:
+    if year < 2018:
         configuration.add_shift(
             SystematicShiftByQuantity(
                 name="CMS_l1_ecal_prefiringDown",
@@ -116,9 +114,9 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name=f"CMS_scale_m_stat", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
+        add_shift(name="CMS_scale_m_stat", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
         add_shift(name=f"CMS_scale_m_syst{shift_era_tag}", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
-        add_shift(name=f"CMS_res_m_stat", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
+        add_shift(name="CMS_res_m_stat", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
         add_shift(name=f"CMS_res_m_syst_{shift_era_tag}", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
 
     #########################
@@ -162,7 +160,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Electron energy correction shifts
     #########################
-    if int(era[:4]) < 2022:
+    if year < 2022:
         with defaults(
             scopes="global",
             shift_key="ele_es_variation",
@@ -221,7 +219,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # MET Recoil Shifts
     #########################
-    if int(era[:4]) < 2022:
+    if year < 2022:
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[met.ApplyRecoilCorrections_Run2],
@@ -266,7 +264,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Z pt DY uncertainties
     #########################
-    if int(era[:4]) >= 2022:
+    if year >= 2022:
         add_shift(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[event.ZPtReweighting],
@@ -280,7 +278,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     # Tau energy scale shifts  #
     #########################
     with defaults(shift_map={"Down": "down", "Up": "up"}, exclude_samples=["data", "embedding", "embedding_mc"]):
-        if ("dyjets" in sample or "electroweak_boson" in sample) and int(era[:4]) < 2022:
+        if ("dyjets" in sample or "electroweak_boson" in sample) and year < 2022:
             add_shift(
                 name="CMS_scale_t_genMuon",
                 shift_key="tau_mufake_es",
@@ -295,7 +293,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 add_shift(name="CMS_scale_t_DM0_genElectron_endcap", shift_key="tau_elefake_es_DM0_endcap")
                 add_shift(name="CMS_scale_t_DM1_genElectron_barrel", shift_key="tau_elefake_es_DM1_barrel")
                 add_shift(name="CMS_scale_t_DM1_genElectron_endcap", shift_key="tau_elefake_es_DM1_endcap")
-        elif int(era[:4]) < 2022:
+        elif year < 2022:
             with defaults(scopes=("et", "mt", "tt")):
                 # dm and pt scheme
                 with defaults(producers=[taus.TauEnergyCorrection_ES_dm_pt_binned]):
@@ -308,7 +306,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         for pt in ["20to40", "40toInf"]:
                             add_shift(name=f"CMS_scale_t_DM{dm_num}_genTau_pT{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        elif int(era[:4]) >= 2022 and int(era[:4]) < 2024:
+        elif year >= 2022 and int(era[:4]) < 2024:
             with defaults(scopes=("et", "mt", "tt")):
                 with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
@@ -319,7 +317,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
                         add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
-        elif int(era[:4]) >= 2024:
+        elif year >= 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
@@ -340,7 +338,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         shift_map={"Up": "up", "Down": "down"}
         ):
 
-        if int(era[:4]) < 2022:
+        if year < 2022:
             with defaults(scopes=("et", "mt")):
                 #dm and pt scheme
                 with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned]):
@@ -391,7 +389,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
-                if int(era[:4]) < 2024:
+                if year < 2024:
                     # 2022-2023 (NanoAODv12): DM-dependent ("dm" flag) SFs. Per the
                     # TauPOG recommendation the uncertainty is split into:
                     #  - 2 stat. uncertainties per DM, uncorrelated across DM and era
@@ -413,7 +411,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                             add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF])
                             add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
 
-            if int(era[:4]) < 2024:
+            if year < 2024:
                 # vs Jet uncertainties correlated across decay modes (2022-2023):
                 # shift all DM-binned config keys simultaneously.
                 json_era_tag = TAU_JSON_ERA_MAP[era]
@@ -448,10 +446,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     
     class JES_CONFIG:
         REGROUPED = True
-        jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if int(era[:4])<2022 else jets.JetEnergyCorrection
+        jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if year<2022 else jets.JetEnergyCorrection
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
-        if int(era[:4]) < 2022:
+        if year < 2022:
             with defaults(
                 scopes=("mt", "et", "tt"),
                 shift_key="btag_sf_variation",
@@ -507,7 +505,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 scopes="global",
                 producers=[JES_CONFIG.jet_pt_correction_producer]
             )
-            if int(era[:4]) < 2022:
+            if year < 2022:
                 add_shift(
                     shift_key="btag_sf_variation",
                     shift_map={"Up": "up_jes", "Down": "down_jes"},
@@ -564,7 +562,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         scopes="global",
                         producers=[JES_CONFIG.jet_pt_correction_producer]
                     )
-                    if int(era[:4]) < 2022:
+                    if year < 2022:
                         add_shift(
                             shift_key="btag_sf_variation",
                             shift_map={"Up": f"up_jes{name}", "Down": f"down_jes{name}"},
@@ -596,7 +594,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         producers=[JES_CONFIG.jet_pt_correction_producer],
                     )
 
-                    if int(era[:4]) < 2022:
+                    if year < 2022:
                         btag_variation_source = f"{name}_{era}" if is_yearly else name
                         add_shift(
                             shift_key="btag_sf_variation",
