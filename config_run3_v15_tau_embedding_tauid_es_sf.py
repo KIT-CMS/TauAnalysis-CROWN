@@ -51,7 +51,7 @@ def build_config(
     
     run2_v15 = False #für Run3_v15
     # define Tau energy correction producers, id, and variation scheme
-    configuration.ES_ID_SCHEME = ES_ID_SCHEME("dm_binned_run3")# wie in config_run3 , nicht mehr p_T getrennt 
+    configuration.ES_ID_SCHEME = ES_ID_SCHEME("run3")
 
     ###########################
     ####### Parameters ########
@@ -74,8 +74,6 @@ def build_config(
     "Flag_BadPFMuonFilter",
     "Flag_BadPFMuonDzFilter",
     "Flag_eeBadScFilter",
-    "Flag_ecalBadCalibFilter",
-    "Flag_hfNoisyHitsFilter",
     ]
     if int(era[:4]) < 2022:
         default_met_filters.extend(["Flag_HBHENoiseFilter", "Flag_HBHENoiseIsoFilter"])
@@ -261,17 +259,21 @@ def build_config(
                     "2016postVFP": "Missing or non existent",
                     "2017": "Missing or non existent",
                     "2018": "Missing or non existent",
-                    "2024": '"/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetid.json.gz"',
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetid.json.gz",
                 }
             ),
-            "jet_collection_name":'"AK4PUPPI"', #only used for jet ID so not relevant for run 2
+            "jet_collection_name":"AK4PUPPI", #only used for jet ID so not relevant for run 2
             "jet_jec_file": EraModifier( 
                 {
                     "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jet_jerc.json.gz",
                 }
             ),
             "jet_jer_master_seed": 42,
@@ -281,7 +283,7 @@ def build_config(
                     "2016postVFP": "Summer20UL16NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16NanoV15_V1_MC",
                     "2017": "Summer20UL17NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL17NanoV15_V1_MC",
                     "2018": "Summer20UL18NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL18NanoV15_V1_MC",
-                    "2024": "Summer24Prompt24_V2_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V2_MC",
+                    "2024": "Summer24Prompt24_V5_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V5_MC",
                 }
             ),
             # jet resolution correction
@@ -314,7 +316,7 @@ def build_config(
                     "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
                     "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jetvetomaps.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                 }
             ),
             "jet_veto_map_name": EraModifier(
@@ -672,8 +674,9 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-25/tau.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
                 }
             ),
             "tau_id_vsele_DM0_barrel": "nom",
@@ -709,19 +712,34 @@ def build_config(
             "tau_es_DM11_pt40to60": "nom",
             "tau_es_DM11_pt60toInf": "nom",
             # fake ele
-            "tau_elefake_es_DM0": "nom",
-            "tau_elefake_es_DM1": "nom",
-            "tau_elefake_es_DM10": "nom",
-            "tau_elefake_es_DM11": "nom",
             "tau_elefake_es_DM0_barrel": "nom",
-            "tau_elefake_es_DM0_endcap": "nom",
             "tau_elefake_es_DM1_barrel": "nom",
+            "tau_elefake_es_DM10_barrel": "nom",
+            "tau_elefake_es_DM11_barrel": "nom",
+            "tau_elefake_es_DM0_endcap": "nom",
             "tau_elefake_es_DM1_endcap": "nom",
-            "tau_mufake_es": "nom",
-            # new ES variation (will replace above):
-            "tau_es_variation": "nom",
+            "tau_elefake_es_DM10_endcap": "nom",
+            "tau_elefake_es_DM11_endcap": "nom",
+            "tau_mufake_es_DM0": "nom",
+            "tau_mufake_es_DM1": "nom",
+            "tau_mufake_es_DM10": "nom",
+            "tau_mufake_es_DM11": "nom",
             # variations vs jet
-            "tau_sf_vsjet_variation": "nom",
+            "tau_id_vsjet_DM0_pt20to40": "nom",
+            "tau_id_vsjet_DM0_pt40to60": "nom",
+            "tau_id_vsjet_DM0_pt60toInf": "nom",
+
+            "tau_id_vsjet_DM1_pt20to40": "nom",
+            "tau_id_vsjet_DM1_pt40to60": "nom",
+            "tau_id_vsjet_DM1_pt60toInf": "nom",
+
+            "tau_id_vsjet_DM10_pt20to40": "nom",
+            "tau_id_vsjet_DM10_pt40to60": "nom",
+            "tau_id_vsjet_DM10_pt60toInf": "nom",
+
+            "tau_id_vsjet_DM11_pt20to40": "nom",
+            "tau_id_vsjet_DM11_pt40to60": "nom",
+            "tau_id_vsjet_DM11_pt60toInf": "nom",
             # trigger SF
             "ditau_trigger_wp": "Medium",
             "ditau_trigger_corrtype": "sf",
@@ -742,14 +760,15 @@ def build_config(
                     "2022postEE": "data/jsonpog-integration/POG/MUO/2022_Summer22EE/muon_Z.json.gz",
                     "2023preBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23/muon_Z.json.gz",
                     "2023postBPix": "data/jsonpog-integration/POG/MUO/2023_Summer23BPix/muon_Z.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-11-27/muon_Z.json.gz",
-                }
-            ),
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-06-18/muon_Z.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-25Prompt-Summer24-NanoAODv15/2026-04-28/muon_Z.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-25Prompt-Summer24-NanoAODv15/2026-04-28/muon_Z.json.gz",
+             }
+         ),
             "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",  # correction for mediumId WP
             "muon_iso_sf_name": "NUM_TightPFIso_DEN_MediumID",  # correction for TightPFIso WP (PF isolation < 0.15)
-            "muon_id_sf_variation": "nominal",# "systup"/"systdown" are up/down variations
-            "muon_iso_sf_variation": "nominal",
+            "muon_id_variation": "nominal",
+            "muon_iso_variation": "nominal",
 
             #run 2 scale factors from embedding framework
             "mc_muon_sf_file": EraModifier(
@@ -1283,8 +1302,8 @@ def build_config(
             name="muonIdSFUp",
             scopes=["mt", "mm"],
             shift_config={
-                ("mt"): {"muon_id_sf_variation": "systup"},
-                ("mm"): {"muon_id_sf_variation": "systup"},
+                ("mt"): {"muon_id_variation": "systup"},
+                ("mm"): {"muon_id_variation": "systup"},
             },
             producers={
                 ("mt"): [
@@ -1302,8 +1321,8 @@ def build_config(
             name="muonIdSFDown",
             scopes=["mt", "mm"],
             shift_config={
-                ("mt"): {"muon_id_sf_variation": "systdown"},
-                ("mm"): {"muon_id_sf_variation": "systdown"},
+                ("mt"): {"muon_id_variation": "systdown"},
+                ("mm"): {"muon_id_variation": "systdown"},
             },
             producers={
                 ("mt"): [
@@ -1321,8 +1340,8 @@ def build_config(
             name="muonIsoSFUp",
             scopes=["mt", "mm"],
             shift_config={
-                ("mt"): {"muon_iso_sf_variation": "syst_up"},
-                ("mm"): {"muon_iso_sf_variation": "syst_up"},
+                ("mt"): {"muon_iso_variation": "systup"},
+                ("mm"): {"muon_iso_variation": "systup"},
             },
             producers={
                 ("mt"): [
@@ -1340,8 +1359,8 @@ def build_config(
             name="muonIsoSFDown",
             scopes=["mt", "mm"],
             shift_config={
-                ("mt"): {"muon_iso_sf_variation": "syst_down"},
-                ("mm"): {"muon_iso_sf_variation": "syst_down"},
+                ("mt"): {"muon_iso_variation": "systdown"},
+                ("mm"): {"muon_iso_variation": "systdown"},
             },
             producers={
                 ("mt"): [
