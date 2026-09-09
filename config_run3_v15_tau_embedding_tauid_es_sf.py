@@ -28,8 +28,7 @@ from .scripts.SpecialSetups import ES_ID_SCHEME
 from .tau_embedding_settings import setup_embedding
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
-
-from .variations import add_Variations
+from .tau_variations import add_tauVariations
 
 def build_config(
     era: str,

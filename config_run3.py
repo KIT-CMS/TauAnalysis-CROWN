@@ -19,7 +19,6 @@ from .producers import (
     taus,
     triggers,
 )
-
 from .quantities import nanoAODv15
 from .quantities import output as q
 from .tau_embedding_settings import setup_embedding
