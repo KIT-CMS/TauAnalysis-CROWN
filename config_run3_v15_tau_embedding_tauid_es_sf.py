@@ -636,7 +636,6 @@ def build_config(
             "ggH_generator": "powheg",
         },
     )
-    ####################bis hier hin alles easy #################################
     ###### scope Specifics ######
     configuration.add_config_parameters(
         ["mt"],
@@ -901,7 +900,9 @@ def build_config(
             "second_muon_index_in_pair": 1,
         },
     )
-    ############################# Bis hier überarbeitet #####################################
+    #########################################
+    #### Specific coniguration for Run 2 ####
+    #########################################
     if year < 2022:
         configuration.add_config_parameters(
             "global",
@@ -909,6 +910,9 @@ def build_config(
                 "max_muon_iso": 0.3,
                 "max_ele_iso": 0.3,
                 "jet_reapplyJES": False,
+                # Run 2 jet selection (GoodJets_Run2): no horn treatment, pt>30 and |eta|<4.7
+                "min_jet_pt": 30,
+                "max_jet_eta": 4.7,
             },
         )
         configuration.add_config_parameters(
@@ -959,31 +963,31 @@ def build_config(
             event.LHE_alphaS_weight,
             event.PS_weight,
             muons.BaseMuons,
-            electrons.ElectronPtCorrectionMC,
-            electrons.BaseElectrons,
+            muons.MuonPtCorrectionSwitch.get(era),
+            electrons.ElectronPtCorrectionMCSwitch.get(era),
+            electrons.BaseElectronsSwitch.get(era),
             jets.GenJet,
             jets.JetSmearingSeed,
-            jets.JetBTagUParT,
-            jets.JetRho,
-            jets.JetID,
+            jets.JetBTagSwitch.get(era),
+            jets.JetRhoSwitch.get(era),
+            jets.JetIDSwitch.get(era),
             jets.JetVetoMapVeto,
             jets.JetIDCut,
             # jets.JetIDCut, For run2_v15 in GoodJets_Run2_v15
-            jets.JetEnergyCorrection_Run3,
+            jets.JetEnergyCorrectionSwitch.get(era),
             jets.JetPtCut_loose,
             jets.JetEtaCut_Max3,
             jets.LooseJets_LowEta,
             jets.LooseJets_HighEta,
             jets.GoodJets_loose,
             jets.GoodJets_tight,
-            jets.GoodJets,
-            jets.GoodBJets,
-            event.DiLeptonVeto,
+            jets.GoodJetsSwitch.get(era),
+            jets.GoodBJetsSwitch.get(era),
+            event.DiLeptonVetoSwitch.get(era),
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             met.BuildRawMetVector,
-            met.MetBasics_v15,
-            met.MetMask,
+            met.BuildMetVector,
             event.EvenOddIDFlag,
         ],
     )
@@ -992,11 +996,12 @@ def build_config(
         [
             jets.JetCollection,
             jets.BasicJetQuantities,
-            met.MetCorrections,
+            met.MetCorrectionsSwitch.get(era),
             pairquantities.DiTauPairMETQuantities,
             genparticles.GenMatching,
         ],
     )
+    ############################# Bis hier gekommen ########################
     configuration.add_producers(
         "mt",
         [

@@ -1040,10 +1040,10 @@ def build_config(
                         "tau_1_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_1",
                         "tau_2_vsjet_id_WPbit_outputname": f"id_tau_vsJet_{wp}_2",
                     }
-                    for wp, bit in dict(
-                        VVLoose=2,
-                        VLoose=3,
-                    ).items()
+                    for wp, bit in {
+                        "VVLoose": 2,
+                        "VLoose": 3,
+                    }.items()
                 ],
                 "vsjet_tau_id": [
                     {
