@@ -14,9 +14,9 @@ from code_generation.systematics import SystematicShift, get_add_shift
 from code_generation.modifiers import EraModifier
 from code_generation.helpers import defaults
 
-measure_tauES = False
+measure_tauES = True
 measure_eleES = False
-measure_tauID = False
+measure_tauID = True
 
 
 def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -> Configuration:
@@ -25,7 +25,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     #####################
 
     configuration.add_config_parameters(
-        ["mt", "et", "tt", "em"],
+        ["mt"],
         {
             "truegen_mother_pdgid": 23,
             "truegen_daughter_1_pdgid": 15,
@@ -40,14 +40,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             "truegen_daugher_2_pdgid": 13,
         },
     )
-    configuration.add_config_parameters(
-        ["ee"],
-        {
-            "truegen_mother_pdgid": 23,
-            "truegen_daughter_1_pdgid": 11,
-            "truegen_daugher_2_pdgid": 11,
-        },
-    )
 
     ######################
     # scale factors #
@@ -57,7 +49,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     configuration.add_config_parameters(
         scopes,
         {
-            "embedding_selection_sf_file": EraModifier(
+            "embedding_selection_sf_file": EraModifier(  ### ToDo: up to date?
                 {
                     "2016preVFP": "data/embedding/embeddingselection_2016preVFPUL.json.gz",
                     "2016postVFP": "data/embedding/embeddingselection_2016postVFPUL.json.gz",
@@ -78,7 +70,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
 
     # add muon scalefactors from embedding measurements
     configuration.add_config_parameters(
-        ["mt", "mm", "em"],
+        ["mt", "mm"],
         {
             "embedding_muon_sf_file": EraModifier(
                 {
@@ -95,29 +87,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 }
             ),
             "embedding_muon_id_sf": "ID_pt_eta_bins",
+            "embedding_muon_id_extrapolation": 1.0,
             "embedding_muon_iso_sf": "Iso_pt_eta_bins",
-        },
-    )
-    # add electron scalefactors from embedding measurements
-    configuration.add_config_parameters(
-        ["et", "ee", "em"],
-        {
-            "embedding_electron_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/embedding/electron_2016preVFPUL.json.gz",
-                    "2016postVFP": "data/embedding/electron_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/electron_2017UL.json.gz",
-                    "2018": "data/embedding/electron_2018UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": '""',
-                    "2025": '""',
-                }
-            ),
-            "embedding_electron_id_sf": "ID90_pt_eta_bins",
-            "embedding_electron_iso_sf": "Iso_pt_eta_bins",
+            "embedding_muon_iso_extrapolation": 1.0,
         },
     )
 
@@ -131,247 +103,6 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     # and not the regular trigger producer. Also we have to match to special filter bits:
     # tt -> bit 20
     # mt -> bit 21
-    configuration.add_config_parameters(
-        ["tt"],
-        {
-            # here we do not match to the hlt path, only the filter
-            "doubletau_trigger_embedding": EraModifier(
-                {
-                    "2025": [
-                        {
-                            "flagname": "trg_double_tau30_mediumiso_pnet",
-                            "p1_ptcut": 30,
-                            "p2_ptcut": 30,
-                            "p1_etacut": 2.3,
-                            "p2_etacut": 2.3,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2024": [
-                        {
-                            "flagname": "trg_double_tau30_mediumiso_pnet",
-                            "p1_ptcut": 30,
-                            "p2_ptcut": 30,
-                            "p1_etacut": 2.3,
-                            "p2_etacut": 2.3,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2023postBPix": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2023preBPix": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2022postEE": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2022preEE": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 20,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 20,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2018": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso_hps",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": -1,  # 13,  # TODO: check this
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": -1,  # 13,  # TODO: check this
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau40_tightiso",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": -1,  # 13,  # TODO: check this
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": -1,  # 13,  # TODO: check this
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau40_mediumiso_tightid",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": -1,  # 13,  # TODO: check this
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": -1,  # 13,  # TODO: check this
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau35_tightiso_tightid",
-                            "p1_ptcut": 35,
-                            "p2_ptcut": 35,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": -1,  # 13,  # TODO: check this
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": -1,  # 13,  # TODO: check this
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2017": [
-                        {
-                            "flagname": "trg_double_tau40_tightiso",
-                            "hlt_path": "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau40_mediumiso_tightid",
-                            "hlt_path": "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau35_tightiso_tightid",
-                            "hlt_path": "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2016postVFP": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso",
-                            "hlt_path": "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau35_mediumcombiso",
-                            "hlt_path": "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                    "2016preVFP": [
-                        {
-                            "flagname": "trg_double_tau35_mediumiso",
-                            "hlt_path": "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                        {
-                            "flagname": "trg_double_tau35_mediumcombiso",
-                            "hlt_path": "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
-                            "p1_ptcut": 40,
-                            "p2_ptcut": 40,
-                            "p1_etacut": 2.1,
-                            "p2_etacut": 2.1,
-                            "p1_filterbit": 6,
-                            "p1_trigger_particle_id": 15,
-                            "p2_filterbit": 6,
-                            "p2_trigger_particle_id": 15,
-                            "max_deltaR_triggermatch": 0.4,
-                        },
-                    ],
-                }
-            ),
-        },
-    )
 
     configuration.add_config_parameters(
         ["mt"],
@@ -630,211 +361,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             )
         },
     )
-    # electron trigger SF settings from embedding measurements
-    configuration.add_config_parameters(
-        ["et", "ee"],
-        {
-            "singlelectron_trigger_sf": EraModifier(
-                {
-                    "2025": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2024": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2023postBPix": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2023preBPix": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2022postEE": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2022preEE": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2018": [
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2017": [
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        },
-                    ],
-                    "2016postVFP": [
-                        {
-                            "flagname": "trg_wgt_single_ele25",
-                            "embedding_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        }
-                    ],
-                    "2016preVFP": [
-                        {
-                            "flagname": "trg_wgt_single_ele25",
-                            "embedding_trigger_sf": "Trg25_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.0,  # for nominal case
-                        }
-                    ],
-                }
-            )
-        },
-    )
-    # ditau trigger SF settings for embedding
-    configuration.add_config_parameters(
-        ["tt"],
-        {
-            "emb_ditau_trigger_wp": "Medium",
-            "emb_ditau_trigger_type": "ditau",
-            "emb_ditau_trigger_corrtype": "sf",
-            "emb_ditau_trigger_syst": "nom",
-            "emb_ditau_trigger_file": EraModifier(
-                {
-                    "2016preVFP": "",
-                    "2016postVFP": "",
-                    "2017": "",
-                    "2018": "data/embedding/tau_trigger2018_UL.json.gz",
-                    "2022preEE": "",
-                    "2022postEE": "",
-                    "2023preBPix": "",
-                    "2023postBPix": "",
-                    "2024": "",
-                    "2025": "",
-                }
-            ),
-        },
-    )
 
     #########################
     # Trigger shifts
     #########################
-
-    configuration.add_shift(
-        SystematicShift(
-            name="singleElectronTriggerSFUp",
-            shift_config={
-                ("et"): {
-                    "singlelectron_trigger_sf": [
-                        {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.02,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "trg_extrapolation": 1.02,
-                        },
-                    ]
-                }
-            },
-            producers={("et"): embedding.ETGenerateSingleElectronTriggerSF},
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="singleElectronTriggerSFDown",
-            shift_config={
-                ("et"): {
-                    "singlelectron_trigger_sf": [
-                        {
-                            "flagname": "trg_wgt_single_ele32orele35",
-                            "embedding_trigger_sf": "Trg32_or_Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele32",
-                            "embedding_trigger_sf": "Trg32_Iso_pt_eta_bins",
-                            "trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele35",
-                            "embedding_trigger_sf": "Trg35_Iso_pt_eta_bins",
-                            "trg_extrapolation": 0.98,
-                        },
-                        {
-                            "flagname": "trg_wgt_single_ele27orele32orele35",
-                            "embedding_trigger_sf": "Trg_Iso_pt_eta_bins",
-                            "trg_extrapolation": 0.98,
-                        },
-                    ]
-                }
-            },
-            producers={("et"): embedding.ETGenerateSingleElectronTriggerSF},
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
 
     configuration.add_shift(
         SystematicShift(
@@ -1065,16 +595,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         ),
     )
     configuration.add_modification_rule(
-        ["et", "mt", "tt"],
+        ["mt"],
         RemoveProducer(
             producers=[pairquantities.taujet_pt_2, genparticles.gen_taujet_pt_2],
-            samples=["embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["tt"],
-        RemoveProducer(
-            producers=[pairquantities.taujet_pt_1, genparticles.gen_taujet_pt_1],
             samples=["embedding", "embedding_mc"],
         ),
     )
@@ -1086,143 +609,130 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         ),
     )
     configuration.add_modification_rule(
-        ["et"],
-        ReplaceProducer(
-            producers=[genparticles.ETGenPair, genparticles.EmbeddingGenPair],
-            samples=["embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["tt"],
-        ReplaceProducer(
-            producers=[genparticles.TTGenPair, genparticles.EmbeddingGenPair],
-            samples=["embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["em"],
-        ReplaceProducer(
-            producers=[genparticles.EMGenPair, genparticles.EmbeddingGenPair],
-            samples=["embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
         ["mm"],
         ReplaceProducer(
             producers=[genparticles.MuMuGenPair, genparticles.EmbeddingGenPair],
             samples=["embedding", "embedding_mc"],
         ),
     )
+
     configuration.add_modification_rule(
-        ["ee"],
-        ReplaceProducer(
-            producers=[genparticles.ElElGenPair, genparticles.EmbeddingGenPair],
+        scopes,
+        AppendProducer(
+            producers=[embedding.TauEmbeddingSelectionSF],
             samples=["embedding", "embedding_mc"],
         ),
     )
+    configuration.add_modification_rule(
+        ["mt"],
+        AppendProducer(
+            producers=[
+                embedding.TauEmbeddingMuonIDSF_1,
+                embedding.TauEmbeddingMuonIsoSF_1,
+                embedding.MTGenerateSingleMuonTriggerSF,
+            ],
+            samples=["embedding"],
+        ),
+    )
+    configuration.add_modification_rule(
+        ["mm"],
+        AppendProducer(
+            producers=[
+                embedding.TauEmbeddingMuonIDSF_1,
+                embedding.TauEmbeddingMuonIsoSF_1,
+                embedding.TauEmbeddingMuonIDSF_2,
+                embedding.TauEmbeddingMuonIsoSF_2,
+                embedding.MTGenerateSingleMuonTriggerSF,
+            ],
+            samples=["embedding"],
+        ),
+    )
 
-    if int(era[:4]) < 2022:
-        configuration.add_modification_rule(
-            scopes,
-            AppendProducer(
-                producers=[embedding.TauEmbeddingSelectionSF],
-                samples=["embedding", "embedding_mc"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["mt"],
-            AppendProducer(
-                producers=[
+    ######################
+    # Tau ID/ISO Variations
+    ######################
+    # ID
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIdSFUp",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_id_extrapolation": 1.02},
+                ("mm"): {"embedding_muon_id_extrapolation": 1.02},
+            },
+            producers={
+                ("mt"): [
                     embedding.TauEmbeddingMuonIDSF_1,
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                    embedding.MTGenerateSingleMuonTriggerSF,
                 ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["et"],
-            AppendProducer(
-                producers=[
-                    embedding.TauEmbeddingElectronIDSF_1,
-                    embedding.TauEmbeddingElectronIsoSF_1,
-                    embedding.ETGenerateSingleElectronTriggerSF,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["tt"],
-            AppendProducer(
-                producers=[
-                    embedding.TTGenerateDoubleTauTriggerSF_1,
-                    embedding.TTGenerateDoubleTauTriggerSF_2,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["em"],
-            AppendProducer(
-                producers=[
-                    embedding.TauEmbeddingElectronIDSF_1,
-                    embedding.TauEmbeddingElectronIsoSF_1,
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIDSF_1,
                     embedding.TauEmbeddingMuonIDSF_2,
+                ],
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIdSFDown",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_id_extrapolation": 0.98},
+                ("mm"): {"embedding_muon_id_extrapolation": 0.98},
+            },
+            producers={
+                ("mt"): [
+                    embedding.TauEmbeddingMuonIDSF_1,
+                ],
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIDSF_1,
+                    embedding.TauEmbeddingMuonIDSF_2,
+                ],
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    # ISO
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIsoSFUp",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
+                ("mm"): {"embedding_muon_iso_extrapolation": 1.02},
+            },
+            producers={
+                ("mt"): [
+                    embedding.TauEmbeddingMuonIsoSF_1,
+                ],
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIsoSF_1,
                     embedding.TauEmbeddingMuonIsoSF_2,
                 ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["mm"],
-            AppendProducer(
-                producers=[
-                    embedding.TauEmbeddingMuonIDSF_1,
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
+    configuration.add_shift(
+        SystematicShift(
+            name="muonIsoSFDown",
+            scopes=["mt", "mm"],
+            shift_config={
+                ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
+                ("mm"): {"embedding_muon_iso_extrapolation": 0.98},
+            },
+            producers={
+                ("mt"): [
                     embedding.TauEmbeddingMuonIsoSF_1,
-                    embedding.TauEmbeddingMuonIDSF_2,
+                ],
+                ("mm"): [
+                    embedding.TauEmbeddingMuonIsoSF_1,
                     embedding.TauEmbeddingMuonIsoSF_2,
-                    embedding.MTGenerateSingleMuonTriggerSF,
                 ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["ee"],
-            AppendProducer(
-                producers=[
-                    embedding.TauEmbeddingElectronIDSF_1,
-                    embedding.TauEmbeddingElectronIsoSF_1,
-                    embedding.TauEmbeddingElectronIDSF_2,
-                    embedding.TauEmbeddingElectronIsoSF_2,
-                    embedding.ETGenerateSingleElectronTriggerSF,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        # use other trigger flags for embedding samples
-        configuration.add_modification_rule(
-            "tt",
-            ReplaceProducer(
-                producers=[
-                    triggers.TTGenerateDoubleTauTriggerFlags,
-                    triggers.TTGenerateDoubleTauTriggerFlagsEmbedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_outputs("tt", triggers.TTGenerateDoubleTauTriggerFlagsEmbedding.output_group)
-        # use other trigger flags for embedding samples
-        configuration.add_modification_rule(
-            "mt",
-            ReplaceProducer(
-                producers=[
-                    triggers.MTGenerateCrossTriggerFlags,
-                    triggers.MTGenerateCrossTriggerFlagsEmbedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        configuration.add_outputs("mt", triggers.MTGenerateCrossTriggerFlagsEmbedding.output_group)
+            },
+        ),
+        samples=["embedding", "embedding_mc"],
+    )
 
     ######################
     # Tau ID SFs
@@ -1231,14 +741,18 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     if not measure_tauID:
         # replace TauID producers for embedding samples
         configuration.add_config_parameters(
-            ["mt", "et"],
+            ["mt"],
             {
                 "tau_emb_sf_file": EraModifier(
                     {
-                        "2016preVFP": "data/embedding/tau_id_es_embedding2016preVFPUL.json.gz",
-                        "2016postVFP": "data/embedding/tau_id_es_embedding2016postVFPUL.json.gz",
-                        "2017": "data/embedding/tau_id_es_embedding2017UL.json.gz",
-                        "2018": "data/embedding/tau_id_es_embedding2018UL.json.gz",
+                        # "2016preVFP": "data/embedding/tau_id_es_embedding2016preVFPUL.json.gz",
+                        # "2016postVFP": "data/embedding/tau_id_es_embedding2016postVFPUL.json.gz",
+                        # "2017": "data/embedding/tau_id_es_embedding2017UL.json.gz",
+                        # "2018": "data/embedding/tau_id_es_embedding2018UL.json.gz",
+                        "2016preVFP": "payloads/Tau_ID_ES/embedding/DeepTau2018v2p5_id_es_embedding2016preVFPUL.json.gz",
+                        "2016postVFP": "payloads/Tau_ID_ES/embedding/DeepTau2018v2p5_id_es_embedding2016postVFPUL.json.gz",
+                        "2017": "payloads/Tau_ID_ES/embedding/DeepTau2018v2p5_id_es_embedding2017UL.json.gz",
+                        "2018": "payloads/Tau_ID_ES/embedding/DeepTau2018v2p5_id_es_embedding2018UL.json.gz",
                         "2022preEE": "",
                         "2022postEE": "",
                         "2023preBPix": "",
@@ -1261,8 +775,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tau_emb_sf_vsjet_3prong1pizero20to40": "nom",
                 "tau_emb_sf_vsjet_3prong1pizero40toInf": "nom",
                 "tau_emb_sf_vsjet_variation": "nom",
-                "tau_emb_ES_WP": "Tight",  # Do also for more WP (vsjets) if needed !!!
-                "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
+                "tau_emb_ES_WP": "Medium",  # Do also for more WP (vsjets) if needed !!!
+                "tau_vsjet_vseleWP": "VVLoose",
+                "tau_emb_id_sf_correctionset": "DeepTau2018v2p5VSjet",
                 "tau_emb_vsjet_sf_dependence": "pt",
                 "vsjet_tau_id_sf_embedding": [
                     {
@@ -1283,120 +798,43 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 ],
             },
         )
-        # replace TauID producers for embedding samples
-        configuration.add_config_parameters(
-            ["tt"],
-            {
-                "tau_emb_sf_file": EraModifier(
-                    {
-                        "2016preVFP": "data/embedding/tau_2016preVFPUL.json.gz",
-                        "2016postVFP": "data/embedding/tau_2016postVFPUL.json.gz",
-                        "2017": "data/embedding/tau_2017UL.json.gz",
-                        "2018": "data/jsonpog-integration/POG/TAU/2018_UL/tau_emb_es_2018UL.json.gz",
-                        "2022preEE": '""',
-                        "2022postEE": '""',
-                        "2023preBPix": '""',
-                        "2023postBPix": '""',
-                        "2024": '""',
-                        "2025": '""',
-                    }
-                ),
-                "tau_emb_ES_json_name": "tau_energy_scale",
-                "tau_emb_sf_vsjet_1prong0pizero": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_1prong1pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong0pizero40toInf": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero20to40": "nom",
-                "tau_emb_sf_vsjet_3prong1pizero40toInf": "nom",
-                "tau_emb_id_sf_correctionset": "DeepTau2017v2p1VSjet",
-                "tau_emb_vsjet_sf_dependence": "pt",
-                "vsjet_tau_id_sf_embedding": [
-                    {
-                        "tau_1_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_1",
-                        "tau_2_vsjet_sf_outputname": f"id_wgt_tau_vsJet_{wp}_2",
-                        "vsjet_tau_id_WP": f"{wp}",
-                    }
-                    for wp in [
-                        # "VVVLoose",
-                        # "VVLoose",
-                        # "VLoose",
-                        # "Loose",
-                        "Medium",
-                        "Tight",
-                        # "VTight",
-                        # "VVTight",
-                    ]
+        configuration.add_modification_rule(
+            ["mt"],
+            ReplaceProducer(
+                producers=[
+                    taus.TauEnergyCorrectionSwitch.get(era),
+                    embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
                 ],
-            },
+                samples=["embedding"],
+            ),
         )
-        if int(era[:4]) < 2022:
-            configuration.add_modification_rule(
-                ["et", "mt"],
-                ReplaceProducer(
-                    producers=[
-                        scalefactors.TauID_SFSwitch.get(era),
-                        embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
-            configuration.add_modification_rule(
-                "tt",
-                ReplaceProducer(
-                    producers=[
-                        scalefactors.Tau_1_VsJetTauID_SF_Run2,
-                        embedding.Tau_1_VsJetTauID_tt_SF,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
-            configuration.add_modification_rule(
-                "tt",
-                ReplaceProducer(
-                    producers=[
-                        scalefactors.TauID_SFSwitch.get(era),
-                        embedding.Tau_2_VsJetTauID_tt_SF,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
-            configuration.add_outputs(
-                ["et", "mt"],
-                embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned.output_group,
-            )
-            configuration.add_outputs(
-                "tt",
-                [
-                    embedding.Tau_1_VsJetTauID_tt_SF.output_group,
-                    embedding.Tau_2_VsJetTauID_tt_SF.output_group,
-                ],
-            )
+        configuration.add_modification_rule(
+            ["mt"],
+            AppendProducer(
+                producers=[embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned],
+                samples=["embedding"],
+            ),
+        )
+        configuration.add_outputs(
+            ["mt"],
+            embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned.output_group,
+        )
 
         # and add the variations for it
         # !!! The corresponding producer has to be picked in taus.py, either the pt inclusive or exclusive one. They are named the same !!!
         add_shift = get_add_shift(configuration)
         with defaults(shift_map={"Up": "up", "Down": "down"}):
-            for var in ["20to40", "40toInf"]:
-                for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+            for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+                for var in ["20to40", "40toInf"]:
                     add_shift(
                         name=f"vsJetTau{dm}{var}",
                         shift_key=f"tau_emb_sf_vsjet_{dm}{var}",
                         scopes=("et", "mt"),
                         producers=[embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned],
                     )
-                    add_shift(
-                        name=f"tauEs{dm}{var}",
-                        shift_key=f"tau_ES_shift_{dm}{var}",
-                        producers=[taus.TauPtCorrection_emb_genTau_dm_pt_binned],
-                    )
 
-                for dm in [0, 1, 10, 11]:
+            for dm in [0, 1, 10, 11]:
+                for var in ["20to40", "40toInf"]:
                     add_shift(
                         name=f"vsJetTauDM{dm}{var}",
                         shift_key=f"tau_emb_sf_vsjet_tauDM{dm}{var}",
@@ -1407,8 +845,14 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     if measure_tauES:
         ###################
         # Tau ES variations for measurement
-        # first set the initial variation to nominal
-
+        # first exchange the producer to shift raw/uncorrected pt and set the initial variation to nominal
+        configuration.add_modification_rule(
+            "mt",
+            ReplaceProducer(
+                producers=[taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_Embedding],
+                samples=["embedding"],
+            ),
+        )
         configuration.add_config_parameters(
             "mt",
             {
@@ -1418,17 +862,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tau_ES_shift_DM11": 1.0,
             },
         )
-        configuration.add_modification_rule(
-            "mt",
-            ReplaceProducer(
-                producers=[
-                    taus.TauEnergyCorrectionSwitch.get(era),  # taus.TauEnergyCorrection,
-                    taus.TauEnergyCorrection_Embedding_ES_dm_pt_binned,  # taus.TauEnergyCorrection_Embedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
-        tauESvariations = [-8.0 + 0.1 * i for i in range(0, 121)]
+        # tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist() if x != 0 and x>=-20.0]
+        # tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even
+        # tauESvariations = [x for x in np.arange(19.9, -20.0, -0.2).round(2).tolist()] # odd
+        tauESvariations = []
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
@@ -1447,18 +884,17 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 samples=["embedding"],
             )
     else:
-        if int(era[:4]) < 2022:
-            configuration.add_modification_rule(
-                ["mt", "et", "tt"],
-                ReplaceProducer(
-                    producers=[
-                        taus.TauEnergyCorrectionSwitch.get(era),
-                        embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
-
+        add_shift = get_add_shift(configuration)
+        for dm in ["1prong0pizero", "1prong1pizero", "3prong0pizero", "3prong1pizero"]:
+            for var in ["20to40", "40toInf"]:
+                add_shift(
+                    name=f"tauEs{dm}{var}",
+                    shift_key=f"tau_ES_shift_{dm}{var}",
+                    shift_map={"Up": "up", "Down": "down"},
+                    scopes=("et", "mt", "tt"),
+                    producers=[embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned],
+                    exclude_samples=["data"],
+                )
     if measure_eleES:
         ###################
         # Ele fake ES variations for measurement
@@ -1521,58 +957,57 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             },
         )
         # not yet measured for run 3
-        if int(era[:4]) < 2022:
-            configuration.add_modification_rule(
-                "global",
-                ReplaceProducer(
-                    producers=[
-                        electrons.ElectronPtCorrectionMC_v9,
-                        electrons.ElectronPtCorrectionEmbedding,
-                    ],
-                    samples=["embedding"],
-                ),
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name="eleEsBarrelUp",
-                    shift_config={("global"): {"ele_energyscale_barrel": "up"}},
-                    producers={("global"): electrons.ElectronPtCorrectionEmbedding},
-                ),
+        configuration.add_modification_rule(
+            "global",
+            ReplaceProducer(
+                producers=[
+                    electrons.ElectronPtCorrectionMCSwitch.get(era),
+                    electrons.ElectronPtCorrectionEmbedding,
+                ],
                 samples=["embedding"],
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name="eleEsBarrelDown",
-                    shift_config={
-                        ("global"): {"ele_energyscale_barrel": "down"},
-                    },
-                    producers={("global"): electrons.ElectronPtCorrectionEmbedding},
-                ),
-                samples=["embedding"],
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name="eleEsEndcapUp",
-                    shift_config={
-                        ("global"): {
-                            "ele_energyscale_endcap": "up",
-                        }
-                    },
-                    producers={("global"): electrons.ElectronPtCorrectionEmbedding},
-                ),
-                samples=["embedding"],
-            )
-            configuration.add_shift(
-                SystematicShift(
-                    name="eleEsEndcapDown",
-                    shift_config={
-                        ("global"): {
-                            "ele_energyscale_endcap": "down",
-                        }
-                    },
-                    producers={("global"): electrons.ElectronPtCorrectionEmbedding},
-                ),
-                samples=["embedding"],
-            )
+            ),
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsBarrelUp",
+                shift_config={("global"): {"ele_energyscale_barrel": "up"}},
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsBarrelDown",
+                shift_config={
+                    ("global"): {"ele_energyscale_barrel": "down"},
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsEndcapUp",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_endcap": "up",
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="eleEsEndcapDown",
+                shift_config={
+                    ("global"): {
+                        "ele_energyscale_endcap": "down",
+                    }
+                },
+                producers={("global"): electrons.ElectronPtCorrectionEmbedding},
+            ),
+            samples=["embedding"],
+        )
 
     return configuration
