@@ -9,6 +9,7 @@ from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProduce
 from code_generation.systematics import (
     SystematicShift,
     SystematicShiftByQuantity,
+    get_add_shift,
 )
 
 from .producers import (
@@ -26,7 +27,9 @@ from .producers import (
 )
 from .quantities import nanoAODv9, nanoAODv15
 from .quantities import output as q
-from .tau_embedding_settings import setup_embedding # TODO: check again difference between tau_embedding_settings and tau_embedding_settings_SFs
+
+# TODO: check again difference between tau_embedding_settings and tau_embedding_settings_SFs
+from .tau_embedding_settings import setup_embedding
 from .tau_triggersetup import RUN2_ERAS, add_diTauTriggerSetup
 from .variations import add_Variations
 
@@ -301,14 +304,30 @@ def build_config(
             "jet_jer_master_seed": 42,
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": "Summer20UL16APVNanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16APVNanoV15_V1_MC",
-                    "2016postVFP": "Summer20UL16NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16NanoV15_V1_MC",
-                    "2017": "Summer20UL17NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL17NanoV15_V1_MC",
-                    "2018": "Summer20UL18NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL18NanoV15_V1_MC",
-                    "2022preEE": "Summer22_22Sep2023_V4_DATA" if sample in ["embedding", "data"] else "Summer22_22Sep2023_V4_MC",
-                    "2022postEE": "Summer22EE_22Sep2023_V4_DATA" if sample in ["embedding", "data"] else "Summer22EE_22Sep2023_V4_MC",
-                    "2023preBPix": "Summer23Prompt23_V4_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V4_MC",
-                    "2023postBPix": "Summer23BPixPrompt23_V4_DATA" if sample in ["embedding", "data"] else "Summer23BPixPrompt23_V4_MC",
+                    "2016preVFP": "Summer20UL16APVNanoV15_V1_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer20UL16APVNanoV15_V1_MC",
+                    "2016postVFP": "Summer20UL16NanoV15_V1_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer20UL16NanoV15_V1_MC",
+                    "2017": "Summer20UL17NanoV15_V1_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer20UL17NanoV15_V1_MC",
+                    "2018": "Summer20UL18NanoV15_V1_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer20UL18NanoV15_V1_MC",
+                    "2022preEE": "Summer22_22Sep2023_V4_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer22_22Sep2023_V4_MC",
+                    "2022postEE": "Summer22EE_22Sep2023_V4_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer22EE_22Sep2023_V4_MC",
+                    "2023preBPix": "Summer23Prompt23_V4_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer23Prompt23_V4_MC",
+                    "2023postBPix": "Summer23BPixPrompt23_V4_DATA"
+                    if sample in ["embedding", "data"]
+                    else "Summer23BPixPrompt23_V4_MC",
                     "2024": "Summer24Prompt24_V5_DATA" if sample in ["embedding", "data"] else "Summer24Prompt24_V5_MC",
                     "2025": "Summer24Prompt25_V3_DATA" if sample in ["embedding", "data"] else "Summer24Prompt25_V3_MC",
                     "2026": "Summer24Prompt26_V1_DATA" if sample in ["embedding", "data"] else "Summer24Prompt26_V1_MC",
@@ -754,7 +773,6 @@ def build_config(
             "tau_es_DM11_pt20to40": "nom",
             "tau_es_DM11_pt40to60": "nom",
             "tau_es_DM11_pt60toInf": "nom",
-            
             # variations vs jet
             "tau_id_vsjet_DM0_pt20to40": "nom",
             "tau_id_vsjet_DM0_pt40to60": "nom",
@@ -986,8 +1004,7 @@ def build_config(
             event.DiLeptonVetoSwitch.get(era),
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
-            met.BuildRawMetVector,
-            met.BuildMetVector,
+            met.MetBasicsSwitch.get(era),
             event.EvenOddIDFlag,
         ],
     )
@@ -1045,45 +1062,115 @@ def build_config(
         ],
     )
 
-    
     DATA_ONLY = ["data", "embedding", "embedding_mc"]
 
     ################################
     ######### Modifications ########
     ################################
     for mod_scopes, rule_cls, producers, sample_filter in [
-        ("global", RemoveProducer, [event.npartons],  {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
+        (
+            "global",
+            RemoveProducer,
+            [event.npartons],
+            {
+                "exclude_samples": [
+                    "dyjets",
+                    "dyjets_powheg",
+                    "dyjets_amcatnlo",
+                    "dyjets_amcatnlo_ll",
+                    "dyjets_amcatnlo_tt",
+                    "wjets",
+                    "wjets_amcatnlo",
+                    "electroweak_boson",
+                ]
+            },
+        ),
         # temporary get pileup weights from root file for data 2025 by tau fw group until official json PUweights are available, 23/03/2026
         # ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY +["diboson", "ggZZ"]}), # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
+        (
+            "global",
+            RemoveProducer,
+            [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight],
+            {"samples": DATA_ONLY + ["diboson", "ggZZ"]},
+        ),  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
         (["mt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
         (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
-        ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
+        (
+            "global",
+            AppendProducer,
+            [genparticles.GenDYFlavor, genparticles.GenDYFilter],
+            {"samples": ["dyjets_amcatnlo_ll"]},
+        ),
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
+        (
+            scopes,
+            AppendProducer,
+            [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties],
+            {"samples": ["ggh_htautau", "rem_htautau"]},
+        ),
         (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         # remove tauid and tauES related producers, as we want to measure those values.
-        (["mt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": ["data", "embedding_mc"]}),
-        (["mt"], RemoveProducer, [scalefactors.TauID_SF], {"samples": DATA_ONLY}), # this is what we want to produce
-        (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        ("global", AppendProducer, [event.PrefireWeight], {"exclude_samples": ["fake_era"],"eras": [e for e in RUN2_ERAS if e != "2018"]}),
+        (
+            ["mt"],
+            ReplaceProducer,
+            [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data],
+            {"samples": ["data", "embedding_mc"]},
+        ),
+        (["mt"], RemoveProducer, [scalefactors.TauID_SF], {"samples": DATA_ONLY}),  # this is what we want to produce
+        (
+            ["mt"],
+            AppendProducer,
+            [
+                scalefactors.MTGenerateSingleMuonTriggerSF_MC,
+                scalefactors.PrivateMuonIDSF_1_MC,
+                scalefactors.PrivateMuonIsoSF_1_MC,
+            ],
+            {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS},
+        ),
+        (
+            ["mm"],
+            AppendProducer,
+            [
+                scalefactors.PrivateMuonIDSF_1_MC,
+                scalefactors.PrivateMuonIsoSF_1_MC,
+                scalefactors.PrivateMuonIDSF_2_MC,
+                scalefactors.PrivateMuonIsoSF_2_MC,
+                scalefactors.MTGenerateSingleMuonTriggerSF_MC,
+            ],
+            {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS},
+        ),
+        (
+            "global",
+            AppendProducer,
+            [event.PrefireWeight],
+            {"exclude_samples": ["fake_era"], "eras": [e for e in RUN2_ERAS if e != "2018"]},
+        ),
         # separate MC for 2024 and 2025 by even/odd event number
         ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2024"]}),
-        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        (
+            "global",
+            AppendProducer,
+            [event.OddIDFilter],
+            {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]},
+        ),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
     #########################
     ######## OUTPUTS ########
     #########################
+    configuration.add_outputs(
+        "global",
+        [p for p in met.MetBasicsSwitch.get(era).get_outputs("global")],
+    )
+
     configuration.add_outputs(
         scopes,
         [
@@ -1116,7 +1203,8 @@ def build_config(
             q.dimuon_veto,
             q.dilepton_veto,
             q.dielectron_veto,
-        ],
+        ]
+        + [p for scope in scopes for p in met.MetCorrectionsSwitch.get(era).get_outputs(scope)],
     )
     # add genWeight for everything but data
     if sample not in ["data"]:
@@ -1135,14 +1223,14 @@ def build_config(
         [
             q.nmuons,
             q.ntaus,
-            configuration.ES_ID_SCHEME.mc.producerID.output_group,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             q.extramuon_veto,
             q.dimuon_veto,
             q.extraelec_veto,
         ]
         + [p for p in genparticles.MTGenDiTauPairQuantities.get_outputs("mt")]
-        + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")],
+        + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")]
+        + [p for p in pairquantities.MTDiTauPairQuantitiesSwitch.get(era).get_outputs("mt")],
     )
     configuration.add_outputs(
         "mm",
@@ -1152,16 +1240,6 @@ def build_config(
         ]
         + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")]
         + [p for p in genparticles.MuMuGenPairQuantities.get_outputs("mm")],
-    )
-    ############### Bis hier hin ###################
-
-    configuration.add_outputs(
-        "global",
-        [p for p in met.MetBasics_v15.get_outputs("global")],
-    )
-    configuration.add_outputs(
-        "mt",
-        [p for p in pairquantities.MTDiTauPairQuantities.get_outputs("mt")],
     )
 
     add_shift = get_add_shift(configuration)
@@ -1369,10 +1447,6 @@ def build_config(
                 scopes=["global"],
             )
         )
-
-    #########################
-    # Z pt DY uncertainties
-    #########################
 
     #########################
     # Add additional producers and SFs related to embedded samples
