@@ -68,7 +68,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2022postEE": '""',
                     "2023preBPix": '""',
                     "2023postBPix": '""',
-                    "2024": '""',
+                    "2024": '"data/embedding/embeddingselection_2024C.json.gz"',
                     "2025": '""',
                 }
             ),
@@ -91,7 +91,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2022postEE": '""',
                     "2023preBPix": '""',
                     "2023postBPix": '""',
-                    "2024": '""',
+                    "2024": '"data/embedding/muon_2024C.json.gz"',
                     "2025": '""',
                 }
             ),
