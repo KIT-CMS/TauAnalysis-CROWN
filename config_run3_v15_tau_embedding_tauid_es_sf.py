@@ -26,8 +26,8 @@ from .producers import (
 )
 from .quantities import nanoAODv9, nanoAODv15
 from .quantities import output as q
-from .tau_embedding_settings import setup_embedding
-from .tau_triggersetup import add_diTauTriggerSetup
+from .tau_embedding_settings import setup_embedding # TODO: check again difference between tau_embedding_settings and tau_embedding_settings_SFs
+from .tau_triggersetup import RUN2_ERAS, add_diTauTriggerSetup
 from .variations import add_Variations
 
 
@@ -342,15 +342,14 @@ def build_config(
                     "2018": "AK4PFPuppi",
                 },
                 default="AK4PFPuppi",  # run3
-
             ),
             # jet veto configuration
             "jet_veto_map_file": EraModifier(
                 {
-                    "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
-                    "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
-                    "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
-                    "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-04-13/jetvetomaps.json.gz",
+                    "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
+                    "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
+                    "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
+                    "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
@@ -755,15 +754,7 @@ def build_config(
             "tau_es_DM11_pt20to40": "nom",
             "tau_es_DM11_pt40to60": "nom",
             "tau_es_DM11_pt60toInf": "nom",
-            # fake ele
-            "tau_elefake_es_DM0_barrel": "nom",
-            "tau_elefake_es_DM1_barrel": "nom",
-            "tau_elefake_es_DM10_barrel": "nom",
-            "tau_elefake_es_DM11_barrel": "nom",
-            "tau_elefake_es_DM0_endcap": "nom",
-            "tau_elefake_es_DM1_endcap": "nom",
-            "tau_elefake_es_DM10_endcap": "nom",
-            "tau_elefake_es_DM11_endcap": "nom",
+            
             # variations vs jet
             "tau_id_vsjet_DM0_pt20to40": "nom",
             "tau_id_vsjet_DM0_pt40to60": "nom",
@@ -777,6 +768,15 @@ def build_config(
             "tau_id_vsjet_DM11_pt20to40": "nom",
             "tau_id_vsjet_DM11_pt40to60": "nom",
             "tau_id_vsjet_DM11_pt60toInf": "nom",
+            # fake ele
+            "tau_elefake_es_DM0_barrel": "nom",
+            "tau_elefake_es_DM1_barrel": "nom",
+            "tau_elefake_es_DM10_barrel": "nom",
+            "tau_elefake_es_DM11_barrel": "nom",
+            "tau_elefake_es_DM0_endcap": "nom",
+            "tau_elefake_es_DM1_endcap": "nom",
+            "tau_elefake_es_DM10_endcap": "nom",
+            "tau_elefake_es_DM11_endcap": "nom",
             # vs ele id
             "tau_id_vsele_DM0_barrel": "nom",
             "tau_id_vsele_DM1_barrel": "nom",
@@ -805,7 +805,7 @@ def build_config(
             "tau_es_variation": "nom",
             # variations vs jet
             "tau_sf_vsjet_variation": "nom",
-            # tau sf variation
+            # tau sf variation Run2
             "tau_sf_vsjet_tau30to35": "nom",
             "tau_sf_vsjet_tau35to40": "nom",
             "tau_sf_vsjet_tau40to500": "nom",
@@ -962,8 +962,8 @@ def build_config(
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
-            muons.BaseMuons,
             muons.MuonPtCorrectionSwitch.get(era),
+            muons.BaseMuons,
             electrons.ElectronPtCorrectionMCSwitch.get(era),
             electrons.BaseElectronsSwitch.get(era),
             jets.GenJet,
@@ -1001,7 +1001,6 @@ def build_config(
             genparticles.GenMatching,
         ],
     )
-    ############################# Bis hier gekommen ########################
     configuration.add_producers(
         "mt",
         [
@@ -1009,10 +1008,9 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            configuration.ES_ID_SCHEME.mc.producerID,
-            configuration.ES_ID_SCHEME.mc.producerGroupES,
-            taus.BaseTaus,
-            taus.GoodTaus,
+            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.BaseTausSwitch.get(era),
+            taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
             electrons.ExtraElectronsVeto,
             pairselection.MTPairSelection,
@@ -1021,9 +1019,9 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVMu1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.MTDiTauPairQuantities,
+            pairquantities.MTDiTauPairQuantitiesSwitch.get(era),
             genparticles.MTGenDiTauPairQuantities,
-            scalefactors.TauID_SF,
+            scalefactors.TauID_SFSwitch.get(era),
             triggers.MTGenerateSingleMuonTriggerFlags,
         ],
     )
@@ -1047,217 +1045,41 @@ def build_config(
         ],
     )
 
+    
+    DATA_ONLY = ["data", "embedding", "embedding_mc"]
+
     ################################
     ######### Modifications ########
     ################################
-    if era == "2024":
+    for mod_scopes, rule_cls, producers, sample_filter in [
+        ("global", RemoveProducer, [event.npartons],  {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
+        # temporary get pileup weights from root file for data 2025 by tau fw group until official json PUweights are available, 23/03/2026
+        # ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY +["diboson", "ggZZ"]}), # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
+        (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
+        (["mt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
+        (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
+        ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
+        ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
+        ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
+        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets", "electroweak_boson"]}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
+        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
+        (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
+        ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
+        # remove tauid and tauES related producers, as we want to measure those values.
+        (["mt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": ["data", "embedding_mc"]}),
+        (["mt"], RemoveProducer, [scalefactors.TauID_SF], {"samples": DATA_ONLY}), # this is what we want to produce
+        (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        ("global", AppendProducer, [event.PrefireWeight], {"exclude_samples": ["fake_era"],"eras": [e for e in RUN2_ERAS if e != "2018"]}),
         # separate MC for 2024 and 2025 by even/odd event number
-        configuration.add_modification_rule(
-            "global",
-            AppendProducer(
-                producers=[event.EvenIDFilter],
-                exclude_samples=["data", "embedding"],
-            ),
-        )
-    if era == "2025":
-        # temporary root pileup for data 2025 by tau fw group, 23/03/2026
-        configuration.add_modification_rule(
-            "global",
-            ReplaceProducer(
-                producers=[event.PUweights, event.PUweights_root],
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            ),
-        )
-        # separate MC for 2024 and 2025 by even/odd event number
-        configuration.add_modification_rule(
-            "global",
-            AppendProducer(
-                producers=[event.OddIDFilter],
-                exclude_samples=["data", "embedding"],
-            ),
-        )
-    configuration.add_modification_rule(
-        "global",
-        RemoveProducer(
-            producers=[event.npartons],
-            exclude_samples=[
-                "dyjets",
-                "dyjets_powheg",
-                "dyjets_amcatnlo",
-                "dyjets_amcatnlo_ll",
-                "dyjets_amcatnlo_tt",
-                "wjets",
-                "wjets_amcatnlo",
-                "electroweak_boson",
-            ],
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
-        RemoveProducer(
-            producers=[
-                event.PUweights,
-                event.PS_weight,
-            ],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
-        RemoveProducer(
-            producers=[
-                event.LHE_Scale_weight,
-                event.LHE_PDF_weight,
-                event.LHE_alphaS_weight,
-            ],
-            samples=[
-                "data",
-                "embedding",
-                "embedding_mc",
-                "diboson",
-                "ggZZ",
-            ],  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
-        AppendProducer(producers=event.JSONFilter, samples=["data", "embedding", "embedding_mc"]),
-    )
-    ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
-    configuration.add_modification_rule(
-        "global",
-        AppendProducer(
-            producers=[genparticles.GenDYFlavor, genparticles.GenDYFilter],
-            samples=["dyjets_amcatnlo_ll"],
-        ),
-    )
-    configuration.add_modification_rule(
-        scopes,
-        RemoveProducer(
-            producers=[genparticles.GenMatching],
-            samples=["data"],
-        ),
-    )
-    configuration.add_modification_rule(
-        "global",
-        ReplaceProducer(
-            producers=[jets.GenJet, jets.GenJet_data],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(producers=event.ZPtMassReweighting, samples=["dyjets", "electroweak_boson"]),
-    )
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(
-            producers=[event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties],
-            samples=["ggh_htautau", "rem_htautau"],
-        ),
-    )
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(
-            producers=event.QQH_WG1_Uncertainties,
-            samples=["vbf_htautau", "rem_htautau"],
-        ),
-    )
-    configuration.add_modification_rule(
-        scopes,
-        AppendProducer(producers=[event.TopPtReweighting], samples="ttbar"),
-    )
-    configuration.add_modification_rule(
-        ["mt"],
-        ReplaceProducer(
-            producers=[
-                configuration.ES_ID_SCHEME.mc.producerGroupES,
-                taus.TauEnergyCorrection_data,
-            ],
-            samples=["data", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mt"],
-        RemoveProducer(
-            producers=[
-                scalefactors.TauID_SF,
-            ],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mt"],
-        RemoveProducer(
-            producers=[
-                configuration.ES_ID_SCHEME.mc.producerID,
-            ],
-            samples=["data", "embedding", "embedding_mc"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mt"],
-        RemoveProducer(
-            producers=[genparticles.MTGenDiTauPairQuantities],
-            samples=["data"],
-        ),
-    )
-    configuration.add_modification_rule(
-        ["mm"],
-        RemoveProducer(
-            producers=[genparticles.MuMuGenPairQuantities],
-            samples=["data"],
-        ),
-    )
-    if year < 2022:
-        configuration.add_modification_rule(
-            "global",
-            ReplaceProducer(
-                producers=[jets.GoodJets, jets.GoodJets_Run2_v15],
-                exclude_samples=["fake_era"],
-            ),
-        )
-        configuration.add_modification_rule(
-            scopes,
-            ReplaceProducer(
-                producers=[met.MetCorrections, met.MetCorrections_Run2],
-                exclude_samples=["fake_era"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["mt"],
-            AppendProducer(
-                producers=[
-                    scalefactors.MTGenerateSingleMuonTriggerSF_MC,
-                    scalefactors.PrivateMuonIDSF_1_MC,
-                    scalefactors.PrivateMuonIsoSF_1_MC,
-                ],
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            ),
-        )
-        configuration.add_modification_rule(
-            ["mm"],
-            AppendProducer(
-                producers=[
-                    scalefactors.PrivateMuonIDSF_1_MC,
-                    scalefactors.PrivateMuonIsoSF_1_MC,
-                    scalefactors.PrivateMuonIDSF_2_MC,
-                    scalefactors.PrivateMuonIsoSF_2_MC,
-                    scalefactors.MTGenerateSingleMuonTriggerSF_MC,
-                ],
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            ),
-        )
-
-        if era != "2018":
-            configuration.add_modification_rule(
-                "global",
-                AppendProducer(
-                    producers=event.PrefireWeight,
-                    exclude_samples=["fake_era"],
-                ),
-            )
+        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2024"]}),
+        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+    ]:
+        configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
     #########################
     ######## OUTPUTS ########
@@ -1319,7 +1141,8 @@ def build_config(
             q.dimuon_veto,
             q.extraelec_veto,
         ]
-        + [p for p in scalefactors.TauID_SF.get_outputs("mt")],
+        + [p for p in genparticles.MTGenDiTauPairQuantities.get_outputs("mt")]
+        + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")],
     )
     configuration.add_outputs(
         "mm",
@@ -1327,8 +1150,10 @@ def build_config(
             q.nmuons,
             triggers.MuMuGenerateSingleMuonTriggerFlags.output_group,
         ]
-        + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")],
+        + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")]
+        + [p for p in genparticles.MuMuGenPairQuantities.get_outputs("mm")],
     )
+    ############### Bis hier hin ###################
 
     configuration.add_outputs(
         "global",
