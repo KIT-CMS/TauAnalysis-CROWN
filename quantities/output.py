@@ -4,6 +4,8 @@ from code_generation.quantity import Quantity, NanoAODQuantity
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
 
+puppimet_norec = Quantity()
+
 # run dependent denitions
 tau_IDvsEle = Quantity()
 tau_IDvsMu = Quantity()

@@ -47,7 +47,7 @@ def build_config(
         available_scopes,
     )
 
-    measure_btag_efficiency = False
+    measure_btag_efficiency = True
 
     ###########################
     ####### Parameters ########
@@ -144,7 +144,7 @@ def build_config(
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
                     "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
-                    "2026": "data/root_pileup/Data_PileUp_2025_69p2.root",
+                    "2026": "data/root_pileup/Data_PileUp_2026_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -277,8 +277,8 @@ def build_config(
                 {
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jetid.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetid.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetid.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetid.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jetid.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15/jetid.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetid.json.gz",
@@ -294,8 +294,8 @@ def build_config(
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jet_jerc.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jet_jerc.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jet_jerc.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jet_jerc.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jet_jerc.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15//jet_jerc.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jet_jerc.json.gz",
@@ -330,8 +330,8 @@ def build_config(
                     "2018": "Summer19UL18_JRV3_MC",
                     "2022preEE": "Summer22_22Sep2023_JRV2_MC",
                     "2022postEE": "Summer22EE_22Sep2023_JRV2_MC",
-                    "2023preBPix": "Summer23Prompt23_RunCv1234_JRV2_MC",
-                    "2023postBPix": "Summer23BPixPrompt23_RunD_JRV2_MC",
+                    "2023preBPix": "Summer23Prompt23_RunCv1234_JRV3_MC",
+                    "2023postBPix": "Summer23BPixPrompt23_RunD_JRV3_MC",
                     "2024": "Summer24Prompt24_JRV2_MC",
                     "2025": "Summer24Prompt25_JRV2_MC",
                     "2026": "Summer24Prompt26_RunBD_JRV1_MC",
@@ -355,8 +355,8 @@ def build_config(
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jetvetomaps.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15/jetvetomaps.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetvetomaps.json.gz",
@@ -596,6 +596,7 @@ def build_config(
                     "ggh_htautau": True,
                     "vbf_htautau": True,
                     "rem_htautau": True,
+                    "rem_higgs": True,
                     "ggh_hww": True,
                     "vbf_hww": True,
                     "rem_VH": True,
@@ -634,6 +635,7 @@ def build_config(
                     "vbf_htautau": "NNLO",
                     "vbf_hbb": "NNLO",
                     "rem_htautau": "NNLO",
+                    "rem_higgs": "NNLO",
                     "rem_hbb": "NNLO",
                     "wjets": "NNLO",
                     }, 
@@ -647,6 +649,24 @@ def build_config(
         },
     )
     ###### scope Specifics ######
+    # from 2025 the TauPOG TES is one bin per DM again, so the DM-only (v12-style) producer matches the json
+    tau_es_version = "v12" if int(era[:4]) >= 2025 else None
+
+    def vsmu_tau_id_entries(wps):
+        return [
+            {
+                "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
+                "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
+                "vsmu_tau_id_WP": "{wp}".format(wp=wp),
+                "vsele_tau_id_WP": "{wp_ele}".format(wp_ele=wp_ele),
+                "vsjet_tau_id_WP": "Medium", #eventually add more if available and used
+                "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
+                "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
+                "vsmu_tau_id_WPbit": bit,
+            }
+            for (wp, bit), wp_ele in product(wps.items(), ["VVLoose", "Tight"])
+        ]
+
     configuration.add_config_parameters(
         ["mt", "tt", "et"],
         {
@@ -688,30 +708,14 @@ def build_config(
                     #"VVTight": 8,
                 }.items()
             ],
-            "vsmu_tau_id": [
+            # 2025 json only provides VLoose and Tight vsMu SFs
+            "vsmu_tau_id": EraModifier(
                 {
-                    "tau_1_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
-                    "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
-                    "vsmu_tau_id_WP": "{wp}".format(wp=wp),
-                    "vsele_tau_id_WP": "{wp_ele}".format(wp_ele=wp_ele),
-                    "vsjet_tau_id_WP": "Medium", #eventually add more if available and used
-                    "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
-                    "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
-                    "vsmu_tau_id_WPbit": bit,
-                }
-                for (wp, bit), wp_ele in product(
-                    {
-                        "VLoose": 1,
-                        "Loose": 2,
-                        "Medium": 3,
-                        "Tight": 4,
-                    }.items(),
-                    [
-                        "VVLoose",
-                        "Tight",
-                    ],
-                )
-            ],
+                    "2025": vsmu_tau_id_entries({"VLoose": 1, "Tight": 4}),
+                    "2026": vsmu_tau_id_entries({"VLoose": 1, "Tight": 4}),
+                },
+                default=vsmu_tau_id_entries({"VLoose": 1, "Loose": 2, "Medium": 3, "Tight": 4}),
+            ),
             # wp for tau pt correction
             "tau_vsjet_wp": "Medium", ##change again to Loose if it becomes available
             "tau_vsele_wp": "VVLoose",
@@ -743,11 +747,13 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-25Prompt-Summer24-NanoAODv15/2026-08-05/tau.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-25Prompt-Summer24-NanoAODv15/2026-08-05/tau.json.gz",
                 }
             ),
             "tau_vsjet_sf_dependence": "dm",
+            # only the 2025+ jsons take the vsMu WP; VLoose is the only WP available for all combinations
+            "tau_vsjet_vsmuWP": EraModifier({"2025": "VLoose", "2026": "VLoose"}, default='""'),
             #decay modes
             "tau_dms": TAU_DECAY_MODES,
             #energy scale
@@ -1226,7 +1232,7 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1272,7 +1278,7 @@ def build_config(
         "et",
         [
             electrons.GoodElectrons,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1350,7 +1356,7 @@ def build_config(
         [   
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1395,13 +1401,13 @@ def build_config(
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau", "rem_higgs"]}),
+        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau", "rem_higgs"]}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
-        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
+        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era, tau_es_version), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
@@ -1425,6 +1431,7 @@ def build_config(
         (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
+        ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras":["2025", "2026"]}),
         ("global", ReplaceProducer, [electrons.ElectronIDCut, electrons.ElectronIDCut_v9], {"eras": RUN2_ERAS}),
         ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
         ("global", ReplaceProducer, [muons.MuonPtCorrection, muons.MuonPtCorrection_Run2], {"eras": RUN2_ERAS}),

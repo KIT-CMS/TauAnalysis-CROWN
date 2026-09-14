@@ -65,24 +65,24 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Pileup Shifts
     #########################
-    # if era == "2025":
-    #     add_shift(
-    #         name=f"PileUp",
-    #         shift_key="PU_reweighting_variation",
-    #         shift_map={"Up": "data/root_pileup/Data_PileUp_2025_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_66p0168.root"},
-    #         scopes="global",
-    #         producers=[event.PUweights],
-    #         exclude_samples=["data", "embedding", "embedding_mc"],
-    #     )
-    # else:
-    add_shift(
-        name=f"CMS_pileup_{shift_era_tag}",
-        shift_key="PU_reweighting_variation",
-        shift_map={"Up": "up", "Down": "down"},
-        scopes="global",
-        producers=[event.PUweights],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    if era == "2025" or era == "2026":
+        add_shift(
+            name=f"PileUp",
+            shift_key="PU_reweighting_variation",
+            shift_map={"Up": "data/root_pileup/Data_PileUp_2025_2026_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_2026_66p0168.root"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
+    else:
+        add_shift(
+            name=f"CMS_pileup_{shift_era_tag}",
+            shift_key="PU_reweighting_variation",
+            shift_map={"Up": "up", "Down": "down"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
 
     #########################
     # Prefiring Shifts
@@ -319,13 +319,25 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
                         add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
-        elif int(era[:4]) >= 2024:
+        elif int(era[:4]) == 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
                         for pt in ["20to40", "40to60", "60toInf"]:
                             add_shift(name=f"CMS_scale_t_DM{dm}_genTau_pT{pt}_{shift_era_tag}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                        # ele fake
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        # muon fake
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
+        elif int(era[:4]) >= 2025:
+            # 2025 json: one TES per DM (correlated across pt), same scheme as 2022-2023
+            with defaults(scopes=("et", "mt", "tt")):
+                with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
+                    for dm in ["0", "1", "10", "11"]:
+                        # genuine tau
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
                         # ele fake
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")

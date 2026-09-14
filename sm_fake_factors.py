@@ -127,8 +127,8 @@ def build_config(
                     "2018": "",
                     "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
                     "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_et_met.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_et_met.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/FF_corrections_et.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",
                 }
@@ -224,8 +224,8 @@ def build_config(
                     "2018": "payloads/fake_factors/sm/2018/with_embedding/FF_corrections_mt.json.gz",
                     "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
                     "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt_met.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt_met.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/FF_corrections_mt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",
                 }

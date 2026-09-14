@@ -184,6 +184,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
     with defaults(call='''lorentzvector::GetPt({df}, {output}, {input})'''):
         MetPt = Producer(input=[q.puppimet_p4_recoilcorrected], output=[q.puppimet])
+        MetPt_norec = Producer(input=[q.puppimet_p4_leptoncorrected], output=[q.puppimet_norec])
         MetPt_Run3 = Producer(input=[q.puppimet_p4_unclustered_corrected], output=[q.puppimet])
         PFMetPt = Producer(input=[q.pfmet_p4_recoilcorrected], output=[q.pfmet])
 
@@ -211,6 +212,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
+                MetPt_norec,
             ],
         )
         PFMetCorrections = ProducerGroup(
