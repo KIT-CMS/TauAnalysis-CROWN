@@ -957,16 +957,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             },
         )
         # not yet measured for run 3
-        configuration.add_modification_rule(
-            "global",
-            ReplaceProducer(
-                producers=[
-                    electrons.ElectronPtCorrectionMCSwitch.get(era),
-                    electrons.ElectronPtCorrectionEmbedding,
-                ],
-                samples=["embedding"],
-            ),
-        )
+        # configuration.add_modification_rule(
+        #     "global",
+        #     ReplaceProducer(
+        #         producers=[
+        #             electrons.ElectronPtCorrectionMCSwitch.get(era),
+        #             electrons.ElectronPtCorrectionEmbedding,
+        #         ],
+        #         samples=["embedding"],
+        #     ),
+        # )
         configuration.add_shift(
             SystematicShift(
                 name="eleEsBarrelUp",

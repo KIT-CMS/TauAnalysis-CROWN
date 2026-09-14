@@ -1393,6 +1393,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     add_shift(
                         name=f"tauEs{dm}{var}",
                         shift_key=f"tau_ES_shift_{dm}{var}",
+                        scopes=("et", "mt"),
                         producers=[taus.TauPtCorrection_emb_genTau_dm_pt_binned],
                     )
 
