@@ -1380,16 +1380,18 @@ def build_config(
             )
         )
 
-    #########################
-    # Add additional producers and SFs related to embedded samples
-    #########################
-    if sample == "embedding" or sample == "embedding_mc":
-        configuration = setup_embedding(configuration, scopes, era)
+
 
     #########################
     # Import triggersetup and sf
     #########################
     configuration = add_diTauTriggerSetup(configuration)
+
+    #########################
+    # Add additional producers and SFs related to embedded samples
+    #########################
+    if sample == "embedding" or sample == "embedding_mc":
+        configuration = setup_embedding(configuration, scopes, era)
 
     #########################
     # Add variations for uncertainty calculation and systematic shifts
