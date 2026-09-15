@@ -1,8 +1,9 @@
+from .scalefactors import SingleMuTriggerSF
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
-from ..quantities import output as q
-from ..quantities import nanoAODv15 as nanoAOD
+from code_generation.producer import ExtendedVectorProducer, Producer, ProducerGroup, SwitchProducer
 
+from ..quantities import nanoAODv15 as nanoAOD
+from ..quantities import output as q
 
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='''event::quantity::Rename<Float_t>({df}, {output}, {input})'''):
@@ -195,3 +196,7 @@ with defaults(vec_config="vsjet_tau_id_sf_embedding"):
         output="tau_1_vsjet_sf_outputname",
         scopes=["tt"],
     )
+
+class TauEmbeddingSingleMuTriggerSF_Switch(SwitchProducer):
+    run2 = MTGenerateSingleMuonTriggerSF
+    run3 = SingleMuTriggerSF

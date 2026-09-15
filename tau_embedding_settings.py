@@ -538,44 +538,50 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 {
                     "2025": [  # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                            "singlemuon_trigger_flagname": '""',
+                            "singlemuon_trigger_flag": '""',
+                            "singlemuon_trigger_sf_name": '""',
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
-                    "2024": [  # TODO: not implemented yet
-                        {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                    "2024": [
+                        {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
+                            "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                            "singlemuon_trigger_flag": "trg_single_mu24",
+                            "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
                     "2023postBPix": [  # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                            "singlemuon_trigger_flagname": '""',
+                            "singlemuon_trigger_flag": '""',
+                            "singlemuon_trigger_sf_name": '""',
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
                     "2023preBPix": [  # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                            "singlemuon_trigger_flagname": '""',
+                            "singlemuon_trigger_flag": '""',
+                            "singlemuon_trigger_sf_name": '""',
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
                     "2022postEE": [  # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                            "singlemuon_trigger_flagname": '""',
+                            "singlemuon_trigger_flag": '""',
+                            "singlemuon_trigger_sf_name": '""',
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
                     "2022preEE": [  # TODO: not implemented yet
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
-                            "trg_extrapolation": 1.0,  # for nominal case
+                            "singlemuon_trigger_flagname": '""',
+                            "singlemuon_trigger_flag": '""',
+                            "singlemuon_trigger_sf_name": '""',
+                            "singlemuon_trigger_variation": "nominal",
                         },
                     ],
                     "2018": [
@@ -845,44 +851,50 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                         {
                             "2025": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
-                            "2024": [  # TODO: not implemented yet
-                                {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                            "2024": [
+                                {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
+                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                                    "singlemuon_trigger_flag": "trg_single_mu24",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
                             "2023preBPix": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
                             "2022postEE": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
                             "2022preEE": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systup",
                                 },
                             ],
                             "2018": [
@@ -938,8 +950,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 }
             },
             producers={
-                ("mt"): embedding.MTGenerateSingleMuonTriggerSF,
-                ("mm"): embedding.MTGenerateSingleMuonTriggerSF,
+                ("mt"): embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
+                ("mm"): embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
             },
         ),
         samples=["embedding", "embedding_mc"],
@@ -953,44 +965,50 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                         {
                             "2025": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
-                            "2024": [  # TODO: not implemented yet
-                                {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                            "2024": [
+                                {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
+                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
+                                    "singlemuon_trigger_flag": "trg_single_mu24",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
                             "2023preBPix": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
                             "2022postEE": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
                             "2022preEE": [  # TODO: not implemented yet
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "singlemuon_trigger_flagname": "",
+                                    "singlemuon_trigger_flag": "",
+                                    "singlemuon_trigger_sf_name": "",
+                                    "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
                             "2018": [
@@ -1046,8 +1064,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 }
             },
             producers={
-                ("mt"): embedding.MTGenerateSingleMuonTriggerSF,
-                ("mm"): embedding.MTGenerateSingleMuonTriggerSF,
+                ("mt"): embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
+                ("mm"): embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
             },
         ),
         samples=["embedding", "embedding_mc"],
@@ -1135,7 +1153,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 producers=[
                     embedding.TauEmbeddingMuonIDSF_1,
                     embedding.TauEmbeddingMuonIsoSF_1,
-                    embedding.MTGenerateSingleMuonTriggerSF,
+                    embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
                 ],
                 samples=["embedding"],
             ),
@@ -1181,7 +1199,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     embedding.TauEmbeddingMuonIsoSF_1,
                     embedding.TauEmbeddingMuonIDSF_2,
                     embedding.TauEmbeddingMuonIsoSF_2,
-                    embedding.MTGenerateSingleMuonTriggerSF,
+                    embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
                 ],
                 samples=["embedding"],
             ),

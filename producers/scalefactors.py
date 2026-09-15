@@ -551,7 +551,7 @@ SingleMuTriggerSF = ExtendedVectorProducer(
         q.eta_1,
     ],
     output="singlemuon_trigger_flagname",
-    scopes=["mt","em"],
+    scopes=["mt","em","mm"],
     vec_config="singlemuon_trigger_sf",
 )
 
