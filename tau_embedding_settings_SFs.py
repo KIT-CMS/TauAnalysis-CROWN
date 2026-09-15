@@ -59,7 +59,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2022postEE": '""',
                     "2023preBPix": '""',
                     "2023postBPix": '""',
-                    "2024": '"data/embedding/embeddingselection_2024C.json.gz"',
+                    "2024": "data/embedding/embeddingselection_2024C.json.gz",
                     "2025": '""',
                 }
             ),
@@ -82,7 +82,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                     "2022postEE": '""',
                     "2023preBPix": '""',
                     "2023postBPix": '""',
-                    "2024": '"data/embedding/muon_2024C.json.gz"',
+                    "2024": "data/embedding/muon_2024C.json.gz",
                     "2025": '""',
                 }
             ),
@@ -274,10 +274,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
-                    "2024": [  # TODO: not implemented yet
+                    "2024": [
                         {
-                            "flagname": '""',
-                            "embedding_trigger_sf": '""',
+                            "flagname": "trg_wgt_single_mu24",
+                            "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
                             "trg_extrapolation": 1.0,  # for nominal case
                         },
                     ],
@@ -380,11 +380,11 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
-                            "2024": [  # TODO: not implemented yet
+                            "2024": [
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "trg_extrapolation": 1.02,  # 2% upward variation
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
@@ -488,11 +488,11 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                                     "trg_extrapolation": 1.0,  # for nominal case
                                 },
                             ],
-                            "2024": [  # TODO: not implemented yet
+                            "2024": [
                                 {
-                                    "flagname": "",
-                                    "embedding_trigger_sf": "",
-                                    "trg_extrapolation": 1.0,  # for nominal case
+                                    "flagname": "trg_wgt_single_mu24",
+                                    "embedding_trigger_sf": "Trg_IsoMu24_pt_eta_bins",
+                                    "trg_extrapolation": 0.98,  # 2% downward variation
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
