@@ -152,7 +152,7 @@ ps_weight = Quantity()
 prefiring_wgt = Quantity()
 
 #### MET 
-
+# add PuppiMET_pt/phi as unshifted quantities for producers.met.ApplyUnclusteredMetShift.py
 PuppiMET_pt_nanoAOD_ref = NanoAODQuantity("PuppiMET_pt")
 PuppiMET_phi_nanoAOD_ref = NanoAODQuantity("PuppiMET_phi")
 
