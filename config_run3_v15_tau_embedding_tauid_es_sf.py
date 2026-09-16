@@ -11,6 +11,7 @@ from code_generation.systematics import (
     SystematicShiftByQuantity,
     get_add_shift,
 )
+from code_generation.utility.generate_DAG import create_graph
 
 from .producers import (
     electrons,
@@ -1239,4 +1240,6 @@ def build_config(
     configuration.optimize()
     configuration.validate()
     configuration.report()
+    nanoAOD_inputs = [n for n in dir(nanoAODv15) if not n.startswith("__")]
+    create_graph(configuration, nanoAOD_inputs, "build/graph", "CROWNelements")
     return configuration.expanded_configuration()
