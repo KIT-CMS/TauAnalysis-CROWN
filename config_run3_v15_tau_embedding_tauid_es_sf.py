@@ -241,24 +241,6 @@ def build_config(
             ),
             "jet_eta_3": 4.7,  # This is used for JetEtaCut producer for run2 now !!
             "jet_id": 2,  # 2==pass tight ID and fail tightLepVeto, 6== pass tight and pass tightLepVeto, new minimal selection https://cms-talk.web.cern.ch/t/updated-jet-selection-criterion-for-jet-veto-map/130527
-            # bjet selection -> need to be in global
-            "min_bjet_pt": 20,
-            "max_bjet_eta": 2.5,
-            "btag_cut": EraModifier(  ## values from the wiki for a medium wp https://btv-wiki.docs.cern.ch/ScaleFactors
-                {
-                    # wp for deepJet
-                    "2016preVFP": 0.2598,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
-                    "2016postVFP": 0.2489,  # taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
-                    "2017": 0.3040,
-                    "2018": 0.2783,
-                    # wp for particleNet
-                    "2022preEE": 0.245,
-                    "2022postEE": 0.2605,
-                    "2023preBPix": 0.1917,
-                    "2023postBPix": 0.1919,
-                },
-                default=0.1272,  # 2024, 2025, 2026 UParT
-            ),
             # jet puID
             "jet_puid": EraModifier(
                 {
@@ -405,152 +387,8 @@ def build_config(
         },
     )
     configuration.add_config_parameters(
-        ["mt"],
-        {
-            "btag_eff_file": EraModifier(
-                {
-                    "2022preEE": "payloads/btag_efficiencies/2022preEE/mt/btag_efficiency.json.gz",
-                    "2022postEE": "payloads/btag_efficiencies/2022postEE/mt/btag_efficiency.json.gz",
-                    "2023preBPix": "payloads/btag_efficiencies/2023preBPix/mt/btag_efficiency.json.gz",
-                    "2023postBPix": "payloads/btag_efficiencies/2023postBPix/mt/btag_efficiency.json.gz",
-                    "2024": "payloads/btag_efficiencies/2024/mt/btag_efficiency.json.gz",
-                    "2025": "payloads/btag_efficiencies/2025/mt/btag_efficiency.json.gz",
-                    "2026": "payloads/btag_efficiencies/2025/mt/btag_efficiency.json.gz",  # to update later on
-                },
-                default='""',  # Run 2
-            ),
-        },
-    )
-    configuration.add_config_parameters(
         scopes,
         {
-            # bjet scale factors -> needs to be in scopes
-            "btag_sf_file": EraModifier(  # TODO Update run2 when btag efficiency is measured (needed for new SFs producers)
-                {
-                    "2016preVFP": "data/jsonpog-integration/POG/BTV/2016preVFP_UL/btagging.json.gz",
-                    "2016postVFP": "data/jsonpog-integration/POG/BTV/2016postVFP_UL/btagging.json.gz",
-                    "2017": "data/jsonpog-integration/POG/BTV/2017_UL/btagging.json.gz",
-                    "2018": "data/jsonpog-integration/POG/BTV/2018_UL/btagging.json.gz",
-                    "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22CDSep23-Summer22-NanoAODv12/2025-08-20/btagging.json.gz",
-                    "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-08-20/btagging.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
-                }
-            ),
-            "btag_sf_variation": "central",
-            "btag_sf_variation_bc": "central",
-            "btag_sf_variation_lf": "central",
-            "btag_wp": "M",
-            "btag_corr_algo": EraModifier(
-                {
-                    "2016preVFP": "deepJet_shape",
-                    "2016postVFP": "deepJet_shape",
-                    "2017": "deepJet_shape",
-                    "2018": "deepJet_shape",
-                    "2022preEE": "particleNet_comb",
-                    "2022postEE": "particleNet_comb",
-                    "2023preBPix": "particleNet_comb",
-                    "2023postBPix": "particleNet_comb",
-                    "2024": "UParTAK4_comb",
-                    "2025": "UParTAK4_comb",
-                    "2026": "UParTAK4_comb",
-                }
-            ),
-            "btag_corr_algo_lf": EraModifier(
-                {
-                    "2016preVFP": "deepJet_shape",
-                    "2016postVFP": "deepJet_shape",
-                    "2017": "deepJet_shape",
-                    "2018": "deepJet_shape",
-                    "2022preEE": "particleNet_light",
-                    "2022postEE": "particleNet_light",
-                    "2023preBPix": "particleNet_light",
-                    "2023postBPix": "particleNet_light",
-                    "2024": "UParTAK4_light",
-                    "2025": "UParTAK4_light",
-                    "2026": "UParTAK4_light",
-                }
-            ),
-            "btag_sf_wp_name": EraModifier(
-                {
-                    "2016preVFP": "TO_ADD",
-                    "2016postVFP": "TO_ADD",
-                    "2017": "TO_ADD",
-                    "2018": "TO_ADD",
-                    "2022preEE": "particleNet_wp_values",
-                    "2022postEE": "particleNet_wp_values",
-                    "2023preBPix": "particleNet_wp_values",
-                    "2023postBPix": "particleNet_wp_values",
-                    "2024": "UParTAK4_wp_values",
-                    "2025": "UParTAK4_wp_values",
-                    "2026": "UParTAK4_wp_values",
-                },
-            ),
-            "btag_eff_name": "btag_efficiency",
-            "btag_eff_sample_type": SampleModifier(
-                {
-                    **{sample_type: sample_type for sample_type in available_sample_types},
-                    **{
-                        sample_type: "dyjets"
-                        for sample_type in [
-                            "dyjets",
-                            "dyjets_madgraph",
-                            "dyjets_amcatnlo",
-                            "dyjets_amcatnlo_ll",
-                            "dyjets_amcatnlo_tt",
-                            "dyjets_powheg",
-                            "electroweak_boson",
-                        ]
-                    },
-                    **{
-                        sample_type: "ggh_htautau"
-                        for sample_type in [
-                            "ggh_htautau",
-                            "ggh_hbb",
-                            "hh4b",
-                            "hh2b2tau",
-                            "hh4v",
-                            "nmssm_Ybb",
-                            "nmssm_Ytautau",
-                        ]
-                    },
-                    **{
-                        sample_type: "vbf_htautau"
-                        for sample_type in [
-                            "vbf_htautau",
-                            "vbf_hbb",
-                        ]
-                    },
-                    **{
-                        sample_type: "rem_htautau"
-                        for sample_type in [
-                            "rem_htautau",
-                            "rem_hbb",
-                            "rem_hww",
-                            "rem_hzz",
-                            "rem_higgs",
-                        ]
-                    },
-                    **{
-                        sample_type: "ttbar"
-                        for sample_type in [
-                            "ttbar",
-                            "rem_ttbar",
-                        ]
-                    },
-                    **{
-                        sample_type: "wjets"
-                        for sample_type in [
-                            "wjets",
-                            "wjets_madgraph",
-                            "wjets_amcatnlo",
-                        ]
-                    },
-                }
-            ),
             # jet selection
             "deltaR_jet_veto": 0.5,
             # pair selection
@@ -984,7 +822,6 @@ def build_config(
             electrons.BaseElectronsSwitch.get(era),
             jets.GenJet,
             jets.JetSmearingSeed,
-            jets.JetBTagSwitch.get(era),
             jets.JetRhoSwitch.get(era),
             jets.JetIDSwitch.get(era),
             jets.JetVetoMapVeto,
@@ -998,7 +835,6 @@ def build_config(
             jets.GoodJets_loose,
             jets.GoodJets_tight,
             jets.GoodJetsSwitch.get(era),
-            jets.GoodBJetsSwitch.get(era),
             event.DiLeptonVetoSwitch.get(era),
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
