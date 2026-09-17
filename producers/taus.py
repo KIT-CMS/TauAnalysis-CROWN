@@ -245,7 +245,7 @@ with defaults(scopes=["et", "mt", "tt"]):
         )
         # Run 3
         TauPtCorrection_byValue = Producer(
-            call='''embedding::tau::PtCorrection_byValue({df}, {output}, {input}, "{tau_ES_shift_DM0}", "{tau_ES_shift_DM1}", "{tau_ES_shift_DM10}", "{tau_ES_shift_DM11}")''',
+            call='''embedding::tau::PtCorrection_byValue({df}, {output}, {input}, {tau_ES_shift_DM0}, {tau_ES_shift_DM1}, {tau_ES_shift_DM10}, {tau_ES_shift_DM11})''',
             input=[nanoAODv15.Tau_pt, nanoAODv15.Tau_decayMode],
         )
         RenameTauPt = Producer(
