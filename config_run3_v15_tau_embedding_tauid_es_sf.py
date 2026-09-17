@@ -906,8 +906,6 @@ def build_config(
     ################################
     for mod_scopes, rule_cls, producers, sample_filter in [
         ("global", RemoveProducer, [event.npartons], {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
-        # temporary get pileup weights from root file for data 2025 by tau fw group until official json PUweights are available, 23/03/2026
-        # ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
         (available_scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
