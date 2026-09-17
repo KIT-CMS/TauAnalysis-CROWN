@@ -266,7 +266,7 @@ def build_config(
                 },
                 default='""',  # not used for Run 2
             ),
-            "jet_collection_name": '"AK4PUPPI"',  # only used for jet ID so not relevant for run 2
+            "jet_collection_name": 'AK4PUPPI',  # only used for jet ID so not relevant for run 2
             "jet_jec_file": EraModifier(
                 {
                     "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
@@ -388,7 +388,7 @@ def build_config(
         },
     )
     configuration.add_config_parameters(
-        scopes,
+        available_scopes,
         {
             # jet selection
             "deltaR_jet_veto": 0.5,
@@ -771,7 +771,7 @@ def build_config(
             },
         )
         configuration.add_config_parameters(
-            scopes,
+            available_scopes,
             {
                 "propagateJets": SampleModifier(
                     {"data": False},
@@ -844,10 +844,10 @@ def build_config(
         ],
     )
     configuration.add_producers(
-        scopes,
+        available_scopes,
         [
             jets.JetCollection,
-            jets.BasicJetQuantities,
+            jets.NumberOfJets, # needed by met.ApplyRecoilCorrections
             met.MetCorrectionsSwitch.get(era),
             pairquantities.mt_1, # we don't need all DiTauPairMETQuantities, so we just add the mt_1 and mt_2 producers
             pairquantities.mt_2,
@@ -886,6 +886,7 @@ def build_config(
             muons.VetoSecondMuon,
             muons.ExtraMuonsVeto,
             muons.NumberOfGoodMuons,
+            electrons.ExtraElectronsVeto,
             pairselection.ZMuMuPairSelection,
             pairselection.GoodMuMuPairFilter,
             pairselection.LVMu1,
@@ -909,17 +910,17 @@ def build_config(
         # ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
-        (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
+        (available_scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
         (["mt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),   # this is what we want to produce
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
         (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global",AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter],{"samples": ["dyjets_amcatnlo_ll"]}),
-        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets", "electroweak_boson"]}),
-        (scopes,AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
-        (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
+        (available_scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets", "electroweak_boson"]}),
+        (available_scopes,AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
+        (available_scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
+        (available_scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         # remove tauid and tauES related producers, as we want to measure those values.
         (["mt"],ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": ["data", "embedding_mc"]}),
@@ -929,6 +930,7 @@ def build_config(
         # separate MC for 2024 and 2025 by even/odd event number
         ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2024"]}),
         ("global",AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        ("global", RemoveProducer, [jets.JetMassCorrection], {}), # is imported through JetEnergyCorrectionSwitch.get(era) but not needed for this analysis
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
@@ -941,7 +943,7 @@ def build_config(
     )
 
     configuration.add_outputs(
-        scopes,
+        available_scopes,
         [
             nanoAODv15.PV_npvsGood,
             q.is_data,
@@ -976,14 +978,14 @@ def build_config(
         + [p for scope in scopes for p in met.MetCorrectionsSwitch.get(era).get_outputs(scope)],
     )
     # add genWeight for everything but data
-    if sample not in ["data"]:
+    if sample != "data":
         configuration.add_outputs(
-            scopes,
+            available_scopes,
             nanoAODv15.genWeight,
         )
         if year < 2018:
             configuration.add_outputs(
-                scopes,
+                available_scopes,
                 q.prefiring_wgt,
             )
 
@@ -1006,6 +1008,8 @@ def build_config(
         [
             q.nmuons,
             triggers.MuMuGenerateSingleMuonTriggerFlags.output_group,
+            q.extramuon_veto,
+            q.extraelec_veto,
         ]
         + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")]
         + [p for p in genparticles.MuMuGenPairQuantities.get_outputs("mm")],
