@@ -202,6 +202,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
+                MetPt_norec,
             ],
         )
         MetCorrections_v12 = ProducerGroup(

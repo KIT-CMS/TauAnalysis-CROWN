@@ -117,6 +117,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_et.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_et.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_et.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/fake_factors_et.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -131,6 +132,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/FF_corrections_et.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",  # to update later on
                 }
             ),
         },
@@ -214,6 +216,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_mt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_mt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_mt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/fake_factors_mt.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -228,6 +231,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/FF_corrections_mt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",  # to update later on
                 }
             ),
         },
@@ -306,6 +310,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_tt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/fake_factors_tt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/fake_factors_tt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/fake_factors_tt.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -320,6 +325,7 @@ def build_config(
                     "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_tt.json.gz",
                     "2024": "payloads/fake_factors/sm/2024/FF_corrections_tt.json.gz",
                     "2025": "payloads/fake_factors/sm/2025/FF_corrections_tt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_tt.json.gz",  # to update later on
                 }
             ),
         },

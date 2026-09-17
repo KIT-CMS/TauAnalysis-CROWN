@@ -1461,6 +1461,8 @@ def build_config(
             q.is_wjets,
             q.is_ggh_htautau,
             q.is_vbf_htautau,
+            q.is_rem_htautau,
+            q.is_rem_higgs,
             q.is_diboson,
             nanoAODv15.run,
             q.lumi,
