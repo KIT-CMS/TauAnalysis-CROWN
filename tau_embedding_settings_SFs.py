@@ -1,4 +1,4 @@
-from __future__ import annotations  # needed for type annotations in > python 3.7
+from __future__ import annotations
 
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from .producers import embedding as embedding
@@ -23,7 +23,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     #####################
     # gen parameters #
     #####################
-
+    year = int(era[:4])
     configuration.add_config_parameters(
         ["mt"],
         {
@@ -68,30 +68,48 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         },
     )
 
-    # add muon scalefactors from embedding measurements
-    configuration.add_config_parameters(
-        ["mt", "mm"],
-        {
-            "embedding_muon_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/embedding/muon_2016preVFPUL.json.gz",
-                    "2016postVFP": "data/embedding/muon_2016postVFPUL.json.gz",
-                    "2017": "data/embedding/muon_2017UL.json.gz",
-                    "2018": "data/embedding/muon_2018UL.json.gz",
-                    "2022preEE": '""',
-                    "2022postEE": '""',
-                    "2023preBPix": '""',
-                    "2023postBPix": '""',
-                    "2024": "data/embedding/muon_2024C.json.gz",
-                    "2025": '""',
-                }
-            ),
-            "embedding_muon_id_sf": "ID_pt_eta_bins",
-            "embedding_muon_id_extrapolation": 1.0,
-            "embedding_muon_iso_sf": "Iso_pt_eta_bins",
-            "embedding_muon_iso_extrapolation": 1.0,
-        },
-    )
+    # add muon scalefactors from embedding measurements with seperation of run2 and run3 
+    if year < 2022:
+        configuration.add_config_parameters(
+            ["mt", "mm"],
+            {
+                "embedding_muon_sf_file": EraModifier(
+                    {
+                        "2016preVFP": "data/embedding/muon_2016preVFPUL.json.gz",
+                        "2016postVFP": "data/embedding/muon_2016postVFPUL.json.gz",
+                        "2017": "data/embedding/muon_2017UL.json.gz",
+                        "2018": "data/embedding/muon_2018UL.json.gz",
+                    }
+                ),
+                "embedding_muon_id_sf": "ID_pt_eta_bins",
+                "embedding_muon_id_extrapolation": 1.0,
+                "embedding_muon_iso_sf": "Iso_pt_eta_bins",
+                "embedding_muon_iso_extrapolation": 1.0,
+            },
+        )
+    if year >= 2022:
+        configuration.add_config_parameters(
+                    ["mt", "mm"],
+                    {
+                        "muon_sf_file": EraModifier(
+                            {
+                                "2022preEE": '""',
+                                "2022postEE": '""',
+                                "2023preBPix": '""',
+                                "2023postBPix": '""',
+                                "2024": "data/embedding/muon_2024C.json.gz",
+                                "2025": '""',
+                            }
+                        ),
+                        "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
+                        "muon_iso_sf_name": "NUM_TightPFIso_DEN_MediumID",
+                        "muon_id_variation": "nominal",
+                        "muon_iso_variation": "nominal",
+                    },
+                )
+
+
+        
 
     ############
     # TRIGGERS #
@@ -278,7 +296,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                         {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
                             "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                             "singlemuon_trigger_flag": "trg_single_mu24",
-                            "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                            "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_GlobalMuons_and_CutBasedIdMedium_and_PFIsoTight",
                             "singlemuon_trigger_variation": "nominal",
                         },
                     ],
@@ -390,7 +408,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                                 {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_GlobalMuons_and_CutBasedIdMedium_and_PFIsoTight",
                                     "singlemuon_trigger_variation": "systup",
                                 },
                             ],
@@ -504,7 +522,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                                 {  #  Run3 uses the single muon trigger from scalefactors.SingleMuTriggerSF
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_???",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_GlobalMuons_and_CutBasedIdMedium_and_PFIsoTight",
                                     "singlemuon_trigger_variation": "systdown",
                                 },
                             ],
@@ -643,9 +661,9 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     configuration.add_modification_rule(
         ["mt"],
         AppendProducer(
-            producers=[
-                embedding.TauEmbeddingMuonIDSF_1,
-                embedding.TauEmbeddingMuonIsoSF_1,
+           producers=[
+                embedding.TauEmbeddingMuonIDSF_1_Switch.get(era),
+                embedding.TauEmbeddingMuonIsoSF_1_Switch.get(era),
                 embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
             ],
             samples=["embedding"],
@@ -654,11 +672,11 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     configuration.add_modification_rule(
         ["mm"],
         AppendProducer(
-            producers=[
-                embedding.TauEmbeddingMuonIDSF_1,
-                embedding.TauEmbeddingMuonIsoSF_1,
-                embedding.TauEmbeddingMuonIDSF_2,
-                embedding.TauEmbeddingMuonIsoSF_2,
+           producers=[
+                embedding.TauEmbeddingMuonIDSF_1_Switch.get(era),
+                embedding.TauEmbeddingMuonIsoSF_1_Switch.get(era),
+                embedding.TauEmbeddingMuonIDSF_2_Switch.get(era),
+                embedding.TauEmbeddingMuonIsoSF_2_Switch.get(era),
                 embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era),
             ],
             samples=["embedding"],
@@ -666,90 +684,91 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
     )
 
     ######################
-    # Tau ID/ISO Variations
+    # Tau ID/ISO Variations for run2 
     ######################
     # ID
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFUp",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"embedding_muon_id_extrapolation": 1.02},
-                ("mm"): {"embedding_muon_id_extrapolation": 1.02},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                ],
-                ("mm"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                    embedding.TauEmbeddingMuonIDSF_2,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFDown",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"embedding_muon_id_extrapolation": 0.98},
-                ("mm"): {"embedding_muon_id_extrapolation": 0.98},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                ],
-                ("mm"): [
-                    embedding.TauEmbeddingMuonIDSF_1,
-                    embedding.TauEmbeddingMuonIDSF_2,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    # ISO
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFUp",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
-                ("mm"): {"embedding_muon_iso_extrapolation": 1.02},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                ],
-                ("mm"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                    embedding.TauEmbeddingMuonIsoSF_2,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFDown",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
-                ("mm"): {"embedding_muon_iso_extrapolation": 0.98},
-            },
-            producers={
-                ("mt"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                ],
-                ("mm"): [
-                    embedding.TauEmbeddingMuonIsoSF_1,
-                    embedding.TauEmbeddingMuonIsoSF_2,
-                ],
-            },
-        ),
-        samples=["embedding", "embedding_mc"],
-    )
+    if year < 2022:
+        configuration.add_shift(
+            SystematicShift(
+                name="muonIdSFUp",
+                scopes=["mt", "mm"],
+                shift_config={
+                    ("mt"): {"embedding_muon_id_extrapolation": 1.02},
+                    ("mm"): {"embedding_muon_id_extrapolation": 1.02},
+                },
+                producers={
+                    ("mt"): [
+                        embedding.TauEmbeddingMuonIDSF_1,
+                    ],
+                    ("mm"): [
+                        embedding.TauEmbeddingMuonIDSF_1,
+                        embedding.TauEmbeddingMuonIDSF_2,
+                    ],
+                },
+            ),
+            samples=["embedding", "embedding_mc"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="muonIdSFDown",
+                scopes=["mt", "mm"],
+                shift_config={
+                    ("mt"): {"embedding_muon_id_extrapolation": 0.98},
+                    ("mm"): {"embedding_muon_id_extrapolation": 0.98},
+                },
+                producers={
+                    ("mt"): [
+                        embedding.TauEmbeddingMuonIDSF_1,
+                    ],
+                    ("mm"): [
+                        embedding.TauEmbeddingMuonIDSF_1,
+                        embedding.TauEmbeddingMuonIDSF_2,
+                    ],
+                },
+            ),
+            samples=["embedding", "embedding_mc"],
+        )
+        # ISO
+        configuration.add_shift(
+            SystematicShift(
+                name="muonIsoSFUp",
+                scopes=["mt", "mm"],
+                shift_config={
+                    ("mt"): {"embedding_muon_iso_extrapolation": 1.02},
+                    ("mm"): {"embedding_muon_iso_extrapolation": 1.02},
+                },
+                producers={
+                    ("mt"): [
+                        embedding.TauEmbeddingMuonIsoSF_1,
+                    ],
+                    ("mm"): [
+                        embedding.TauEmbeddingMuonIsoSF_1,
+                        embedding.TauEmbeddingMuonIsoSF_2,
+                    ],
+                },
+            ),
+            samples=["embedding", "embedding_mc"],
+        )
+        configuration.add_shift(
+            SystematicShift(
+                name="muonIsoSFDown",
+                scopes=["mt", "mm"],
+                shift_config={
+                    ("mt"): {"embedding_muon_iso_extrapolation": 0.98},
+                    ("mm"): {"embedding_muon_iso_extrapolation": 0.98},
+                },
+                producers={
+                    ("mt"): [
+                        embedding.TauEmbeddingMuonIsoSF_1,
+                    ],
+                    ("mm"): [
+                        embedding.TauEmbeddingMuonIsoSF_1,
+                        embedding.TauEmbeddingMuonIsoSF_2,
+                    ],
+                },
+            ),
+            samples=["embedding", "embedding_mc"],
+        )
 
     ######################
     # Tau ID SFs

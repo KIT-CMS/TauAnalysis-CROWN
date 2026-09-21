@@ -1,4 +1,10 @@
-from .scalefactors import SingleMuTriggerSF
+from .scalefactors import (
+    SingleMuTriggerSF,
+    Muon_1_ID_SF,
+    Muon_1_Iso_SF,
+    Muon_2_ID_SF,
+    Muon_2_Iso_SF,
+)
 from code_generation.helpers import defaults
 from code_generation.producer import ExtendedVectorProducer, Producer, ProducerGroup, SwitchProducer
 
@@ -200,3 +206,22 @@ with defaults(vec_config="vsjet_tau_id_sf_embedding"):
 class TauEmbeddingSingleMuTriggerSF_Switch(SwitchProducer):
     run2 = MTGenerateSingleMuonTriggerSF
     run3 = SingleMuTriggerSF
+
+class TauEmbeddingMuonIDSF_1_Switch(SwitchProducer):
+    run2 = TauEmbeddingMuonIDSF_1
+    run3 = Muon_1_ID_SF
+
+
+class TauEmbeddingMuonIsoSF_1_Switch(SwitchProducer):
+    run2 = TauEmbeddingMuonIsoSF_1
+    run3 = Muon_1_Iso_SF
+
+
+class TauEmbeddingMuonIDSF_2_Switch(SwitchProducer):
+    run2 = TauEmbeddingMuonIDSF_2
+    run3 = Muon_2_ID_SF
+
+
+class TauEmbeddingMuonIsoSF_2_Switch(SwitchProducer):
+    run2 = TauEmbeddingMuonIsoSF_2
+    run3 = Muon_2_Iso_SF
