@@ -898,10 +898,10 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tau_ES_shift_DM11": 1.0,
             },
         )
-        # tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist() if x != 0 and x>=-20.0]
-        # tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even
+        tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist() if x != 0 and x>=-20.0]
+        #tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even
         # tauESvariations = [x for x in np.arange(19.9, -20.0, -0.2).round(2).tolist()] # odd
-        tauESvariations = []
+        #tauESvariations = []
         for tauESvariation in tauESvariations:
             name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
             configuration.add_shift(
