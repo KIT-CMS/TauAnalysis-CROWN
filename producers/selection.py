@@ -648,6 +648,63 @@ with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {
         output=[q.ff_ttbar_ARlike],
     )
 
+# gen-match-based process split (T/J/L, see quantities/output.py) -- leg 1 is the light
+# lepton, whose "genuine" gen_match code is channel-specific (tau->e = 3 for et, tau->mu =
+# 4 for mt), so et and mt each get their own block instead of sharing the one above.
+with defaults(scopes=["et"]):
+    _gen_category_T_leg1_et = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 3)''',
+        input=[q.gen_match_1],
+        output=[Quantity("gen_category_T_leg1_et")],
+    )
+    _gen_category_T_leg2_et = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
+        input=[q.gen_match_2],
+        output=[Quantity("gen_category_T_leg2_et")],
+    )
+    gen_category_T_et = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[_gen_category_T_leg1_et.output[0], _gen_category_T_leg2_et.output[0]],
+        output=[q.gen_category_T],
+    )
+    gen_category_J_et = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 6)''',
+        input=[q.gen_match_2],
+        output=[q.gen_category_J],
+    )
+    gen_category_L_et = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "none_of")''',
+        input=[q.gen_category_T, q.gen_category_J],
+        output=[q.gen_category_L],
+    )
+
+with defaults(scopes=["mt"]):
+    _gen_category_T_leg1_mt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 4)''',
+        input=[q.gen_match_1],
+        output=[Quantity("gen_category_T_leg1_mt")],
+    )
+    _gen_category_T_leg2_mt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
+        input=[q.gen_match_2],
+        output=[Quantity("gen_category_T_leg2_mt")],
+    )
+    gen_category_T_mt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[_gen_category_T_leg1_mt.output[0], _gen_category_T_leg2_mt.output[0]],
+        output=[q.gen_category_T],
+    )
+    gen_category_J_mt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 6)''',
+        input=[q.gen_match_2],
+        output=[q.gen_category_J],
+    )
+    gen_category_L_mt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "none_of")''',
+        input=[q.gen_category_T, q.gen_category_J],
+        output=[q.gen_category_L],
+    )
+
 with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}, "all_of")'''):
     # both tau legs' pt are already encoded in `selcut_presel_trigger` itself
     # (the doubletau trigger flag's own p1/p2 ptcuts), so no separate flat
@@ -866,6 +923,45 @@ with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}
         output=[q.ff_qcd_sub_AR_SR_ARlike],
     )
 
+# gen-match-based process split (T/J/L, see quantities/output.py) -- symmetric in both
+# legs, both are hadronic taus here.
+with defaults(scopes=["tt"]):
+    _gen_category_T_leg1_tt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
+        input=[q.gen_match_1],
+        output=[Quantity("gen_category_T_leg1_tt")],
+    )
+    _gen_category_T_leg2_tt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
+        input=[q.gen_match_2],
+        output=[Quantity("gen_category_T_leg2_tt")],
+    )
+    gen_category_T_tt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[_gen_category_T_leg1_tt.output[0], _gen_category_T_leg2_tt.output[0]],
+        output=[q.gen_category_T],
+    )
+    _gen_category_J_leg1_tt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 6)''',
+        input=[q.gen_match_1],
+        output=[Quantity("gen_category_J_leg1_tt")],
+    )
+    _gen_category_J_leg2_tt = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 6)''',
+        input=[q.gen_match_2],
+        output=[Quantity("gen_category_J_leg2_tt")],
+    )
+    gen_category_J_tt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''',
+        input=[_gen_category_J_leg1_tt.output[0], _gen_category_J_leg2_tt.output[0]],
+        output=[q.gen_category_J],
+    )
+    gen_category_L_tt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "none_of")''',
+        input=[q.gen_category_T, q.gen_category_J],
+        output=[q.gen_category_L],
+    )
+
 
 # ---------------------------------------------------------------------------
 # em -- only the signal region mask; no presel_mask, no fake factor regions
@@ -956,6 +1052,31 @@ class SRMaskEMSwitch(SwitchProducer):
 class SRMaskSsEMSwitch(SwitchProducer):
     run2 = SR_mask_ss_em_Run2
     run3 = SR_mask_ss_em
+
+
+# gen-match-based process split (T/L only, see quantities/output.py) -- no hadronic tau
+# leg in em, so there is no jet->tau fake category; gen_category_J is not produced here.
+with defaults(scopes=["em"]):
+    _gen_category_T_leg1_em = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 3)''',
+        input=[q.gen_match_1],
+        output=[Quantity("gen_category_T_leg1_em")],
+    )
+    _gen_category_T_leg2_em = Producer(
+        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 4)''',
+        input=[q.gen_match_2],
+        output=[Quantity("gen_category_T_leg2_em")],
+    )
+    gen_category_T_em = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "all_of")''',
+        input=[_gen_category_T_leg1_em.output[0], _gen_category_T_leg2_em.output[0]],
+        output=[q.gen_category_T],
+    )
+    gen_category_L_em = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "none_of")''',
+        input=[q.gen_category_T],
+        output=[q.gen_category_L],
+    )
 
 
 def build_trigger_pt_or_flag(

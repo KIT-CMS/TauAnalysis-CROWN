@@ -580,6 +580,14 @@ SR_mask = Quantity()
 # needs the QCD estimate to follow systematic variations too.
 SR_mask_ss = Quantity()
 
+# gen-match-based process split (T = genuine tau pair, J = jet->tau fake, L = everything
+# else, mainly lepton fakes) -- shift-aware like SR_mask, since the chosen pair (and so
+# gen_match) can change under energy-scale shifts. T/J/L partition the event space; em has
+# no jet-fake leg, so gen_category_J is not produced there.
+gen_category_T = Quantity()
+gen_category_J = Quantity()
+gen_category_L = Quantity()
+
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()
 ff_wjets_SRlike = Quantity()

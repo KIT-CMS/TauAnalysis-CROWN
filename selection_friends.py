@@ -410,6 +410,12 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
+                # gen-match-based process split (T/J/L)
+                selection._gen_category_T_leg1_et,
+                selection._gen_category_T_leg2_et,
+                selection.gen_category_T_et,
+                selection.gen_category_J_et,
+                selection.gen_category_L_et,
             ],
         )
         configuration.add_outputs(
@@ -418,6 +424,9 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.gen_category_T,
+                q.gen_category_J,
+                q.gen_category_L,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_wjets_SRlike,
@@ -513,6 +522,12 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
+                # gen-match-based process split (T/J/L)
+                selection._gen_category_T_leg1_mt,
+                selection._gen_category_T_leg2_mt,
+                selection.gen_category_T_mt,
+                selection.gen_category_J_mt,
+                selection.gen_category_L_mt,
             ],
         )
         configuration.add_outputs(
@@ -521,6 +536,9 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.gen_category_T,
+                q.gen_category_J,
+                q.gen_category_L,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_wjets_SRlike,
@@ -600,6 +618,14 @@ def add_selection(
                 selection.ff_qcd_sub_DR_SR_ARlike_tt,
                 selection.ff_qcd_sub_AR_SR_SRlike_tt,
                 selection.ff_qcd_sub_AR_SR_ARlike_tt,
+                # gen-match-based process split (T/J/L)
+                selection._gen_category_T_leg1_tt,
+                selection._gen_category_T_leg2_tt,
+                selection.gen_category_T_tt,
+                selection._gen_category_J_leg1_tt,
+                selection._gen_category_J_leg2_tt,
+                selection.gen_category_J_tt,
+                selection.gen_category_L_tt,
             ],
         )
         configuration.add_outputs(
@@ -608,6 +634,9 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.gen_category_T,
+                q.gen_category_J,
+                q.gen_category_L,
                 q.ff_qcd_SRlike,
                 q.ff_qcd_ARlike,
                 q.ff_qcd_sub_SRlike,
@@ -648,9 +677,16 @@ def add_selection(
                 selection.MuonIsoFlag_em,
                 selection.SRMaskEMSwitch.get(era),
                 selection.SRMaskSsEMSwitch.get(era),
+                # gen-match-based process split (T/L only, no jet->tau fake leg)
+                selection._gen_category_T_leg1_em,
+                selection._gen_category_T_leg2_em,
+                selection.gen_category_T_em,
+                selection.gen_category_L_em,
             ],
         )
-        configuration.add_outputs(["em"], [q.SR_mask, q.SR_mask_ss])
+        configuration.add_outputs(
+            ["em"], [q.SR_mask, q.SR_mask_ss, q.gen_category_T, q.gen_category_L]
+        )
 
     # only used as control for Run 2 so far
     if "mm" in scopes:
