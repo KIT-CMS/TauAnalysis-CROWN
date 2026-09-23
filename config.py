@@ -1248,10 +1248,10 @@ def build_config(
             scalefactors.MuonIDIso_SF,
             scalefactors.TauID_SFSwitch.get(era),
             triggers.MTGenerateSingleMuonTriggerFlags,
-            #triggers.MTGenerateCrossTriggerFlags,
-            #triggers.GenerateSingleTrailingTauTriggerFlags,
+            triggers.MTGenerateCrossTriggerFlags,
+            triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleMuTriggerSF,
-            #scalefactors.MuTauTriggerSF,
+            scalefactors.MuTauTriggerSF,
         ],
     )
     configuration.add_producers(
@@ -1297,10 +1297,10 @@ def build_config(
             scalefactors.TauID_SFSwitch.get(era),
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
-            #triggers.ETGenerateCrossTriggerFlags,
-            #triggers.GenerateSingleTrailingTauTriggerFlags,
+            triggers.ETGenerateCrossTriggerFlags,
+            triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleEleTriggerSF,
-            #scalefactors.EleTauTriggerSF,
+            scalefactors.EleTauTriggerSF,
         ],
     )
     configuration.add_producers(
@@ -1371,6 +1371,8 @@ def build_config(
             scalefactors.TauID_SFSwitch.get(era),
             triggers.TTGenerateDoubleTauTriggerFlags,
             scalefactors.DoubleTauTriggerSF,
+            triggers.TTGenerateDoubleTauJetTriggerFlags,
+            scalefactors.DoubleTauJetTriggerSF,
         ],
     )
     
@@ -1417,13 +1419,14 @@ def build_config(
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["mt"], RemoveProducer, [scalefactors.SingleMuTriggerSF], {"eras": RUN2_ERAS}),
+        (["mt"], RemoveProducer, [scalefactors.MuTauTriggerSF], {"eras": RUN2_ERAS}),
         (["et"], RemoveProducer, [scalefactors.SingleEleTriggerSF], {"eras": RUN2_ERAS}),
+        (["et"], RemoveProducer, [scalefactors.EleTauTriggerSF], {"eras": RUN2_ERAS}),
         (["tt"], RemoveProducer, [scalefactors.DoubleTauTriggerSF], {"eras": RUN2_ERAS}),
+        (["tt"], RemoveProducer, [triggers.TTGenerateDoubleTauJetTriggerFlags, scalefactors.DoubleTauJetTriggerSF], {"eras": RUN2_ERAS}),
 
-        # cross triggers and embedding triggers
-        (["mt"], AppendProducer, [triggers.MTGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
+        # embedding triggers (Run 2 only; cross-trigger flags/SFs are now in the default mt/et producer lists for all eras)
         (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["et"], AppendProducer, [triggers.ETGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
         (["et"], AppendProducer, [scalefactors.ETGenerateSingleElectronTriggerSF_MC, scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["tt"], AppendProducer, [triggers.GenerateSingleTrailingTauTriggerFlags, triggers.GenerateSingleLeadingTauTriggerFlags], {"eras": RUN2_ERAS}),
         (["em"], AppendProducer, [triggers.EMGenerateCrossTriggerFlags], {"eras": RUN2_ERAS}),
@@ -1615,19 +1618,29 @@ def build_config(
             "mt",
             [
                 scalefactors.SingleMuTriggerSF.output_group,
+                triggers.MTGenerateCrossTriggerFlags.output_group,
+                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("mt")
+                ] + [p for p in scalefactors.MuTauTriggerSF.get_outputs("mt")
             ],
         )
         configuration.add_outputs(
             "et",
             [
                 scalefactors.SingleEleTriggerSF.output_group,
+                triggers.ETGenerateCrossTriggerFlags.output_group,
+                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("et")
+                ] + [p for p in scalefactors.EleTauTriggerSF.get_outputs("et")
             ],
         )
         configuration.add_outputs(
             "tt",
-            [p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")],
+            [
+                triggers.TTGenerateDoubleTauJetTriggerFlags.output_group,
+                ] + [p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")
+                ] + [p for p in scalefactors.DoubleTauJetTriggerSF.get_outputs("tt")
+            ],
         )
         configuration.add_outputs(
             "em",

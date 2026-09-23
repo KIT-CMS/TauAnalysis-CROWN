@@ -116,10 +116,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name=f"CMS_scale_m_stat", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
-        add_shift(name=f"CMS_scale_m_syst{shift_era_tag}", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
-        add_shift(name=f"CMS_res_m_stat", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
-        add_shift(name=f"CMS_res_m_syst_{shift_era_tag}", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
+        add_shift(name=f"CMS_scale_m_stat_{shift_era_tag}", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
+        add_shift(name=f"CMS_scale_m_syst", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
+        add_shift(name=f"CMS_res_m_stat_{shift_era_tag}", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
+        add_shift(name=f"CMS_res_m_syst", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
 
     #########################
     # Muon ID shifts
@@ -308,17 +308,6 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         for pt in ["20to40", "40toInf"]:
                             add_shift(name=f"CMS_scale_t_DM{dm_num}_genTau_pT{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        elif int(era[:4]) >= 2022 and int(era[:4]) < 2024:
-            with defaults(scopes=("et", "mt", "tt")):
-                with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
-                    for dm in ["0", "1", "10", "11"]:
-                        # genuine tau
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
-                        # ele fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
-                        # muon fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
         elif int(era[:4]) == 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
@@ -331,8 +320,8 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
                         # muon fake
                         add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
-        elif int(era[:4]) >= 2025:
-            # 2025 json: one TES per DM (correlated across pt), same scheme as 2022-2023
+        else:
+            # 2022, 2023, 2025, 2026: one TES per DM (correlated across pt), same scheme for all these eras
             with defaults(scopes=("et", "mt", "tt")):
                 with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:

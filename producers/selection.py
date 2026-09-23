@@ -958,12 +958,29 @@ class SRMaskSsEMSwitch(SwitchProducer):
     run3 = SR_mask_ss_em
 
 
-def build_trigger_pt_or_flag(scope, flagnames, output, pt1_max_by_flag=None, pt2_min_param=None):
-    """OR of HLT-path legs for a Run 2 friend-tree trigger flag; `flagnames` is a list of already-produced ntuple branches.
-    The leg's own object (`pt_1`) is already cut on by the flag itself (see `matchParticle` in `src/triggers.cxx`);
-    `pt1_max_by_flag` (per-flag upper `pt_1` bound, only et 2017) and `pt2_min_param` (a config-parameter name for the
-    other leg's offline pt, added via `add_config_parameters`) cover the bounds the flag itself can't express."""
+def build_trigger_pt_or_flag(
+    scope,
+    flagnames,
+    output,
+    pt1_max_by_flag=None,
+    pt2_min_param=None,
+    pt1_min_by_flag=None,
+    pt2_min_by_flag=None,
+    pt2_max_by_flag=None,
+):
+    """OR of HLT-path legs for a friend-tree trigger flag; `flagnames` is a list of already-produced ntuple branches.
+    Each leg's own object pt/eta is already cut on by the flag itself (see `matchParticle`/`TripleObjectFlag` in
+    `src/triggers.cxx`); the optional per-flag bound dicts (`pt1_min_by_flag`, `pt1_max_by_flag`, `pt2_min_by_flag`,
+    `pt2_max_by_flag`, all keyed by flagname) cover bounds the flag itself can't express, or narrow an
+    acceptance-recovery trigger's own region so it doesn't overlap the higher-threshold trigger it complements
+    (e.g. the MuTau cross trigger only contributing below the SingleMuon plateau) -- keeping each event's trigger
+    category unambiguous instead of letting two flags fire for the same event. `pt2_min_param` (a config-parameter
+    name rather than a literal, for the Run 2 legs that share one offline tau-pt bound across every flag in the
+    list) is kept separately for backwards compatibility."""
+    pt1_min_by_flag = pt1_min_by_flag or {}
     pt1_max_by_flag = pt1_max_by_flag or {}
+    pt2_min_by_flag = pt2_min_by_flag or {}
+    pt2_max_by_flag = pt2_max_by_flag or {}
     producers = []
     leg_outputs = []
     for i, flagname in enumerate(flagnames):
@@ -982,14 +999,20 @@ def build_trigger_pt_or_flag(scope, flagnames, output, pt1_max_by_flag=None, pt2
         )
         terms.append(flag_output[0])
 
-        pt1_max = pt1_max_by_flag.get(flagname)
-        if pt1_max is not None:
-            bound_output = [Quantity(f"{leg}_pt1max")]
+        for bound_name, bound_value, bound_quantity, bound_call in (
+            ("pt1min", pt1_min_by_flag.get(flagname), q.pt_1, "GreaterFlag"),
+            ("pt1max", pt1_max_by_flag.get(flagname), q.pt_1, "SmallerFlag"),
+            ("pt2min", pt2_min_by_flag.get(flagname), q.pt_2, "GreaterFlag"),
+            ("pt2max", pt2_max_by_flag.get(flagname), q.pt_2, "SmallerFlag"),
+        ):
+            if bound_value is None:
+                continue
+            bound_output = [Quantity(f"{leg}_{bound_name}")]
             producers.append(
                 _RawProducer(
-                    name=f"{leg}_pt1max",
-                    call=f'''event::quantity::SmallerFlag<float>({{df}}, {{output}}, {{input}}, {pt1_max})''',
-                    input=[q.pt_1],
+                    name=f"{leg}_{bound_name}",
+                    call=f'''event::quantity::{bound_call}<float>({{df}}, {{output}}, {{input}}, {bound_value})''',
+                    input=[bound_quantity],
                     output=bound_output,
                     scopes=[scope],
                 )
@@ -997,10 +1020,10 @@ def build_trigger_pt_or_flag(scope, flagnames, output, pt1_max_by_flag=None, pt2
             terms.append(bound_output[0])
 
         if pt2_min_param is not None:
-            bound_output = [Quantity(f"{leg}_pt2min")]
+            bound_output = [Quantity(f"{leg}_pt2min_param")]
             producers.append(
                 _RawProducer(
-                    name=f"{leg}_pt2min",
+                    name=f"{leg}_pt2min_param",
                     call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, {%s})''' % pt2_min_param,
                     input=[q.pt_2],
                     output=bound_output,

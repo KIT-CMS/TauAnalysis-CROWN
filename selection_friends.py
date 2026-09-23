@@ -116,6 +116,28 @@ def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
             pt1_max_by_flag={"trg_single_ele32": 36.0} if (scope, era) == ("et", "2017") else None,
             pt2_min_param="presel_trigger_pt2_min",
         )
+    # Run 3 mt/et/tt: primary trigger (SingleLepton / plain DiTau) OR'd with an acceptance-recovery
+    # secondary trigger (cross trigger / DiTau+Jet). Cap the secondary's own pt1/pt2 at the primary's
+    # embedded threshold so the two trigger categories partition the phase space without overlap -- an
+    # event that would satisfy both is attributed to the primary trigger only, matching AN-25-055's
+    # convention of using the loosest matching HLT ("only require the loosest HLT which still accepts
+    # the event", Sec. 6.7). The bounds below match each primary flag's own p1/p2_ptcut in
+    # tau_triggersetup.py; the `len(flags) == 2` guard keeps this from firing for scopes/eras with a
+    # single flag (no secondary to exclude) or Run 2's multi-flag OR lists (already handled above).
+    _exclusivity_bound = {
+        "mt": 26.0,  # trg_single_mu24's own ptcut
+        "et": 32.0,  # trg_single_ele30's own ptcut
+        "tt": 40.0 if era in DOUBLETAU_HPS_ERAS else 35.0,  # plain DiTau's own p1/p2_ptcut
+    }.get(scope)
+    if _exclusivity_bound is not None and len(flags) == 2:
+        secondary_flag = flags[1]
+        return selection.build_trigger_pt_or_flag(
+            scope,
+            flags,
+            [q.selcut_presel_trigger],
+            pt1_max_by_flag={secondary_flag: _exclusivity_bound},
+            pt2_max_by_flag={secondary_flag: _exclusivity_bound} if scope == "tt" else None,
+        )
     return [selection.build_trigger_or_flag(scope, flags, [q.selcut_presel_trigger])]
 
 
@@ -197,14 +219,19 @@ def add_selection(
                                 "2018": 30.0},
                             default=0.0,
                         ),
+                        # SingleMuon OR'd with the MuTau cross trigger for acceptance recovery at low
+                        # muon pt (AN-25-055 Table 27): each flag already embeds its own p1/p2 ptcuts
+                        # via matchParticle (see tau_triggersetup.py), so a plain any-of OR is correct
+                        # here without any extra pt-window logic.
                         "singlemuon_trigger_flags": EraModifier(
                             {
                                 "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
                                 "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
                                 "2017": ["trg_single_mu27"],
                                 "2018": ["trg_single_mu24", "trg_single_mu27"],
+                                **{era: ["trg_single_mu24", "trg_cross_mu20tau27_hps"] for era in DOUBLETAU_HPS_ERAS},
                             },
-                            default=["trg_single_mu24"],
+                            default=["trg_single_mu24", "trg_cross_mu20tau27_pnet"],  # 2024, 2025, 2026
                         ),
         },
     )
@@ -231,13 +258,16 @@ def add_selection(
                         "presel_trigger_pt2_min": EraModifier(
                             {"2017": 30.0, "2018": 30.0},
                             default=0.0),
-                        # per-era OR of single-electron HLT paths
+                        # per-era OR of single-electron HLT paths, OR'd with the ETau cross trigger for
+                        # acceptance recovery at low electron pt (AN-25-055 Table 30): each flag already
+                        # embeds its own p1/p2 ptcuts via matchParticle, so a plain any-of OR is correct.
                         "singleelectron_trigger_flags": EraModifier(
                             {
                                 "2017": ["trg_single_ele32", "trg_single_ele35"],
                                 "2018": ["trg_single_ele35", "trg_single_ele32"],
+                                **{era: ["trg_single_ele30", "trg_cross_ele24tau30_hps"] for era in DOUBLETAU_HPS_ERAS},
                             },
-                            default=["trg_single_ele30"],
+                            default=["trg_single_ele30", "trg_cross_ele24tau30_pnet"],  # 2024, 2025, 2026
                         ),
         },
     )
@@ -250,7 +280,9 @@ def add_selection(
                 {era: "VLoose" for era in RUN2_ERAS},
                 default="VLoose_VVLoose",
             ),
-            # both tau legs' pt are already encoded in the doubletau trigger flag's own p1/p2 ptcuts, so no flat lep-pt cuts are needed here
+            # both tau legs' pt (and the jet leg's, for the DiTau+Jet trigger) are already encoded in
+            # each flag's own matchParticle ptcuts (see tau_triggersetup.py / TripleObjectFlag), so a
+            # plain any-of OR of DiTau and DiTau+Jet is correct here with no extra pt/jet cuts needed.
             "doubletau_trigger_flags": EraModifier(
                 {
                     # 2016/2017 have no doubletau trigger defined (see tau_triggersetup.py)
@@ -261,9 +293,9 @@ def add_selection(
                         "trg_double_tau40_mediumiso_tightid",
                         "trg_double_tau40_tightiso",
                     ],
-                    **{era: ["trg_double_tau35_mediumiso_hps"] for era in DOUBLETAU_HPS_ERAS},
+                    **{era: ["trg_double_tau35_mediumiso_hps", "trg_double_tau30_jet_mediumiso_hps"] for era in DOUBLETAU_HPS_ERAS},
                 },
-                default=["trg_double_tau30_mediumiso_pnet"],  # 2024, 2025, 2026
+                default=["trg_double_tau30_mediumiso_pnet", "trg_double_tau26_jet_pnet"],  # 2024, 2025, 2026
             ),
         },
     )

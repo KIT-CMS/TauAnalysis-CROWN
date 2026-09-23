@@ -111,13 +111,13 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_et.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_et.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_et.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_et.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/fake_factors_et.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/fake_factors_et.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/fake_factors_et.json.gz",  # to update later on
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/fake_factors_et.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/fake_factors_et.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_et.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_et.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/fake_factors_et.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/fake_factors_et.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/fake_factors_et.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -126,13 +126,13 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_et.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_et.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_et.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_et.json.gz",  # to update later on
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_et.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_et.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_et.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_et.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/FF_corrections_et.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/FF_corrections_et.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/FF_corrections_et.json.gz",  # to update later on
                 }
             ),
         },
@@ -209,14 +209,14 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/fake_factors/sm/2018/with_embedding/fake_factors_mt.json.gz",
-                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_mt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_mt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_mt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_mt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/fake_factors_mt.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/fake_factors_mt.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/fake_factors_mt.json.gz",  # to update later on
+                    "2018": "payloads/fake_factors/sm/2018/with_embedding/260921/fake_factors_mt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/fake_factors_mt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/fake_factors_mt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_mt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_mt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/fake_factors_mt.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/fake_factors_mt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/fake_factors_mt.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -224,14 +224,14 @@ def build_config(
                     "2016preVFP": "",
                     "2016postVFP": "",
                     "2017": "",
-                    "2018": "payloads/fake_factors/sm/2018/with_embedding/FF_corrections_mt.json.gz",
-                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_mt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_mt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_mt.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_mt.json.gz",  # to update later on
+                    "2018": "payloads/fake_factors/sm/2018/with_embedding/260921/FF_corrections_mt.json.gz",
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_mt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_mt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_mt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_mt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/FF_corrections_mt.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/FF_corrections_mt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/FF_corrections_mt.json.gz",  # to update later on
                 }
             ),
         },
@@ -304,13 +304,13 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022/fake_factors_tt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/fake_factors_tt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/fake_factors_tt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/fake_factors_tt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/fake_factors_tt.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/fake_factors_tt.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/fake_factors_tt.json.gz",  # to update later on
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/fake_factors_tt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/fake_factors_tt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_tt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/fake_factors_tt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/fake_factors_tt.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/fake_factors_tt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/fake_factors_tt.json.gz",  # to update later on
                 }
             ),
             "corr_file": EraModifier(
@@ -319,13 +319,13 @@ def build_config(
                     "2016postVFP": "",
                     "2017": "",
                     "2018": "",
-                    "2022preEE": "payloads/fake_factors/sm/2022/FF_corrections_tt.json.gz",
-                    "2022postEE": "payloads/fake_factors/sm/2022/FF_corrections_tt.json.gz",
-                    "2023preBPix": "payloads/fake_factors/sm/2023/FF_corrections_tt.json.gz",
-                    "2023postBPix": "payloads/fake_factors/sm/2023/FF_corrections_tt.json.gz",
-                    "2024": "payloads/fake_factors/sm/2024/FF_corrections_tt.json.gz",
-                    "2025": "payloads/fake_factors/sm/2025/FF_corrections_tt.json.gz",
-                    "2026": "payloads/fake_factors/sm/2025/FF_corrections_tt.json.gz",  # to update later on
+                    "2022preEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_tt.json.gz",
+                    "2022postEE": "payloads/fake_factors/sm/2022/260921/FF_corrections_tt.json.gz",
+                    "2023preBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_tt.json.gz",
+                    "2023postBPix": "payloads/fake_factors/sm/2023/260921/FF_corrections_tt.json.gz",
+                    "2024": "payloads/fake_factors/sm/2024/260921/FF_corrections_tt.json.gz",
+                    "2025": "payloads/fake_factors/sm/2025/260921/FF_corrections_tt.json.gz",
+                    "2026": "payloads/fake_factors/sm/2025/260921/FF_corrections_tt.json.gz",  # to update later on
                 }
             ),
         },

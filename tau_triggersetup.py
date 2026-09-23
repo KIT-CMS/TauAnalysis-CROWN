@@ -647,6 +647,71 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
         },
     )
 
+    # di tau + jet trigger (acceptance recovery trigger for HH->bbtautau-like phase space;
+    # not implemented for Run 2, which had no such path)
+    doubletau_jet_trigger_defaults = {
+        "p1_trigger_particle_id": 15,
+        "p2_trigger_particle_id": 15,
+        "p3_trigger_particle_id": 1,  # Jet (see include/triggers.hxx matchParticle docstring)
+        # offline jet pT from AN-25-055 Table 24 (both 2022/2023 and 2024: >= 65, i.e. +5 GeV
+        # over the native 60 GeV HLT jet threshold, matching the convention used for the tau legs)
+        "p3_ptcut": 65,
+        # not given by a specific offline table entry; using the analysis' general jet
+        # acceptance (AN-25-055 Sec. 5.4: pT > 30, |eta| < 4.7) as a non-restrictive bound
+        "p3_etacut": 4.7,
+        # Jet-type filter bit 17 = "DiTau+Jet (Jet) Signal" / "hltHpsOverlapFilterDeepTauDoublePFTau*PFJet*"
+        # (nanoAODv12_run3 and nanoAODv15_run3 TrigObj_filterBits, Jet section) - same bit index in
+        # both NanoAOD versions, and a different enumeration than the Tau-type bits used for p1/p2
+        "p3_filterbit": "17",
+        "max_deltaR_triggermatch": 0.4,
+    }
+
+    configuration.add_config_parameters(
+        ["tt"],
+        {
+            "doubletau_jet_trigger": EraModifier(
+                {
+                    **{era: [] for era in RUN2_ERAS},  # no DiTau+Jet HLT path existed in Run 2
+                    **{
+                        era: [
+                            {
+                                "flagname": "trg_double_tau26_jet_pnet",
+                                "hlt_path": "HLT_DoublePNetTauhPFJet26_L2NN_eta2p3_PFJet60",
+                                # offline thresholds from AN-25-055 Table 24 (2024): leading tau >= 30, trailing tau 30-35
+                                "p1_ptcut": 30,
+                                "p2_ptcut": 30,
+                                "p1_etacut": 2.3,
+                                "p2_etacut": 2.3,
+                                # PNet + "di-tau + PFJet" (nanoAODv15_run3 Tau filterBits); confirmed against the TauTrigger
+                                # TWiki filter-bit column for this exact path - unlike the plain PNet DiTau paths, this
+                                # path has no separate Medium/Tight WP variant, so there is no WP bit here.
+                                "p1_filterbit": "4, 14",
+                                "p2_filterbit": "4, 14",
+                                **doubletau_jet_trigger_defaults,
+                            },
+                        ]
+                        for era in ["2024", "2025", "2026"]
+                    },
+                },
+                default=[  # 2022preEE, 2022postEE, 2023preBPix, 2023postBPix
+                    {
+                        "flagname": "trg_double_tau30_jet_mediumiso_hps",
+                        "hlt_path": "HLT_DoubleMediumDeepTauPFTauHPS30_L2NN_eta2p1_PFJet60",
+                        # offline thresholds from AN-25-055 Table 24 (2022/2023): both taus >= 35-40, taking the
+                        # lower edge to match the +5 GeV over native-HLT-threshold convention used for the plain DiTau trigger above
+                        "p1_ptcut": 35,
+                        "p2_ptcut": 35,
+                        "p1_etacut": 2.1,
+                        "p2_etacut": 2.1,
+                        "p1_filterbit": "3, 14",  # DeepTau + "di-tau + PFJet" (nanoAODv12_run3 Tau filterBits)
+                        "p2_filterbit": "3, 14",
+                        **doubletau_jet_trigger_defaults,
+                    },
+                ],
+            ),
+        },
+    )
+
     # e mu cross trigger
     elmu_cross_trigger_defaults = {
         "p1_etacut": 2.1,
@@ -1101,6 +1166,54 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                     ),
                     "doubletau_trigger_leg2_sf_name": "ditau",
                     "doubletau_trigger_leg2_variation": "nom",
+                },
+            ],
+        },
+    )
+
+    # di tau + jet trigger scale factors (tau legs only; the jet leg has no centrally
+    # provided POG correction, see AN-25-055 Sec. 7 - a custom SF from the HHbbTauTau group is used instead)
+    configuration.add_config_parameters(
+        ["tt"],
+        {
+            "doubletau_jet_trigger_leg1_sf": [
+                {
+                    "doubletau_jet_trigger_leg1_flagname": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_wgt_doubletau_jet30_leg1" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_wgt_doubletau_jet26_leg1",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_jet_trigger_flag": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_double_tau30_jet_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_double_tau26_jet_pnet",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_jet_trigger_leg1_sf_name": "ditaujet",
+                    "doubletau_jet_trigger_leg1_variation": "nom",
+                },
+            ],
+            "doubletau_jet_trigger_leg2_sf": [
+                {
+                    "doubletau_jet_trigger_leg2_flagname": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_wgt_doubletau_jet30_leg2" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_wgt_doubletau_jet26_leg2",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_jet_trigger_flag": EraModifier(
+                        {
+                            **{era: '""' for era in RUN2_ERAS},
+                            **{era: "trg_double_tau30_jet_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
+                        },
+                        default="trg_double_tau26_jet_pnet",  # 2024, 2025, 2026
+                    ),
+                    "doubletau_jet_trigger_leg2_sf_name": "ditaujet",
+                    "doubletau_jet_trigger_leg2_variation": "nom",
                 },
             ],
         },
