@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-from .producers import embedding as embedding
-from .producers import scalefactors as scalefactors
-from .producers import pairquantities as pairquantities
-from .producers import genparticles as genparticles
-from .producers import taus as taus
-from .producers import jets as jets
-from .producers import triggers as triggers
-from .producers import electrons as electrons
 from code_generation.configuration import Configuration
-from code_generation.systematics import SystematicShift, get_add_shift
-from code_generation.modifiers import EraModifier
 from code_generation.helpers import defaults
+from code_generation.modifiers import EraModifier
+from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
+from code_generation.systematics import SystematicShift, get_add_shift
+
+from .producers import electrons, embedding, genparticles, pairquantities, taus
 
 measure_tauES = True
 measure_eleES = False
@@ -898,7 +892,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 "tau_ES_shift_DM11": 1.0,
             },
         )
-        tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.1, -0.1).round(2).tolist() if x != 0 and x>=-20.0]
+        tauESvariations = [x / 10 for x in range(200, -201, -1) if x != 0] # get variations from 20% to -20% in steps of 0.1%, excluding 0
         #tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even
         # tauESvariations = [x for x in np.arange(19.9, -20.0, -0.2).round(2).tolist()] # odd
         #tauESvariations = []
