@@ -588,6 +588,14 @@ gen_category_T = Quantity()
 gen_category_J = Quantity()
 gen_category_L = Quantity()
 
+# per-file MC normalization constants (weights_friends.py) -- names/semantics match the
+# legacy Python xsec/build_friend_tree.py friend these replace, for drop-in compatibility
+# with existing downstream readers (TauFakeFactors' gen_weight(), TauKITFlow's
+# process_selection.py). Not produced for data/embedding.
+crossSectionPerEventWeight = Quantity()
+numberGeneratedEventsWeight = Quantity()
+negative_events_fraction = Quantity()
+
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()
 ff_wjets_SRlike = Quantity()
