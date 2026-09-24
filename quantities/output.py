@@ -596,6 +596,11 @@ crossSectionPerEventWeight = Quantity()
 numberGeneratedEventsWeight = Quantity()
 negative_events_fraction = Quantity()
 
+# combined per-event MC weight (weights_friends.py, Phase 3) -- see
+# producers/weights.py:build_weight_chain() for exactly what's folded in and what's
+# deliberately excluded (trigger SF, lumi, process-specific terms).
+weight = Quantity()
+
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()
 ff_wjets_SRlike = Quantity()

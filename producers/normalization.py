@@ -29,7 +29,7 @@ SampleNormalization = Producer(
 # TauFakeFactors/preselection.py already uses for MC-only branches missing on data.
 with defaults(
     scopes=["et", "mt", "tt", "em"],
-    call='''event::Define<float>({df}, {output}, 1.0f)''',
+    call='''event::quantity::Define<float>({df}, {output}, 1.0f)''',
     input=[],
 ):
     ConstantCrossSectionPerEventWeight = Producer(output=[q.crossSectionPerEventWeight])
