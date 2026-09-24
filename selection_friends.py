@@ -8,6 +8,7 @@ from .quantities import output as q
 from code_generation.quantity import Quantity
 from code_generation.rules import AppendProducer, RemoveProducer
 from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
+from .wp_config import VSELE_WP, VSJET_WP, VSJET_ANTIISO_WP
 
 # producers whose input column name is templated with a config parameter resolved by `_resolve_templated_quantities` below
 TEMPLATED_QUANTITY_PRODUCERS = [
@@ -116,18 +117,11 @@ def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
             pt1_max_by_flag={"trg_single_ele32": 36.0} if (scope, era) == ("et", "2017") else None,
             pt2_min_param="presel_trigger_pt2_min",
         )
-    # Run 3 mt/et/tt: primary trigger (SingleLepton / plain DiTau) OR'd with an acceptance-recovery
-    # secondary trigger (cross trigger / DiTau+Jet). Cap the secondary's own pt1/pt2 at the primary's
-    # embedded threshold so the two trigger categories partition the phase space without overlap -- an
-    # event that would satisfy both is attributed to the primary trigger only, matching AN-25-055's
-    # convention of using the loosest matching HLT ("only require the loosest HLT which still accepts
-    # the event", Sec. 6.7). The bounds below match each primary flag's own p1/p2_ptcut in
-    # tau_triggersetup.py; the `len(flags) == 2` guard keeps this from firing for scopes/eras with a
-    # single flag (no secondary to exclude) or Run 2's multi-flag OR lists (already handled above).
+    # Cap the secondary's trigger own pt1/pt2 at the primary's threshold so the two are othrogonal
     _exclusivity_bound = {
-        "mt": 26.0,  # trg_single_mu24's own ptcut
-        "et": 32.0,  # trg_single_ele30's own ptcut
-        "tt": 40.0 if era in DOUBLETAU_HPS_ERAS else 35.0,  # plain DiTau's own p1/p2_ptcut
+        "mt": 26.0,
+        "et": 32.0,
+        "tt": 40.0 if era in DOUBLETAU_HPS_ERAS else 35.0,
     }.get(scope)
     if _exclusivity_bound is not None and len(flags) == 2:
         secondary_flag = flags[1]
@@ -155,15 +149,10 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            # tau vs jet working points of the fake factor regions (Run 2: Tight/VLoose, Run 3: Medium/VVVLoose)
-            "ff_tau_iso_vsjet_wp": EraModifier(
-                {era: "Tight" for era in RUN2_ERAS},
-                default="Medium"
-            ),
-            "ff_tau_antiiso_vsjet_wp": EraModifier(
-                {era: "VLoose" for era in RUN2_ERAS},
-                default="VVVLoose"
-            ),
+            # tau vs jet working points of the fake factor regions -- see wp_config.py
+            # (shared with weights_friends.py's SF WP, must not drift apart)
+            "ff_tau_iso_vsjet_wp": VSJET_WP,
+            "ff_tau_antiiso_vsjet_wp": VSJET_ANTIISO_WP,
         },
     )
 
@@ -194,7 +183,7 @@ def add_selection(
             "lep_iso_min_qcd": EraModifier(
                 {era: 0.05 for era in RUN2_ERAS},
                 default=0.0),
-            "presel_vsele_wp": "VVLoose",
+            "presel_vsele_wp": VSELE_WP["mt"],
                         # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
                         "presel_vsmu_wp": EraModifier(
                             {era: "Tight" for era in RUN2_ERAS},
@@ -219,10 +208,6 @@ def add_selection(
                                 "2018": 30.0},
                             default=0.0,
                         ),
-                        # SingleMuon OR'd with the MuTau cross trigger for acceptance recovery at low
-                        # muon pt (AN-25-055 Table 27): each flag already embeds its own p1/p2 ptcuts
-                        # via matchParticle (see tau_triggersetup.py), so a plain any-of OR is correct
-                        # here without any extra pt-window logic.
                         "singlemuon_trigger_flags": EraModifier(
                             {
                                 "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
@@ -244,7 +229,7 @@ def add_selection(
                 default=0.0),
 
             # preselection tau ID WPs, trigger flag names, and offline lepton/tau pt thresholds matching the trigger turn-on plateau
-            "presel_vsele_wp": "Tight",
+            "presel_vsele_wp": VSELE_WP["et"],
                         # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
                         "presel_vsmu_wp": EraModifier(
                             {era: "VLoose" for era in RUN2_ERAS},
@@ -258,9 +243,6 @@ def add_selection(
                         "presel_trigger_pt2_min": EraModifier(
                             {"2017": 30.0, "2018": 30.0},
                             default=0.0),
-                        # per-era OR of single-electron HLT paths, OR'd with the ETau cross trigger for
-                        # acceptance recovery at low electron pt (AN-25-055 Table 30): each flag already
-                        # embeds its own p1/p2 ptcuts via matchParticle, so a plain any-of OR is correct.
                         "singleelectron_trigger_flags": EraModifier(
                             {
                                 "2017": ["trg_single_ele32", "trg_single_ele35"],
@@ -274,15 +256,13 @@ def add_selection(
     configuration.add_config_parameters(
         ["tt"],
         {
-            "presel_vsele_wp": "VVLoose",
+            "presel_vsele_wp": VSELE_WP["tt"],
             # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
             "presel_vsmu_wp": EraModifier(
                 {era: "VLoose" for era in RUN2_ERAS},
                 default="VLoose_VVLoose",
             ),
-            # both tau legs' pt (and the jet leg's, for the DiTau+Jet trigger) are already encoded in
-            # each flag's own matchParticle ptcuts (see tau_triggersetup.py / TripleObjectFlag), so a
-            # plain any-of OR of DiTau and DiTau+Jet is correct here with no extra pt/jet cuts needed.
+            # all legs pt cuts are encoded in each flag's own matchParticle 
             "doubletau_trigger_flags": EraModifier(
                 {
                     # 2016/2017 have no doubletau trigger defined (see tau_triggersetup.py)
