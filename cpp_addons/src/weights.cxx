@@ -28,5 +28,16 @@ ROOT::RDF::RNode NormalizedGenWeightSign(ROOT::RDF::RNode df,
         {genweight_col, negative_fraction_col});
 }
 
+ROOT::RDF::RNode Select(ROOT::RDF::RNode df, const std::string &outputname,
+                        const std::string &cond_col, const std::string &true_col,
+                        const std::string &false_col) {
+    return df.Define(
+        outputname,
+        [](const bool &cond, const double &true_value, const double &false_value) {
+            return cond ? true_value : false_value;
+        },
+        {cond_col, true_col, false_col});
+}
+
 } // namespace weights
 #endif

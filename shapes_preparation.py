@@ -1,16 +1,25 @@
+"""Selection masks, gen_category, and the combined MC `weight` -- one friend.
+See project memory (crown-weights-friend-project-status.md) for the phased plan."""
 from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
-
-from .producers import selection as selection
-from .quantities import output as q
 from code_generation.quantity import Quantity
 from code_generation.rules import AppendProducer, RemoveProducer
-from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
-from .wp_config import VSELE_WP, VSJET_WP, VSJET_ANTIISO_WP
 
-# producers whose input column name is templated with a config parameter resolved by `_resolve_templated_quantities` below
+from . import normalization
+from .producers import normalization as normalization_producers
+from .producers import selection as selection
+from .producers import weights as weight_producers
+from .quantities import output as q
+from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
+
+# tau-vsJet WP: Run 2 has no Medium/VVVLoose split, uses Tight/VLoose instead.
+VSJET_WP = EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium")
+VSJET_ANTIISO_WP = EraModifier({era: "VLoose" for era in RUN2_ERAS}, default="VVVLoose")
+# tau-vsEle WP per channel: et needs the tighter cut against electron fakes.
+VSELE_WP = {"et": "Tight", "mt": "VVLoose", "tt": "VVLoose"}
+
 TEMPLATED_QUANTITY_PRODUCERS = [
     selection.PreselVsEleTauID_1,
     selection.PreselVsEleTauID_2,
@@ -24,10 +33,8 @@ TEMPLATED_QUANTITY_PRODUCERS = [
     selection.TauVVVLooseFlag_2,
 ]
 
-# quantities kept nominal-only for fake factors
 NOMINAL_ONLY_QUANTITIES = (
     q.presel_mask,
-    # atomic flags used only by the fake-factor regions
     q.selcut_tau_noniso_1,
     q.selcut_tau_noniso_2,
     q.selcut_tau_vvvloose_1,
@@ -41,7 +48,6 @@ NOMINAL_ONLY_QUANTITIES = (
     q.selcut_ttbar_nbtag,
     q.selcut_ss,
     q.selcut_lepton_veto_inv,
-    # the fake-factor region masks themselves
     q.ff_qcd_SRlike,
     q.ff_qcd_ARlike,
     q.ff_qcd_sub_SRlike,
@@ -78,9 +84,13 @@ NOMINAL_ONLY_QUANTITIES = (
     q.ff_wjets_AR_SR_ARlike_ss,
 )
 
+# samples with no per-nick normalization to look up
+NO_NORMALIZATION_SAMPLES = ("data", "embedding", "embedding_mc")
+# channels build_weight_chain() implements; else constant weight=1.0
+IMPLEMENTED_WEIGHT_CHANNELS = ("et", "mt", "tt", "em")
+
 
 def _resolve_templated_quantities(configuration, scope: str) -> None:
-    """Resolve `TEMPLATED_QUANTITY_PRODUCERS` columns once config parameters for `scope` are known."""
     parameters = configuration.config_parameters[scope]
     for producer in TEMPLATED_QUANTITY_PRODUCERS:
         if scope not in producer.scopes:
@@ -95,7 +105,6 @@ def _resolve_templated_quantities(configuration, scope: str) -> None:
 
 
 def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
-    """Producers combining the scope's per-era HLT flag list into `selcut_presel_trigger`."""
     parameters = configuration.config_parameters[scope]
     flags = parameters[
         {
@@ -107,17 +116,14 @@ def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
             "em": "cross_trigger_flags",
         }[scope]
     ]
-    # a nonzero `presel_trigger_pt2_min` means the era's legs also need an offline leg-2 pt bound the flags can't express
     if parameters.get("presel_trigger_pt2_min"):
         return selection.build_trigger_pt_or_flag(
             scope,
             flags,
             [q.selcut_presel_trigger],
-            # only the 2017 ele32 leg needs an upper pt_1 band (ele35 takes over from 36 up)
             pt1_max_by_flag={"trg_single_ele32": 36.0} if (scope, era) == ("et", "2017") else None,
             pt2_min_param="presel_trigger_pt2_min",
         )
-    # Cap the secondary's trigger own pt1/pt2 at the primary's threshold so the two are othrogonal
     _exclusivity_bound = {
         "mt": 26.0,
         "et": 32.0,
@@ -141,7 +147,7 @@ def add_selection(
     era: str,
     sample: str,
 ) -> object:
-    
+
     ###########################
     ####### Parameters ########
     ###########################
@@ -149,14 +155,11 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            # tau vs jet working points of the fake factor regions -- see wp_config.py
-            # (shared with weights_friends.py's SF WP, must not drift apart)
             "ff_tau_iso_vsjet_wp": VSJET_WP,
             "ff_tau_antiiso_vsjet_wp": VSJET_ANTIISO_WP,
         },
     )
 
-    # light lepton isolation of the signal region (SR_mask) and of the fake factor regions
     configuration.add_config_parameters(
         ["et", "mt", "em"],
         {
@@ -166,106 +169,91 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt"],
         {
-            # transverse mass cut splitting the signal region (mt_1 < mt_cut) from the W+jets determination region (mt_1 >= mt_cut)
             "mt_cut": 70.0,
-            # QCD region transverse mass cut: tighter in Run 2 (50) than the {mt_cut} used everywhere else (70, same as Run 3)
             "mt_cut_qcd": EraModifier(
                 {era: 50.0 for era in RUN2_ERAS},
                 default=70.0,
             ),
         },
     )
-    
+
     configuration.add_config_parameters(
         ["mt"],
         {
-            # Run 2 QCD region only: narrows the lepton isolation window on the low side too (mt: 0.05, et: 0.02)
             "lep_iso_min_qcd": EraModifier(
                 {era: 0.05 for era in RUN2_ERAS},
                 default=0.0),
             "presel_vsele_wp": VSELE_WP["mt"],
-                        # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
-                        "presel_vsmu_wp": EraModifier(
-                            {era: "Tight" for era in RUN2_ERAS},
-                            default="Tight_VVLoose",
-                        ),
-                        # leg 1 (muon) pt is already encoded in trigger
-                        "presel_lep_pt_2": EraModifier(
-                            {
-                                "2016preVFP": 20.0,
-                                "2016postVFP": 20.0,
-                                "2017": 30.0,
-                                "2018": 30.0
-                            },
-                            default=20.0,
-                        ),
-                        # nonzero only where the OR'd trigger legs need an offline tau pt bound of their own
-                        "presel_trigger_pt2_min": EraModifier(
-                            {
-                                "2016preVFP": 20.0,
-                                "2016postVFP": 20.0,
-                                "2017": 30.0,
-                                "2018": 30.0},
-                            default=0.0,
-                        ),
-                        "singlemuon_trigger_flags": EraModifier(
-                            {
-                                "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
-                                "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
-                                "2017": ["trg_single_mu27"],
-                                "2018": ["trg_single_mu24", "trg_single_mu27"],
-                                **{era: ["trg_single_mu24", "trg_cross_mu20tau27_hps"] for era in DOUBLETAU_HPS_ERAS},
-                            },
-                            default=["trg_single_mu24", "trg_cross_mu20tau27_pnet"],  # 2024, 2025, 2026
-                        ),
+            "presel_vsmu_wp": EraModifier(
+                {era: "Tight" for era in RUN2_ERAS},
+                default="Tight_VVLoose",
+            ),
+            "presel_lep_pt_2": EraModifier(
+                {
+                    "2016preVFP": 20.0,
+                    "2016postVFP": 20.0,
+                    "2017": 30.0,
+                    "2018": 30.0
+                },
+                default=20.0,
+            ),
+            "presel_trigger_pt2_min": EraModifier(
+                {
+                    "2016preVFP": 20.0,
+                    "2016postVFP": 20.0,
+                    "2017": 30.0,
+                    "2018": 30.0},
+                default=0.0,
+            ),
+            "singlemuon_trigger_flags": EraModifier(
+                {
+                    "2016preVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+                    "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
+                    "2017": ["trg_single_mu27"],
+                    "2018": ["trg_single_mu24", "trg_single_mu27"],
+                    **{era: ["trg_single_mu24", "trg_cross_mu20tau27_hps"] for era in DOUBLETAU_HPS_ERAS},
+                },
+                default=["trg_single_mu24", "trg_cross_mu20tau27_pnet"],  # 2024, 2025, 2026
+            ),
         },
     )
     configuration.add_config_parameters(
         ["et"],
         {
-            # Run 2 QCD region only: narrows the lepton isolation window on the low side too (mt: 0.05, et: 0.02)
             "lep_iso_min_qcd": EraModifier(
                 {era: 0.02 for era in RUN2_ERAS},
                 default=0.0),
-
-            # preselection tau ID WPs, trigger flag names, and offline lepton/tau pt thresholds matching the trigger turn-on plateau
             "presel_vsele_wp": VSELE_WP["et"],
-                        # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
-                        "presel_vsmu_wp": EraModifier(
-                            {era: "VLoose" for era in RUN2_ERAS},
-                            default="VLoose_Tight",
-                        ),
-                        # leg 1 (electron) pt is already encoded in the trigger
-                        "presel_lep_pt_2": EraModifier(
-                            {"2017": 30.0, "2018": 30.0},
-                            default=20.0),
-                        # nonzero only where the OR'd trigger legs need an offline tau pt bound of their own
-                        "presel_trigger_pt2_min": EraModifier(
-                            {"2017": 30.0, "2018": 30.0},
-                            default=0.0),
-                        "singleelectron_trigger_flags": EraModifier(
-                            {
-                                "2017": ["trg_single_ele32", "trg_single_ele35"],
-                                "2018": ["trg_single_ele35", "trg_single_ele32"],
-                                **{era: ["trg_single_ele30", "trg_cross_ele24tau30_hps"] for era in DOUBLETAU_HPS_ERAS},
-                            },
-                            default=["trg_single_ele30", "trg_cross_ele24tau30_pnet"],  # 2024, 2025, 2026
-                        ),
+            "presel_vsmu_wp": EraModifier(
+                {era: "VLoose" for era in RUN2_ERAS},
+                default="VLoose_Tight",
+            ),
+            "presel_lep_pt_2": EraModifier(
+                {"2017": 30.0, "2018": 30.0},
+                default=20.0),
+            "presel_trigger_pt2_min": EraModifier(
+                {"2017": 30.0, "2018": 30.0},
+                default=0.0),
+            "singleelectron_trigger_flags": EraModifier(
+                {
+                    "2017": ["trg_single_ele32", "trg_single_ele35"],
+                    "2018": ["trg_single_ele35", "trg_single_ele32"],
+                    **{era: ["trg_single_ele30", "trg_cross_ele24tau30_hps"] for era in DOUBLETAU_HPS_ERAS},
+                },
+                default=["trg_single_ele30", "trg_cross_ele24tau30_pnet"],  # 2024, 2025, 2026
+            ),
         },
     )
     configuration.add_config_parameters(
         ["tt"],
         {
             "presel_vsele_wp": VSELE_WP["tt"],
-            # Run 2 tau ID has no combined vsMu WPs; use the first part of the Run 3 combined WP
             "presel_vsmu_wp": EraModifier(
                 {era: "VLoose" for era in RUN2_ERAS},
                 default="VLoose_VVLoose",
             ),
-            # all legs pt cuts are encoded in each flag's own matchParticle 
             "doubletau_trigger_flags": EraModifier(
                 {
-                    # 2016/2017 have no doubletau trigger defined (see tau_triggersetup.py)
                     **{era: ['""'] for era in RUN2_ERAS},
                     "2018": [
                         "trg_double_tau35_tightiso_tightid",
@@ -282,7 +270,6 @@ def add_selection(
     configuration.add_config_parameters(
         ["em"],
         {
-            # Run 3 only -- 2018's cross-trigger legs are not modeled here
             "presel_lep_pt_1": 26.0,
             "presel_lep_pt_2": 25.0,
             "cross_trigger_flags": EraModifier(
@@ -333,10 +320,8 @@ def add_selection(
                 *_presel_trigger_producers(configuration, "et", era),
                 selection.PreselVsEleTauID_2,
                 selection.PreselVsMuTauID_2,
-                # the Run 2 masks fold the leg-2 pt bound into `selcut_presel_trigger` instead
                 *([] if era in RUN2_ERAS else [selection.PreselLepPt_2]),
                 selection.PreselMaskSwitch.get(era),
-                # `q_1 * q_2`, the shared input of both sign flags
                 selection.ChargeProduct,
                 selection.OppositeSignFlag,
                 selection.SameSignFlag,
@@ -355,33 +340,26 @@ def add_selection(
                 selection.WjetsMtFlag,
                 selection.NBtagEqZeroFlag,
                 selection.TTbarNBtagFlag,
-                # the signal region
                 selection.SRMaskSwitch.get(era),
                 selection.SRMaskSsSwitch.get(era),
-                # QCD
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
-                # W+jets
                 selection.ff_wjets_SRlike,
                 selection.ff_wjets_ARlike,
                 selection.ff_wjets_SRlike_ss,
                 selection.ff_wjets_ARlike_ss,
-                # ttbar
                 selection.FFTtbarSRSwitch.get(era),
                 selection.FFTtbarARSwitch.get(era),
                 selection.FFTtbarSRlikeSwitch.get(era),
                 selection.FFTtbarARlikeSwitch.get(era),
                 selection.ff_ttbar_SRlike_ss,
                 selection.ff_ttbar_ARlike_ss,
-                # process fractions
                 selection.ff_fraction_SR,
                 selection.ff_fraction_AR,
-                # QCD DR/AR to SR corrections
                 selection.ff_qcd_DR_SR_SRlike,
                 selection.ff_qcd_DR_SR_ARlike,
                 selection.ff_qcd_AR_SR_SRlike,
                 selection.ff_qcd_AR_SR_ARlike,
-                # W+jets DR/AR to SR corrections
                 selection.ff_wjets_DR_SR_SRlike,
                 selection.ff_wjets_DR_SR_ARlike,
                 selection.ff_wjets_DR_SR_SRlike_ss,
@@ -390,7 +368,6 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                # gen-match-based process split (T/J/L)
                 selection._gen_category_T_leg1_et,
                 selection._gen_category_T_leg2_et,
                 selection.gen_category_T_et,
@@ -445,10 +422,8 @@ def add_selection(
                 *_presel_trigger_producers(configuration, "mt", era),
                 selection.PreselVsEleTauID_2,
                 selection.PreselVsMuTauID_2,
-                # the Run 2 masks fold the leg-2 pt bound into `selcut_presel_trigger` instead
                 *([] if era in RUN2_ERAS else [selection.PreselLepPt_2]),
                 selection.PreselMaskSwitch.get(era),
-                # `q_1 * q_2`, the shared input of both sign flags
                 selection.ChargeProduct,
                 selection.OppositeSignFlag,
                 selection.SameSignFlag,
@@ -467,33 +442,26 @@ def add_selection(
                 selection.WjetsMtFlag,
                 selection.NBtagEqZeroFlag,
                 selection.TTbarNBtagFlag,
-                # the signal region
                 selection.SRMaskSwitch.get(era),
                 selection.SRMaskSsSwitch.get(era),
-                # QCD
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
-                # W+jets
                 selection.ff_wjets_SRlike,
                 selection.ff_wjets_ARlike,
                 selection.ff_wjets_SRlike_ss,
                 selection.ff_wjets_ARlike_ss,
-                # ttbar
                 selection.FFTtbarSRSwitch.get(era),
                 selection.FFTtbarARSwitch.get(era),
                 selection.FFTtbarSRlikeSwitch.get(era),
                 selection.FFTtbarARlikeSwitch.get(era),
                 selection.ff_ttbar_SRlike_ss,
                 selection.ff_ttbar_ARlike_ss,
-                # process fractions
                 selection.ff_fraction_SR,
                 selection.ff_fraction_AR,
-                # QCD DR/AR to SR corrections
                 selection.ff_qcd_DR_SR_SRlike,
                 selection.ff_qcd_DR_SR_ARlike,
                 selection.ff_qcd_AR_SR_SRlike,
                 selection.ff_qcd_AR_SR_ARlike,
-                # W+jets DR/AR to SR corrections
                 selection.ff_wjets_DR_SR_SRlike,
                 selection.ff_wjets_DR_SR_ARlike,
                 selection.ff_wjets_DR_SR_SRlike_ss,
@@ -502,7 +470,6 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                # gen-match-based process split (T/J/L)
                 selection._gen_category_T_leg1_mt,
                 selection._gen_category_T_leg2_mt,
                 selection.gen_category_T_mt,
@@ -555,7 +522,6 @@ def add_selection(
             [
                 selection.JetVetoMapFlag,
                 *_presel_trigger_producers(configuration, "tt", era),
-                # both tau legs, hence every tau flag twice
                 selection.PreselVsEleTauID_1,
                 selection.PreselVsEleTauID_2,
                 selection.PreselVsMuTauID_1,
@@ -574,31 +540,24 @@ def add_selection(
                 selection.TauNonIsoFlag_2,
                 selection.TauVVVLooseFlag_1,
                 selection.TauVVVLooseFlag_2,
-                # the signal region
                 selection.SRMaskTTSwitch.get(era),
                 selection.SRMaskSsTTSwitch.get(era),
-                # QCD, leading tau
                 selection.ff_qcd_SRlike_tt,
                 selection.ff_qcd_ARlike_tt,
-                # QCD, subleading tau
                 selection.ff_qcd_sub_SRlike_tt,
                 selection.ff_qcd_sub_ARlike_tt,
-                # process fractions
                 selection.ff_fraction_SR_tt,
                 selection.ff_fraction_AR_tt,
                 selection.ff_fraction_sub_SR_tt,
                 selection.ff_fraction_sub_AR_tt,
-                # DR/AR to SR corrections, leading tau
                 selection.ff_qcd_DR_SR_SRlike_tt,
                 selection.ff_qcd_DR_SR_ARlike_tt,
                 selection.ff_qcd_AR_SR_SRlike_tt,
                 selection.ff_qcd_AR_SR_ARlike_tt,
-                # DR/AR to SR corrections, subleading tau
                 selection.ff_qcd_sub_DR_SR_SRlike_tt,
                 selection.ff_qcd_sub_DR_SR_ARlike_tt,
                 selection.ff_qcd_sub_AR_SR_SRlike_tt,
                 selection.ff_qcd_sub_AR_SR_ARlike_tt,
-                # gen-match-based process split (T/J/L)
                 selection._gen_category_T_leg1_tt,
                 selection._gen_category_T_leg2_tt,
                 selection.gen_category_T_tt,
@@ -636,7 +595,6 @@ def add_selection(
             ],
         )
 
-    # used as control for Run 3 and proper signal region for Run 2
     if "em" in scopes:
         _resolve_templated_quantities(configuration, "em")
         configuration.add_producers(
@@ -644,7 +602,6 @@ def add_selection(
             [
                 selection.JetVetoMapFlag,
                 *_presel_trigger_producers(configuration, "em", era),
-                # the Run 2 mask has no separate lep-pt terms
                 *([] if era in RUN2_ERAS else [selection.PreselLepPt_1, selection.PreselLepPt_2]),
                 selection.ChargeProduct,
                 selection.OppositeSignFlag,
@@ -657,7 +614,6 @@ def add_selection(
                 selection.MuonIsoFlag_em,
                 selection.SRMaskEMSwitch.get(era),
                 selection.SRMaskSsEMSwitch.get(era),
-                # gen-match-based process split (T/L only, no jet->tau fake leg)
                 selection._gen_category_T_leg1_em,
                 selection._gen_category_T_leg2_em,
                 selection.gen_category_T_em,
@@ -668,7 +624,6 @@ def add_selection(
             ["em"], [q.SR_mask, q.SR_mask_ss, q.gen_category_T, q.gen_category_L]
         )
 
-    # only used as control for Run 2 so far
     if "mm" in scopes:
         configuration.add_producers(
             ["mm"],
@@ -709,7 +664,6 @@ def add_selection(
 
 
 def restrict_selection_shifts(configuration, scopes, shifts=None):
-    # Keep `presel_mask` and the fake factor regions on nominal only.
     announced = list(shifts or [])
     for scope in scopes:
         for quantity in NOMINAL_ONLY_QUANTITIES:
@@ -718,6 +672,55 @@ def restrict_selection_shifts(configuration, scopes, shifts=None):
             quantity.shifts[scope] = set()
 
     return configuration
+
+
+def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
+    scopes_list = list(configuration.selected_scopes)
+    if sample not in NO_NORMALIZATION_SAMPLES:
+        norm_table_path = normalization.build_norm_table(
+            era, sample, normalization.DATA_NORMALIZATION_DIR
+        )
+        configuration.add_config_parameters(
+            scopes_list,
+            {"norm_table_path": norm_table_path},
+        )
+        configuration.add_producers(
+            scopes_list,
+            [normalization_producers.SampleNormalization],
+        )
+        for scope in scopes_list:
+            configuration.add_config_parameters(
+                scope,
+                {
+                    "vs_ele_wp": VSELE_WP.get(scope, VSELE_WP["mt"]),
+                    "vs_jet_wp": VSJET_WP,
+                },
+            )
+            if scope in IMPLEMENTED_WEIGHT_CHANNELS:
+                weight_producers.build_weight_chain(configuration, scope, era, RUN2_ERAS)
+                weight_producers.resolve_templated_quantities(configuration, scope)
+            else:
+                configuration.add_producers(scope, [weight_producers.ConstantWeight])
+                configuration.add_outputs(scope, [q.weight])
+    else:
+        configuration.add_producers(
+            scopes_list,
+            [
+                normalization_producers.ConstantCrossSectionPerEventWeight,
+                normalization_producers.ConstantNumberGeneratedEventsWeight,
+                normalization_producers.ConstantNegativeEventsFraction,
+                weight_producers.ConstantWeight,
+            ],
+        )
+        configuration.add_outputs(scopes_list, [q.weight])
+    configuration.add_outputs(
+        scopes_list,
+        [
+            q.crossSectionPerEventWeight,
+            q.numberGeneratedEventsWeight,
+            q.negative_events_fraction,
+        ],
+    )
 
 
 def build_config(
@@ -741,7 +744,6 @@ def build_config(
         quantities_map,
     )
 
-    # every shift the input ntuple carries is propagated to the signal region (SR_mask)
     shifts_to_add = [
         "__" + shift
         for scope in configuration.selected_scopes
@@ -749,20 +751,13 @@ def build_config(
         if shift != "nominal"
     ]
 
-    #########################
-    # The selection masks
-    #########################
-
     configuration = add_selection(configuration, scopes, era, sample)
-
-    # presel_mask and the fake-factor regions are nominal-only; must run before shifts are added
     configuration = restrict_selection_shifts(
         configuration, configuration.selected_scopes, shifts=shifts_to_add
     )
 
-    #########################
-    # Finalize and validate the configuration
-    #########################
+    _add_normalization_and_weight(configuration, era, sample)
+
     configuration.optimize()
     configuration.validate()
     configuration.report()
