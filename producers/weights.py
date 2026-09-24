@@ -19,12 +19,16 @@ TEMPLATED_QUANTITY_PRODUCERS = []
 # 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
 MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 
-# per-era luminosity in pb^-1, matching TauKITFlow's config/samples.yaml
+# per-era luminosity in pb^-1, matching TauKITFlow's config/samples.yaml. "2025" is
+# 2025+2026 data combined (109.898115287 + 25.148977841 fb^-1): there is no separate
+# 2026 MC campaign, MC comes exclusively from 2025 (odd-half OddIDFilter), so its
+# weight must reflect the lumi of all the data it stands in for. MC_CAMPAIGN_SPLIT_FACTOR
+# above applies the *2 on top of this, kept as a separate factor, not baked in here.
 LUMI_PB = {
     "2016preVFP": 19500.0, "2016postVFP": 16800.0, "2017": 41500.0, "2018": 59830.0,
-    "2022preEE": 8086.0, "2022postEE": 26679.0,
-    "2023preBPix": 17964.0, "2023postBPix": 9677.0,
-    "2024": 109816.0, "2025": 109898.0, "2026": 25140.0,
+    "2022preEE": 8086.069205, "2022postEE": 26674.924045,
+    "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
+    "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
 
 DOUBLETAU_HPS_ERAS = ("2022preEE", "2022postEE", "2023preBPix", "2023postBPix")
