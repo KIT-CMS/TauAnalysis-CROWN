@@ -14,6 +14,14 @@ into selection_friends.py: keeps a database-content rebuild from forcing a
 rebuild of the mask/gen_category friend, at the cost of consumers attaching
 two friends instead of one.
 
+For data/embedding, where there is no per-nick normalization to look up,
+the same three columns are still produced, as a constant 1.0 -- a friend
+with a different schema (or no friend at all) per sample_type breaks
+downstream code that attaches this friend and multiplies by these columns
+uniformly across samples. CROWN's own framework refuses to build a friend
+with zero producers/outputs (confirmed empirically), so this isn't
+optional -- data/embedding need *something* wired, not just a skip.
+
 Not yet wired downstream (TFF/TauKITFlow still read the legacy xsec friend
 or their own gen_weight()); needs to be built and validated against real
 ntuples first (numberGeneratedEventsWeight/crossSectionPerEventWeight must
@@ -28,7 +36,8 @@ from .producers import normalization as normalization_producers
 from .quantities import output as q
 
 # samples with no per-nick normalization to look up (matches
-# normalization.build_norm_table()'s own skip list)
+# normalization.build_norm_table()'s own skip list) -- these get the
+# constant-1.0 fake-normalization producers instead, see module docstring
 NO_NORMALIZATION_SAMPLES = ("data", "embedding", "embedding_mc")
 
 
@@ -53,8 +62,8 @@ def build_config(
         quantities_map,
     )
 
+    scopes_list = list(configuration.selected_scopes)
     if sample not in NO_NORMALIZATION_SAMPLES:
-        scopes_list = list(configuration.selected_scopes)
         norm_table_path = normalization.build_norm_table(
             era, sample, normalization.DATA_NORMALIZATION_DIR
         )
@@ -66,14 +75,23 @@ def build_config(
             scopes_list,
             [normalization_producers.SampleNormalization],
         )
-        configuration.add_outputs(
+    else:
+        configuration.add_producers(
             scopes_list,
             [
-                q.crossSectionPerEventWeight,
-                q.numberGeneratedEventsWeight,
-                q.negative_events_fraction,
+                normalization_producers.ConstantCrossSectionPerEventWeight,
+                normalization_producers.ConstantNumberGeneratedEventsWeight,
+                normalization_producers.ConstantNegativeEventsFraction,
             ],
         )
+    configuration.add_outputs(
+        scopes_list,
+        [
+            q.crossSectionPerEventWeight,
+            q.numberGeneratedEventsWeight,
+            q.negative_events_fraction,
+        ],
+    )
 
     configuration.optimize()
     configuration.validate()
