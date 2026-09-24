@@ -114,10 +114,12 @@ def _equal_flag_int(scope, step_name, input_quantity, value):
 
 
 def build_weight_chain(configuration, scope: str, era: str, run2_eras) -> None:
-    """Builds and registers the full `weight` producer chain for one scope (et/mt/tt).
-    Adds producers/outputs to `configuration` directly. Not yet implemented for em
-    (simpler formula, no tau leg) or embedding (separate weight structure entirely) --
-    see project memory.
+    """Builds and registers the full `weight` producer chain for one scope
+    (et/mt/tt/em). Adds producers/outputs to `configuration` directly. Not implemented
+    for mm/ee (constant weight=1.0 fallback), or embedding at all -- Run3 doesn't use
+    embedding and its weight structure is different enough (emb_genweight/
+    emb_idsel_wgt/etc, no xsec normalization) that guessing at it risks a Run2 mistake
+    for no Run3 benefit; left alone per user direction, see project memory.
 
     Deliberately excluded from `weight` (see project memory for why): trigger SF
     (fragile/era-dependent, TauKITFlow's own trgweight has a documented history of
@@ -154,7 +156,8 @@ def build_weight_chain(configuration, scope: str, era: str, run2_eras) -> None:
     p, running = _product_step(scope, next_name(), running, "double", q.puweight, "double")
     producers.append(p)
 
-    # -- lepton id/iso (channel-specific)
+    # -- lepton id/iso (channel-specific; em has no tau leg -- both legs are light
+    # leptons, so this covers the whole idweight/isoweight term, not just one factor)
     if scope == "mt":
         p, running = _product_step(scope, next_name(), running, "double", q.id_wgt_mu_1, "double")
         producers.append(p)
@@ -163,41 +166,51 @@ def build_weight_chain(configuration, scope: str, era: str, run2_eras) -> None:
     elif scope == "et":
         p, running = _product_step(scope, next_name(), running, "double", q.id_wgt_ele_wp90iso_1, "double")
         producers.append(p)
+    elif scope == "em":
+        # electron (leg 1) id, muon (leg 2) id and iso -- no electron iso term (that's
+        # embedding-only in TauKITFlow's MC_base_process_selection, not applicable here)
+        p, running = _product_step(scope, next_name(), running, "double", q.id_wgt_ele_wp90iso_1, "double")
+        producers.append(p)
+        p, running = _product_step(scope, next_name(), running, "double", q.id_wgt_mu_2, "double")
+        producers.append(p)
+        p, running = _product_step(scope, next_name(), running, "double", q.iso_wgt_mu_2, "double")
+        producers.append(p)
     # tt: no lepton leg
 
-    # -- tau vsJet SF, gated per genuine leg (leg 1 only for tt/et absent, leg 2 always
-    # present for et/mt; both legs for tt)
-    tau_legs = [2] if scope in ("et", "mt") else [1, 2]
-    for leg in tau_legs:
-        cond_name = f"{prefix}_is_genuine_tau_{leg}"
-        p, cond = _equal_flag_int(scope, cond_name, getattr(q, f"gen_match_{leg}"), 5)
-        producers.append(p)
-        gated_name = f"{prefix}_tauid_vsjet_gated_{leg}"
-        p, gated = _gate_step(
-            scope, gated_name, cond,
-            Quantity(f"id_wgt_tau_vsJet_{{vs_jet_wp}}_{leg}"), templated=True,
-        )
-        producers.append(p)
-        p, running = _product_step(scope, next_name(), running, "double", gated, "double")
-        producers.append(p)
+    # -- tau vsJet/vsMu/vsEle SFs: em has no hadronic tau leg, so none of this applies
+    if scope in ("et", "mt", "tt"):
+        # tau vsJet SF, gated per genuine leg (leg 2 only for et/mt; both legs for tt)
+        tau_legs = [2] if scope in ("et", "mt") else [1, 2]
+        for leg in tau_legs:
+            cond_name = f"{prefix}_is_genuine_tau_{leg}"
+            p, cond = _equal_flag_int(scope, cond_name, getattr(q, f"gen_match_{leg}"), 5)
+            producers.append(p)
+            gated_name = f"{prefix}_tauid_vsjet_gated_{leg}"
+            p, gated = _gate_step(
+                scope, gated_name, cond,
+                Quantity(f"id_wgt_tau_vsJet_{{vs_jet_wp}}_{leg}"), templated=True,
+            )
+            producers.append(p)
+            p, running = _product_step(scope, next_name(), running, "double", gated, "double")
+            producers.append(p)
 
-    # -- tau vsMu / vsEle SF, ungated (correctionlib already gen_match-aware), one or
-    # both legs depending on channel
-    vsmu_wp_prefix = {"et": "VLoose", "mt": "Tight", "tt": "VLoose"}[scope]
-    for leg in tau_legs:
-        p, running = _product_step(
-            scope, next_name(), running, "double",
-            Quantity(f"id_wgt_tau_vsMu_{vsmu_wp_prefix}_{{vs_ele_wp}}_{leg}"), "double",
-            templated=True,
-        )
-        producers.append(p)
-    for leg in tau_legs:
-        p, running = _product_step(
-            scope, next_name(), running, "double",
-            Quantity(f"id_wgt_tau_vsEle_{{vs_ele_wp}}_{leg}"), "double",
-            templated=True,
-        )
-        producers.append(p)
+        # tau vsMu / vsEle SF, ungated (correctionlib already gen_match-aware), one or
+        # both legs depending on channel
+        vsmu_wp_prefix = {"et": "VLoose", "mt": "Tight", "tt": "VLoose"}[scope]
+        for leg in tau_legs:
+            p, running = _product_step(
+                scope, next_name(), running, "double",
+                Quantity(f"id_wgt_tau_vsMu_{vsmu_wp_prefix}_{{vs_ele_wp}}_{leg}"), "double",
+                templated=True,
+            )
+            producers.append(p)
+        for leg in tau_legs:
+            p, running = _product_step(
+                scope, next_name(), running, "double",
+                Quantity(f"id_wgt_tau_vsEle_{{vs_ele_wp}}_{leg}"), "double",
+                templated=True,
+            )
+            producers.append(p)
 
     # -- btag (Run3 only; channel != mm, but this friend never runs for mm)
     if era not in run2_eras:
