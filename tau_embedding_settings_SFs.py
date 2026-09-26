@@ -833,7 +833,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             ReplaceProducer(
                 producers=[
                     taus.TauEnergyCorrectionSwitch.get(era),
-                    embedding.Tau_2_VsJetTauID_lt_SF_dm_pt_binned,
+                    taus.TauEnergyCorrection_Embedding_ES_dm_pt_binned, #prüfen ob es passt.
                 ],
                 samples=["embedding"],
             ),
@@ -962,8 +962,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
                 ),
                 samples=["embedding"],
             )
-    else:
-        # add embedding electron energy scale scalefactors
+    elif year < 2022: # da wir keine ES Elektronen für Run3 haben, machen wir das nur für Run2
+    # add embedding electron energy scale scalefactors:
         configuration.add_config_parameters(
             "global",
             {

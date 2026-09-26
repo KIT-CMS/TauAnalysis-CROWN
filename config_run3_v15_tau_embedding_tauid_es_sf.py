@@ -910,6 +910,9 @@ def build_config(
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
         (available_scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
         (["mt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),   # this is what we want to produce
+         (["mt", "mm"],AppendProducer,[scalefactors.MuonIDIso_SF, scalefactors.SingleMuTriggerSF],{"exclude_samples": DATA_ONLY, "exclude_eras": RUN2_ERAS},), #SF für MC
+        ("global",ReplaceProducer,[electrons.ElectronPtCorrectionMCSwitch.get(era),electrons.ElectronPtCorrectionDataSwitch.get(era),],{"samples": DATA_ONLY}, #für data nicht gleiche Korrektur wie für MC
+        ),
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
         (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
@@ -929,6 +932,7 @@ def build_config(
         ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2024"]}),
         ("global",AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
         ("global", RemoveProducer, [jets.JetMassCorrection], {}), # is imported through JetEnergyCorrectionSwitch.get(era) but not needed for this analysis
+
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
