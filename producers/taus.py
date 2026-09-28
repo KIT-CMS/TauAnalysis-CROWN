@@ -320,6 +320,25 @@ with defaults(scopes=["et", "mt", "tt"]):
                 "{tau_es_DM11_pt60toInf}")''',
             input=[nanoAODv15.Tau_pt, nanoAODv15.Tau_eta, nanoAODv15.Tau_decayMode, nanoAODv15.Tau_genPartFlav],
         )
+        TauPtCorrection_MC_Experimental = Producer(
+            call='''physicsobject::tau::experimental::PtCorrectionMC(
+                {df},
+                correctionManager,
+                {output},
+                {input},
+                "{tau_sf_file}",
+                "{tau_ES_json_name}",
+                "{tau_id_algorithm}",
+                "{tau_vsjet_wp}",
+                "{tau_vsele_wp}",
+                "{tau_es_variation}")''',
+            input=[
+                nanoAODv15.Tau_pt,
+                nanoAODv15.Tau_eta,
+                nanoAODv15.Tau_decayMode,
+                nanoAODv15.Tau_genPartFlav,
+            ],
+        )
         TauPtCorrection_data = Producer(
             call='''event::quantity::Rename<ROOT::RVec<float>>({df}, {output}, {input})''',
             input=[nanoAODv15.Tau_pt],
@@ -390,6 +409,12 @@ with defaults(scopes=["et", "mt", "tt"]):
         TauEnergyCorrection = ProducerGroup(
             subproducers=[
                 TauPtCorrection_MC,
+                TauMassCorrection,
+            ],
+        )
+        TauEnergyCorrection_Experimental = ProducerGroup(
+            subproducers=[
+                TauPtCorrection_MC_Experimental,
                 TauMassCorrection,
             ],
         )

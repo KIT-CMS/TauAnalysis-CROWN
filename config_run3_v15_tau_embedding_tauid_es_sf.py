@@ -53,7 +53,14 @@ def build_config(
     )
 
     year = int(era[:4])
+    # Für Run3 ab 2024 nehmen wir den neuen producer
+    use_experimental_tau_id = year >= 2024
 
+    tau_id_sf_producer = (
+        scalefactors.TauID_SF_Experimental
+        if use_experimental_tau_id
+        else scalefactors.TauID_SFSwitch.get(era)
+    )
     ###########################
     ####### Parameters ########
     ###########################
@@ -660,6 +667,8 @@ def build_config(
             "tau_es_variation": "nom",
             # variations vs jet
             "tau_sf_vsjet_variation": "nom",
+            "tau_sf_vsele_variation": "nom",
+            "tau_sf_vsmu_variation": "nom",
             # tau sf variation Run2
             "tau_sf_vsjet_tau30to35": "nom",
             "tau_sf_vsjet_tau35to40": "nom",
@@ -874,7 +883,7 @@ def build_config(
             pairselection.LVTau2Uncorrected,
             pairquantities.MTDiTauPairQuantitiesSwitch.get(era),
             genparticles.MTGenDiTauPairQuantities,
-            scalefactors.TauID_SFSwitch.get(era),
+            tau_id_sf_producer,
             triggers.MTGenerateSingleMuonTriggerFlags,
         ],
     )
@@ -909,10 +918,9 @@ def build_config(
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),  # ToDO: scale weights to be provided in nanoAODs for VV at some point!!!
         (available_scopes, RemoveProducer, [genparticles.GenMatching], {"samples": ["data"]}),
-        (["mt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),   # this is what we want to produce
-         (["mt", "mm"],AppendProducer,[scalefactors.MuonIDIso_SF, scalefactors.SingleMuTriggerSF],{"exclude_samples": DATA_ONLY, "exclude_eras": RUN2_ERAS},), #SF für MC
-        ("global",ReplaceProducer,[electrons.ElectronPtCorrectionMCSwitch.get(era),electrons.ElectronPtCorrectionDataSwitch.get(era),],{"samples": DATA_ONLY}, #für data nicht gleiche Korrektur wie für MC
-        ),
+        (["mt"], RemoveProducer, [tau_id_sf_producer], {"samples": DATA_ONLY}),   # this is what we want to produce
+        (["mt", "mm"],AppendProducer,[scalefactors.MuonIDIso_SF, scalefactors.SingleMuTriggerSF],{"exclude_samples": DATA_ONLY, "exclude_eras": RUN2_ERAS},), #SF für MC
+        ("global",ReplaceProducer,[electrons.ElectronPtCorrectionMCSwitch.get(era),electrons.ElectronPtCorrectionDataSwitch.get(era),],{"samples": DATA_ONLY}), #für data nicht gleiche Korrektur wie für MC, wir korrigieren embedding erstmal mit data...da e oft aus data kommen.
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
         (["mm"], RemoveProducer, [genparticles.MuMuGenPairQuantities], {"samples": ["data"]}),
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
@@ -1002,7 +1010,7 @@ def build_config(
             q.extraelec_veto,
         ]
         + [p for p in genparticles.MTGenDiTauPairQuantities.get_outputs("mt")]
-        + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")]
+        + [p for p in tau_id_sf_producer.get_outputs("mt")]
         + [p for p in pairquantities.MTDiTauPairQuantitiesSwitch.get(era).get_outputs("mt")],
     )
     configuration.add_outputs(
@@ -1016,215 +1024,6 @@ def build_config(
         + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")]
         + [p for p in genparticles.MuMuGenPairQuantities.get_outputs("mm")],
     )
-
-    add_shift = get_add_shift(configuration)
-
-    #########################
-    # Electron energy correction shifts
-    #########################
-    with defaults(
-        scopes="global",
-        shift_key="ele_es_variation",
-        producers=[electrons.ElectronPtCorrectionMC],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    ):
-        add_shift(name="eleEsReso", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-        add_shift(name="eleEsScale", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
-    #########################
-    # Muon id/iso sf shifts
-    #########################
-
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFUp",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"muon_id_variation": "systup"},
-                ("mm"): {"muon_id_variation": "systup"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-                ("mm"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIdSFDown",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"muon_id_variation": "systdown"},
-                ("mm"): {"muon_id_variation": "systdown"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-                ("mm"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFUp",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"muon_iso_variation": "systup"},
-                ("mm"): {"muon_iso_variation": "systup"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-                ("mm"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShift(
-            name="muonIsoSFDown",
-            scopes=["mt", "mm"],
-            shift_config={
-                ("mt"): {"muon_iso_variation": "systdown"},
-                ("mm"): {"muon_iso_variation": "systdown"},
-            },
-            producers={
-                ("mt"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-                ("mm"): [
-                    scalefactors.MuonIDIso_SF,
-                ],
-            },
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-
-    #########################
-    # MET Shifts
-    #########################
-    configuration.add_shift(
-        SystematicShiftByQuantity(
-            name="metUnclusteredEnUp",
-            quantity_change={
-                nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredUp",
-                nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredUp",
-            },
-            scopes=["global"],
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-    configuration.add_shift(
-        SystematicShiftByQuantity(
-            name="metUnclusteredEnDown",
-            quantity_change={
-                nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
-                nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
-            },
-            scopes=["global"],
-        ),
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-
-    #########################
-    # MET Recoil Shifts
-    #########################
-    if year < 2022:
-        with defaults(
-            scopes=("et", "mt", "tt", "em", "ee", "mm"),
-            producers=[met.ApplyRecoilCorrections_Run2],
-            exclude_samples=["data", "embedding", "embedding_mc"],
-            shift_key=[
-                "apply_recoil_resolution_systematic",  # set either to True or False
-                "apply_recoil_response_systematic",  # set either to True or False
-                "recoil_systematic_shift_up",  # set either to True or False upon variation
-                "recoil_systematic_shift_down",  # set either to True or False upon variation
-            ],
-        ):
-            add_shift(
-                name="metRecoilResponse",
-                shift_map={
-                    "Up": [False, True, True, False],
-                    "Down": [False, True, False, True],
-                },
-            )
-            add_shift(
-                name="metRecoilResolution",
-                shift_map={
-                    "Up": [True, False, True, False],
-                    "Down": [True, False, False, True],
-                },
-            )
-    else:
-        with defaults(
-            scopes=("et", "mt", "tt", "em", "ee", "mm"),
-            producers=[met.ApplyRecoilCorrections],
-            exclude_samples=["data", "embedding", "embedding_mc"],
-            shift_key=["recoil_method", "recoil_variation"],
-        ):
-            add_shift(
-                name="metRecoilResponse",
-                shift_map={
-                    "Up": ["Uncertainty", "RespUp"],
-                    "Down": ["Uncertainty", "RespDown"],
-                },
-            )
-            add_shift(
-                name="metRecoilResolution",
-                shift_map={
-                    "Up": ["Uncertainty", "ResolUp"],
-                    "Down": ["Uncertainty", "ResolDown"],
-                },
-            )
-
-    #########################
-    # Pileup Shifts
-    #########################
-    add_shift(
-        name="PileUp",
-        shift_key="PU_reweighting_variation",
-        shift_map={"Up": "up", "Down": "down"},
-        scopes="global",
-        producers=[event.PUweights],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
-
-    #########################
-    # Prefiring Shifts
-    #########################
-    if era != "2018" and year < 2022:
-        configuration.add_shift(
-            SystematicShiftByQuantity(
-                name="prefiringDown",
-                quantity_change={
-                    nanoAODv9.L1PreFiringWeight_Nom: "L1PreFiringWeight_Dn",
-                },
-                scopes=["global"],
-            )
-        )
-        configuration.add_shift(
-            SystematicShiftByQuantity(
-                name="prefiringUp",
-                quantity_change={
-                    nanoAODv9.L1PreFiringWeight_Nom: "L1PreFiringWeight_Up",
-                },
-                scopes=["global"],
-            )
-        )
-
-
-
     #########################
     # Import triggersetup and sf
     #########################
@@ -1239,7 +1038,12 @@ def build_config(
     #########################
     # Add variations for uncertainty calculation and systematic shifts
     #########################
-    configuration = add_Variations(configuration, sample, era)
+    configuration = add_Variations(
+        configuration,
+        sample,
+        era,
+        use_experimental_tau_id=use_experimental_tau_id,
+    )
     #########################
     # Finalize and validate the configuration
     #########################

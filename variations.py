@@ -28,7 +28,13 @@ ERA_MAP = {
     "2026": "2026",
 }
 
-def add_Variations(configuration: Configuration, sample: str, era: str) -> Configuration:
+def add_Variations(
+    configuration: Configuration,
+    sample: str,
+    era: str,
+    use_experimental_tau_id: bool = False,
+    use_experimental_tau_es: bool = False,
+) -> Configuration:
 
     year = int(era[:4])
     add_shift = get_add_shift(configuration)
@@ -278,7 +284,48 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     # Tau energy scale shifts  #
     #########################
     with defaults(shift_map={"Down": "down", "Up": "up"}, exclude_samples=["data", "embedding", "embedding_mc"]):
-        if ("dyjets" in sample or "electroweak_boson" in sample) and year < 2022:
+        if use_experimental_tau_es and year >= 2024:
+            with defaults(
+                scopes="mt",
+                producers=[taus.TauEnergyCorrection_Experimental],
+                shift_key="tau_es_variation",
+            ):
+                for dm in [0, 1, 10, 11]:
+                    # Echte hadronische Taus
+                    for pt in ["20to40", "40to60", "60toInf"]:
+                        add_shift(
+                            name=(
+                                f"CMS_scale_t_DM{dm}_genTau_"
+                                f"pT{pt}_{shift_era_tag}"
+                            ),
+                            shift_map={
+                                "Up": f"up_custom_genTau_dm{dm}_pt{pt}",
+                                "Down": f"down_custom_genTau_dm{dm}_pt{pt}",
+                            },
+                        )
+
+                    # Elektronen, die als Tau rekonstruiert wurden
+                    for region in ["barrel", "endcap"]:
+                        add_shift(
+                            name=(
+                                f"CMS_scale_t_DM{dm}_genElectron_"
+                                f"{region}_{shift_era_tag}"
+                            ),
+                            shift_map={
+                                "Up": f"up_custom_genEle_dm{dm}_{region}",
+                                "Down": f"down_custom_genEle_dm{dm}_{region}",
+                            },
+                        )
+
+                    # Myonen, die als Tau rekonstruiert wurden
+                    add_shift(
+                        name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}",
+                        shift_map={
+                            "Up": f"up_custom_genMu_dm{dm}",
+                            "Down": f"down_custom_genMu_dm{dm}",
+                        },
+                    )
+        elif ("dyjets" in sample or "electroweak_boson" in sample) and year < 2022:
             add_shift(
                 name="CMS_scale_t_genMuon",
                 shift_key="tau_mufake_es",
@@ -337,8 +384,61 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         exclude_samples=["data", "embedding", "embedding_mc"],
         shift_map={"Up": "up", "Down": "down"}
         ):
+        if use_experimental_tau_id and year >= 2024:
+            with defaults(scopes="mt"):
+                # Tau ID vs Jet: getrennt nach DM und pT
+                for dm in [0, 1, 10, 11]:
+                    for pt in ["20to40", "40to60", "60toInf"]:
+                        add_shift(
+                            name=(
+                                f"CMS_eff_t_DeepTau2018v2p5_VSjet_"
+                                f"DM{dm}_pT{pt}_{shift_era_tag}"
+                            ),
+                            producers=[
+                                scalefactors.Tau_2_VsJetTauID_SF_Experimental,
+                            ],
+                            shift_key="tau_sf_vsjet_variation",
+                            shift_map={
+                                "Up": f"up_custom_genTau_dm{dm}_pt{pt}",
+                                "Down": f"down_custom_genTau_dm{dm}_pt{pt}",
+                            },
+                        )
 
-        if year < 2022:
+                    # Tau ID vs Electron: getrennt nach DM und Eta-Region
+                    for region in ["barrel", "endcap"]:
+                        add_shift(
+                            name=(
+                                f"CMS_fake_t_DeepTau2018v2p5_VSe_"
+                                f"DM{dm}_{region}_{shift_era_tag}"
+                            ),
+                            producers=[
+                                scalefactors.Tau_2_VsEleTauID_SF_Experimental,
+                            ],
+                            shift_key="tau_sf_vsele_variation",
+                            shift_map={
+                                "Up": f"up_custom_genEle_dm{dm}_{region}",
+                                "Down": f"down_custom_genEle_dm{dm}_{region}",
+                            },
+                        )
+
+                # Tau ID vs Muon: getrennt nach Eta-Region ohne DM da die Tau POG das so macht 
+                for wheel in range(1, 6):
+                    add_shift(
+                        name=(
+                            f"CMS_fake_t_DeepTau2018v2p5_VSmu_"
+                            f"wheel{wheel}_{shift_era_tag}"
+                        ),
+                        producers=[
+                            scalefactors.Tau_2_VsMuTauID_SF_Experimental,
+                        ],
+                        shift_key="tau_sf_vsmu_variation",
+                        shift_map={
+                            "Up": f"up_custom_genMu_wheel{wheel}",
+                            "Down": f"down_custom_genMu_wheel{wheel}",
+                        },
+                    )
+
+        elif year < 2022:
             with defaults(scopes=("et", "mt")):
                 #dm and pt scheme
                 with defaults(producers=[scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned]):

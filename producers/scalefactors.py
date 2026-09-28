@@ -382,6 +382,25 @@ with defaults(scopes=["et", "mt", "tt"]):
         output="tau_2_vsele_sf_outputname",
         vec_config="vsele_tau_id",
     )
+    Tau_2_VsEleTauID_SF_Experimental = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::experimental::Id_vsEle(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_algorithm}VSe",
+            "{vsele_tau_id_WP}",
+            "{era}",
+            "{tau_sf_vsele_variation}")''',
+        input=[
+            q.eta_2,
+            q.tau_decaymode_2,
+            q.gen_match_2,
+        ],
+        output="tau_2_vsele_sf_outputname",
+        vec_config="vsele_tau_id",
+    )
     # duplicate of the one below...
     Tau_2_VsMuTauID_SF_Run2 = ExtendedVectorProducer(
         call='''physicsobject::tau::scalefactor::Id_vsMu(
@@ -422,6 +441,26 @@ with defaults(scopes=["et", "mt", "tt"]):
             "{tau_id_vsmu_wheel4}", 
             "{tau_id_vsmu_wheel5}")''',
         input=[q.eta_2, q.gen_match_2],
+        output="tau_2_vsmu_sf_outputname",
+        vec_config="vsmu_tau_id",
+    )
+    Tau_2_VsMuTauID_SF_Experimental = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::experimental::Id_vsMu(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_algorithm}VSmu",
+            "{vsmu_tau_id_WP}",
+            "{vsele_tau_id_WP}",
+            "{vsjet_tau_id_WP}",
+            "{era}",
+            "{tau_sf_vsmu_variation}")''',
+        input=[
+            q.eta_2,
+            q.gen_match_2,
+        ],
         output="tau_2_vsmu_sf_outputname",
         vec_config="vsmu_tau_id",
     )
@@ -472,7 +511,26 @@ with defaults(scopes=["et", "mt", "tt"]):
         output="tau_2_vsjet_sf_outputname",
         vec_config="vsjet_tau_id",
     )
-
+    Tau_2_VsJetTauID_SF_Experimental = ExtendedVectorProducer(
+        call='''physicsobject::tau::scalefactor::experimental::Id_vsJet(
+            {df},
+            correctionManager,
+            {output},
+            {input},
+            "{tau_sf_file}",
+            "{tau_id_algorithm}VSjet",
+            "{vsjet_tau_id_WP}",
+            "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_sf_dependence}",
+            "{tau_sf_vsjet_variation}")''',
+        input=[
+            q.pt_2,
+            q.tau_decaymode_2,
+            q.gen_match_2,
+        ],
+        output="tau_2_vsjet_sf_outputname",
+        vec_config="vsjet_tau_id",
+    )
 #########################
 # Electron ID/ISO SF with isolation
 #########################
@@ -797,6 +855,14 @@ with defaults(call=None, input=None, output=None):
                 Tau_2_VsMuTauID_SF,
             ],
         },
+    )
+    TauID_SF_Experimental = ProducerGroup(
+        scopes=["mt"],
+        subproducers=[
+            Tau_2_VsJetTauID_SF_Experimental,
+            Tau_2_VsEleTauID_SF_Experimental,
+            Tau_2_VsMuTauID_SF_Experimental,
+        ],
     )
 
     EleID_SF = ProducerGroup(
