@@ -6,7 +6,6 @@ from ..producers import electrons as electrons
 from ..producers import photons as photons
 from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
-
 TrigObj_collection = [
     nanoAOD.TrigObj_filterBits,
     nanoAOD.TrigObj_id,
@@ -127,7 +126,7 @@ with defaults(scopes=["ee"]):
         ],
     )
 
-    with defaults(vec_configs="singleelectron_trigger"):
+    with defaults(vec_config="singleelectron_trigger"):
         ElElSingleElectronTriggerFlags_1 = ExtendedVectorProducer(
             call='''trigger::SingleObjectFlag({df}, {output}, {input}, "{hlt_path}", {ptcut}, {etacut}, {trigger_particle_id}, {vec_open}{filterbit}{vec_close}, {max_deltaR_triggermatch}, {triggerobject_ptcut})''',
             input=[q.p4_1] + TrigObj_collection,

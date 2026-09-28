@@ -1,10 +1,11 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.producer import BaseFilter, Producer, ProducerGroup, VectorProducer, SwitchProducer
+from code_generation.producer import BaseFilter, Producer, ProducerGroup, VectorProducer
 from ..producers import electrons as electrons
 from ..producers import muons as muons
 from ..producers import genparticles as genparticles
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of general producers for event quantities
@@ -50,6 +51,7 @@ with defaults(scopes=["global"]):
             is_embedding_mc := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_embedding_mc})''', output=[q.is_embedding_mc]),
             is_singletop := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_singletop})''', output=[q.is_singletop]),
             is_rem_htautau := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_rem_htautau})''', output=[q.is_rem_htautau]),
+            is_rem_higgs := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_rem_higgs})''', output=[q.is_rem_higgs]),
             is_electroweak_boson := Producer(call='''event::quantity::Define<bool>({df}, {output}, {is_electroweak_boson})''', output=[q.is_electroweak_boson]),
         ]
 

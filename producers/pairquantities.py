@@ -1,7 +1,8 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer, SwitchProducer
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
+from code_generation.producer import SwitchProducer
 
 
 ####################
