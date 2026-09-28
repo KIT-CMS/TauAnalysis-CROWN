@@ -1,7 +1,9 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer, SwitchProducer
+from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
+from code_generation.producer import SwitchProducer
+
 
 ############################
 # Muon ID, ISO SF
@@ -106,6 +108,7 @@ with defaults(scopes=["tt"]):
             "{tau_id_algorithm}VSjet", 
             "{vsjet_tau_id_WP}", 
             "{tau_vsjet_vseleWP}", 
+            "{tau_vsjet_vsmuWP}", 
             "{tau_vsjet_sf_dependence}", 
             "{tau_id_vsjet_DM0_pt20to40}",
             "{tau_id_vsjet_DM0_pt40to60}",
@@ -455,6 +458,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             "{tau_id_algorithm}VSjet", 
             "{vsjet_tau_id_WP}", 
             "{tau_vsjet_vseleWP}", 
+            "{tau_vsjet_vsmuWP}", 
             "{tau_vsjet_sf_dependence}", 
             "{tau_id_vsjet_DM0_pt20to40}",
             "{tau_id_vsjet_DM0_pt40to60}",
@@ -661,6 +665,43 @@ DoubleTauTriggerSF = ProducerGroup(
     subproducers=[
         DoubleTauTriggerLeg1SF,
         DoubleTauTriggerLeg2SF,
+    ],
+)
+
+# tau-leg SFs for the DiTau+Jet trigger; the jet leg has no centrally provided POG SF (see AN-25-055 Sec. 7)
+DoubleTauJetTriggerLeg1SF = ExtendedVectorProducer(
+    name="DoubleTauJetTriggerLeg1SF",
+    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_jet_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_jet_trigger_leg1_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_jet_trigger_leg1_variation}")''',
+    input=[
+        q.pt_1,
+        q.tau_decaymode_1,
+    ],
+    output="doubletau_jet_trigger_leg1_flagname",
+    scopes=["tt"],
+    vec_config="doubletau_jet_trigger_leg1_sf",
+)
+
+DoubleTauJetTriggerLeg2SF = ExtendedVectorProducer(
+    name="DoubleTauJetTriggerLeg2SF",
+    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_jet_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_jet_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_jet_trigger_leg2_variation}")''',
+    input=[
+        q.pt_2,
+        q.tau_decaymode_2,
+    ],
+    output="doubletau_jet_trigger_leg2_flagname",
+    scopes=["tt"],
+    vec_config="doubletau_jet_trigger_leg2_sf",
+)
+
+DoubleTauJetTriggerSF = ProducerGroup(
+    name="DoubleTauJetTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["tt"],
+    subproducers=[
+        DoubleTauJetTriggerLeg1SF,
+        DoubleTauJetTriggerLeg2SF,
     ],
 )
 

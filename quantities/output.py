@@ -1,9 +1,10 @@
 # from code_generation.quantity import Quantity
-from code_generation.quantity import Quantity
-from code_generation.quantity import NanoAODQuantity
+from code_generation.quantity import Quantity, NanoAODQuantity
 
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
+
+puppimet_norec = Quantity()
 
 # run dependent denitions
 tau_IDvsEle = Quantity()
@@ -138,6 +139,7 @@ is_ggh_hbb = Quantity()
 is_rem_hbb = Quantity()
 is_singletop = Quantity()
 is_rem_htautau = Quantity()
+is_rem_higgs = Quantity()
 is_electroweak_boson = Quantity()
 is_embedding = Quantity()
 is_embedding_mc = Quantity()
@@ -157,7 +159,6 @@ PuppiMET_pt_nanoAOD_ref = NanoAODQuantity("PuppiMET_pt")
 PuppiMET_phi_nanoAOD_ref = NanoAODQuantity("PuppiMET_phi")
 
 # MetBasics
-met_mask = Quantity()
 rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()
@@ -536,3 +537,101 @@ is_2018 = Quantity()
 is_2017 = Quantity()
 is_2016postVFP = Quantity()
 is_2016preVFP = Quantity()
+
+# seelctions
+selcut_presel_vsele_1 = Quantity()
+selcut_presel_vsele_2 = Quantity()
+selcut_presel_vsmu_1 = Quantity()
+selcut_presel_vsmu_2 = Quantity()
+selcut_presel_trigger = Quantity()
+selcut_presel_lep_pt_1 = Quantity()
+selcut_presel_lep_pt_2 = Quantity()
+selcut_jet_veto = Quantity()
+selcut_no_extraelec = Quantity()
+selcut_no_extramuon = Quantity()
+selcut_no_dilepton = Quantity()
+selcut_lepton_veto = Quantity()
+selcut_lepton_veto_inv = Quantity()
+selcut_tau_iso_1 = Quantity()
+selcut_tau_iso_2 = Quantity()
+selcut_tau_noniso_1 = Quantity()
+selcut_tau_noniso_2 = Quantity()
+selcut_tau_vvvloose_1 = Quantity()
+selcut_tau_vvvloose_2 = Quantity()
+selcut_lep_iso = Quantity()
+selcut_lep_antiiso = Quantity()
+selcut_em_ele_iso = Quantity()
+selcut_em_muon_iso = Quantity()
+selcut_lep_iso_qcd_run2 = Quantity()
+selcut_lep_iso_min_qcd_run2 = Quantity()
+selcut_mt_lt_qcd = Quantity()
+selcut_mt_lt_70 = Quantity()
+selcut_wjets_mt = Quantity()
+selcut_nbtag_eq_0 = Quantity()
+selcut_ttbar_nbtag = Quantity()
+selcut_q_prod = Quantity()
+selcut_os = Quantity()
+selcut_ss = Quantity()
+
+presel_mask = Quantity()
+SR_mask = Quantity()
+# SR_mask with the OS requirement swapped for SS -- the QCD same-sign control
+# region, kept shift-aware (unlike the FF masks below) since shape production
+# needs the QCD estimate to follow systematic variations too.
+SR_mask_ss = Quantity()
+
+# gen-match-based process split (T = genuine tau pair, J = jet->tau fake, L = everything
+# else, mainly lepton fakes) -- shift-aware like SR_mask, since the chosen pair (and so
+# gen_match) can change under energy-scale shifts. T/J/L partition the event space; em has
+# no jet-fake leg, so gen_category_J is not produced there.
+gen_category_T = Quantity()
+gen_category_J = Quantity()
+gen_category_L = Quantity()
+
+# per-file MC normalization constants (weights_friends.py) -- names/semantics match the
+# legacy Python xsec/build_friend_tree.py friend these replace, for drop-in compatibility
+# with existing downstream readers (TauFakeFactors' gen_weight(), TauKITFlow's
+# process_selection.py). Not produced for data/embedding.
+crossSectionPerEventWeight = Quantity()
+numberGeneratedEventsWeight = Quantity()
+negative_events_fraction = Quantity()
+
+# combined per-event MC weight (weights_friends.py, Phase 3) -- see
+# producers/weights.py:build_weight_chain() for exactly what's folded in and what's
+# deliberately excluded (trigger SF, lumi, process-specific terms).
+weight = Quantity()
+
+ff_qcd_SRlike = Quantity()
+ff_qcd_ARlike = Quantity()
+ff_wjets_SRlike = Quantity()
+ff_wjets_ARlike = Quantity()
+ff_wjets_SRlike_ss = Quantity()
+ff_wjets_ARlike_ss = Quantity()
+ff_ttbar_SR = Quantity()
+ff_ttbar_AR = Quantity()
+ff_ttbar_SRlike = Quantity()
+ff_ttbar_ARlike = Quantity()
+ff_ttbar_SRlike_ss = Quantity()
+ff_ttbar_ARlike_ss = Quantity()
+ff_fraction_SR = Quantity()
+ff_fraction_AR = Quantity()
+ff_qcd_DR_SR_SRlike = Quantity()
+ff_qcd_DR_SR_ARlike = Quantity()
+ff_qcd_AR_SR_SRlike = Quantity()
+ff_qcd_AR_SR_ARlike = Quantity()
+ff_wjets_DR_SR_SRlike = Quantity()
+ff_wjets_DR_SR_ARlike = Quantity()
+ff_wjets_DR_SR_SRlike_ss = Quantity()
+ff_wjets_DR_SR_ARlike_ss = Quantity()
+ff_wjets_AR_SR_SRlike = Quantity()
+ff_wjets_AR_SR_ARlike = Quantity()
+ff_wjets_AR_SR_SRlike_ss = Quantity()
+ff_wjets_AR_SR_ARlike_ss = Quantity()
+ff_qcd_sub_SRlike = Quantity()
+ff_qcd_sub_ARlike = Quantity()
+ff_fraction_sub_SR = Quantity()
+ff_fraction_sub_AR = Quantity()
+ff_qcd_sub_DR_SR_SRlike = Quantity()
+ff_qcd_sub_DR_SR_ARlike = Quantity()
+ff_qcd_sub_AR_SR_SRlike = Quantity()
+ff_qcd_sub_AR_SR_ARlike = Quantity()
