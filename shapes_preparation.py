@@ -1,5 +1,6 @@
-"""Selection masks, gen_category, and the combined MC `weight` -- one friend.
-See project memory (crown-weights-friend-project-status.md) for the phased plan."""
+import glob
+import json
+import os
 from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
@@ -7,18 +8,10 @@ from code_generation.modifiers import EraModifier
 from code_generation.quantity import Quantity
 from code_generation.rules import AppendProducer, RemoveProducer
 
-from . import normalization
-from .producers import normalization as normalization_producers
 from .producers import selection as selection
 from .producers import weights as weight_producers
 from .quantities import output as q
 from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
-
-# tau-vsJet WP: Run 2 has no Medium/VVVLoose split, uses Tight/VLoose instead.
-VSJET_WP = EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium")
-VSJET_ANTIISO_WP = EraModifier({era: "VLoose" for era in RUN2_ERAS}, default="VVVLoose")
-# tau-vsEle WP per channel: et needs the tighter cut against electron fakes.
-VSELE_WP = {"et": "Tight", "mt": "VVLoose", "tt": "VVLoose"}
 
 TEMPLATED_QUANTITY_PRODUCERS = [
     selection.PreselVsEleTauID_1,
@@ -84,62 +77,6 @@ NOMINAL_ONLY_QUANTITIES = (
     q.ff_wjets_AR_SR_ARlike_ss,
 )
 
-# samples with no per-nick normalization to look up
-NO_NORMALIZATION_SAMPLES = ("data", "embedding", "embedding_mc")
-# channels build_weight_chain() implements; else constant weight=1.0
-IMPLEMENTED_WEIGHT_CHANNELS = ("et", "mt", "tt", "em")
-
-
-def _resolve_templated_quantities(configuration, scope: str) -> None:
-    parameters = configuration.config_parameters[scope]
-    for producer in TEMPLATED_QUANTITY_PRODUCERS:
-        if scope not in producer.scopes:
-            continue
-        producer.input[scope] = [
-            Quantity(template.name.format(**parameters))
-            for template in producer.input[scope]
-        ]
-        for column in producer.input[scope]:
-            for output_quantity in producer.output:
-                column.adopt(output_quantity, scope)
-
-
-def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
-    parameters = configuration.config_parameters[scope]
-    flags = parameters[
-        {
-            "et": "singleelectron_trigger_flags",
-            "ee": "singleelectron_trigger_flags",
-            "mt": "singlemuon_trigger_flags",
-            "mm": "singlemuon_trigger_flags",
-            "tt": "doubletau_trigger_flags",
-            "em": "cross_trigger_flags",
-        }[scope]
-    ]
-    if parameters.get("presel_trigger_pt2_min"):
-        return selection.build_trigger_pt_or_flag(
-            scope,
-            flags,
-            [q.selcut_presel_trigger],
-            pt1_max_by_flag={"trg_single_ele32": 36.0} if (scope, era) == ("et", "2017") else None,
-            pt2_min_param="presel_trigger_pt2_min",
-        )
-    _exclusivity_bound = {
-        "mt": 26.0,
-        "et": 32.0,
-        "tt": 40.0 if era in DOUBLETAU_HPS_ERAS else 35.0,
-    }.get(scope)
-    if _exclusivity_bound is not None and len(flags) == 2:
-        secondary_flag = flags[1]
-        return selection.build_trigger_pt_or_flag(
-            scope,
-            flags,
-            [q.selcut_presel_trigger],
-            pt1_max_by_flag={secondary_flag: _exclusivity_bound},
-            pt2_max_by_flag={secondary_flag: _exclusivity_bound} if scope == "tt" else None,
-        )
-    return [selection.build_trigger_or_flag(scope, flags, [q.selcut_presel_trigger])]
-
 
 def add_selection(
     configuration,
@@ -155,8 +92,9 @@ def add_selection(
     configuration.add_config_parameters(
         ["et", "mt", "tt"],
         {
-            "ff_tau_iso_vsjet_wp": VSJET_WP,
-            "ff_tau_antiiso_vsjet_wp": VSJET_ANTIISO_WP,
+            # Run 2 has no Medium/VVVLoose split, uses Tight/VLoose instead.
+            "ff_tau_iso_vsjet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
+            "ff_tau_antiiso_vsjet_wp": EraModifier({era: "VLoose" for era in RUN2_ERAS}, default="VVVLoose"),
         },
     )
 
@@ -183,7 +121,7 @@ def add_selection(
             "lep_iso_min_qcd": EraModifier(
                 {era: 0.05 for era in RUN2_ERAS},
                 default=0.0),
-            "presel_vsele_wp": VSELE_WP["mt"],
+            "presel_vsele_wp": "VVLoose",  # et needs the tighter Tight cut against electron fakes
             "presel_vsmu_wp": EraModifier(
                 {era: "Tight" for era in RUN2_ERAS},
                 default="Tight_VVLoose",
@@ -211,9 +149,11 @@ def add_selection(
                     "2016postVFP": ["trg_single_mu22", "trg_single_mu22_tk", "trg_single_mu22_eta2p1", "trg_single_mu22_tk_eta2p1"],
                     "2017": ["trg_single_mu27"],
                     "2018": ["trg_single_mu24", "trg_single_mu27"],
-                    **{era: ["trg_single_mu24", "trg_cross_mu20tau27_hps"] for era in DOUBLETAU_HPS_ERAS},
+                    # mutau cross-trigger switches from HPS to PNet only in 2025 (unlike
+                    # the tt doubletau trigger, which switches already in 2024)
+                    **{era: ["trg_single_mu24", "trg_cross_mu20tau27_hps"] for era in [*DOUBLETAU_HPS_ERAS, "2024"]},
                 },
-                default=["trg_single_mu24", "trg_cross_mu20tau27_pnet"],  # 2024, 2025, 2026
+                default=["trg_single_mu24", "trg_cross_mu20tau27_pnet"],  # 2025, 2026
             ),
         },
     )
@@ -223,7 +163,7 @@ def add_selection(
             "lep_iso_min_qcd": EraModifier(
                 {era: 0.02 for era in RUN2_ERAS},
                 default=0.0),
-            "presel_vsele_wp": VSELE_WP["et"],
+            "presel_vsele_wp": "Tight",  # tighter cut against electron fakes than mt/tt
             "presel_vsmu_wp": EraModifier(
                 {era: "VLoose" for era in RUN2_ERAS},
                 default="VLoose_Tight",
@@ -238,16 +178,18 @@ def add_selection(
                 {
                     "2017": ["trg_single_ele32", "trg_single_ele35"],
                     "2018": ["trg_single_ele35", "trg_single_ele32"],
-                    **{era: ["trg_single_ele30", "trg_cross_ele24tau30_hps"] for era in DOUBLETAU_HPS_ERAS},
+                    # eletau cross-trigger switches from HPS to PNet only in 2025 (unlike
+                    # the tt doubletau trigger, which switches already in 2024)
+                    **{era: ["trg_single_ele30", "trg_cross_ele24tau30_hps"] for era in [*DOUBLETAU_HPS_ERAS, "2024"]},
                 },
-                default=["trg_single_ele30", "trg_cross_ele24tau30_pnet"],  # 2024, 2025, 2026
+                default=["trg_single_ele30", "trg_cross_ele24tau30_pnet"],  # 2025, 2026
             ),
         },
     )
     configuration.add_config_parameters(
         ["tt"],
         {
-            "presel_vsele_wp": VSELE_WP["tt"],
+            "presel_vsele_wp": "VVLoose",
             "presel_vsmu_wp": EraModifier(
                 {era: "VLoose" for era in RUN2_ERAS},
                 default="VLoose_VVLoose",
@@ -663,6 +605,81 @@ def add_selection(
     return configuration
 
 
+def build_norm_table(output_dir: str, sample_database_root: str = None) -> str:
+    # Writes data/normalization/norm_table.json
+    sample_database_root = sample_database_root or os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "sample_database")
+    table = {}
+    for datasets_path in glob.glob(os.path.join(sample_database_root, "*", "datasets.json")):
+        with open(datasets_path) as f:
+            datasets = json.load(f)
+        for entry in datasets.values():
+            if None in (entry.get("xsec"), entry.get("nevents"), entry.get("generator_weight")):
+                continue
+            table[entry["nick"]] = {
+                "xsec": float(entry["xsec"]),
+                "nevents": float(entry["nevents"]),
+                "generator_weight": float(entry["generator_weight"]),
+            }
+    if not table:
+        raise ValueError(f"build_norm_table: no entries found under {sample_database_root}")
+
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "norm_table.json"), "w") as f:
+        json.dump(table, f)
+    return "data/normalization/norm_table.json"
+
+
+def _resolve_templated_quantities(configuration, scope: str) -> None:
+    parameters = configuration.config_parameters[scope]
+    for producer in TEMPLATED_QUANTITY_PRODUCERS:
+        if scope not in producer.scopes:
+            continue
+        producer.input[scope] = [
+            Quantity(template.name.format(**parameters))
+            for template in producer.input[scope]
+        ]
+        for column in producer.input[scope]:
+            for output_quantity in producer.output:
+                column.adopt(output_quantity, scope)
+
+
+def _presel_trigger_producers(configuration, scope: str, era: str) -> list:
+    parameters = configuration.config_parameters[scope]
+    flags = parameters[
+        {
+            "et": "singleelectron_trigger_flags",
+            "ee": "singleelectron_trigger_flags",
+            "mt": "singlemuon_trigger_flags",
+            "mm": "singlemuon_trigger_flags",
+            "tt": "doubletau_trigger_flags",
+            "em": "cross_trigger_flags",
+        }[scope]
+    ]
+    if parameters.get("presel_trigger_pt2_min"):
+        return selection.build_trigger_pt_or_flag(
+            scope,
+            flags,
+            [q.selcut_presel_trigger],
+            pt1_max_by_flag={"trg_single_ele32": 36.0} if (scope, era) == ("et", "2017") else None,
+            pt2_min_param="presel_trigger_pt2_min",
+        )
+    _exclusivity_bound = {
+        "mt": 26.0,
+        "et": 32.0,
+        "tt": 40.0 if era in DOUBLETAU_HPS_ERAS else 35.0,
+    }.get(scope)
+    if _exclusivity_bound is not None and len(flags) == 2:
+        secondary_flag = flags[1]
+        return selection.build_trigger_pt_or_flag(
+            scope,
+            flags,
+            [q.selcut_presel_trigger],
+            pt1_max_by_flag={secondary_flag: _exclusivity_bound},
+            pt2_max_by_flag={secondary_flag: _exclusivity_bound} if scope == "tt" else None,
+        )
+    return [selection.build_trigger_or_flag(scope, flags, [q.selcut_presel_trigger])]
+
+
 def restrict_selection_shifts(configuration, scopes, shifts=None):
     announced = list(shifts or [])
     for scope in scopes:
@@ -676,27 +693,27 @@ def restrict_selection_shifts(configuration, scopes, shifts=None):
 
 def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
     scopes_list = list(configuration.selected_scopes)
-    if sample not in NO_NORMALIZATION_SAMPLES:
-        norm_table_path = normalization.build_norm_table(
-            era, sample, normalization.DATA_NORMALIZATION_DIR
-        )
+    if sample not in ["data", "embedding", "embedding_mc"]: #don't apply normalisation
+        norm_table_path = build_norm_table(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization"))
         configuration.add_config_parameters(
             scopes_list,
             {"norm_table_path": norm_table_path},
         )
         configuration.add_producers(
             scopes_list,
-            [normalization_producers.SampleNormalization],
+            [weight_producers.SampleNormalization],
         )
         for scope in scopes_list:
             configuration.add_config_parameters(
                 scope,
                 {
-                    "vs_ele_wp": VSELE_WP.get(scope, VSELE_WP["mt"]),
-                    "vs_jet_wp": VSJET_WP,
+                    # same per-channel WPs as presel_vsele_wp above; et is tighter,
+                    # everything else (incl. em, with no presel vsEle cut) falls back to VVLoose
+                    "vs_ele_wp": "Tight" if scope == "et" else "VVLoose",
+                    "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                 },
             )
-            if scope in IMPLEMENTED_WEIGHT_CHANNELS:
+            if scope in ["et", "mt", "tt", "em"]:
                 weight_producers.build_weight_chain(configuration, scope, era, RUN2_ERAS)
                 weight_producers.resolve_templated_quantities(configuration, scope)
             else:
@@ -706,9 +723,9 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
         configuration.add_producers(
             scopes_list,
             [
-                normalization_producers.ConstantCrossSectionPerEventWeight,
-                normalization_producers.ConstantNumberGeneratedEventsWeight,
-                normalization_producers.ConstantNegativeEventsFraction,
+                weight_producers.ConstantCrossSectionPerEventWeight,
+                weight_producers.ConstantNumberGeneratedEventsWeight,
+                weight_producers.ConstantNegativeEventsFraction,
                 weight_producers.ConstantWeight,
             ],
         )

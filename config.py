@@ -425,8 +425,8 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
                 }
             ),
             "btag_sf_variation": "central",
@@ -1249,7 +1249,6 @@ def build_config(
             scalefactors.TauID_SFSwitch.get(era),
             triggers.MTGenerateSingleMuonTriggerFlags,
             triggers.MTGenerateCrossTriggerFlags,
-            triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleMuTriggerSF,
             scalefactors.MuTauTriggerSF,
         ],
@@ -1298,7 +1297,6 @@ def build_config(
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
             triggers.ETGenerateCrossTriggerFlags,
-            triggers.GenerateSingleTrailingTauTriggerFlags,
             scalefactors.SingleEleTriggerSF,
             scalefactors.EleTauTriggerSF,
         ],
@@ -1428,7 +1426,6 @@ def build_config(
         # embedding triggers (Run 2 only; cross-trigger flags/SFs are now in the default mt/et producer lists for all eras)
         (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["et"], AppendProducer, [scalefactors.ETGenerateSingleElectronTriggerSF_MC, scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["tt"], AppendProducer, [triggers.GenerateSingleTrailingTauTriggerFlags, triggers.GenerateSingleLeadingTauTriggerFlags], {"eras": RUN2_ERAS}),
         (["em"], AppendProducer, [triggers.EMGenerateCrossTriggerFlags], {"eras": RUN2_ERAS}),
         (["em"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
@@ -1590,14 +1587,12 @@ def build_config(
             "mt",
             [
                 triggers.MTGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             ],
         )
         configuration.add_outputs(
             "et",
             [
                 triggers.ETGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             ],
         )
         configuration.add_outputs(
@@ -1606,20 +1601,12 @@ def build_config(
                 triggers.EMGenerateCrossTriggerFlags.output_group,
             ],
         )
-        configuration.add_outputs(
-            "tt",
-            [
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
-            ],
-        )
     else:
         configuration.add_outputs(
             "mt",
             [
                 scalefactors.SingleMuTriggerSF.output_group,
                 triggers.MTGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("mt")
                 ] + [p for p in scalefactors.MuTauTriggerSF.get_outputs("mt")
             ],
@@ -1629,7 +1616,6 @@ def build_config(
             [
                 scalefactors.SingleEleTriggerSF.output_group,
                 triggers.ETGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("et")
                 ] + [p for p in scalefactors.EleTauTriggerSF.get_outputs("et")
             ],

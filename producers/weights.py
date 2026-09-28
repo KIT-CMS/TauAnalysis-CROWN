@@ -1,9 +1,31 @@
 """Builds the per-channel `weight` producer chain (shapes_preparation.py, Phase 3)."""
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
+from ..tau_triggersetup import DOUBLETAU_HPS_ERAS
 from code_generation.helpers import defaults
 from code_generation.producer import Producer
 from code_generation.quantity import Quantity
+
+# {norm_table_path} set by shapes_preparation.py's build_norm_table()
+SampleNormalization = Producer(
+    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
+    input=[],
+    output=[
+        q.crossSectionPerEventWeight,
+        q.numberGeneratedEventsWeight,
+        q.negative_events_fraction,
+    ],
+    scopes=["et", "mt", "tt", "em"],
+)
+
+with defaults(
+    scopes=["et", "mt", "tt", "em"],
+    call='''event::quantity::Define<float>({df}, {output}, 1.0f)''',
+    input=[],
+):
+    ConstantCrossSectionPerEventWeight = Producer(output=[q.crossSectionPerEventWeight])
+    ConstantNumberGeneratedEventsWeight = Producer(output=[q.numberGeneratedEventsWeight])
+    ConstantNegativeEventsFraction = Producer(output=[q.negative_events_fraction])
 
 # data/embedding, mm/ee: constant no-op weight
 with defaults(
@@ -13,11 +35,8 @@ with defaults(
 ):
     ConstantWeight = Producer(output=[q.weight])
 
-# WP-templated producers, resolved once config parameters for a scope are known --
-# same pattern as shapes_preparation.py's own TEMPLATED_QUANTITY_PRODUCERS/
-# _resolve_templated_quantities.
-TEMPLATED_QUANTITY_PRODUCERS = []
 
+TEMPLATED_QUANTITY_PRODUCERS = []
 
 def resolve_templated_quantities(configuration, scope: str) -> None:
     parameters = configuration.config_parameters[scope]
@@ -36,17 +55,13 @@ def resolve_templated_quantities(configuration, scope: str) -> None:
 # 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
 MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 
-# per-era luminosity in pb^-1; "2025" is 2025+2026 data combined (MC comes exclusively
-# from 2025, OddIDFilter)
+# per-era luminosity in pb^-1; "2025" is 2025+2026 data combined
 LUMI_PB = {
     "2016preVFP": 19500.0, "2016postVFP": 16800.0, "2017": 41500.0, "2018": 59830.0,
     "2022preEE": 8086.069205, "2022postEE": 26674.924045,
     "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
     "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
-
-DOUBLETAU_HPS_ERAS = ("2022preEE", "2022postEE", "2023preBPix", "2023postBPix")
-
 
 def _product(scope, name, out_name, in1, type1, in2, type2, templated=False):
     out = Quantity(out_name)
@@ -66,7 +81,7 @@ def _gate(scope, name, out_name, cond, value, templated=False):
     out = Quantity(out_name)
     producer = Producer(
         name=name,
-        call='''weights::Gate({df}, {output}, {input})''',
+        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
         input=[cond, value],
         output=[out],
         scopes=[scope],
@@ -80,7 +95,7 @@ def _select(scope, name, out_name, cond, if_true, if_false):
     out = Quantity(out_name)
     producer = Producer(
         name=name,
-        call='''weights::Select({df}, {output}, {input})''',
+        call='''event::quantity::Select<double>({df}, {output}, {input})''',
         input=[cond, if_true, if_false],
         output=[out],
         scopes=[scope],
@@ -89,13 +104,12 @@ def _select(scope, name, out_name, cond, if_true, if_false):
 
 
 def _normalization_producers(scope, era):
-    """xsec * (1/nevents) * sign(genWeight)/negative_fraction * lumi * pileup -- the
-    same formula for every channel, only the scope differs."""
+    # xsec * (1/nevents) * sign(genWeight)/negative_fraction * lumi * pileup
     producers = []
 
     gen_weight_sign = Producer(
         name=f"GenWeightSign_{scope}",
-        call='''weights::NormalizedGenWeightSign({df}, {output}, {input})''',
+        call='''event::quantity::NormalizedGenWeightSign({df}, {output}, {input})''',
         input=[nanoAOD.genWeight, q.negative_events_fraction],
         output=[Quantity(f"weight_{scope}_gen_sign")],
         scopes=[scope],
@@ -208,9 +222,6 @@ def et_weight_producers(era, run2_eras) -> list:
     )
     producers.append(p)
 
-    # single-trigger-fired ? single SF : cross-trigger legs SF, matching
-    # config.py's trigger SF producers exactly. Run2 not implemented -- config.py's
-    # own trigger SF setup differs there too.
     if era not in run2_eras:
         p, cross = _product(
             "et", "EleTauCrossTriggerSF_et", "weight_et_eletau_cross_trigger_sf",
@@ -343,8 +354,6 @@ def tt_weight_producers(era, run2_eras) -> list:
         )
         producers.append(p)
 
-    # plain-DiTau-fired ? plain-DiTau legs SF : DiTau+Jet legs SF -- era-branched
-    # exactly like tau_triggersetup.py's own EraModifiers for these branch names.
     if era not in run2_eras:
         if era in DOUBLETAU_HPS_ERAS:
             plain_cond = Quantity("trg_double_tau35_mediumiso_hps")
@@ -401,10 +410,6 @@ def em_weight_producers(era, run2_eras) -> list:
     )
     producers.append(p)
 
-    # (pt_1>26)*trg_wgt_single_mu24, matching TauKITFlow's
-    # shapes/selection/process_selection.py em trgweight exactly. config.py's
-    # SingleMuTriggerSF is unconditional across all eras for em, so this applies
-    # to Run2 too (unlike et/mt/tt's trigger SF).
     lep_pt_1_above_26 = Producer(
         name="LepPt1Above26_em",
         call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 26.0)''',
