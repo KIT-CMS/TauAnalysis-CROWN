@@ -55,11 +55,17 @@ def build_config(
     year = int(era[:4])
     # Für Run3 ab 2024 nehmen wir den neuen producer
     use_experimental_tau_id = year >= 2024
+    use_experimental_tau_es = year >= 2024
 
     tau_id_sf_producer = (
         scalefactors.TauID_SF_Experimental
         if use_experimental_tau_id
         else scalefactors.TauID_SFSwitch.get(era)
+    )
+    tau_es_producer = (
+        taus.TauEnergyCorrection_Experimental
+        if use_experimental_tau_es
+        else taus.TauEnergyCorrectionSwitch.get(era)
     )
     ###########################
     ####### Parameters ########
@@ -870,7 +876,7 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            tau_es_producer,
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -932,7 +938,7 @@ def build_config(
         (available_scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         # remove tauid and tauES related producers, as we want to measure those values.
-        (["mt"],ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": ["data", "embedding_mc"]}),
+        (["mt"],ReplaceProducer, [tau_es_producer, taus.TauEnergyCorrection_data], {"samples": ["data"]}),
         (["mt"],AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC,], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["mm"],AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC,], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
@@ -1033,7 +1039,7 @@ def build_config(
     # Add additional producers and SFs related to embedded samples
     #########################
     if sample == "embedding" or sample == "embedding_mc":
-        configuration = setup_embedding(configuration, scopes, era)
+        configuration = setup_embedding(configuration, scopes, era, tau_es_producer,)
 
     #########################
     # Add variations for uncertainty calculation and systematic shifts
@@ -1043,6 +1049,7 @@ def build_config(
         sample,
         era,
         use_experimental_tau_id=use_experimental_tau_id,
+        use_experimental_tau_es=use_experimental_tau_es,
     )
     #########################
     # Finalize and validate the configuration

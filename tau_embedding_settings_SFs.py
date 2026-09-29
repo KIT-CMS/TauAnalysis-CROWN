@@ -13,7 +13,9 @@ measure_eleES = False
 measure_tauID = True
 
 
-def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -> Configuration:
+def setup_embedding(configuration: Configuration, scopes: List[str], era: str, tau_es_producer=None,) -> Configuration:
+    if tau_es_producer is None:
+        tau_es_producer = taus.TauEnergyCorrectionSwitch.get(era)
     #####################
     # gen parameters #
     #####################
@@ -832,7 +834,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
             ["mt"],
             ReplaceProducer(
                 producers=[
-                    taus.TauEnergyCorrectionSwitch.get(era),
+                    tau_es_producer,
                     taus.TauEnergyCorrection_Embedding_ES_dm_pt_binned, #prüfen ob es passt.
                 ],
                 samples=["embedding"],
@@ -879,7 +881,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str) -
         configuration.add_modification_rule(
             "mt",
             ReplaceProducer(
-                producers=[taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_Embedding],
+                producers=[tau_es_producer, taus.TauEnergyCorrection_Embedding],
                 samples=["embedding"],
             ),
         )
