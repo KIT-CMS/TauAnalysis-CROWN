@@ -535,91 +535,155 @@ ETGenerateSingleElectronTriggerSF_MC = ExtendedVectorProducer(  # --- from our m
 # Trigger scale factors Run 3
 ######################
 
-SingleEleTriggerSF = ExtendedVectorProducer(
-    name="SingleEleTriggerSF",
-    call='''physicsobject::electron::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{singleelectron_trigger_flag}", "{singleelctron_trigger_era}", "{singleelectron_trigger_path_id_name}", "{singleelectron_trigger_sf_file}", "{singleelectron_trigger_sf_name}", "{singleelectron_trigger_variation}")''',
-    input=[
-        q.pt_1,
-        q.eta_1,
-    ],
-    output="singleelectron_trigger_flagname",
-    scopes=["et","em"],
-    vec_config="singleelectron_trigger_sf",
+with defaults(scopes=["et"], input=[q.pt_1, q.eta_1]):
+    SingleElectronTriggerSF = Producer(
+        call='''physicsobject::electron::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_single_flag}", "{singleelctron_trigger_era}", "{trigger_electron_single_path}", "{singleelectron_trigger_sf_file}", "Electron-HLT-SF", "{trigger_electron_variation}")''',
+        output=[q.trg_sf_single],
+    )
+    CrossElectronTriggerSF = Producer(
+        call='''physicsobject::electron::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_cross_flag}", "{singleelctron_trigger_era}", "{trigger_electron_cross_path}", "{eletau_cross_trigger_leg1_sf_file}", "Electron-HLT-SF", "{trigger_electron_variation}")''',
+        output=[q.trg_sf_lepton],
+    )
+
+with defaults(scopes=["mt"], input=[q.pt_1, q.eta_1]):
+    SingleMuonTriggerSF = Producer(
+        call='''physicsobject::muon::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_single_flag}", "{muon_sf_file}", "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight", "{trigger_muon_variation}")''',
+        output=[q.trg_sf_single],
+    )
+    CrossMuonTriggerSF = Producer(
+        call='''physicsobject::muon::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_cross_flag}", "{mutau_cross_trigger_leg1_sf_file}", "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight", "{trigger_muon_variation}")''',
+        output=[q.trg_sf_lepton],
+    )
+
+# the muon is leg 2 in em (the electron is leg 1), the single muon trigger is the only trigger used
+SingleMuonTriggerSF_em = Producer(
+    call='''physicsobject::muon::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_single_flag}", "{muon_sf_file}", "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight", "{trigger_muon_variation}")''',
+    input=[q.pt_2, q.eta_2],
+    output=[q.trg_wgt],
+    scopes=["em"],
 )
 
-SingleMuTriggerSF = ExtendedVectorProducer(
-    name="SingleMuTriggerSF",
-    call='''physicsobject::muon::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{singlemuon_trigger_flag}", "{muon_sf_file}", "{singlemuon_trigger_sf_name}", "{singlemuon_trigger_variation}")''',
-    input=[
-        q.pt_1,
-        q.eta_1,
-    ],
-    output="singlemuon_trigger_flagname",
-    scopes=["mt","em"],
-    vec_config="singlemuon_trigger_sf",
+TauCrossTriggerSF_Leg = Producer(
+    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_cross_flag}", "{tau_sf_file}", "tau_trigger", "{trigger_tau_trigger_name}", "{ditau_trigger_wp}", "sf", "{trigger_tau_variation}")''',
+    input=[q.pt_2, q.tau_decaymode_2],
+    output=[q.trg_sf_tau],
+    scopes=["et", "mt"],
 )
 
-MuTauTriggerLeg1SF = ExtendedVectorProducer(
-    name="MuTauTriggerLeg1SF",
-    call='''physicsobject::muon::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{mutau_cross_trigger_flag}", "{mutau_cross_trigger_leg1_sf_file}", "{mutau_cross_trigger_leg1_sf_name}", "{mutau_cross_trigger_leg1_variation}")''',
-    input=[
-        q.pt_1,
-        q.eta_1,
-    ],
-    output="mutau_cross_trigger_leg1_flagname",
-    scopes=["mt"],
-    vec_config="mutau_trigger_leg1_sf",
+with defaults(scopes=["tt"]):
+    DiTauTriggerSF_1 = Producer(
+        call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_ditau_flag}", "{tau_sf_file}", "tau_trigger", "ditau", "{ditau_trigger_wp}", "sf", "{trigger_ditau_variation}")''',
+        input=[q.pt_1, q.tau_decaymode_1],
+        output=[q.trg_sf_ditau_1],
+    )
+    DiTauTriggerSF_2 = Producer(
+        call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_ditau_flag}", "{tau_sf_file}", "tau_trigger", "ditau", "{ditau_trigger_wp}", "sf", "{trigger_ditau_variation}")''',
+        input=[q.pt_2, q.tau_decaymode_2],
+        output=[q.trg_sf_ditau_2],
+    )
+    DiTauJet_TauTriggerSF_1 = Producer(
+        call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_ditaujet_flag}", "{tau_sf_file}", "tau_trigger", "ditaujet", "{ditau_trigger_wp}", "sf", "{trigger_ditaujet_variation}")''',
+        input=[q.pt_1, q.tau_decaymode_1],
+        output=[q.trg_sf_ditaujet_1],
+    )
+    DiTauJet_TauTriggerSF_2 = Producer(
+        call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{trigger_ditaujet_flag}", "{tau_sf_file}", "tau_trigger", "ditaujet", "{ditau_trigger_wp}", "sf", "{trigger_ditaujet_variation}")''',
+        input=[q.pt_2, q.tau_decaymode_2],
+        output=[q.trg_sf_ditaujet_2],
+    )
+    # the jet leg has no centrally provided POG SF, it is provided by the HHbbTauTau group
+    DiTauJet_JetTriggerSF_Leg = Producer(
+        call='''trigger::JetLegScaleFactor({df}, correctionManager, {output}, {input}, "{trigger_ditaujet_flag}", "{trigger_jet_leg_file}", "{trigger_jet_leg_name}", "{trigger_jet_variation}", "{trigger_jet_syst_var}")''',
+        input=[q.jet_p4_1],
+        output=[q.trg_sf_jet],
+    )
+
+SingleOrCrossTriggerSF = Producer(
+    call='''trigger::SingleOrCrossScaleFactor({df}, {output}, "{trigger_single_flag}", {input})''',
+    input=[q.trg_sf_single, q.trg_sf_lepton, q.trg_sf_tau],
+    output=[q.trg_wgt],
+    scopes=["et", "mt"],
 )
 
-MuTauTriggerLeg2SF = ExtendedVectorProducer(
-    name="GenerateMuTauCrossTriggerLeg2SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{mutau_cross_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{mutau_cross_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{mutau_cross_trigger_leg2_variation}")''',
-    input=[
-        q.pt_2,
-        q.tau_decaymode_2,
-    ],
-    output="mutau_cross_trigger_leg2_flagname",
-    scopes=["mt"],
-    vec_config="mutau_trigger_leg2_sf",
+DiTauOrDiTauJetTriggerSF = Producer(
+    call='''trigger::DiTauOrDiTauJetScaleFactor({df}, {output}, "{trigger_ditau_flag}", {input})''',
+    input=[q.trg_sf_ditau_1, q.trg_sf_ditau_2, q.trg_sf_ditaujet_1, q.trg_sf_ditaujet_2, q.trg_sf_jet],
+    output=[q.trg_wgt],
+    scopes=["tt"],
 )
 
-# producer group containing the scale factors for both legs of the double muon-tau trigger
-MuTauTriggerSF = ProducerGroup(
-    name="MuTauTriggerSF",
+# producer groups with the scale factors of the legs, one group per source of uncertainty
+ElectronTriggerSF = ProducerGroup(
+    name="ElectronTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["et"],
+    subproducers=[
+        SingleElectronTriggerSF,
+        CrossElectronTriggerSF,
+    ],
+)
+
+MuonTriggerSF = ProducerGroup(
+    name="MuonTriggerSF",
     call=None,
     input=None,
     output=None,
     scopes=["mt"],
     subproducers=[
-        MuTauTriggerLeg1SF,
-        MuTauTriggerLeg2SF,
+        SingleMuonTriggerSF,
+        CrossMuonTriggerSF,
     ],
 )
 
-EleTauTriggerLeg1SF = ExtendedVectorProducer(
-    name="EleTauTriggerLeg1SF",
-    call='''physicsobject::electron::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{eletau_cross_trigger_flag}", "{singleelctron_trigger_era}", "{eletau_cross_trigger_leg1_path_id_name}", "{eletau_cross_trigger_leg1_sf_file}", "{eletau_cross_trigger_leg1_sf_name}", "{eletau_cross_trigger_leg1_variation}")''',
-    input=[
-        q.pt_1,
-        q.eta_1,
+TauCrossTriggerSF = ProducerGroup(
+    name="TauCrossTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["et", "mt"],
+    subproducers=[
+        TauCrossTriggerSF_Leg,
     ],
-    output="eletau_cross_trigger_leg1_flagname",
-    scopes=["et"],
-    vec_config="eletau_cross_trigger_leg1_sf",
 )
 
-EleTauTriggerLeg2SF = ExtendedVectorProducer(
-    name="EleTauTriggerLeg2SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{eletau_cross_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{eletau_cross_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{eletau_cross_trigger_leg2_variation}")''',
-    input=[
-        q.pt_2,
-        q.tau_decaymode_2,
+DiTauTriggerSF = ProducerGroup(
+    name="DiTauTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["tt"],
+    subproducers=[
+        DiTauTriggerSF_1,
+        DiTauTriggerSF_2,
     ],
-    output="eletau_cross_trigger_leg2_flagname",
-    scopes=["et"],
-    vec_config="eletau_cross_trigger_leg2_sf",
 )
 
+DiTauJet_TauTriggerSF = ProducerGroup(
+    name="DiTauJet_TauTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["tt"],
+    subproducers=[
+        DiTauJet_TauTriggerSF_1,
+        DiTauJet_TauTriggerSF_2,
+    ],
+)
+
+DiTauJet_JetTriggerSF = ProducerGroup(
+    name="DiTauJet_JetTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["tt"],
+    subproducers=[
+        DiTauJet_JetTriggerSF_Leg,
+    ],
+)
+
+# producer groups with the trigger scale factor of the event
 EleTauTriggerSF = ProducerGroup(
     name="EleTauTriggerSF",
     call=None,
@@ -627,81 +691,36 @@ EleTauTriggerSF = ProducerGroup(
     output=None,
     scopes=["et"],
     subproducers=[
-        EleTauTriggerLeg1SF,
-        EleTauTriggerLeg2SF,
+        ElectronTriggerSF,
+        TauCrossTriggerSF,
+        SingleOrCrossTriggerSF,
     ],
 )
 
-DoubleTauTriggerLeg1SF = ExtendedVectorProducer(
-    name="DoubleTauTriggerLeg1SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_trigger_leg1_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_trigger_leg1_variation}")''',
-    input=[
-        q.pt_1,
-        q.tau_decaymode_1,
+MuTauTriggerSF = ProducerGroup(
+    name="MuTauTriggerSF",
+    call=None,
+    input=None,
+    output=None,
+    scopes=["mt"],
+    subproducers=[
+        MuonTriggerSF,
+        TauCrossTriggerSF,
+        SingleOrCrossTriggerSF,
     ],
-    output="doubletau_trigger_leg1_flagname",
-    scopes=["tt"],
-    vec_config="doubletau_trigger_leg1_sf",
 )
 
-DoubleTauTriggerLeg2SF = ExtendedVectorProducer(
-    name="DoubleTauTriggerLeg2SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_trigger_leg2_variation}")''',
-    input=[
-        q.pt_2,
-        q.tau_decaymode_2,
-    ],
-    output="doubletau_trigger_leg2_flagname",
-    scopes=["tt"],
-    vec_config="doubletau_trigger_leg2_sf",
-)
-
-DoubleTauTriggerSF = ProducerGroup(
-    name="DoubleTauTriggerSF",
+TauTauTriggerSF = ProducerGroup(
+    name="TauTauTriggerSF",
     call=None,
     input=None,
     output=None,
     scopes=["tt"],
     subproducers=[
-        DoubleTauTriggerLeg1SF,
-        DoubleTauTriggerLeg2SF,
-    ],
-)
-
-# tau-leg SFs for the DiTau+Jet trigger; the jet leg has no centrally provided POG SF (see AN-25-055 Sec. 7)
-DoubleTauJetTriggerLeg1SF = ExtendedVectorProducer(
-    name="DoubleTauJetTriggerLeg1SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_jet_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_jet_trigger_leg1_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_jet_trigger_leg1_variation}")''',
-    input=[
-        q.pt_1,
-        q.tau_decaymode_1,
-    ],
-    output="doubletau_jet_trigger_leg1_flagname",
-    scopes=["tt"],
-    vec_config="doubletau_jet_trigger_leg1_sf",
-)
-
-DoubleTauJetTriggerLeg2SF = ExtendedVectorProducer(
-    name="DoubleTauJetTriggerLeg2SF",
-    call='''physicsobject::tau::scalefactor::Trigger({df}, correctionManager, {output}, {input}, "{doubletau_jet_trigger_flag}", "{tau_sf_file}", "tau_trigger", "{doubletau_jet_trigger_leg2_sf_name}", "{ditau_trigger_wp}", "{ditau_trigger_corrtype}", "{doubletau_jet_trigger_leg2_variation}")''',
-    input=[
-        q.pt_2,
-        q.tau_decaymode_2,
-    ],
-    output="doubletau_jet_trigger_leg2_flagname",
-    scopes=["tt"],
-    vec_config="doubletau_jet_trigger_leg2_sf",
-)
-
-DoubleTauJetTriggerSF = ProducerGroup(
-    name="DoubleTauJetTriggerSF",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["tt"],
-    subproducers=[
-        DoubleTauJetTriggerLeg1SF,
-        DoubleTauJetTriggerLeg2SF,
+        DiTauTriggerSF,
+        DiTauJet_TauTriggerSF,
+        DiTauJet_JetTriggerSF,
+        DiTauOrDiTauJetTriggerSF,
     ],
 )
 

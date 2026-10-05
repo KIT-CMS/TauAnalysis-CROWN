@@ -486,41 +486,41 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
         input=[q.p4_1, q.p4_2, q.puppimet_p4_recoilcorrected],
         output=[q.mt_tot],
     )
-    Pzetamissvis_pf = Producer(
-        call='''quantities::PzetaMissVis({df}, {output}, {input})''',
-        input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
-        output=[q.pzetamissvis_pf],
-    )
-    mTdileptonMET_pf = Producer(
-        call='''quantities::TransverseMass({df}, {output}, {input})''',
-        input=[q.p4_dilepton, q.pfmet_p4_recoilcorrected],
-        output=[q.mTdileptonMET_pf],
-    )
-    mt_1_pf = Producer(
-        call='''quantities::TransverseMass({df}, {output}, {input})''',
-        input=[q.p4_1, q.pfmet_p4_recoilcorrected],
-        output=[q.mt_1_pf],
-    )
-    mt_2_pf = Producer(
-        call='''quantities::TransverseMass({df}, {output}, {input})''',
-        input=[q.p4_2, q.pfmet_p4_recoilcorrected],
-        output=[q.mt_2_pf],
-    )
-    pt_tt_pf = Producer(
-        call='''lorentzvector::GetPt({df}, {output}, {input})''',
-        input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
-        output=[q.pt_tt_pf],
-    )
-    pt_ttjj_pf = Producer(
-        call='''lorentzvector::GetPt({df}, {output}, {input})''',
-        input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.pfmet_p4_recoilcorrected],
-        output=[q.pt_ttjj_pf],
-    )
-    mt_tot_pf = Producer(
-        call='''quantities::TransverseMass({df}, {output}, {input})''',
-        input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
-        output=[q.mt_tot_pf],
-    )
+    # Pzetamissvis_pf = Producer(
+    #     call='''quantities::PzetaMissVis({df}, {output}, {input})''',
+    #     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    #     output=[q.pzetamissvis_pf],
+    # )
+    # mTdileptonMET_pf = Producer(
+    #     call='''quantities::TransverseMass({df}, {output}, {input})''',
+    #     input=[q.p4_dilepton, q.pfmet_p4_recoilcorrected],
+    #     output=[q.mTdileptonMET_pf],
+    # )
+    # mt_1_pf = Producer(
+    #     call='''quantities::TransverseMass({df}, {output}, {input})''',
+    #     input=[q.p4_1, q.pfmet_p4_recoilcorrected],
+    #     output=[q.mt_1_pf],
+    # )
+    # mt_2_pf = Producer(
+    #     call='''quantities::TransverseMass({df}, {output}, {input})''',
+    #     input=[q.p4_2, q.pfmet_p4_recoilcorrected],
+    #     output=[q.mt_2_pf],
+    # )
+    # pt_tt_pf = Producer(
+    #     call='''lorentzvector::GetPt({df}, {output}, {input})''',
+    #     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    #     output=[q.pt_tt_pf],
+    # )
+    # pt_ttjj_pf = Producer(
+    #     call='''lorentzvector::GetPt({df}, {output}, {input})''',
+    #     input=[q.p4_1, q.p4_2, q.jet_p4_1, q.jet_p4_2, q.pfmet_p4_recoilcorrected],
+    #     output=[q.pt_ttjj_pf],
+    # )
+    # mt_tot_pf = Producer(
+    #     call='''quantities::TransverseMass({df}, {output}, {input})''',
+    #     input=[q.p4_1, q.p4_2, q.pfmet_p4_recoilcorrected],
+    #     output=[q.mt_tot_pf],
+    # )
     pt_dijet = Producer(
         call='''lorentzvector::GetPt({df}, {output}, {input})''',
         input=[q.jet_p4_1, q.jet_p4_2],
@@ -573,13 +573,13 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
                 pt_tt,
                 pt_ttjj,
                 mt_tot,
-                Pzetamissvis_pf,
-                mTdileptonMET_pf,
-                mt_1_pf,
-                mt_2_pf,
-                pt_tt_pf,
-                pt_ttjj_pf,
-                mt_tot_pf,
+                # Pzetamissvis_pf,
+                # mTdileptonMET_pf,
+                # mt_1_pf,
+                # mt_2_pf,
+                # pt_tt_pf,
+                # pt_ttjj_pf,
+                # mt_tot_pf,
                 pt_dijet,
                 jet_hemisphere,
             ],
