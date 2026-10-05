@@ -11,7 +11,8 @@ from code_generation.rules import AppendProducer, RemoveProducer
 from .producers import selection as selection
 from .producers import weights as weight_producers
 from .quantities import output as q
-from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
+from .config import RUN2_ERAS
+from .tau_triggersetup import DOUBLETAU_HPS_ERAS
 
 TEMPLATED_QUANTITY_PRODUCERS = [
     selection.PreselVsEleTauID_1,
@@ -212,8 +213,8 @@ def add_selection(
     configuration.add_config_parameters(
         ["em"],
         {
-            "presel_lep_pt_1": 26.0,
-            "presel_lep_pt_2": 25.0,
+            "presel_lep_pt_1": 25.0,  # electron
+            "presel_lep_pt_2": 26.0,  # muon
             "cross_trigger_flags": EraModifier(
                 {"2018": ["trg_cross_mu23ele12", "trg_cross_mu8ele23"]},
                 default=["trg_single_mu24"],
@@ -629,9 +630,9 @@ def build_norm_table(output_dir: str, sample_database_root: str = None) -> str:
     return "data/normalization/norm_table.json"
 
 
-def _resolve_templated_quantities(configuration, scope: str) -> None:
+def _resolve_templated_quantities(configuration, scope: str, templated_producers=TEMPLATED_QUANTITY_PRODUCERS) -> None:
     parameters = configuration.config_parameters[scope]
-    for producer in TEMPLATED_QUANTITY_PRODUCERS:
+    for producer in templated_producers:
         if scope not in producer.scopes:
             continue
         producer.input[scope] = [
@@ -711,11 +712,20 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     # everything else (incl. em, with no presel vsEle cut) falls back to VVLoose
                     "vs_ele_wp": "Tight" if scope == "et" else "VVLoose",
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
+                    "luminosity_pb": EraModifier(weight_producers.LUMI_PB),
+                    "mc_campaign_split_factor": EraModifier(weight_producers.MC_CAMPAIGN_SPLIT_FACTOR, default=1.0),
                 },
             )
             if scope in ["et", "mt", "tt", "em"]:
-                weight_producers.build_weight_chain(configuration, scope, era, RUN2_ERAS)
-                weight_producers.resolve_templated_quantities(configuration, scope)
+                weight_switch = {
+                    "et": weight_producers.WeightETSwitch,
+                    "mt": weight_producers.WeightMTSwitch,
+                    "tt": weight_producers.WeightTTSwitch,
+                    "em": weight_producers.WeightEMSwitch,
+                }[scope]
+                configuration.add_producers(scope, [weight_switch.get(era)])
+                configuration.add_outputs(scope, [q.weight])
+                _resolve_templated_quantities(configuration, scope, weight_producers.TEMPLATED_QUANTITY_PRODUCERS)
             else:
                 configuration.add_producers(scope, [weight_producers.ConstantWeight])
                 configuration.add_outputs(scope, [q.weight])

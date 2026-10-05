@@ -1,59 +1,8 @@
-"""Builds the per-channel `weight` producer chain (shapes_preparation.py, Phase 3)."""
 from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
-from ..tau_triggersetup import DOUBLETAU_HPS_ERAS
 from code_generation.helpers import defaults
-from code_generation.producer import Producer
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 from code_generation.quantity import Quantity
-
-# {norm_table_path} set by shapes_preparation.py's build_norm_table()
-SampleNormalization = Producer(
-    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
-    input=[],
-    output=[
-        q.crossSectionPerEventWeight,
-        q.numberGeneratedEventsWeight,
-        q.negative_events_fraction,
-    ],
-    scopes=["et", "mt", "tt", "em"],
-)
-
-with defaults(
-    scopes=["et", "mt", "tt", "em"],
-    call='''event::quantity::Define<float>({df}, {output}, 1.0f)''',
-    input=[],
-):
-    ConstantCrossSectionPerEventWeight = Producer(output=[q.crossSectionPerEventWeight])
-    ConstantNumberGeneratedEventsWeight = Producer(output=[q.numberGeneratedEventsWeight])
-    ConstantNegativeEventsFraction = Producer(output=[q.negative_events_fraction])
-
-# data/embedding, mm/ee: constant no-op weight
-with defaults(
-    scopes=["et", "mt", "tt", "em", "mm", "ee"],
-    call='''event::quantity::Define<double>({df}, {output}, 1.0)''',
-    input=[],
-):
-    ConstantWeight = Producer(output=[q.weight])
-
-
-TEMPLATED_QUANTITY_PRODUCERS = []
-
-def resolve_templated_quantities(configuration, scope: str) -> None:
-    parameters = configuration.config_parameters[scope]
-    for producer in TEMPLATED_QUANTITY_PRODUCERS:
-        if scope not in producer.scopes:
-            continue
-        producer.input[scope] = [
-            Quantity(template.name.format(**parameters))
-            for template in producer.input[scope]
-        ]
-        for column in producer.input[scope]:
-            for output_quantity in producer.output:
-                column.adopt(output_quantity, scope)
-
-
-# 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
-MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 
 # per-era luminosity in pb^-1; "2025" is 2025+2026 data combined
 LUMI_PB = {
@@ -62,389 +11,142 @@ LUMI_PB = {
     "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
     "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
+# 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
+MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 
-def _product(scope, name, out_name, in1, type1, in2, type2, templated=False):
-    out = Quantity(out_name)
-    producer = Producer(
-        name=name,
-        call=f'''event::quantity::Product<{type1},{type2}>({{df}}, {{output}}, {{input}})''',
-        input=[in1, in2],
-        output=[out],
-        scopes=[scope],
-    )
-    if templated:
-        TEMPLATED_QUANTITY_PRODUCERS.append(producer)
-    return producer, out
+# {norm_table_path} set by shapes_preparation.py's build_norm_table()
+SampleNormalization = Producer(
+    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
+    input=[],
+    output=[
+        q.crossSectionPerEventWeight, 
+        q.numberGeneratedEventsWeight, 
+        q.negative_events_fraction
+    ],
+    scopes=["et", "mt", "tt", "em"],
+)
 
+# data/embedding: constant no-op normalization and weight
+with defaults(scopes=["et", "mt", "tt", "em"], call='''event::quantity::Define<float>({df}, {output}, 1.0f)''', input=[]):
+    ConstantCrossSectionPerEventWeight = Producer(output=[q.crossSectionPerEventWeight])
+    ConstantNumberGeneratedEventsWeight = Producer(output=[q.numberGeneratedEventsWeight])
+    ConstantNegativeEventsFraction = Producer(output=[q.negative_events_fraction])
 
-def _gate(scope, name, out_name, cond, value, templated=False):
-    out = Quantity(out_name)
-    producer = Producer(
-        name=name,
-        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
-        input=[cond, value],
-        output=[out],
-        scopes=[scope],
-    )
-    if templated:
-        TEMPLATED_QUANTITY_PRODUCERS.append(producer)
-    return producer, out
+# data/embedding and mm/ee: constant no-op weight
+with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"], call='''event::quantity::Define<double>({df}, {output}, 1.0)''', input=[]):
+    ConstantWeight = Producer(output=[q.weight])
 
+##############################################################################
+# normalization: xsec / nevents * sign(genWeight) / negative fraction * lumi * pileup
+##############################################################################
 
-def _select(scope, name, out_name, cond, if_true, if_false):
-    out = Quantity(out_name)
-    producer = Producer(
-        name=name,
-        call='''event::quantity::Select<double>({df}, {output}, {input})''',
-        input=[cond, if_true, if_false],
-        output=[out],
-        scopes=[scope],
-    )
-    return producer, out
-
-
-def _normalization_producers(scope, era):
-    # xsec * (1/nevents) * sign(genWeight)/negative_fraction * lumi * pileup
-    producers = []
-
-    gen_weight_sign = Producer(
-        name=f"GenWeightSign_{scope}",
+with defaults(scopes=["et", "mt", "tt", "em"]):
+    GenWeightSign = Producer(
         call='''event::quantity::NormalizedGenWeightSign({df}, {output}, {input})''',
         input=[nanoAOD.genWeight, q.negative_events_fraction],
-        output=[Quantity(f"weight_{scope}_gen_sign")],
-        scopes=[scope],
+        output=[q.weight_gen_sign],
     )
-    producers.append(gen_weight_sign)
+    Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
+    MCCampaignSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, {mc_campaign_split_factor})''', input=[], output=[q.weight_campaign_split])
+    
+    with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
+        NormXsecNgen = Producer(input=[q.crossSectionPerEventWeight, q.numberGeneratedEventsWeight], output=[q.weight_xsec_ngen])
+        NormSigned = Producer(input=[q.weight_xsec_ngen, q.weight_gen_sign], output=[q.weight_norm_signed])
+        NormLumi = Producer(input=[q.weight_norm_signed, q.weight_lumi], output=[q.weight_norm_lumi])
+        NormPileup = Producer(input=[q.weight_norm_lumi, q.puweight], output=[q.weight_norm_pileup])
 
-    p, xsec_ngen = _product(
-        scope, f"Normalization_{scope}", f"weight_{scope}_xsec_ngen",
-        q.crossSectionPerEventWeight, "double", q.numberGeneratedEventsWeight, "double",
+##############################################################################
+# lepton and tau ID scale factors
+##############################################################################
+
+with defaults(scopes=["et", "mt", "tt"]):
+    GenuineTau_2 = Producer(call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''', input=[q.gen_match_2], output=[q.weight_genuine_tau_2])
+    VsJetSF_2 = Producer(
+        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
+        input=[q.weight_genuine_tau_2, Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_2")],
+        output=[q.weight_vsjet_sf_2],
     )
-    producers.append(p)
-
-    p, norm_signed = _product(
-        scope, f"NormalizationSigned_{scope}", f"weight_{scope}_norm_signed",
-        xsec_ngen, "double", gen_weight_sign.output[0], "double",
+with defaults(scopes=["tt"]):
+    GenuineTau_1 = Producer(call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''', input=[q.gen_match_1], output=[q.weight_genuine_tau_1])
+    VsJetSF_1 = Producer(
+        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
+        input=[q.weight_genuine_tau_1, Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_1")],
+        output=[q.weight_vsjet_sf_1],
     )
-    producers.append(p)
 
-    lumi = Producer(
-        name=f"Lumi_{scope}",
-        call=f'''event::quantity::Define<double>({{df}}, {{output}}, {LUMI_PB[era]})''',
-        input=[],
-        output=[Quantity(f"weight_{scope}_lumi")],
-        scopes=[scope],
+with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
+    with defaults(scopes=["et"]):
+        EleID_et = Producer(input=[q.weight_norm_pileup, q.id_wgt_ele_wp90iso_1], output=[q.weight_ele_id])
+        VsJet_et = Producer(input=[q.weight_ele_id, q.weight_vsjet_sf_2], output=[q.weight_vsjet_2])
+        VsMu_et = Producer(input=[q.weight_vsjet_2, Quantity("id_wgt_tau_vsMu_VLoose_{vs_ele_wp}_2")], output=[q.weight_vsmu_2])
+    with defaults(scopes=["mt"]):
+        MuID_mt = Producer(input=[q.weight_norm_pileup, q.id_wgt_mu_1], output=[q.weight_mu_id])
+        MuIso_mt = Producer(input=[q.weight_mu_id, q.iso_wgt_mu_1], output=[q.weight_mu_iso])
+        VsJet_mt = Producer(input=[q.weight_mu_iso, q.weight_vsjet_sf_2], output=[q.weight_vsjet_2])
+        VsMu_mt = Producer(input=[q.weight_vsjet_2, Quantity("id_wgt_tau_vsMu_Tight_{vs_ele_wp}_2")], output=[q.weight_vsmu_2])
+    with defaults(scopes=["et", "mt"]):
+        VsEle_2 = Producer(input=[q.weight_vsmu_2, Quantity("id_wgt_tau_vsEle_{vs_ele_wp}_2")], output=[q.weight_vsele_2])
+    with defaults(scopes=["tt"]):
+        VsJet_tt_1 = Producer(input=[q.weight_norm_pileup, q.weight_vsjet_sf_1], output=[q.weight_vsjet_1])
+        VsJet_tt_2 = Producer(input=[q.weight_vsjet_1, q.weight_vsjet_sf_2], output=[q.weight_vsjet_2])
+        VsMu_tt_1 = Producer(input=[q.weight_vsjet_2, Quantity("id_wgt_tau_vsMu_VLoose_{vs_ele_wp}_1")], output=[q.weight_vsmu_1])
+        VsMu_tt_2 = Producer(input=[q.weight_vsmu_1, Quantity("id_wgt_tau_vsMu_VLoose_{vs_ele_wp}_2")], output=[q.weight_vsmu_2])
+        VsEle_tt_1 = Producer(input=[q.weight_vsmu_2, Quantity("id_wgt_tau_vsEle_{vs_ele_wp}_1")], output=[q.weight_vsele_1])
+        VsEle_tt_2 = Producer(input=[q.weight_vsele_1, Quantity("id_wgt_tau_vsEle_{vs_ele_wp}_2")], output=[q.weight_vsele_2])
+    with defaults(scopes=["em"]):
+        EleID_em = Producer(input=[q.weight_norm_pileup, q.id_wgt_ele_wp90iso_1], output=[q.weight_ele_id])
+        MuID_em = Producer(input=[q.weight_ele_id, q.id_wgt_mu_2], output=[q.weight_mu_id])
+        MuIso_em = Producer(input=[q.weight_mu_id, q.iso_wgt_mu_2], output=[q.weight_mu_iso])
+
+# producers with a templated input quantity, resolved by shapes_preparation.py
+TEMPLATED_QUANTITY_PRODUCERS = [VsJetSF_1, VsJetSF_2, VsMu_et, VsMu_mt, VsEle_2, VsMu_tt_1, VsMu_tt_2, VsEle_tt_1, VsEle_tt_2]
+
+##############################################################################
+# trigger and b-tag scale factors (Run 3 only) and the final weight
+##############################################################################
+
+with defaults(scopes=["et", "mt", "tt"], call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
+    Trigger_ettt = Producer(input=[q.weight_vsele_2, q.trg_wgt], output=[q.weight_trigger])
+    Weight_ettt_Run2 = Producer(input=[q.weight_vsele_2, q.weight_campaign_split], output=[q.weight])
+with defaults(scopes=["em"], call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
+    Trigger_em = Producer(input=[q.weight_mu_iso, q.trg_wgt], output=[q.weight_trigger])
+    Weight_em_Run2 = Producer(input=[q.weight_mu_iso, q.weight_campaign_split], output=[q.weight])
+with defaults(scopes=["et", "mt", "tt", "em"]):
+    Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_trigger, q.btag_weight], output=[q.weight_btag])
+    Weight_Run3 = Producer(
+        call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_btag, q.weight_campaign_split], output=[q.weight]
     )
-    producers.append(lumi)
 
-    p, norm_lumi = _product(
-        scope, f"NormalizationLumi_{scope}", f"weight_{scope}_norm_lumi",
-        norm_signed, "double", lumi.output[0], "double",
-    )
-    producers.append(p)
+with defaults(call=None, input=None, output=None):
+    with defaults(scopes=["et"]):
+        _norm = [GenWeightSign, Lumi, MCCampaignSplit, NormXsecNgen, NormSigned, NormLumi, NormPileup]
+        _tau_2 = [GenuineTau_2, VsJetSF_2]
+        WeightET_Run3 = ProducerGroup(subproducers=_norm + _tau_2 + [EleID_et, VsJet_et, VsMu_et, VsEle_2, Trigger_ettt, Btag, Weight_Run3])
+        WeightET_Run2 = ProducerGroup(subproducers=_norm + _tau_2 + [EleID_et, VsJet_et, VsMu_et, VsEle_2, Weight_ettt_Run2])
+    with defaults(scopes=["mt"]):
+        WeightMT_Run3 = ProducerGroup(subproducers=_norm + _tau_2 + [MuID_mt, MuIso_mt, VsJet_mt, VsMu_mt, VsEle_2, Trigger_ettt, Btag, Weight_Run3])
+        WeightMT_Run2 = ProducerGroup(subproducers=_norm + _tau_2 + [MuID_mt, MuIso_mt, VsJet_mt, VsMu_mt, VsEle_2, Weight_ettt_Run2])
+    with defaults(scopes=["tt"]):
+        _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
+        _ids_tt = [VsJet_tt_1, VsJet_tt_2, VsMu_tt_1, VsMu_tt_2, VsEle_tt_1, VsEle_tt_2]
+        WeightTT_Run3 = ProducerGroup(subproducers=_norm + _tau_12 + _ids_tt + [Trigger_ettt, Btag, Weight_Run3])
+        WeightTT_Run2 = ProducerGroup(subproducers=_norm + _tau_12 + _ids_tt + [Weight_ettt_Run2])
+    with defaults(scopes=["em"]):
+        WeightEM_Run3 = ProducerGroup(subproducers=_norm + [EleID_em, MuID_em, MuIso_em, Trigger_em, Btag, Weight_Run3])
+        WeightEM_Run2 = ProducerGroup(subproducers=_norm + [EleID_em, MuID_em, MuIso_em, Weight_em_Run2])
 
-    p, norm_pileup = _product(
-        scope, f"NormalizationPileup_{scope}", f"weight_{scope}_norm_pileup",
-        norm_lumi, "double", q.puweight, "double",
-    )
-    producers.append(p)
+class WeightETSwitch(SwitchProducer):
+    run2 = WeightET_Run2
+    run3 = WeightET_Run3
 
-    return producers, norm_pileup
+class WeightMTSwitch(SwitchProducer):
+    run2 = WeightMT_Run2
+    run3 = WeightMT_Run3
 
+class WeightTTSwitch(SwitchProducer):
+    run2 = WeightTT_Run2
+    run3 = WeightTT_Run3
 
-def _mc_campaign_split_producer(scope, era, running):
-    split_factor = MC_CAMPAIGN_SPLIT_FACTOR.get(era, 1.0)
-    split = Producer(
-        name=f"MCCampaignSplit_{scope}",
-        call=f'''event::quantity::Define<double>({{df}}, {{output}}, {split_factor})''',
-        input=[],
-        output=[Quantity(f"weight_{scope}_campaign_split")],
-        scopes=[scope],
-    )
-    weight = Producer(
-        name=f"Weight_{scope}",
-        call='''event::quantity::Product<double,double>({df}, {output}, {input})''',
-        input=[running, split.output[0]],
-        output=[q.weight],
-        scopes=[scope],
-    )
-    return [split, weight]
-
-
-def _btag_producer(scope, era, running):
-    if era in ("2016preVFP", "2016postVFP", "2017", "2018"):
-        return [], running
-    p, out = _product(
-        scope, f"NormalizationBtag_{scope}", f"weight_{scope}_norm_btag",
-        running, "double", q.btag_weight, "float",
-    )
-    return [p], out
-
-
-def et_weight_producers(era, run2_eras) -> list:
-    producers, running = _normalization_producers("et", era)
-
-    p, running = _product(
-        "et", "NormalizationLepID_et", "weight_et_norm_lepid",
-        running, "double", q.id_wgt_ele_wp90iso_1, "double",
-    )
-    producers.append(p)
-
-    is_genuine_tau_2 = Producer(
-        name="IsGenuineTau2_et",
-        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
-        input=[q.gen_match_2],
-        output=[Quantity("weight_et_is_genuine_tau_2")],
-        scopes=["et"],
-    )
-    producers.append(is_genuine_tau_2)
-    p, tauid_vsjet = _gate(
-        "et", "TauIdVsJetGated_et", "weight_et_tauid_vsjet_gated",
-        is_genuine_tau_2.output[0], Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_2"), templated=True,
-    )
-    producers.append(p)
-    p, running = _product(
-        "et", "NormalizationTauIdVsJet_et", "weight_et_norm_tauid_vsjet",
-        running, "double", tauid_vsjet, "double",
-    )
-    producers.append(p)
-
-    p, running = _product(
-        "et", "NormalizationTauIdVsMu_et", "weight_et_norm_tauid_vsmu",
-        running, "double", Quantity("id_wgt_tau_vsMu_VLoose_{vs_ele_wp}_2"), "double",
-        templated=True,
-    )
-    producers.append(p)
-    p, running = _product(
-        "et", "NormalizationTauIdVsEle_et", "weight_et_norm_tauid_vsele",
-        running, "double", Quantity("id_wgt_tau_vsEle_{vs_ele_wp}_2"), "double",
-        templated=True,
-    )
-    producers.append(p)
-
-    if era not in run2_eras:
-        p, cross = _product(
-            "et", "EleTauCrossTriggerSF_et", "weight_et_eletau_cross_trigger_sf",
-            Quantity("trg_wgt_ele24tau30_leg1"), "double", Quantity("trg_wgt_ele24tau30_leg2"), "float",
-        )
-        producers.append(p)
-        p, trigger = _select(
-            "et", "TriggerSF_et", "weight_et_trigger_sf",
-            Quantity("trg_single_ele30"), Quantity("trg_wgt_single_ele30"), cross,
-        )
-        producers.append(p)
-        p, running = _product(
-            "et", "NormalizationTrigger_et", "weight_et_norm_trigger",
-            running, "double", trigger, "double",
-        )
-        producers.append(p)
-
-    btag_producers, running = _btag_producer("et", era, running)
-    producers.extend(btag_producers)
-
-    producers.extend(_mc_campaign_split_producer("et", era, running))
-    return producers
-
-
-def mt_weight_producers(era, run2_eras) -> list:
-    producers, running = _normalization_producers("mt", era)
-
-    p, running = _product(
-        "mt", "NormalizationLepID_mt", "weight_mt_norm_lepid",
-        running, "double", q.id_wgt_mu_1, "double",
-    )
-    producers.append(p)
-    p, running = _product(
-        "mt", "NormalizationLepIso_mt", "weight_mt_norm_lepiso",
-        running, "double", q.iso_wgt_mu_1, "double",
-    )
-    producers.append(p)
-
-    is_genuine_tau_2 = Producer(
-        name="IsGenuineTau2_mt",
-        call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
-        input=[q.gen_match_2],
-        output=[Quantity("weight_mt_is_genuine_tau_2")],
-        scopes=["mt"],
-    )
-    producers.append(is_genuine_tau_2)
-    p, tauid_vsjet = _gate(
-        "mt", "TauIdVsJetGated_mt", "weight_mt_tauid_vsjet_gated",
-        is_genuine_tau_2.output[0], Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_2"), templated=True,
-    )
-    producers.append(p)
-    p, running = _product(
-        "mt", "NormalizationTauIdVsJet_mt", "weight_mt_norm_tauid_vsjet",
-        running, "double", tauid_vsjet, "double",
-    )
-    producers.append(p)
-
-    p, running = _product(
-        "mt", "NormalizationTauIdVsMu_mt", "weight_mt_norm_tauid_vsmu",
-        running, "double", Quantity("id_wgt_tau_vsMu_Tight_{vs_ele_wp}_2"), "double",
-        templated=True,
-    )
-    producers.append(p)
-    p, running = _product(
-        "mt", "NormalizationTauIdVsEle_mt", "weight_mt_norm_tauid_vsele",
-        running, "double", Quantity("id_wgt_tau_vsEle_{vs_ele_wp}_2"), "double",
-        templated=True,
-    )
-    producers.append(p)
-
-    if era not in run2_eras:
-        p, cross = _product(
-            "mt", "MuTauCrossTriggerSF_mt", "weight_mt_mutau_cross_trigger_sf",
-            Quantity("trg_wgt_mu20tau27_leg1"), "double", Quantity("trg_wgt_mu20tau27_leg2"), "float",
-        )
-        producers.append(p)
-        p, trigger = _select(
-            "mt", "TriggerSF_mt", "weight_mt_trigger_sf",
-            Quantity("trg_single_mu24"), Quantity("trg_wgt_single_mu24"), cross,
-        )
-        producers.append(p)
-        p, running = _product(
-            "mt", "NormalizationTrigger_mt", "weight_mt_norm_trigger",
-            running, "double", trigger, "double",
-        )
-        producers.append(p)
-
-    btag_producers, running = _btag_producer("mt", era, running)
-    producers.extend(btag_producers)
-
-    producers.extend(_mc_campaign_split_producer("mt", era, running))
-    return producers
-
-
-def tt_weight_producers(era, run2_eras) -> list:
-    producers, running = _normalization_producers("tt", era)
-
-    for leg in (1, 2):
-        is_genuine_tau = Producer(
-            name=f"IsGenuineTau{leg}_tt",
-            call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''',
-            input=[getattr(q, f"gen_match_{leg}")],
-            output=[Quantity(f"weight_tt_is_genuine_tau_{leg}")],
-            scopes=["tt"],
-        )
-        producers.append(is_genuine_tau)
-        p, tauid_vsjet = _gate(
-            "tt", f"TauIdVsJetGated{leg}_tt", f"weight_tt_tauid_vsjet_gated_{leg}",
-            is_genuine_tau.output[0], Quantity(f"id_wgt_tau_vsJet_{{vs_jet_wp}}_{leg}"), templated=True,
-        )
-        producers.append(p)
-        p, running = _product(
-            "tt", f"NormalizationTauIdVsJet{leg}_tt", f"weight_tt_norm_tauid_vsjet_{leg}",
-            running, "double", tauid_vsjet, "double",
-        )
-        producers.append(p)
-
-    for leg in (1, 2):
-        p, running = _product(
-            "tt", f"NormalizationTauIdVsMu{leg}_tt", f"weight_tt_norm_tauid_vsmu_{leg}",
-            running, "double", Quantity(f"id_wgt_tau_vsMu_VLoose_{{vs_ele_wp}}_{leg}"), "double",
-            templated=True,
-        )
-        producers.append(p)
-    for leg in (1, 2):
-        p, running = _product(
-            "tt", f"NormalizationTauIdVsEle{leg}_tt", f"weight_tt_norm_tauid_vsele_{leg}",
-            running, "double", Quantity(f"id_wgt_tau_vsEle_{{vs_ele_wp}}_{leg}"), "double",
-            templated=True,
-        )
-        producers.append(p)
-
-    if era not in run2_eras:
-        if era in DOUBLETAU_HPS_ERAS:
-            plain_cond = Quantity("trg_double_tau35_mediumiso_hps")
-            plain_leg1, plain_leg2 = Quantity("trg_wgt_doubletau35_leg1"), Quantity("trg_wgt_doubletau35_leg2")
-            jet_leg1, jet_leg2 = Quantity("trg_wgt_doubletau_jet30_leg1"), Quantity("trg_wgt_doubletau_jet30_leg2")
-        else:
-            plain_cond = Quantity("trg_double_tau30_mediumiso_pnet")
-            plain_leg1, plain_leg2 = Quantity("trg_wgt_doubletau30_leg1"), Quantity("trg_wgt_doubletau30_leg2")
-            jet_leg1, jet_leg2 = Quantity("trg_wgt_doubletau_jet26_leg1"), Quantity("trg_wgt_doubletau_jet26_leg2")
-        p, plain = _product(
-            "tt", "DoubleTauTriggerSF_tt", "weight_tt_doubletau_trigger_sf",
-            plain_leg1, "float", plain_leg2, "float",
-        )
-        producers.append(p)
-        p, jet = _product(
-            "tt", "DoubleTauJetTriggerSF_tt", "weight_tt_doubletau_jet_trigger_sf",
-            jet_leg1, "float", jet_leg2, "float",
-        )
-        producers.append(p)
-        p, trigger = _select(
-            "tt", "TriggerSF_tt", "weight_tt_trigger_sf",
-            plain_cond, plain, jet,
-        )
-        producers.append(p)
-        p, running = _product(
-            "tt", "NormalizationTrigger_tt", "weight_tt_norm_trigger",
-            running, "double", trigger, "double",
-        )
-        producers.append(p)
-
-    btag_producers, running = _btag_producer("tt", era, running)
-    producers.extend(btag_producers)
-
-    producers.extend(_mc_campaign_split_producer("tt", era, running))
-    return producers
-
-
-def em_weight_producers(era, run2_eras) -> list:
-    producers, running = _normalization_producers("em", era)
-
-    p, running = _product(
-        "em", "NormalizationEleID_em", "weight_em_norm_ele_id",
-        running, "double", q.id_wgt_ele_wp90iso_1, "double",
-    )
-    producers.append(p)
-    p, running = _product(
-        "em", "NormalizationMuID_em", "weight_em_norm_mu_id",
-        running, "double", q.id_wgt_mu_2, "double",
-    )
-    producers.append(p)
-    p, running = _product(
-        "em", "NormalizationMuIso_em", "weight_em_norm_mu_iso",
-        running, "double", q.iso_wgt_mu_2, "double",
-    )
-    producers.append(p)
-
-    lep_pt_1_above_26 = Producer(
-        name="LepPt1Above26_em",
-        call='''event::quantity::GreaterFlag<float>({df}, {output}, {input}, 26.0)''',
-        input=[q.pt_1],
-        output=[Quantity("weight_em_lep_pt_1_above_26")],
-        scopes=["em"],
-    )
-    producers.append(lep_pt_1_above_26)
-    p, trigger = _product(
-        "em", "TriggerSF_em", "weight_em_trigger_sf",
-        lep_pt_1_above_26.output[0], "bool", Quantity("trg_wgt_single_mu24"), "double",
-    )
-    producers.append(p)
-    p, running = _product(
-        "em", "NormalizationTrigger_em", "weight_em_norm_trigger",
-        running, "double", trigger, "double",
-    )
-    producers.append(p)
-
-    btag_producers, running = _btag_producer("em", era, running)
-    producers.extend(btag_producers)
-
-    producers.extend(_mc_campaign_split_producer("em", era, running))
-    return producers
-
-
-CHANNEL_WEIGHT_PRODUCERS = {
-    "et": et_weight_producers,
-    "mt": mt_weight_producers,
-    "tt": tt_weight_producers,
-    "em": em_weight_producers,
-}
-
-
-def build_weight_chain(configuration, scope: str, era: str, run2_eras) -> None:
-    producers = CHANNEL_WEIGHT_PRODUCERS[scope](era, run2_eras)
-    configuration.add_producers(scope, producers)
-    configuration.add_outputs(scope, [q.weight])
+class WeightEMSwitch(SwitchProducer):
+    run2 = WeightEM_Run2
+    run3 = WeightEM_Run3
