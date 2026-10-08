@@ -1,11 +1,10 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.producer import BaseFilter, Producer, ProducerGroup, VectorProducer
+from code_generation.producer import BaseFilter, Producer, ProducerGroup, VectorProducer, SwitchProducer
 from ..producers import electrons as electrons
 from ..producers import muons as muons
 from ..producers import genparticles as genparticles
-from code_generation.producer import SwitchProducer
 
 ####################
 # Set of general producers for event quantities

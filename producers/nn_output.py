@@ -2,6 +2,7 @@ from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
 from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup
+
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='utility::Cast<float, int>({df}, {output}, "float", {input}).first'):
         ConversionToFloatCollection = [
