@@ -1,9 +1,10 @@
-# from code_generation.quantity import Quantity
 from code_generation.quantity import Quantity
 from code_generation.quantity import NanoAODQuantity
 
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
+
+puppimet_norec = Quantity()
 
 # run dependent denitions
 tau_IDvsEle = Quantity()
@@ -138,6 +139,7 @@ is_ggh_hbb = Quantity()
 is_rem_hbb = Quantity()
 is_singletop = Quantity()
 is_rem_htautau = Quantity()
+is_rem_higgs = Quantity()
 is_electroweak_boson = Quantity()
 is_embedding = Quantity()
 is_embedding_mc = Quantity()
@@ -536,3 +538,14 @@ is_2018 = Quantity()
 is_2017 = Quantity()
 is_2016postVFP = Quantity()
 is_2016preVFP = Quantity()
+
+# trigger scale factor of the event (Run 3 et/mt/tt) and of the legs of the triggers
+trg_wgt = Quantity()
+trg_sf_single = Quantity()
+trg_sf_lepton = Quantity()
+trg_sf_tau = Quantity()
+trg_sf_ditau_1 = Quantity()
+trg_sf_ditau_2 = Quantity()
+trg_sf_ditaujet_1 = Quantity()
+trg_sf_ditaujet_2 = Quantity()
+trg_sf_jet = Quantity()
