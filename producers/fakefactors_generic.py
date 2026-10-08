@@ -44,9 +44,10 @@ LEG = '''fakefactors::generic::Leg{vec_open}
         {vec_close}'''
 
 
-def add_fake_factors(configuration, scope, analysis, payloads, legs, non_closure):
+def add_fake_factors(configuration, scope, analysis, payloads, legs, non_closure, iso_wp):
     # legs: hadronic tau leg index -> suffix of its correction names, e.g. {1: "", 2: "_subleading"}
     # non_closure: "coarse" (compound shifts), "fine" (per variable shifts) or "both"
+    # iso_wp: the tau vsJet WP of the signal region, selecting the failing tau of the fully hadronic fake factor weight
     q = importlib.import_module(f"analysis_configurations.{analysis}.quantities.output")
     files = {"file": f"{payloads}/fake_factors_{scope}.json.gz", "corr_file": f"{payloads}/FF_corrections_{scope}.json.gz"}
     configuration.add_config_parameters(scope, files)
@@ -85,6 +86,26 @@ def add_fake_factors(configuration, scope, analysis, payloads, legs, non_closure
                 shift_config, shift_producers = shifts.setdefault(name, ({}, []))
                 shift_config[parameter] = key
                 shift_producers.extend(p for p in producers if p not in shift_producers)
+
+    # ff_weight, the weight of the anti-isolated region: the fake factor of the hadronic tau (et/mt) or half of the one of
+    # the failing tau (tt); the fake factors of the legs stay available
+    if len(legs) == 1:
+        ff_weight = Producer(
+            name=f"FakeFactorWeight_{scope}", call='''event::quantity::Copy<float>({df}, {output}, {input})''',
+            input=[q.fake_factor_2], output=[q.ff_weight], scopes=[scope],
+        )
+    else:
+        ff_weight = Producer(
+            name=f"FakeFactorWeight_{scope}", call='''event::quantity::AntiIsoFakeFactor({df}, {output}, {input})''',
+            input=[q.fake_factor_1, q.fake_factor_2, Quantity(f"id_tau_vsJet_{iso_wp}_1"), Quantity(f"id_tau_vsJet_{iso_wp}_2")],
+            output=[q.ff_weight], scopes=[scope],
+        )
+    configuration.add_producers(scope, [ff_weight])
+    configuration.add_outputs(scope, [q.ff_weight])
+
+    # Run 3 payloads must carry the final nuisance names as variation keys (TAUER's fake_factors/rename_payload_keys.py converts old ones)
+    if int(re.search(r"/sm/(\d{4})", payloads).group(1)) >= 2022 and (legacy := [n for n in shifts if not n.startswith("CMS_fake_t_")]):
+        raise ValueError(f"the variation keys of {payloads} do not follow CMS_fake_t_<process>_<uncertainty>_<era>_<channel>, e.g. {legacy[0]}")
 
     for name, (shift_config, shift_producers) in shifts.items():
         configuration.add_shift(SystematicShift(name=name, shift_config={(scope,): shift_config}, producers={(scope,): shift_producers}))
@@ -203,6 +224,7 @@ def _variation_keys(corrections, correction, non_closure):
 
 
 def _shift_name(key):
+    # the keys of the payloads are already named CMS_fake_t_<process>_<uncertainty>_<era>_<channel>{Up,Down}
     match = VARIATION_KEY.match(key)
     return match.group(1) + (match.group(2) or match.group(3)).capitalize()
 

@@ -37,7 +37,8 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
     
     #########################
-    # LHE Scale Weight variations
+    # LHE PDF / alphaS and parton shower variations (the scale variations are the
+    # lhe_scale_up/down columns of the STXS scheme, not shifts)
     #########################
     lhe_scale_production_mode_postfixes = {
         "ggh": ["ggH"],
@@ -52,8 +53,6 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 for postfix in lhe_scale_postfixes:
-                    add_shift(name=f"QCDscale_ren_{postfix}", shift_key="muR", producers=[event.LHE_Scale_weight])
-                    add_shift(name=f"QCDscale_fac_{postfix}", shift_key="muF", producers=[event.LHE_Scale_weight])
                     add_shift(name=f"ps_fsr_{postfix}", shift_key="fsr", producers=[event.PS_weight])
                     add_shift(name=f"ps_isr_{postfix}", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):

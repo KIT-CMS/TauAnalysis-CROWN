@@ -29,6 +29,15 @@ TAU_DECAY_MODES = "0,1,10,11"
 
 RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 
+# sample types with the Z pT reweighting (Run 3 shifts included in the weight, see producers/weights.py)
+ZPT_SAMPLES = ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]
+
+# signal sample types with the ggH NNLOPS reweighting (applied to the ggH family events)
+GGH_SAMPLES = ["ggh_htautau", "rem_htautau", "rem_higgs"]
+
+# signal sample types with HTXS information and the LHEScaleWeight variations of the STXS scheme
+STXS_SAMPLES = ["ggh_htautau", "vbf_htautau", "rem_htautau", "rem_higgs"]
+
 
 def build_config(
     era: str,
@@ -89,8 +98,6 @@ def build_config(
             "met_filters": default_met_filters,
             
             # for LHE weights
-            "muR": 1.0,
-            "muF": 1.0,
             "isr": 1.0,
             "fsr": 1.0,
 
@@ -1154,7 +1161,6 @@ def build_config(
             event.npartons,
             event.MetFilter, 
             event.PUweights,
-            event.LHE_Scale_weight,
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
@@ -1355,7 +1361,7 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
@@ -1371,9 +1377,9 @@ def build_config(
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
-        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau", "rem_higgs"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau", "rem_higgs"]}),
+        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ZPT_SAMPLES}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting], {"samples": GGH_SAMPLES}),
+        ("global", AppendProducer, [event.LHE_Scale_up_weight, event.LHE_Scale_down_weight], {"samples": STXS_SAMPLES}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
@@ -1453,7 +1459,6 @@ def build_config(
             q.npartons,
             nanoAODv15.event,
             q.puweight,
-            q.lhe_scale_weight,
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
@@ -1588,6 +1593,9 @@ def build_config(
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("em")
             ],
         )
+
+    if sample in STXS_SAMPLES:
+        configuration.add_outputs(scopes, [q.lhe_scale_up, q.lhe_scale_down])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(

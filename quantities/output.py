@@ -101,25 +101,9 @@ eventCut_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
-THU_ggH_Mu = Quantity()
-THU_ggH_Res = Quantity()
-THU_ggH_Mig01 = Quantity()
-THU_ggH_Mig12 = Quantity()
-THU_ggH_VBF2j = Quantity()
-THU_ggH_VBF3j = Quantity()
-THU_ggH_PT60 = Quantity()
-THU_ggH_PT120 = Quantity()
-THU_ggH_qmtop = Quantity()
-THU_qqH_TOT = Quantity()
-THU_qqH_PTH200 = Quantity()
-THU_qqH_Mjj60 = Quantity()
-THU_qqH_Mjj120 = Quantity()
-THU_qqH_Mjj350 = Quantity()
-THU_qqH_Mjj700 = Quantity()
-THU_qqH_Mjj1000 = Quantity()
-THU_qqH_Mjj1500 = Quantity()
-THU_qqH_25 = Quantity()
-THU_qqH_JET01 = Quantity()
+# raw LHEScaleWeight mu_R = mu_F = 2 / 0.5 of the signal samples, normalized per STXS bin in the friend
+lhe_scale_up = Quantity()
+lhe_scale_down = Quantity()
 
 # SampleFlags
 is_data = Quantity()
@@ -147,7 +131,6 @@ is_embedding_mc = Quantity()
 lumi = Quantity()
 npartons = Quantity()
 puweight = Quantity()
-lhe_scale_weight = Quantity()
 lhe_pdf_weight = Quantity()
 lhe_alphaS_weight = Quantity()
 ps_weight = Quantity()
@@ -400,6 +383,8 @@ raw_fake_factor_2 = Quantity()
 fake_factor = Quantity()
 fake_factor_1 = Quantity()
 fake_factor_2 = Quantity()
+# the fake factor weight of the anti-isolated region: fake_factor_2 for et/mt, half of the failing tau's one for tt
+ff_weight = Quantity()
 
 raw_qcd_fake_factor_1 = Quantity()
 raw_qcd_fake_factor_2 = Quantity()
@@ -579,6 +564,11 @@ SR_mask = Quantity()
 # region, kept shift-aware (unlike the FF masks below) since shape production
 # needs the QCD estimate to follow systematic variations too.
 SR_mask_ss = Quantity()
+# anti-isolated application region of the fake factors (SR_mask with the tau isolation inverted, for tt exactly one tau
+# failing it, the legs combined) -- shift-aware like SR_mask
+AR_mask = Quantity()
+AR_mask_leg1 = Quantity()
+AR_mask_leg2 = Quantity()
 
 # gen-match-based process split (T = genuine tau pair, J = jet->tau fake, L = everything
 # else, mainly lepton fakes) -- shift-aware like SR_mask, since the chosen pair (and so
@@ -596,6 +586,13 @@ crossSectionPerEventWeight = Quantity()
 numberGeneratedEventsWeight = Quantity()
 negative_events_fraction = Quantity()
 
+# per-bin STXS normalization of the signal samples (STXSNormalization): sample family code, per-bin
+# xsec/fraction factor and the LHE scale weights divided by the per-bin sum-of-weights ratio
+stxs_family = Quantity()
+stxs_norm_weight = Quantity()
+lhe_scale_norm_up = Quantity()
+lhe_scale_norm_down = Quantity()
+
 # combined per-event MC weight of the friend (producers/weights.py): normalization, lumi, pileup,
 # lepton and tau ID, trigger and b-tag scale factors; the intermediate products follow
 weight = Quantity()
@@ -605,6 +602,7 @@ weight_campaign_split = Quantity()
 weight_xsec_ngen = Quantity()
 weight_norm_signed = Quantity()
 weight_norm_lumi = Quantity()
+weight_norm_stxs = Quantity()
 weight_norm_pileup = Quantity()
 weight_ele_id = Quantity()
 weight_mu_id = Quantity()
@@ -620,7 +618,15 @@ weight_vsmu_2 = Quantity()
 weight_vsele_1 = Quantity()
 weight_vsele_2 = Quantity()
 weight_trigger = Quantity()
-weight_btag = Quantity()
+weight_reweighted = Quantity()
+weight_one = Quantity()
+weight_top_pt = Quantity()
+# signal samples: ggH NNLOPS reweighting of the ggH family and the LHEScaleWeight factor of the nuisance of the shift (1 nominal)
+stxs_is_ggh = Quantity()
+weight_ggh_nnlo = Quantity()
+weight_signal_nnlo = Quantity()
+weight_lhe_scale = Quantity()
+weight_no_btag = Quantity()
 
 ff_qcd_SRlike = Quantity()
 ff_qcd_ARlike = Quantity()

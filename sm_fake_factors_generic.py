@@ -4,6 +4,7 @@ from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
 
+from .config import RUN2_ERAS
 from .producers import fakefactors_generic as ff
 
 # hadronic tau leg index -> suffix of its correction names
@@ -53,7 +54,7 @@ def build_config(
     )
 
     for scope in scopes:
-        ff.add_fake_factors(configuration, scope, analysis, PAYLOADS[scope][era], LEGS[scope], NON_CLOSURE)
+        ff.add_fake_factors(configuration, scope, analysis, PAYLOADS[scope][era], LEGS[scope], NON_CLOSURE, "Tight" if era in RUN2_ERAS else "Medium")
 
     configuration.optimize()
     configuration.validate()
