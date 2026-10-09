@@ -2,7 +2,6 @@
 #define GUARDFAKEFACTORS_GENERIC_CXX
 
 #include "../include/fakefactors_generic.hxx"
-#include "../../../../include/event.hxx"
 #include "../../../../include/utility/CorrectionManager.hxx"
 #include "../../../../include/utility/Logger.hxx"
 #include "ROOT/RDataFrame.hxx"
@@ -18,6 +17,18 @@
 namespace fakefactors {
 namespace generic {
 
+/**
+ * @brief Constructor of the helper that maps the packed input column onto the
+ * inputs of a correction. Each input of the correction is looked up by name in
+ * the layout; the inputs "process" and "syst" are filled at evaluation time.
+ *
+ * @param correction_name name of the correction, used in the error messages
+ * @param inputs inputs declared by the correction
+ * @param layout names of the quantities in the packed input column, in order
+ * @param proc process name passed to the "process" input of the correction
+ * @throws std::runtime_error if an input is not in the layout or the
+ * correction has no "syst" input
+ */
 ArgBuilder::ArgBuilder(const std::string &correction_name,
                        const std::vector<correction::Variable> &inputs,
                        const std::vector<std::string> &layout,
@@ -46,6 +57,15 @@ ArgBuilder::ArgBuilder(const std::string &correction_name,
     }
 }
 
+/**
+ * @brief Builds the arguments for the evaluation of the correction for one
+ * event. Integer inputs of the correction are cast to int, all other ones to
+ * double.
+ *
+ * @param values the packed input column of the event
+ * @param syst name of the variation, or nominal, for the "syst" input
+ * @return the arguments in the order of the inputs of the correction
+ */
 std::vector<correction::Variable::Type>
 ArgBuilder::build(const std::vector<float> &values, const std::string &syst) const {
     std::vector<correction::Variable::Type> args;
@@ -65,10 +85,32 @@ ArgBuilder::build(const std::vector<float> &values, const std::string &syst) con
     return args;
 }
 
+/**
+ * @brief Constructor of the handler for the compound non-closure correction of
+ * a process.
+ *
+ * @param p part of the variation names before the variable, e.g.
+ * "CMS_fake_t_QCD_non_closure_"
+ * @param vars variables stacked in the compound correction
+ * @param c the compound correction
+ * @param pos position of the "syst" input in the arguments of the correction
+ */
 NonClosureHandler::NonClosureHandler(const std::string &p, const std::vector<std::string> &vars,
                                      const correction::CompoundCorrection *c, size_t pos)
     : prefix(p), compound(c), syst_pos(pos), variables(vars) {}
 
+/**
+ * @brief Evaluates the compound non-closure correction. A coarse variation
+ * (prefix followed by non_closure_Corr...) is the nominal value shifted by the
+ * quadratic sum over the variables of the difference of each per variable
+ * variation to the nominal; Up adds and Down subtracts it. Any other variation
+ * (nominal, per variable) is evaluated directly.
+ *
+ * @param systematic name of the variation or nominal
+ * @param args the arguments of the event built by the ArgBuilder of the
+ * correction
+ * @return the value of the correction
+ */
 float NonClosureHandler::evaluate(const std::string &systematic,
                                   std::vector<correction::Variable::Type> args) const {
     args[syst_pos] = "nominal";
@@ -101,64 +143,15 @@ float NonClosureHandler::evaluate(const std::string &systematic,
     return is_up ? (nominal_value + total_uncertainty) : (nominal_value - total_uncertainty);
 }
 
-namespace {
-
-size_t layout_index(const std::vector<std::string> &layout, const std::string &name) {
-    auto it = std::find(layout.begin(), layout.end(), name);
-    if (it == layout.end()) {
-        throw std::runtime_error("fakefactors::generic: guard '" + name + "' is not in the input layout");
-    }
-    return static_cast<size_t>(it - layout.begin());
-}
-
-struct ProcessEval {
-    Process cfg;
-    const correction::Correction *ff;
-    ArgBuilder ff_args, frac_args;
-    const correction::Correction *dr = nullptr;
-    std::unique_ptr<ArgBuilder> dr_args;
-    std::shared_ptr<NonClosureHandler> nc;
-    std::unique_ptr<ArgBuilder> nc_args;
-};
-
-// Everything needed at event level for one leg, built once at setup
-struct LegEval {
-    const correction::Correction *fractions;
-    std::string fraction_variation;
-    std::vector<ProcessEval> processes;
-    size_t guard;
-
-    LegEval(correctionManager::CorrectionManager &cm, const std::vector<std::string> &layout,
-            const std::string &guard_name, const Leg &leg, const std::string &ff_file,
-            const std::string *ff_corr_file)
-        : fractions(cm.loadCorrection(ff_file, leg.fractions)),
-          fraction_variation(leg.fraction_variation),
-          guard(layout_index(layout, guard_name)) {
-        processes.reserve(leg.processes.size());
-        for (const auto &p : leg.processes) {
-            auto ff = cm.loadCorrection(ff_file, p.ff);
-            processes.push_back(ProcessEval{
-                p, ff,
-                ArgBuilder(p.ff, ff->inputs(), layout, p.name),
-                ArgBuilder(leg.fractions, fractions->inputs(), layout, p.name)});
-            auto &pe = processes.back();
-            if (!ff_corr_file) continue;
-            if (!p.dr_sr.empty()) {
-                pe.dr = cm.loadCorrection(*ff_corr_file, p.dr_sr);
-                pe.dr_args = std::make_unique<ArgBuilder>(p.dr_sr, pe.dr->inputs(), layout, p.name);
-            }
-            if (!p.non_closure.empty()) {
-                auto compound = cm.loadCompoundCorrection(*ff_corr_file, p.non_closure);
-                pe.nc_args = std::make_unique<ArgBuilder>(p.non_closure, compound->inputs(), layout, p.name);
-                pe.nc = std::make_shared<NonClosureHandler>(p.non_closure_prefix, p.non_closure_variables, compound,
-                                                            pe.nc_args->syst_pos);
-            }
-        }
-    }
-};
-
-} // namespace
-
+/**
+ * @brief Packs columns into one std::vector<float> column, so that the terms
+ * read their inputs by position. Each column is cast to float, whatever its type.
+ *
+ * @param df the input dataframe
+ * @param outputname name of the packed column
+ * @param input_columns names of the columns to pack, in the order of the layout
+ * @return a new dataframe containing the packed column
+ */
 ROOT::RDF::RNode build_inputs(
     ROOT::RDF::RNode df,
     const std::string &outputname,
@@ -175,101 +168,227 @@ ROOT::RDF::RNode build_inputs(
     return df.Define(outputname, expression);
 }
 
-ROOT::RDF::RNode raw_fakefactor(
+/**
+ * @brief Evaluates a correction of a process (fake factor or DR->SR) with
+ * correctionlib. The term is 0 for events with a negative guard.
+ *
+ * @param df the input dataframe
+ * @param correctionManager the correction manager to load corrections
+ * @param outputname name of the output column
+ * @param guard pt of the hadronic tau, events with a negative value are not evaluated
+ * @param inputs_column the packed input column
+ * @param layout names of the quantities in the packed input column, in order
+ * @param process process name passed to the correction
+ * @param correction name of the correction in the file
+ * @param variation name of the uncertainty variation or nominal
+ * @param file correctionlib json file with the correction
+ * @return a new dataframe containing the output column
+ */
+ROOT::RDF::RNode correction_term(
     ROOT::RDF::RNode df,
     correctionManager::CorrectionManager &correctionManager,
     const std::string &outputname,
+    const std::string &guard,
     const std::string &inputs_column,
     const std::vector<std::string> &layout,
-    const std::string &guard,
-    const Leg &leg,
-    const std::string &ff_file) {
+    const std::string &process,
+    const std::string &correction,
+    const std::string &variation,
+    const std::string &file) {
 
-    Logger::get("GenericRawFakeFactor")->debug("Setting up raw fake factor for {} ({} processes)", leg.fractions, leg.processes.size());
+    Logger::get("GenericFakeFactor")->debug("Setting up {} for {}", correction, process);
 
-    auto eval = std::make_shared<LegEval>(correctionManager, layout, guard, leg, ff_file, nullptr);
+    auto corr = correctionManager.loadCorrection(file, correction);
+    auto args = std::make_shared<ArgBuilder>(correction, corr->inputs(), layout, process);
 
-    auto calc = [eval](const std::vector<float> &in) {
-        float ff = 0.0f;
-        if (in.at(eval->guard) >= 0.0f) {
-            for (const auto &p : eval->processes) {
-                float ff_val = p.ff->evaluate(p.ff_args.build(in, p.cfg.ff_variation));
-                float frac = eval->fractions->evaluate(p.frac_args.build(in, eval->fraction_variation));
-                ff += std::max(frac, 0.0f) * std::max(ff_val, 0.0f);
-            }
-        }
-        Logger::get("GenericRawFakeFactor")->debug("Event raw fake factor {}", ff);
-        return ff;
+    auto calc = [corr, args, variation](float guard, const std::vector<float> &in) {
+        return guard >= 0.0f ? static_cast<float>(corr->evaluate(args->build(in, variation))) : 0.0f;
     };
-
-    return df.Define(outputname, calc, {inputs_column});
+    return df.Define(outputname, calc, {guard, inputs_column});
 }
 
-ROOT::RDF::RNode fakefactor(
+/**
+ * @brief Evaluates the compound non-closure correction of a process with
+ * correctionlib, see NonClosureHandler. The term is 0 for events with a negative
+ * guard.
+ *
+ * @param df the input dataframe
+ * @param correctionManager the correction manager to load corrections
+ * @param outputname name of the output column
+ * @param guard pt of the hadronic tau, events with a negative value are not evaluated
+ * @param inputs_column the packed input column
+ * @param layout names of the quantities in the packed input column, in order
+ * @param process process name passed to the correction
+ * @param compound_correction name of the compound correction in the file
+ * @param non_closure_prefix part of the variation names before the variable
+ * @param non_closure_variables variables stacked in the compound correction
+ * @param variation name of the uncertainty variation or nominal
+ * @param file correctionlib json file with the corrections
+ * @return a new dataframe containing the output column
+ */
+ROOT::RDF::RNode non_closure_term(
     ROOT::RDF::RNode df,
     correctionManager::CorrectionManager &correctionManager,
-    const std::vector<std::string> &outputnames,
+    const std::string &outputname,
+    const std::string &guard,
     const std::string &inputs_column,
     const std::vector<std::string> &layout,
-    const std::string &guard,
-    const Leg &leg,
-    const std::string &ff_file,
-    const std::string &ff_corr_file,
-    const bool split_info) {
+    const std::string &process,
+    const std::string &compound_correction,
+    const std::string &non_closure_prefix,
+    const std::vector<std::string> &non_closure_variables,
+    const std::string &variation,
+    const std::string &file) {
 
-    Logger::get("GenericFakeFactor")->debug("Setting up fake factor for {} ({} processes)", leg.fractions, leg.processes.size());
+    Logger::get("GenericFakeFactor")->debug("Setting up {} for {}", compound_correction, process);
 
-    auto eval = std::make_shared<LegEval>(correctionManager, layout, guard, leg, ff_file, &ff_corr_file);
+    auto compound = correctionManager.loadCompoundCorrection(file, compound_correction);
+    auto args = std::make_shared<ArgBuilder>(compound_correction, compound->inputs(), layout, process);
+    auto handler = std::make_shared<NonClosureHandler>(non_closure_prefix, non_closure_variables, compound, args->syst_pos);
 
-    constexpr size_t n_split = 6;
-
-    auto calc = [eval, split_info](const std::vector<float> &in) {
-        std::vector<float> split;
-        float ff_sum = 0.0f;
-        if (split_info) split.assign(n_split * eval->processes.size(), 0.0f);
-
-        if (in.at(eval->guard) > 0.0f) {
-            size_t i = 0;
-            for (const auto &p : eval->processes) {
-                float ff = p.ff->evaluate(p.ff_args.build(in, p.cfg.ff_variation));
-                float frac = eval->fractions->evaluate(p.frac_args.build(in, eval->fraction_variation));
-                float dr = p.dr ? static_cast<float>(p.dr->evaluate(p.dr_args->build(in, p.cfg.dr_sr_variation))) : 1.0f;
-                float nc = p.nc ? p.nc->evaluate(p.cfg.non_closure_variation, p.nc_args->build(in, "nominal")) : 1.0f;
-
-                ff = std::max(ff, 0.0f);
-                frac = std::max(frac, 0.0f);
-                dr = std::max(dr, 0.0f);
-                nc = std::max(nc, 0.0f);
-                ff_sum += frac * ff * dr * nc;
-
-                if (split_info) {
-                    float corr = dr * nc;
-                    float *out = &split[i * n_split];
-                    out[0] = ff; out[1] = frac; out[2] = dr; out[3] = nc; out[4] = corr;
-                    out[5] = frac * ff * corr;
-                }
-                ++i;
-            }
-        }
-        return split_info ? split : std::vector<float>{ff_sum};
+    auto calc = [args, handler, variation](float guard, const std::vector<float> &in) {
+        return guard >= 0.0f ? handler->evaluate(variation, args->build(in, "nominal")) : 0.0f;
     };
+    return df.Define(outputname, calc, {guard, inputs_column});
+}
 
-    if (split_info) {
-        std::vector<std::string> strings = {"fakefactor_generic_split_info", leg.fractions, leg.fraction_variation};
-        for (const auto &p : leg.processes) {
-            strings.insert(strings.end(), {p.name, p.ff_variation, p.dr_sr_variation, p.non_closure_variation});
+/**
+ * @brief Evaluates the process fractions of a leg with correctionlib. The
+ * output has one entry per process, all 0 for events with a negative guard.
+ *
+ * @param df the input dataframe
+ * @param correctionManager the correction manager to load corrections
+ * @param outputname name of the output column
+ * @param guard pt of the hadronic tau, events with a negative value are not evaluated
+ * @param inputs_column the packed input column
+ * @param layout names of the quantities in the packed input column, in order
+ * @param correction name of the fractions correction in the file
+ * @param variation name of the uncertainty variation or nominal
+ * @param processes processes of the leg, in the order of the output
+ * @param file correctionlib json file with the correction
+ * @return a new dataframe containing the output column
+ */
+ROOT::RDF::RNode fractions(
+    ROOT::RDF::RNode df,
+    correctionManager::CorrectionManager &correctionManager,
+    const std::string &outputname,
+    const std::string &guard,
+    const std::string &inputs_column,
+    const std::vector<std::string> &layout,
+    const std::string &correction,
+    const std::string &variation,
+    const std::vector<std::string> &processes,
+    const std::string &file) {
+
+    Logger::get("GenericFakeFactor")->debug("Setting up {} for {} processes", correction, processes.size());
+
+    auto corr = correctionManager.loadCorrection(file, correction);
+    std::vector<ArgBuilder> args;
+    for (const auto &process : processes) args.emplace_back(correction, corr->inputs(), layout, process);
+
+    auto calc = [corr, args, variation](float guard, const std::vector<float> &in) {
+        std::vector<float> result(args.size(), 0.0f);
+        if (guard >= 0.0f) {
+            for (size_t i = 0; i < args.size(); ++i) result[i] = corr->evaluate(args[i].build(in, variation));
         }
-        strings.push_back(ff_file);
-        strings.push_back(ff_corr_file);
-        std::string identifier = fakefactors::joinAndReplace(strings, "_");
+        return result;
+    };
+    return df.Define(outputname, calc, {guard, inputs_column});
+}
 
-        auto df1 = df.Define(identifier, calc, {inputs_column});
-        return event::quantity::Unroll<float>(df1, outputnames, identifier);
+namespace {
+
+/**
+ * @brief Wrapper of an ONNX model of the session manager. It keeps the sizes of
+ * the input and output tensors read at setup and checks the input size at every
+ * call.
+ */
+struct OnnxModel {
+    Ort::Session *session;
+    Ort::AllocatorWithDefaultOptions allocator;
+    std::vector<int64_t> input_dims, output_dims;
+    int n_inputs, n_outputs;
+    size_t input_size = 1, output_size = 1;
+
+    OnnxModel(OnnxSessionManager &manager, const std::string &path) : session(manager.getSession(path)) {
+        onnxhelper::prepare_model(session, allocator, input_dims, output_dims, n_inputs, n_outputs);
+        for (auto dim : input_dims) input_size *= dim;
+        for (auto dim : output_dims) output_size *= dim;
     }
 
-    auto extract_ff = [](const std::vector<float> &v) { return v[0]; };
-    auto df1 = df.Define(outputnames[0] + "_tmp_ff_vec", calc, {inputs_column});
-    return df1.Define(outputnames[0], extract_ff, {outputnames[0] + "_tmp_ff_vec"});
+    std::vector<float> operator()(std::vector<float> in) const {
+        if (in.size() != input_size) {
+            throw std::runtime_error("fakefactors::generic: " + std::to_string(in.size()) + " inputs for a model with " + std::to_string(input_size));
+        }
+        return onnxhelper::run_interference(session, allocator, in, input_dims, output_dims, n_inputs, n_outputs);
+    }
+};
+
+} // namespace
+
+/**
+ * @brief Evaluates an ONNX model with one output (fake factor or DR->SR). The
+ * term is 0 for events with a negative guard.
+ *
+ * @param df the input dataframe
+ * @param onnxSessionManager the manager that holds the session of the model
+ * @param outputname name of the output column
+ * @param guard pt of the hadronic tau, events with a negative value are not evaluated
+ * @param inputs_column the packed input column, in the feature order of the model
+ * @param model_file_path path of the ONNX model
+ * @return a new dataframe containing the output column
+ * @throws std::runtime_error if the model has not exactly one output
+ */
+ROOT::RDF::RNode onnx_term(
+    ROOT::RDF::RNode df,
+    OnnxSessionManager &onnxSessionManager,
+    const std::string &outputname,
+    const std::string &guard,
+    const std::string &inputs_column,
+    const std::string &model_file_path) {
+
+    auto model = std::make_shared<OnnxModel>(onnxSessionManager, model_file_path);
+    if (model->output_size != 1) {
+        throw std::runtime_error("fakefactors::generic: model " + model_file_path + " has " + std::to_string(model->output_size) + " outputs, expected 1");
+    }
+    auto calc = [model](float guard, const std::vector<float> &in) {
+        return guard >= 0.0f ? (*model)(in)[0] : 0.0f;
+    };
+    return df.Define(outputname, calc, {guard, inputs_column});
+}
+
+/**
+ * @brief Evaluates an ONNX model with one output per process (process
+ * fractions). The output has one entry per process, all 0 for events with a
+ * negative guard.
+ *
+ * @param df the input dataframe
+ * @param onnxSessionManager the manager that holds the session of the model
+ * @param outputname name of the output column
+ * @param guard pt of the hadronic tau, events with a negative value are not evaluated
+ * @param inputs_column the packed input column, in the feature order of the model
+ * @param model_file_path path of the ONNX model
+ * @param n_processes number of processes, the model must have one output each
+ * @return a new dataframe containing the output column
+ * @throws std::runtime_error if the number of outputs differs from n_processes
+ */
+ROOT::RDF::RNode onnx_fractions(
+    ROOT::RDF::RNode df,
+    OnnxSessionManager &onnxSessionManager,
+    const std::string &outputname,
+    const std::string &guard,
+    const std::string &inputs_column,
+    const std::string &model_file_path,
+    const size_t n_processes) {
+
+    auto model = std::make_shared<OnnxModel>(onnxSessionManager, model_file_path);
+    if (model->output_size != n_processes) {
+        throw std::runtime_error("fakefactors::generic: model " + model_file_path + " has " + std::to_string(model->output_size) + " outputs for " + std::to_string(n_processes) + " processes");
+    }
+    auto calc = [model, n_processes](float guard, const std::vector<float> &in) {
+        return guard >= 0.0f ? (*model)(in) : std::vector<float>(n_processes, 0.0f);
+    };
+    return df.Define(outputname, calc, {guard, inputs_column});
 }
 
 } // namespace generic

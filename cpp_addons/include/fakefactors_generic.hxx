@@ -4,28 +4,16 @@
 #include "ROOT/RDataFrame.hxx"
 #include "correction.h"
 #include "../../../../include/utility/CorrectionManager.hxx"
+#include "../../../../include/utility/OnnxSessionManager.hxx"
 #include "fakefactors.hxx"
 
+#include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace fakefactors {
 namespace generic {
-
-// One fake-factor process of a hadronic tau leg; empty dr_sr / non_closure fields mean "absent".
-// non_closure_prefix is the part of the non-closure variation names before the variable, e.g. "CMS_fake_t_QCD_non_closure_"
-struct Process {
-    std::string name;
-    std::string ff, ff_variation;
-    std::string dr_sr, dr_sr_variation;
-    std::string non_closure, non_closure_prefix, non_closure_variation;
-    std::vector<std::string> non_closure_variables;
-};
-
-struct Leg {
-    std::string fractions, fraction_variation;
-    std::vector<Process> processes;
-};
 
 // Maps the packed input column onto the inputs declared by a correction
 struct ArgBuilder {
@@ -67,27 +55,99 @@ ROOT::RDF::RNode build_inputs(
     const std::string &outputname,
     const std::vector<std::string> &input_columns);
 
-ROOT::RDF::RNode raw_fakefactor(
+// The terms are 0 (the fractions all 0) and not evaluated for events with guard < 0
+
+// Evaluates the correction of a process (fake factor, DR->SR) from the correctionlib payloads
+ROOT::RDF::RNode correction_term(
     ROOT::RDF::RNode df,
     correctionManager::CorrectionManager &correctionManager,
     const std::string &outputname,
+    const std::string &guard,
     const std::string &inputs_column,
     const std::vector<std::string> &layout,
-    const std::string &guard,
-    const Leg &leg,
-    const std::string &ff_file);
+    const std::string &process,
+    const std::string &correction,
+    const std::string &variation,
+    const std::string &file);
 
-ROOT::RDF::RNode fakefactor(
+// non_closure_prefix is the part of the non-closure variation names before the variable, e.g. "CMS_fake_t_QCD_non_closure_"
+ROOT::RDF::RNode non_closure_term(
     ROOT::RDF::RNode df,
     correctionManager::CorrectionManager &correctionManager,
-    const std::vector<std::string> &outputnames,
+    const std::string &outputname,
+    const std::string &guard,
     const std::string &inputs_column,
     const std::vector<std::string> &layout,
+    const std::string &process,
+    const std::string &compound_correction,
+    const std::string &non_closure_prefix,
+    const std::vector<std::string> &non_closure_variables,
+    const std::string &variation,
+    const std::string &file);
+
+// The process fractions of a leg as one std::vector<float>, one entry per process
+ROOT::RDF::RNode fractions(
+    ROOT::RDF::RNode df,
+    correctionManager::CorrectionManager &correctionManager,
+    const std::string &outputname,
     const std::string &guard,
-    const Leg &leg,
-    const std::string &ff_file,
-    const std::string &ff_corr_file,
-    const bool split_info);
+    const std::string &inputs_column,
+    const std::vector<std::string> &layout,
+    const std::string &correction,
+    const std::string &variation,
+    const std::vector<std::string> &processes,
+    const std::string &file);
+
+// ONNX model with one output (fake factor, DR->SR) or one output per process (fractions)
+ROOT::RDF::RNode onnx_term(
+    ROOT::RDF::RNode df,
+    OnnxSessionManager &onnxSessionManager,
+    const std::string &outputname,
+    const std::string &guard,
+    const std::string &inputs_column,
+    const std::string &model_file_path);
+
+ROOT::RDF::RNode onnx_fractions(
+    ROOT::RDF::RNode df,
+    OnnxSessionManager &onnxSessionManager,
+    const std::string &outputname,
+    const std::string &guard,
+    const std::string &inputs_column,
+    const std::string &model_file_path,
+    const size_t n_processes);
+
+// Sum over the processes of max(fraction, 0) * prod(max(term, 0)); columns: guard, fractions, then n_terms terms per process
+template <typename I> struct CombineHelper;
+
+template <std::size_t... N> struct CombineHelper<std::index_sequence<N...>> {
+    template <std::size_t> using Float = float;
+    std::vector<size_t> n_terms;
+    bool strict;
+
+    float operator()(float guard, const std::vector<float> &fractions, Float<N>... terms) const {
+        const float values[] = {terms...};
+        float sum = 0.0f;
+        if (strict ? guard > 0.0f : guard >= 0.0f) {
+            size_t k = 0;
+            for (size_t p = 0; p < n_terms.size(); ++p) {
+                float product = std::max(fractions.at(p), 0.0f);
+                for (size_t t = 0; t < n_terms[p]; ++t) product *= std::max(values[k++], 0.0f);
+                sum += product;
+            }
+        }
+        return sum;
+    }
+};
+
+template <std::size_t N>
+inline ROOT::RDF::RNode combine(
+    ROOT::RDF::RNode df,
+    const std::string &outputname,
+    const std::vector<std::string> &columns,
+    const std::vector<size_t> &n_terms,
+    const bool strict) {
+    return df.Define(outputname, CombineHelper<std::make_index_sequence<N>>{n_terms, strict}, columns);
+}
 
 } // namespace generic
 } // namespace fakefactors

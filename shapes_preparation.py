@@ -27,6 +27,14 @@ TEMPLATED_QUANTITY_PRODUCERS = [
     selection.TauVVVLooseFlag_2,
 ]
 
+# gen-match-based T/J/L process split, per scope
+GEN_CATEGORY_PRODUCERS = {
+    "et": [selection._gen_category_T_leg1_et, selection._gen_category_T_leg2_et, selection.gen_category_T_et, selection.gen_category_J_et, selection.gen_category_L_et],
+    "mt": [selection._gen_category_T_leg1_mt, selection._gen_category_T_leg2_mt, selection.gen_category_T_mt, selection.gen_category_J_mt, selection.gen_category_L_mt],
+    "tt": [selection._gen_category_T_leg1_tt, selection._gen_category_T_leg2_tt, selection.gen_category_T_tt, selection._gen_category_J_leg1_tt, selection._gen_category_J_leg2_tt, selection.gen_category_J_tt, selection.gen_category_L_tt],
+    "em": [selection._gen_category_T_leg1_em, selection._gen_category_T_leg2_em, selection.gen_category_T_em, selection.gen_category_L_em],
+}
+
 NOMINAL_ONLY_QUANTITIES = (
     q.selcut_lep_antiiso,
     q.selcut_lep_iso_qcd_run2,
@@ -307,11 +315,7 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                selection._gen_category_T_leg1_et,
-                selection._gen_category_T_leg2_et,
-                selection.gen_category_T_et,
-                selection.gen_category_J_et,
-                selection.gen_category_L_et,
+                *GEN_CATEGORY_PRODUCERS["et"],
             ],
         )
         configuration.add_outputs(
@@ -411,11 +415,7 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                selection._gen_category_T_leg1_mt,
-                selection._gen_category_T_leg2_mt,
-                selection.gen_category_T_mt,
-                selection.gen_category_J_mt,
-                selection.gen_category_L_mt,
+                *GEN_CATEGORY_PRODUCERS["mt"],
             ],
         )
         configuration.add_outputs(
@@ -503,13 +503,7 @@ def add_selection(
                 selection.ff_qcd_sub_DR_SR_ARlike_tt,
                 selection.ff_qcd_sub_AR_SR_SRlike_tt,
                 selection.ff_qcd_sub_AR_SR_ARlike_tt,
-                selection._gen_category_T_leg1_tt,
-                selection._gen_category_T_leg2_tt,
-                selection.gen_category_T_tt,
-                selection._gen_category_J_leg1_tt,
-                selection._gen_category_J_leg2_tt,
-                selection.gen_category_J_tt,
-                selection.gen_category_L_tt,
+                *GEN_CATEGORY_PRODUCERS["tt"],
             ],
         )
         configuration.add_outputs(
@@ -560,10 +554,7 @@ def add_selection(
                 selection.MuonIsoFlag_em,
                 selection.SRMaskEMSwitch.get(era),
                 selection.SRMaskSsEMSwitch.get(era),
-                selection._gen_category_T_leg1_em,
-                selection._gen_category_T_leg2_em,
-                selection.gen_category_T_em,
-                selection.gen_category_L_em,
+                *GEN_CATEGORY_PRODUCERS["em"],
             ],
         )
         configuration.add_outputs(
@@ -601,6 +592,8 @@ def add_selection(
     for mod_scopes, rule_cls, producers, rule_filter in [
         (["et", "mt", "tt", "em"], RemoveProducer, [selection.JetVetoMapFlag], {"eras": RUN2_ERAS}),
         (["et", "mt"], AppendProducer, [selection.LepIsoQCDWindowFlag_Run2], {"eras": RUN2_ERAS}),
+        # no gen matching in data/embedding n-tuples
+        *[([scope], RemoveProducer, producers, {"samples": ["data", "embedding", "embedding_mc"]}) for scope, producers in GEN_CATEGORY_PRODUCERS.items()],
     ]:
         mod_scopes = [s for s in mod_scopes if s in scopes]
         if mod_scopes:
@@ -685,13 +678,15 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
             scopes_list,
             [weight_producers.SampleNormalization],
         )
-        if sample in STXS_SAMPLES:
-            configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
-            configuration.add_outputs(scopes_list, [q.stxs_family])
-        else:
-            configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
+        # TEMP: STXS norm tables disabled
+        # if sample in STXS_SAMPLES:
+        #     configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
+        #     configuration.add_outputs(scopes_list, [q.stxs_family])
+        # else:
+        configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
         weight_scopes = [s for s in scopes_list if s in ("et", "mt", "tt", "em")]
-        if sample in STXS_SAMPLES and era not in RUN2_ERAS:
+        # TEMP: STXS/LHE-scale tables disabled
+        if False:  # if sample in STXS_SAMPLES and era not in RUN2_ERAS:
             ggh = sample in GGH_SAMPLES
             reweight = [
                 *([weight_producers.IsGGHFamily, weight_producers.GGHNNLOFactor, weight_producers.GGHReweight] if ggh else []),

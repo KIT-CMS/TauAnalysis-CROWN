@@ -466,7 +466,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 add_shift(name="CMS_btag_fullShape_cferr2", shift_map={"Up": "up_cferr2", "Down": "down_cferr2"})
         else:
             with defaults(
-                scopes=("mt", "et", "tt"),
+                scopes=("mt", "et", "tt", "em"),
                 producers=[scalefactors.btaggingWP_SF],
             ):
                 add_shift(
