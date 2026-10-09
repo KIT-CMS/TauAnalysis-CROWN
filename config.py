@@ -16,7 +16,7 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .tau_triggersetup import add_diTauTriggerSetup, RUN2_ERAS
+from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
@@ -26,6 +26,8 @@ from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProduce
 # hadronic tau decay modes the analysis accepts
 # the selection masks cut on the very same list
 TAU_DECAY_MODES = "0,1,10,11"
+
+RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 
 
 def build_config(
@@ -143,8 +145,8 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
-                    "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
-                    "2026": "data/root_pileup/Data_PileUp_2025_69p2.root",
+                    "2025": "data/root_pileup/Data_PileUp_2025_2026_69p2.root",
+                    "2026": "data/root_pileup/Data_PileUp_2026_69p2.root",
                 }
             ),
             "PU_reweighting_file_mc": EraModifier(
@@ -277,8 +279,8 @@ def build_config(
                 {
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jetid.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetid.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetid.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetid.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jetid.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15/jetid.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetid.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetid.json.gz",
@@ -288,19 +290,14 @@ def build_config(
             "jet_collection_name": "AK4PUPPI", #only used for jet ID so not relevant for run 2
             "jet_jec_file": EraModifier(
                 {
-                    "2016preVFP": "data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz",
-                    "2016postVFP": "data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz",
-                    "2017": "data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz",
-                    "2018": "data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz",
-                    # can be switched again when the full run2 setup is moved to nanoAODv15, not just the jets
-                    # "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
-                    # "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
-                    # "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
-                    # "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
+                    "2016preVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016preVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
+                    "2016postVFP": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2016postVFP-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
+                    "2017": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2017-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
+                    "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jet_jerc.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jet_jerc.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jet_jerc.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jet_jerc.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jet_jerc.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jet_jerc.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15/jet_jerc.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jet_jerc.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jet_jerc.json.gz",
@@ -309,15 +306,10 @@ def build_config(
             "jet_jer_master_seed": 42,
             "jet_jes_tag": EraModifier(
                 {
-                    "2016preVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16APV_V7_MC",
-                    "2016postVFP": "NONE" if sample in ["embedding", "data"] else "Summer19UL16_V7_MC",
-                    "2017": "NONE" if sample in ["embedding", "data"] else "Summer19UL17_V5_MC",
-                    "2018": "NONE" if sample in ["embedding", "data"] else "Summer19UL18_V5_MC",
-                    # can be switched again when the full run2 setup is moved to nanoAODv15, not just the jets
-                    # "2016preVFP": "Summer20UL16APVNanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16APVNanoV15_V1_DATA",
-                    # "2016postVFP": "Summer20UL16NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16NanoV15_V1_MC",
-                    # "2017": "Summer20UL17NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL17NanoV15_V1_MC",
-                    # "2018": "Summer20UL18NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL18NanoV15_V1_MC",
+                    "2016preVFP": "Summer20UL16APVNanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16APVNanoV15_V1_DATA",
+                    "2016postVFP": "Summer20UL16NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL16NanoV15_V1_MC",
+                    "2017": "Summer20UL17NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL17NanoV15_V1_MC",
+                    "2018": "Summer20UL18NanoV15_V1_DATA" if sample in ["embedding", "data"] else "Summer20UL18NanoV15_V1_MC",
                     "2022preEE": "Summer22_22Sep2023_V4_DATA" if sample in ["embedding", "data"] else "Summer22_22Sep2023_V4_MC",
                     "2022postEE": "Summer22EE_22Sep2023_V4_DATA" if sample in ["embedding", "data"] else "Summer22EE_22Sep2023_V4_MC",
                     "2023preBPix": "Summer23Prompt23_V4_DATA" if sample in ["embedding", "data"] else "Summer23Prompt23_V4_MC",
@@ -336,17 +328,12 @@ def build_config(
                 {
                     "2016preVFP": "Summer20UL16APV_JRV3_MC",
                     "2016postVFP": "Summer20UL16_JRV3_MC",
-                    "2017": "Summer19UL17_JRV2_MC",
-                    "2018": "Summer19UL18_JRV2_MC",
-                    # can be switched again when the full run2 setup is moved to nanoAODv15, not just the jets
-                    # "2016preVFP": "Summer20UL16APV_JRV3_MC",
-                    # "2016postVFP": "Summer20UL16_JRV3_MC",
-                    # "2017": "Summer19UL17_JRV4_MC",
-                    # "2018": "Summer19UL18_JRV3_MC",
+                    "2017": "Summer19UL17_JRV4_MC",
+                    "2018": "Summer19UL18_JRV3_MC",
                     "2022preEE": "Summer22_22Sep2023_JRV2_MC",
                     "2022postEE": "Summer22EE_22Sep2023_JRV2_MC",
-                    "2023preBPix": "Summer23Prompt23_RunCv1234_JRV2_MC",
-                    "2023postBPix": "Summer23BPixPrompt23_RunD_JRV2_MC",
+                    "2023preBPix": "Summer23Prompt23_RunCv1234_JRV3_MC",
+                    "2023postBPix": "Summer23BPixPrompt23_RunD_JRV3_MC",
                     "2024": "Summer24Prompt24_JRV2_MC",
                     "2025": "Summer24Prompt25_JRV2_MC",
                     "2026": "Summer24Prompt26_RunBD_JRV1_MC",
@@ -370,8 +357,8 @@ def build_config(
                     "2018": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run2-2018-UL-NanoAODv15/2026-06-05/jetvetomaps.json.gz",
                     "2022preEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
-                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
-                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-06-05/jetvetomaps.json.gz",
+                    "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/2026-07-15/jetvetomaps.json.gz",
+                    "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/2026-07-15/jetvetomaps.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                     "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-25Prompt-Summer24-NanoAODv15/2026-07-16/jetvetomaps.json.gz",
                     "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-26Prompt-Summer24-NanoAODv15/2026-07-15/jetvetomaps.json.gz",
@@ -440,8 +427,8 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-06-26/btagging.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
                 }
             ),
             "btag_sf_variation": "central",
@@ -598,24 +585,28 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
-            "applyRecoilCorrections": SampleModifier( #apply only to single boson processes
+            "applyRecoilCorrections": EraModifier( #apply only to single boson processes, not in 2023
                 {
-                    "dyjets": True,
-                    "dyjets_powheg": True,
-                    "dyjets_amcatnlo": True,
-                    "dyjets_amcatnlo_ll": True,
-                    "dyjets_amcatnlo_tt": True,
-                    "wjets": True,
-                    "wjets_amcatnlo": True,
-                    "electroweak_boson": True,
-                    "ggh_htautau": True,
-                    "vbf_htautau": True,
-                    "rem_htautau": True,
-                    "ggh_hww": True,
-                    "vbf_hww": True,
-                    "rem_VH": True,
+                    "2023preBPix": False,
+                    "2023postBPix": False,
                 },
-                default=False,
+                default=sample in [
+                    "dyjets",
+                    "dyjets_powheg",
+                    "dyjets_amcatnlo",
+                    "dyjets_amcatnlo_ll",
+                    "dyjets_amcatnlo_tt",
+                    "wjets",
+                    "wjets_amcatnlo",
+                    "electroweak_boson",
+                    "ggh_htautau",
+                    "vbf_htautau",
+                    "rem_htautau",
+                    "rem_higgs",
+                    "ggh_hww",
+                    "vbf_hww",
+                    "rem_VH",
+                ],
             ),
             "apply_recoil_resolution_systematic": False,
             "apply_recoil_response_systematic": False,
@@ -649,6 +640,7 @@ def build_config(
                     "vbf_htautau": "NNLO",
                     "vbf_hbb": "NNLO",
                     "rem_htautau": "NNLO",
+                    "rem_higgs": "NNLO",
                     "rem_hbb": "NNLO",
                     "wjets": "NNLO",
                     }, 
@@ -662,6 +654,9 @@ def build_config(
         },
     )
     ###### scope Specifics ######
+    # from 2025 the TauPOG TES is one bin per DM again, so the DM-only (v12-style) producer matches the json
+    tau_es_version = "v12" if int(era[:4]) >= 2025 else None
+
     configuration.add_config_parameters(
         ["mt", "tt", "et"],
         {
@@ -676,13 +671,7 @@ def build_config(
                     "tau_2_vsjet_id_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
                     "vsjet_tau_id_WPbit": bit,
                 }
-                for wp, bit in {
-                    #"Loose": 4, 
-                    "Medium": 5,
-                    #"Tight": 6,
-                    #"VTight": 7,
-                    #"VVTight": 8, 
-                }.items()
+                for wp, bit in {"Medium": 5}.items()
             ],
             "vsele_tau_id": [
                 {
@@ -693,15 +682,7 @@ def build_config(
                     "tau_2_vsele_id_outputname": "id_tau_vsEle_{wp}_2".format(wp=wp),
                     "vsele_tau_id_WPbit": bit,
                 }
-                for wp, bit in {
-                    "VVLoose": 2,
-                    #"VLoose": 3,
-                    #"Loose": 4,
-                    #"Medium": 5,
-                    "Tight": 6,
-                    #"VTight": 7,
-                    #"VVTight": 8,
-                }.items()
+                for wp, bit in {"VVLoose": 2, "Tight": 6}.items()
             ],
             "vsmu_tau_id": [
                 {
@@ -709,23 +690,12 @@ def build_config(
                     "tau_2_vsmu_sf_outputname": "id_wgt_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WP": "{wp}".format(wp=wp),
                     "vsele_tau_id_WP": "{wp_ele}".format(wp_ele=wp_ele),
-                    "vsjet_tau_id_WP": "Medium", #eventually add more if available and used
+                    "vsjet_tau_id_WP": "Medium",
                     "tau_1_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_1".format(wp=wp, wp_ele=wp_ele),
                     "tau_2_vsmu_id_outputname": "id_tau_vsMu_{wp}_{wp_ele}_2".format(wp=wp, wp_ele=wp_ele),
                     "vsmu_tau_id_WPbit": bit,
                 }
-                for (wp, bit), wp_ele in product(
-                    {
-                        "VLoose": 1,
-                        "Loose": 2,
-                        "Medium": 3,
-                        "Tight": 4,
-                    }.items(),
-                    [
-                        "VVLoose",
-                        "Tight",
-                    ],
-                )
+                for (wp, bit), wp_ele in product({"VLoose": 1, "Tight": 4}.items(), ["VVLoose", "Tight"])
             ],
             # wp for tau pt correction
             "tau_vsjet_wp": "Medium", ##change again to Loose if it becomes available
@@ -738,13 +708,7 @@ def build_config(
                     "tau_1_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_1".format(wp=wp),
                     "tau_2_vsjet_id_WPbit_outputname": "id_tau_vsJet_{wp}_2".format(wp=wp),
                 }
-                for wp, bit in dict(
-                    VVVLoose = 1,
-                    VVLoose = 2,
-                    VLoose = 3,
-                    Loose = 4, 
-                    Tight = 6,
-                ).items()
+                for wp, bit in dict(VVVLoose = 1, Loose = 4).items()
             ],
             #scale factor
             "tau_sf_file": EraModifier(
@@ -758,11 +722,13 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23CSep23-Summer23-NanoAODv12/2025-12-25/tau.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-12-25/tau.json.gz",
                     "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-01-14/tau.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-25Prompt-Summer24-NanoAODv15/2026-08-05/tau.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/TAU/Run3-25Prompt-Summer24-NanoAODv15/2026-08-05/tau.json.gz",
                 }
             ),
             "tau_vsjet_sf_dependence": "dm",
+            # only the 2025+ jsons take the vsMu WP; VLoose is the only WP available for all combinations
+            "tau_vsjet_vsmuWP": EraModifier({"2025": "VLoose", "2026": "VLoose"}, default='""'),
             #decay modes
             "tau_dms": TAU_DECAY_MODES,
             #energy scale
@@ -1227,7 +1193,7 @@ def build_config(
             jets.BJetCollection,
             jets.BasicBJetQuantities,
             met.MetCorrectionsSwitch.get(era),
-            met.PFMetCorrectionsSwitch.get(era),
+            # met.PFMetCorrectionsSwitch.get(era),
             pairquantities.DiTauPairMETQuantities,
             pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
@@ -1241,7 +1207,7 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1257,10 +1223,8 @@ def build_config(
             scalefactors.MuonIDIso_SF,
             scalefactors.TauID_SFSwitch.get(era),
             triggers.MTGenerateSingleMuonTriggerFlags,
-            #triggers.MTGenerateCrossTriggerFlags,
-            #triggers.GenerateSingleTrailingTauTriggerFlags,
-            scalefactors.SingleMuTriggerSF,
-            #scalefactors.MuTauTriggerSF,
+            triggers.MTGenerateCrossTriggerFlags,
+            scalefactors.MuTauTriggerSF,
         ],
     )
     configuration.add_producers(
@@ -1287,7 +1251,7 @@ def build_config(
         "et",
         [
             electrons.GoodElectrons,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1306,10 +1270,8 @@ def build_config(
             scalefactors.TauID_SFSwitch.get(era),
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
-            #triggers.ETGenerateCrossTriggerFlags,
-            #triggers.GenerateSingleTrailingTauTriggerFlags,
-            scalefactors.SingleEleTriggerSF,
-            #scalefactors.EleTauTriggerSF,
+            triggers.ETGenerateCrossTriggerFlags,
+            scalefactors.EleTauTriggerSF,
         ],
     )
     configuration.add_producers(
@@ -1356,8 +1318,7 @@ def build_config(
             scalefactors.EleID_SF,
             triggers.EMGenerateSingleElectronTriggerFlags,
             triggers.EMGenerateSingleMuonTriggerFlags,
-            scalefactors.SingleEleTriggerSF,
-            scalefactors.SingleMuTriggerSF,
+            scalefactors.SingleMuonTriggerSF_em,
         ],
     )
     configuration.add_producers(
@@ -1365,7 +1326,7 @@ def build_config(
         [   
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
-            taus.TauEnergyCorrectionSwitch.get(era),
+            taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
             taus.BaseTausSwitch.get(era),
             taus.GoodTausSwitch.get(era),
             taus.NumberOfGoodTaus,
@@ -1379,7 +1340,8 @@ def build_config(
             genparticles.TTGenDiTauPairQuantities,
             scalefactors.TauID_SFSwitch.get(era),
             triggers.TTGenerateDoubleTauTriggerFlags,
-            scalefactors.DoubleTauTriggerSF,
+            triggers.TTGenerateDoubleTauJetTriggerFlags,
+            scalefactors.TauTauTriggerSF,
         ],
     )
     
@@ -1410,36 +1372,40 @@ def build_config(
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau", "rem_higgs"]}),
+        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau", "rem_higgs"]}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
-        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
+        (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era, tau_es_version), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
 
     # Era specific modifications
     for mod_scopes, rule_cls, producers, rule_filter in [
         ("global", RemoveProducer, [jets.JetVetoMapVeto], {"eras": RUN2_ERAS}),
+        # no trigger scale factors on data (Run 3; the Run 2 ones are removed above)
+        (["em"], RemoveProducer, [scalefactors.SingleMuonTriggerSF_em], {"samples": ["data"], "exclude_eras": RUN2_ERAS}),
+        (["mt"], RemoveProducer, [scalefactors.MuTauTriggerSF], {"samples": ["data"], "exclude_eras": RUN2_ERAS}),
+        (["et"], RemoveProducer, [scalefactors.EleTauTriggerSF], {"samples": ["data"], "exclude_eras": RUN2_ERAS}),
+        (["tt"], RemoveProducer, [scalefactors.TauTauTriggerSF], {"samples": ["data"], "exclude_eras": RUN2_ERAS}),
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["mt"], RemoveProducer, [scalefactors.SingleMuTriggerSF], {"eras": RUN2_ERAS}),
-        (["et"], RemoveProducer, [scalefactors.SingleEleTriggerSF], {"eras": RUN2_ERAS}),
-        (["tt"], RemoveProducer, [scalefactors.DoubleTauTriggerSF], {"eras": RUN2_ERAS}),
+        (["mt"], RemoveProducer, [scalefactors.MuTauTriggerSF], {"eras": RUN2_ERAS}),
+        (["et"], RemoveProducer, [scalefactors.EleTauTriggerSF], {"eras": RUN2_ERAS}),
+        (["tt"], RemoveProducer, [triggers.TTGenerateDoubleTauJetTriggerFlags, scalefactors.TauTauTriggerSF], {"eras": RUN2_ERAS}),
+        (["em"], RemoveProducer, [scalefactors.SingleMuonTriggerSF_em], {"eras": RUN2_ERAS}),
 
-        # cross triggers and embedding triggers
-        (["mt"], AppendProducer, [triggers.MTGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
+        # embedding triggers (Run 2 only; cross-trigger flags/SFs are now in the default mt/et producer lists for all eras)
         (["mt"], AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["et"], AppendProducer, [triggers.ETGenerateCrossTriggerFlags, triggers.GenerateSingleTrailingTauTriggerFlags], {"eras": RUN2_ERAS}),
         (["et"], AppendProducer, [scalefactors.ETGenerateSingleElectronTriggerSF_MC, scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        (["tt"], AppendProducer, [triggers.GenerateSingleTrailingTauTriggerFlags, triggers.GenerateSingleLeadingTauTriggerFlags], {"eras": RUN2_ERAS}),
         (["em"], AppendProducer, [triggers.EMGenerateCrossTriggerFlags], {"eras": RUN2_ERAS}),
         (["em"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["mm"], AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
+        ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras":["2025", "2026"]}),
         ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
@@ -1453,13 +1419,23 @@ def build_config(
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
 
+    # group outputs nothing downstream reads: they are never added to the config (still computed when needed internally)
+    unused_outputs = {
+        "bjet_p4_1", "bjet_p4_2", "jet_p4_1", "jet_p4_2", "p4_dijet", "p4_dilepton", "rawmet_p4",
+        "puppimet_p4", "puppimet_p4_jetcorrected", "puppimet_p4_leptoncorrected",
+        "puppimet_p4_recoilcorrected", "puppimet_p4_unclustered_corrected",
+        "metcov10", "is_global_1", "is_global_2", "jtag_value_1", "jtag_value_2", "taujet_pt_1", "taujet_pt_2",
+    }
+
+    def used(group, scope):
+        return [p for p in group.get_outputs(scope) if p.name not in unused_outputs]
+
     #########################
     ######## OUTPUTS ########
     #########################
     configuration.add_outputs(
         scopes,
         [
-            nanoAODv15.PV_npvsGood,
             q.is_data,
             q.is_embedding,
             q.is_ttbar,
@@ -1467,29 +1443,27 @@ def build_config(
             q.is_wjets,
             q.is_ggh_htautau,
             q.is_vbf_htautau,
+            q.is_rem_htautau,
+            q.is_rem_higgs,
             q.is_diboson,
             nanoAODv15.run,
             q.lumi,
             q.npartons,
             nanoAODv15.event,
-            q.eventCut_mask,
             q.puweight,
             q.lhe_scale_weight,
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
-            q.jet_ID,
             q.jet_vetomap,
             ] + [p for scope in scopes for p in genparticles.GenMatching.get_outputs(scope)] + [
-            ] + [p for scope in scopes for p in jets.BasicJetQuantities.get_outputs(scope)] + [
-            ] + [p for scope in scopes for p in jets.BasicBJetQuantities.get_outputs(scope)] + [
+            ] + [p for scope in scopes for p in used(jets.BasicJetQuantities, scope)] + [
+            ] + [p for scope in scopes for p in used(jets.BasicBJetQuantities, scope)] + [
             q.btag_weight,
-            ] + [p for scope in scopes for p in pairquantities.DiTauPairMETQuantities.get_outputs(scope)] + [
-            q.dimuon_veto,
+            ] + [p for scope in scopes for p in used(pairquantities.DiTauPairMETQuantities, scope)] + [
             q.dilepton_veto,
-            q.dielectron_veto,
-            ] + [p for scope in scopes for p in pairquantities.DiObjectAngleQuantities.get_outputs(scope)
-            ] + [p for scope in scopes for p in met.MetCorrectionsSwitch.get(era).get_outputs(scope)
+            ] + [p for scope in scopes for p in used(pairquantities.DiObjectAngleQuantities, scope)
+            ] + [p for scope in scopes for p in used(met.MetCorrectionsSwitch.get(era), scope)
         ],
     )
     # add genWeight for everything but data
@@ -1507,98 +1481,74 @@ def build_config(
     configuration.add_outputs(
         "mt",
         [
-            q.nmuons,
-            q.ntaus,
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             q.extramuon_veto,
-            q.dimuon_veto,
             q.extraelec_veto,
-            ] + [p for p in genparticles.MTGenDiTauPairQuantities.get_outputs("mt")
             ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")
         ],
     )
     configuration.add_outputs(
         "mm",
         [
-            q.nmuons,
             triggers.MuMuGenerateSingleMuonTriggerFlags.output_group,
-            ] + [p for p in pairquantities.MuMuPairQuantities.get_outputs("mm")
-            ] + [p for p in genparticles.MuMuGenPairQuantities.get_outputs("mm")
+            ] + [p for p in used(pairquantities.MuMuPairQuantities, "mm")
         ],
     )
     configuration.add_outputs(
         "et",
         [
-            q.nelectrons,
-            q.ntaus,
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
             q.extramuon_veto,
-            q.dimuon_veto,
             q.extraelec_veto,
-            ] + [p for p in genparticles.ETGenDiTauPairQuantities.get_outputs("et")
             ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("et")
         ],
     )
     configuration.add_outputs(
         "em",
         [
-            q.nelectrons,
-            q.nmuons,
             triggers.EMGenerateSingleElectronTriggerFlags.output_group,
             triggers.EMGenerateSingleMuonTriggerFlags.output_group,
             q.extramuon_veto,
-            q.dimuon_veto,
             q.extraelec_veto,
-            ] + [p for p in pairquantities.EMDiTauPairQuantities.get_outputs("em")
-            ] + [p for p in genparticles.EMGenDiTauPairQuantities.get_outputs("em")
+            ] + [p for p in used(pairquantities.EMDiTauPairQuantities, "em")
         ],
     )
     configuration.add_outputs(
         "ee",
         [
-            q.nelectrons,
             triggers.ElElGenerateSingleElectronTriggerFlags.output_group,
             triggers.ElElGenerateDoubleMuonTriggerFlags.output_group,
-            q.dimuon_veto,
             q.extraelec_veto,
-            ] + [p for p in pairquantities.ElElPairQuantities.get_outputs("ee")
-            ] + [p for p in genparticles.ElElGenPairQuantities.get_outputs("ee")
+            ] + [p for p in used(pairquantities.ElElPairQuantities, "ee")
         ],
     )
     configuration.add_outputs(
         "tt",
         [
-            q.ntaus,
             triggers.TTGenerateDoubleTauTriggerFlags.output_group,
-            q.taujet_pt_1,
-            q.taujet_pt_2,
             q.extramuon_veto,
-            q.dimuon_veto,
             q.extraelec_veto,
-            ] + [p for p in genparticles.TTGenDiTauPairQuantities.get_outputs("tt")
             ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("tt")
         ],
     )
 
-    configuration.add_outputs("global", [p for p in met.MetBasicsSwitch.get(era).get_outputs("global")],)
+    configuration.add_outputs("global", used(met.MetBasicsSwitch.get(era), "global"),)
 
-    configuration.add_outputs("mt", [p for p in pairquantities.MTDiTauPairQuantitiesSwitch.get(era).get_outputs("mt")],)
-    configuration.add_outputs("et", [p for p in pairquantities.ETDiTauPairQuantitiesSwitch.get(era).get_outputs("et")],)
-    configuration.add_outputs("tt", [p for p in pairquantities.TTDiTauPairQuantitiesSwitch.get(era).get_outputs("tt")],)
+    configuration.add_outputs("mt", used(pairquantities.MTDiTauPairQuantitiesSwitch.get(era), "mt"),)
+    configuration.add_outputs("et", used(pairquantities.ETDiTauPairQuantitiesSwitch.get(era), "et"),)
+    configuration.add_outputs("tt", used(pairquantities.TTDiTauPairQuantitiesSwitch.get(era), "tt"),)
 
     if int(era[:4]) < 2022:
         configuration.add_outputs(
             "mt",
             [
                 triggers.MTGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             ],
         )
         configuration.add_outputs(
             "et",
             [
                 triggers.ETGenerateCrossTriggerFlags.output_group,
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
             ],
         )
         configuration.add_outputs(
@@ -1607,37 +1557,31 @@ def build_config(
                 triggers.EMGenerateCrossTriggerFlags.output_group,
             ],
         )
-        configuration.add_outputs(
-            "tt",
-            [
-                triggers.GenerateSingleTrailingTauTriggerFlags.output_group,
-                triggers.GenerateSingleLeadingTauTriggerFlags.output_group,
-            ],
-        )
     else:
+        configuration.add_outputs(["et", "mt", "tt", "em"], [q.trg_wgt])
         configuration.add_outputs(
             "mt",
             [
-                scalefactors.SingleMuTriggerSF.output_group,
+                triggers.MTGenerateCrossTriggerFlags.output_group,
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("mt")
             ],
         )
         configuration.add_outputs(
             "et",
             [
-                scalefactors.SingleEleTriggerSF.output_group,
+                triggers.ETGenerateCrossTriggerFlags.output_group,
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("et")
             ],
         )
         configuration.add_outputs(
             "tt",
-            [p for p in scalefactors.DoubleTauTriggerSF.get_outputs("tt")],
+            [
+                triggers.TTGenerateDoubleTauJetTriggerFlags.output_group,
+            ],
         )
         configuration.add_outputs(
             "em",
             [
-                scalefactors.SingleMuTriggerSF.output_group,
-                scalefactors.SingleEleTriggerSF.output_group,
                 ] + [p for p in scalefactors.EleID_SF.get_outputs("em")
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("em")
             ],
@@ -1647,21 +1591,10 @@ def build_config(
         configuration.add_outputs(
             scopes,
             [
-                nanoAODv15.HTXS_Higgs_pt,
-                nanoAODv15.HTXS_Higgs_y,
-                nanoAODv15.HTXS_njets25,
-                nanoAODv15.HTXS_njets30,
-                nanoAODv15.HTXS_stage1_1_cat_pTjet25GeV,
-                nanoAODv15.HTXS_stage1_1_cat_pTjet30GeV,
-                nanoAODv15.HTXS_stage1_1_fine_cat_pTjet25GeV,
-                nanoAODv15.HTXS_stage1_1_fine_cat_pTjet30GeV,
                 nanoAODv15.HTXS_stage1_2_cat_pTjet25GeV,
                 nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV,
                 nanoAODv15.HTXS_stage1_2_fine_cat_pTjet25GeV,
                 nanoAODv15.HTXS_stage1_2_fine_cat_pTjet30GeV,
-                nanoAODv15.HTXS_stage_0,
-                nanoAODv15.HTXS_stage_1_pTjet25,
-                nanoAODv15.HTXS_stage_1_pTjet30,
             ],
         )
 

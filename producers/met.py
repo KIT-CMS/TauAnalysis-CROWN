@@ -1,5 +1,3 @@
-from code_generation.quantity import NanoAODQuantity
-
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv12
 from code_generation.helpers import defaults
@@ -183,6 +181,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
     with defaults(call='''lorentzvector::GetPt({df}, {output}, {input})'''):
         MetPt = Producer(input=[q.puppimet_p4_recoilcorrected], output=[q.puppimet])
+        MetPt_norec = Producer(input=[q.puppimet_p4_leptoncorrected], output=[q.puppimet_norec])
         MetPt_Run3 = Producer(input=[q.puppimet_p4_unclustered_corrected], output=[q.puppimet])
         PFMetPt = Producer(input=[q.pfmet_p4_recoilcorrected], output=[q.pfmet])
 
@@ -200,6 +199,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
+                MetPt_norec,
             ],
         )
         MetCorrections_v12 = ProducerGroup(
@@ -210,6 +210,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
                 ApplyUnclusteredMetShift,
                 MetPt_Run3,
                 MetPhi_Run3,
+                MetPt_norec,
             ],
         )
         PFMetCorrections = ProducerGroup(

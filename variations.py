@@ -15,7 +15,6 @@ from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
 from code_generation.systematics import get_add_shift
-from .tau_triggersetup import RUN2_ERAS, DOUBLETAU_HPS_ERAS
 
 # Map internal era names to JERC JSON era names for JERC sources
 ERA_MAP = {
@@ -65,24 +64,24 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Pileup Shifts
     #########################
-    # if era == "2025":
-    #     add_shift(
-    #         name=f"PileUp",
-    #         shift_key="PU_reweighting_variation",
-    #         shift_map={"Up": "data/root_pileup/Data_PileUp_2025_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_66p0168.root"},
-    #         scopes="global",
-    #         producers=[event.PUweights],
-    #         exclude_samples=["data", "embedding", "embedding_mc"],
-    #     )
-    # else:
-    add_shift(
-        name=f"CMS_pileup_{shift_era_tag}",
-        shift_key="PU_reweighting_variation",
-        shift_map={"Up": "up", "Down": "down"},
-        scopes="global",
-        producers=[event.PUweights],
-        exclude_samples=["data", "embedding", "embedding_mc"],
-    )
+    if era == "2025" or era == "2026":
+        add_shift(
+            name=f"PileUp",
+            shift_key="PU_reweighting_variation",
+            shift_map={"Up": "data/root_pileup/Data_PileUp_2025_2026_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_2026_66p0168.root"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
+    else:
+        add_shift(
+            name=f"CMS_pileup_{shift_era_tag}",
+            shift_key="PU_reweighting_variation",
+            shift_map={"Up": "up", "Down": "down"},
+            scopes="global",
+            producers=[event.PUweights],
+            exclude_samples=["data", "embedding", "embedding_mc"],
+        )
 
     #########################
     # Prefiring Shifts
@@ -116,10 +115,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         producers=[muons.MuonPtCorrection],
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
-        add_shift(name=f"CMS_scale_m_stat", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
-        add_shift(name=f"CMS_scale_m_syst{shift_era_tag}", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
-        add_shift(name=f"CMS_res_m_stat", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
-        add_shift(name=f"CMS_res_m_syst_{shift_era_tag}", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
+        add_shift(name=f"CMS_scale_m_stat_{shift_era_tag}", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
+        add_shift(name=f"CMS_scale_m_syst", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
+        add_shift(name=f"CMS_res_m_stat_{shift_era_tag}", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
+        add_shift(name=f"CMS_res_m_syst", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
 
     #########################
     # Muon ID shifts
@@ -197,7 +196,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     configuration.add_shift(
         SystematicShiftByQuantity(
-            name=f"CMS_scale_met_unclustered_energyUp_{shift_era_tag}",
+            name=f"CMS_scale_met_unclustered_energy_{shift_era_tag}Up",
             quantity_change={
                 nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredUp",
                 nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredUp",
@@ -208,7 +207,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     )
     configuration.add_shift(
         SystematicShiftByQuantity(
-            name=f"CMS_scale_met_unclustered_energyDown_{shift_era_tag}",
+            name=f"CMS_scale_met_unclustered_energy_{shift_era_tag}Down",
             quantity_change={
                 nanoAODv15.PuppiMET_pt: "PuppiMET_ptUnclusteredDown",
                 nanoAODv15.PuppiMET_phi: "PuppiMET_phiUnclusteredDown",
@@ -308,24 +307,25 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         for pt in ["20to40", "40toInf"]:
                             add_shift(name=f"CMS_scale_t_DM{dm_num}_genTau_pT{pt}", shift_key=f"tau_ES_shift_{dm}{pt}")
 
-        elif int(era[:4]) >= 2022 and int(era[:4]) < 2024:
-            with defaults(scopes=("et", "mt", "tt")):
-                with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
-                    for dm in ["0", "1", "10", "11"]:
-                        # genuine tau
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
-                        # ele fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
-                        # muon fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
-        elif int(era[:4]) >= 2024:
+        elif int(era[:4]) == 2024:
             with defaults(scopes=("et", "mt", "tt")): #is there a reason not to apply this everywhere?
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
                         for pt in ["20to40", "40to60", "60toInf"]:
                             add_shift(name=f"CMS_scale_t_DM{dm}_genTau_pT{pt}_{shift_era_tag}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                        # ele fake
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        # muon fake
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
+        else:
+            # 2022, 2023, 2025, 2026: one TES per DM (correlated across pt), same scheme for all these eras
+            with defaults(scopes=("et", "mt", "tt")):
+                with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
+                    for dm in ["0", "1", "10", "11"]:
+                        # genuine tau
+                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
                         # ele fake
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
                         add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
@@ -491,6 +491,17 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     shift_map={"Up": ["central", "up_uncorrelated"], "Down": ["central", "down_uncorrelated"]},
                 )
 
+        def add_jet_leg_trigger_shift(jes_source):
+            # from 2024 on the jet leg SF of the DiTau+Jet trigger depends on the JES source and follows its shifts
+            if int(era[:4]) >= 2024:
+                add_shift(
+                    scopes="tt",
+                    shift_key="trigger_jet_syst_var",
+                    shift_map={"Up": f"leading_jet_pt_nomJer_{jes_source}_up", "Down": f"leading_jet_pt_nomJer_{jes_source}_down"},
+                    producers=[scalefactors.DiTauJet_JetTriggerSF],
+                    exclude_samples=["data", "embedding", "embedding_mc"],
+                )
+
         with defaults(scopes="global", producers=[JES_CONFIG.jet_pt_correction_producer]):
             add_shift(name=f"CMS_res_j_{era_tag}", shift_key="jet_jer_shift", shift_map={"Up": "up", "Down": "down"})
             if era == "2018":  # --- HEM 15/16 issue ---
@@ -514,6 +525,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     scopes=("mt", "et", "tt"),
                     producers=[scalefactors.btagging_SF]
                 )
+            add_jet_leg_trigger_shift("Total")
 
         if not JES_CONFIG.REGROUPED:
             for name in [
@@ -596,6 +608,8 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                         producers=[JES_CONFIG.jet_pt_correction_producer],
                     )
 
+                    add_jet_leg_trigger_shift(f"Regrouped_{name}_2024" if is_yearly else JES_source)
+
                     if int(era[:4]) < 2022:
                         btag_variation_source = f"{name}_{era}" if is_yearly else name
                         add_shift(
@@ -608,227 +622,29 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # Trigger scale factor shifts (Run 3)
     #########################
-    for variation in ["up", "down"]:
-        configuration.add_shift(
-            SystematicShift(
-                name=f"CMS_eff_e_trigger{variation.upper()}",
-                shift_config={
-                    ("et"): {
-                        "singleelectron_trigger_sf": [
-                            {
-                                "singleelectron_trigger_flagname": "trg_wgt_single_ele30",
-                                "singleelectron_trigger_flag": "trg_single_ele30",
-                                "singleelectron_trigger_sf_name": "Electron-HLT-SF",
-                                "singleelectron_trigger_path_id_name": "HLT_SF_Ele30_MVAiso90ID",
-                                "singleelectron_trigger_variation": f"sf{variation}",
-                            },
-                        ],
-                    }
-                },
-                producers={("et"): scalefactors.SingleEleTriggerSF},
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"CMS_trig_etau_cross{variation.upper()}",
-                shift_config={
-                    ("et"): {
-                        "eletau_cross_trigger_leg1_sf": [
-                            {
-                                "eletau_cross_trigger_leg1_flagname": "trg_wgt_ele24tau30_leg1",
-                                "eletau_cross_trigger_flag": EraModifier(
-                                    {"2025": "trg_cross_ele24tau30_pnet", "2026": "trg_cross_ele24tau30_pnet"},
-                                    default="trg_cross_ele24tau30_hps",
-                                ),
-                                "eletau_cross_trigger_leg1_sf_name": "Electron-HLT-SF",
-                                "eletau_cross_trigger_leg1_path_id_name": "HLT_SF_Ele24_TightID",
-                                "eletau_cross_trigger_leg1_variation": f"sf{variation}",
-                            },
-                        ],
-                        "eletau_cross_trigger_leg2_sf": [
-                            {
-                                "eletau_cross_trigger_leg2_flagname": "trg_wgt_ele24tau30_leg2",
-                                "eletau_cross_trigger_flag": EraModifier(
-                                    {"2025": "trg_cross_ele24tau30_pnet", "2026": "trg_cross_ele24tau30_pnet"},
-                                    default="trg_cross_ele24tau30_hps",
-                                ),
-                                "eletau_cross_trigger_leg2_sf_name": "etau",
-                                "eletau_cross_trigger_leg2_variation": variation,
-                            },
-                        ]
-                    },
-                },
-                producers={
-                    ("et"): [
-                        scalefactors.EleTauTriggerSF,
-                    ],
-                },
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
-        configuration.add_shift(
-                SystematicShift(
-                    name=f"CMS_eff_m_trigger_syst{variation.upper()}",
-                    shift_config={
-                        ("mt"): {
-                            "singlemuon_trigger_sf": [
-                                {
-                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
-                                    "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": f"syst{variation}",
-                                },
-                            ],
-                        }
-                    },
-                    producers={("mt"): scalefactors.SingleMuTriggerSF},
-                ),
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            )
-        configuration.add_shift(
-                SystematicShift(
-                    name=f"CMS_eff_m_trigger_stat_{shift_era_tag}{variation.upper()}",
-                    shift_config={
-                        ("mt"): {
-                            "singlemuon_trigger_sf": [
-                                {
-                                    "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
-                                    "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": f"stat{variation}",
-                                },
-                            ],
-                        }
-                    },
-                    producers={("mt"): scalefactors.SingleMuTriggerSF},
-                ),
-                exclude_samples=["data", "embedding", "embedding_mc"],
-            )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"CMS_trig_mutau_cross_syst{variation.upper()}",
-                shift_config={
-                    ("mt"): {
-                        "mutau_trigger_leg1_sf": [
-                            {
-                                "mutau_cross_trigger_flag": EraModifier(
-                                    {"2025": "trg_cross_mu20tau27_pnet", "2026": "trg_cross_mu20tau27_pnet"},
-                                    default="trg_cross_mu20tau27_hps",
-                                ),
-                                "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                                "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
-                                "mutau_cross_trigger_leg1_variation": f"syst{variation}",
-                            },
-                        ],
-                        "mutau_trigger_leg2_sf": [
-                            {
-                                "mutau_cross_trigger_flag": EraModifier(
-                                    {"2025": "trg_cross_mu20tau27_pnet", "2026": "trg_cross_mu20tau27_pnet"},
-                                    default="trg_cross_mu20tau27_hps",
-                                ),
-                                "mutau_cross_trigger_leg2_flagname": "trg_wgt_mu20tau27_leg2",
-                                "mutau_cross_trigger_leg2_sf_name": "mutau",
-                                "mutau_cross_trigger_leg2_variation": variation,
-                            },
-                        ],
-                    },
-                },
-                producers={
-                    ("mt"): [
-                        scalefactors.MuTauTriggerSF,
-                    ],
-                },
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"CMS_trig_mutau_cross_stat_{shift_era_tag}{variation.upper()}",
-                shift_config={
-                    ("mt"): {
-                        "mutau_trigger_leg1_sf": [
-                            {
-                                "mutau_cross_trigger_flag": EraModifier(
-                                    {"2025": "trg_cross_mu20tau27_pnet", "2026": "trg_cross_mu20tau27_pnet"},
-                                    default="trg_cross_mu20tau27_hps",
-                                ),
-                                "mutau_cross_trigger_leg1_flagname": "trg_wgt_mu20tau27_leg1",
-                                "mutau_cross_trigger_leg1_sf_name": "NUM_IsoMu20_DEN_CutBasedIdTight_and_PFIsoTight",
-                                "mutau_cross_trigger_leg1_variation": f"stat{variation}",
-                            },
-                        ],
-                    },
-                },
-                producers={
-                    ("mt"): [
-                        scalefactors.MuTauTriggerSF,
-                    ],
-                },
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
-        configuration.add_shift(
-            SystematicShift(
-                name=f"CMS_trig_t_ditau_cross{variation.upper()}",
-                shift_config={
-                    ("tt"): {
-                        "doubletau_trigger_leg1_sf": [
-                            {
-                                "doubletau_trigger_leg1_flagname": EraModifier(
-                                    {
-                                        **{era: '""' for era in RUN2_ERAS},
-                                        **{era: "trg_wgt_doubletau35_leg1" for era in DOUBLETAU_HPS_ERAS},
-                                    },
-                                    default="trg_wgt_doubletau30_leg1",  # 2024, 2025, 2026
-                                ),
-                                "doubletau_trigger_flag": EraModifier(
-                                    {
-                                        **{era: '""' for era in RUN2_ERAS},
-                                        **{era: "trg_double_tau35_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
-                                    },
-                                    default="trg_double_tau30_mediumiso_pnet",  # 2024, 2025, 2026
-                                ),
-                                "doubletau_trigger_leg1_sf_name": EraModifier(
-                                    {era: '""' for era in RUN2_ERAS},
-                                    default="ditau",  # all Run 3 eras
-                                ),
-                                "doubletau_trigger_leg1_variation": variation,
-                            },
-                        ],
-                        "doubletau_trigger_leg2_sf": [
-                            {
-                                "doubletau_trigger_leg2_flagname": EraModifier(
-                                    {
-                                        **{era: '""' for era in RUN2_ERAS},
-                                        **{era: "trg_wgt_doubletau35_leg2" for era in DOUBLETAU_HPS_ERAS},
-                                    },
-                                    default="trg_wgt_doubletau30_leg2",  # 2024, 2025, 2026
-                                ),
-                                "doubletau_trigger_flag": EraModifier(
-                                    {
-                                        **{era: '""' for era in RUN2_ERAS},
-                                        **{era: "trg_double_tau35_mediumiso_hps" for era in DOUBLETAU_HPS_ERAS},
-                                    },
-                                    default="trg_double_tau30_mediumiso_pnet",  # 2024, 2025, 2026
-                                ),
-                                "doubletau_trigger_leg2_sf_name": EraModifier(
-                                    {era: '""' for era in RUN2_ERAS},
-                                    default="ditau",  # all Run 3 eras
-                                ),
-                                "doubletau_trigger_leg2_variation": variation,
-                            },
-                        ],
-                    },
-                },
-                producers={
-                    ("tt"): [
-                        scalefactors.DoubleTauTriggerSF,
-                    ],
-                },
-            ),
-            exclude_samples=["data", "embedding", "embedding_mc"],
-        )
+    # The lepton legs are correlated between the single and the cross trigger, the jet leg is
+    # uncorrelated with the taus, and the lepton and jet legs are decorrelated between the years.
+    if int(era[:4]) >= 2022:
+        with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
+            add_shift(name=f"CMS_eff_e_trigger_{shift_era_tag}", scopes="et", shift_key="trigger_electron_variation", shift_map={"Up": "sfup", "Down": "sfdown"}, producers=[scalefactors.ElectronTriggerSF])
+            # systup/systdown are the combined stat+syst variations (XPOG convention)
+            add_shift(name=f"CMS_eff_m_trigger_{shift_era_tag}", scopes=("mt", "em"), shift_key="trigger_muon_variation", shift_map={"Up": "systup", "Down": "systdown"}, producers={"mt": [scalefactors.MuonTriggerSF], "em": [scalefactors.SingleMuonTriggerSF_em]})
+            # tau legs (TauPOG combined up/down of the SF)
+            for trigger, scope, key, group in [
+                ("etau", "et", "trigger_tau_variation", scalefactors.TauCrossTriggerSF),
+                ("mutau", "mt", "trigger_tau_variation", scalefactors.TauCrossTriggerSF),
+                ("ditau", "tt", "trigger_ditau_variation", scalefactors.DiTauTriggerSF),
+                ("ditaujet", "tt", "trigger_ditaujet_variation", scalefactors.DiTauJet_TauTriggerSF),
+            ]:
+                add_shift(
+                    name=f"CMS_trig_t_{trigger}_Medium_eff_{shift_era_tag}",
+                    scopes=scope,
+                    shift_key=key,
+                    shift_map={"Up": "up", "Down": "down"},
+                    producers=[group],
+                )
+            with defaults(shift_map={"Up": "up", "Down": "down"}):
+                add_shift(name=f"CMS_trig_j_ditaujet_{shift_era_tag}", scopes="tt", shift_key="trigger_jet_variation", producers=[scalefactors.DiTauJet_JetTriggerSF])
 
     #########################
     # Trigger scale factor shifts (Run 2, embedding framework)

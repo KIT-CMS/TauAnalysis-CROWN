@@ -1,4 +1,3 @@
-# from code_generation.quantity import Quantity
 from code_generation.quantity import Quantity
 
 # Quantity name is set to the name of the variable automatically.
