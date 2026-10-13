@@ -678,15 +678,13 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
             scopes_list,
             [weight_producers.SampleNormalization],
         )
-        # TEMP: STXS norm tables disabled
-        # if sample in STXS_SAMPLES:
-        #     configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
-        #     configuration.add_outputs(scopes_list, [q.stxs_family])
-        # else:
-        configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
+        if sample in STXS_SAMPLES:
+            configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
+            configuration.add_outputs(scopes_list, [q.stxs_family])
+        else:
+            configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
         weight_scopes = [s for s in scopes_list if s in ("et", "mt", "tt", "em")]
-        # TEMP: STXS/LHE-scale tables disabled
-        if False:  # if sample in STXS_SAMPLES and era not in RUN2_ERAS:
+        if sample in STXS_SAMPLES and era not in RUN2_ERAS:
             ggh = sample in GGH_SAMPLES
             reweight = [
                 *([weight_producers.IsGGHFamily, weight_producers.GGHNNLOFactor, weight_producers.GGHReweight] if ggh else []),
@@ -733,6 +731,7 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                     "luminosity_pb": EraModifier(weight_producers.LUMI_PB),
                     "mc_campaign_split_factor": EraModifier(weight_producers.MC_CAMPAIGN_SPLIT_FACTOR, default=1.0),
+                    "puweight_type": EraModifier(weight_producers.PUWEIGHT_TYPE, default="double"),
                 },
             )
             if scope in ["et", "mt", "tt", "em"]:

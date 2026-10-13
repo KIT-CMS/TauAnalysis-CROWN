@@ -13,6 +13,8 @@ LUMI_PB = {
 }
 # 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
 MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
+# puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
+PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
 # {norm_table_path} set by shapes_preparation.py's build_norm_table()
 SampleNormalization = Producer(
@@ -66,7 +68,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         NormSigned = Producer(input=[q.weight_xsec_ngen, q.weight_gen_sign], output=[q.weight_norm_signed])
         NormLumi = Producer(input=[q.weight_norm_signed, q.weight_lumi], output=[q.weight_norm_lumi])
         NormStxs = Producer(input=[q.weight_norm_lumi, q.stxs_norm_weight], output=[q.weight_norm_stxs])
-        NormPileup = Producer(input=[q.weight_norm_stxs, q.puweight], output=[q.weight_norm_pileup])
+    NormPileup = Producer(call='''event::quantity::Product<double,{puweight_type}>({df}, {output}, {input})''', input=[q.weight_norm_stxs, q.puweight], output=[q.weight_norm_pileup])
 
 ##############################################################################
 # lepton and tau ID scale factors
