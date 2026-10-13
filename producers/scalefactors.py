@@ -591,20 +591,20 @@ with defaults(scopes=["tt"]):
     )
     # the jet leg has no centrally provided POG SF, it is provided by the HHbbTauTau group
     DiTauJet_JetTriggerSF_Leg = Producer(
-        call='''trigger::JetLegScaleFactor({df}, correctionManager, {output}, {input}, "{trigger_ditaujet_flag}", "{trigger_jet_leg_file}", "{trigger_jet_leg_name}", "{trigger_jet_variation}", "{trigger_jet_syst_var}")''',
+        call='''physicsobject::tau::scalefactor::TriggerJetLeg({df}, correctionManager, {output}, {input}, "{trigger_ditaujet_flag}", "{trigger_jet_leg_file}", "{trigger_jet_leg_name}", "{trigger_jet_variation}", "{trigger_jet_syst_var}")''',
         input=[q.jet_p4_1],
         output=[q.trg_sf_jet],
     )
 
 SingleOrCrossTriggerSF = Producer(
-    call='''trigger::SingleOrCrossScaleFactor({df}, {output}, "{trigger_single_flag}", {input})''',
+    call='''trigger::SelectScaleFactor({df}, {output}, "{trigger_single_flag}", {input_vec}, 1)''',
     input=[q.trg_sf_single, q.trg_sf_lepton, q.trg_sf_tau],
     output=[q.trg_wgt],
     scopes=["et", "mt"],
 )
 
 DiTauOrDiTauJetTriggerSF = Producer(
-    call='''trigger::DiTauOrDiTauJetScaleFactor({df}, {output}, "{trigger_ditau_flag}", {input})''',
+    call='''trigger::SelectScaleFactor({df}, {output}, "{trigger_ditau_flag}", {input_vec}, 2)''',
     input=[q.trg_sf_ditau_1, q.trg_sf_ditau_2, q.trg_sf_ditaujet_1, q.trg_sf_ditaujet_2, q.trg_sf_jet],
     output=[q.trg_wgt],
     scopes=["tt"],
