@@ -521,6 +521,7 @@ with defaults(scopes=["et", "mt", "tt"]):
             "{tau_id_algorithm}VSjet",
             "{vsjet_tau_id_WP}",
             "{tau_vsjet_vseleWP}",
+            "{tau_vsjet_vsmuWP}",
             "{tau_vsjet_sf_dependence}",
             "{tau_sf_vsjet_variation}")''',
         input=[

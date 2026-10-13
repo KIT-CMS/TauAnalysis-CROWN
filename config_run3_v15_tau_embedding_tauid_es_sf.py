@@ -716,6 +716,7 @@ def build_config(
             "vsmu_tau_wp_cut": 1,
             # tau vs jet wp
             "tau_vsjet_vseleWP": "VVLoose",
+            "tau_vsjet_vsmuWP":  '""',
         },
     )
     configuration.add_config_parameters(
