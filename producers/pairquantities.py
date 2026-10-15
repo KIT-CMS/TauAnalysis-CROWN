@@ -3,7 +3,6 @@ from ..quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer, SwitchProducer
 
-
 ####################
 # Set of general producers for DiTauPair Quantities
 ####################
@@ -572,13 +571,13 @@ with defaults(scopes=["mt", "et", "tt", "em", "ee", "mm"]):
                 pt_tt,
                 pt_ttjj,
                 mt_tot,
-                Pzetamissvis_pf,
-                mTdileptonMET_pf,
-                mt_1_pf,
-                mt_2_pf,
-                pt_tt_pf,
-                pt_ttjj_pf,
-                mt_tot_pf,
+                # Pzetamissvis_pf,
+                # mTdileptonMET_pf,
+                # mt_1_pf,
+                # mt_2_pf,
+                # pt_tt_pf,
+                # pt_ttjj_pf,
+                # mt_tot_pf,
                 pt_dijet,
                 jet_hemisphere,
             ],
