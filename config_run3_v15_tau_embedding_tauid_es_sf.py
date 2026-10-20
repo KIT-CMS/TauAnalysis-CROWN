@@ -943,9 +943,6 @@ def build_config(
         (["mt"],AppendProducer, [scalefactors.MTGenerateSingleMuonTriggerSF_MC, scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC,], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         (["mm"],AppendProducer, [scalefactors.PrivateMuonIDSF_1_MC, scalefactors.PrivateMuonIsoSF_1_MC, scalefactors.PrivateMuonIDSF_2_MC, scalefactors.PrivateMuonIsoSF_2_MC, scalefactors.MTGenerateSingleMuonTriggerSF_MC,], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
-        # separate MC for 2024 and 2025 by even/odd event number
-        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2024"]}),
-        ("global",AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
         ("global", RemoveProducer, [jets.JetMassCorrection], {}), # is imported through JetEnergyCorrectionSwitch.get(era) but not needed for this analysis
 
     ]:
