@@ -241,6 +241,7 @@ def build_config(
                 default=4.7,
             ),
             "jet_eta_3": 4.7,
+            "recoil_jet_eta_hf": 3.0,
             "jet_id": 2,  #2==pass tight ID and fail tightLepVeto, 6== pass tight and pass tightLepVeto, new minimal selection https://cms-talk.web.cern.ch/t/updated-jet-selection-criterion-for-jet-veto-map/130527
             # bjet selection -> need to be in global
             "min_bjet_pt": 20,
@@ -582,11 +583,8 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
-            "applyRecoilCorrections": EraModifier( #apply only to single boson processes, not in 2023
-                {
-                    "2023preBPix": False,
-                    "2023postBPix": False,
-                },
+            "applyRecoilCorrections": EraModifier( #apply only to single boson processes
+                {},
                 default=sample in [
                     "dyjets",
                     "dyjets_powheg",
@@ -1172,6 +1170,8 @@ def build_config(
             jets.LooseJets_HighEta,
             jets.GoodJets_loose,
             jets.GoodJets_tight,
+            jets.RecoilJets_HighEta,
+            jets.RecoilJets,
             jets.GoodJetsSwitch.get(era),
             jets.GoodBJetsSwitch.get(era),
             event.DiLeptonVetoSwitch.get(era),
@@ -1422,7 +1422,7 @@ def build_config(
         "bjet_p4_1", "bjet_p4_2", "jet_p4_1", "jet_p4_2", "p4_dijet", "p4_dilepton", "rawmet_p4",
         "puppimet_p4", "puppimet_p4_jetcorrected", "puppimet_p4_leptoncorrected",
         "puppimet_p4_recoilcorrected", "puppimet_p4_unclustered_corrected",
-        "metcov10", "is_global_1", "is_global_2", "jtag_value_1", "jtag_value_2", "taujet_pt_1", "taujet_pt_2",
+        "metcov10", "is_global_1", "is_global_2", "jtag_value_1", "jtag_value_2", "taujet_pt_1", "taujet_pt_2", "recoil_jets_mask_vetoed",
     }
 
     def used(group, scope):

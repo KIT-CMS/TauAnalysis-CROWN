@@ -226,6 +226,7 @@ with defaults(scopes=["global"]):
         JetEtaCut_Max1 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_1})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max2 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_2})''', input=[nanoAODv15.Jet_eta])
         JetEtaCut_Max3 = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {jet_eta_3})''', input=[nanoAODv15.Jet_eta], output=[q.jet_eta_mask_max])
+        JetEtaCut_MinRecoil = Producer(call='''physicsobject::CutAbsMin<float>({df}, {output}, {input}, {recoil_jet_eta_hf})''', input=[nanoAODv15.Jet_eta])
 
         BJetPtCut = Producer(call='''physicsobject::CutGreater<float>({df}, {output}, {input}, {min_bjet_pt})''', input=[q.jet_pt_corrected])
         BJetEtaCut = Producer(call='''physicsobject::CutAbsSmaller<float>({df}, {output}, {input}, {max_bjet_eta})''', input=[nanoAODv15.Jet_eta])
@@ -271,7 +272,19 @@ with defaults(scopes=["global"]):
         subproducers=[JetPtCut_tight, JetEtaCut_Min1, JetEtaCut_Max2],
     )
     
+    # recoil derivation jets: pt>30 & 3 <= |eta| < 4.7 & id in every era (pt>50 only in the horn)
+    RecoilJets_HighEta = ProducerGroup(
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
+        input=[q.jet_id_mask, q.jet_pt_mask_loose, q.jet_eta_mask_max],
+        output=[q.recoil_jets_mask_higheta],
+        subproducers=[JetEtaCut_MinRecoil],
+    )
+
     with defaults(call='''physicsobject::CombineMasks({df}, {output}, {input}, "any_of")'''):
+        RecoilJets = Producer(
+            input=[q.loose_jets_mask_loweta, q.recoil_jets_mask_higheta, q.good_jets_mask_tight],
+            output=[q.recoil_jets_mask],
+        )
         # (pt>30 & (|eta| < 2.5 || 3 <= |eta| < 4.7) & id) || (pt>50 & 2.5 <= |eta| < 3/4.7 (2022 and 2023) & id) for run 3
         GoodJets = Producer(
             input=[q.good_jets_mask_loose, q.good_jets_mask_tight],
@@ -402,6 +415,17 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
         input=[q.good_jet_collection],
         output=[q.njets],
     )
+    RecoilJetsWithVeto = Producer(
+        call='''physicsobject::CombineMasks({df}, {output}, {input}, "all_of")''',
+        input=[q.recoil_jets_mask, q.jet_overlap_veto_mask],
+        output=[q.recoil_jets_mask_vetoed],
+    )
+    NumberOfRecoilJets = ProducerGroup(
+        call='''physicsobject::Count({df}, {output}, {input})''',
+        input=[],
+        output=[q.njets_recoil],
+        subproducers=[RecoilJetsWithVeto],
+    )
 
     with defaults(input=[q.jet_p4_1]):
         jpt_1 = Producer(call='''lorentzvector::GetPt({df}, {output}, {input})''', output=[q.jpt_1])
@@ -468,6 +492,7 @@ with defaults(scopes=["mt", "et", "tt", "em", "mm", "ee"]):
                 LVJet1,
                 LVJet2,
                 NumberOfJets,
+                NumberOfRecoilJets,
                 jpt_1,
                 jeta_1,
                 jphi_1,

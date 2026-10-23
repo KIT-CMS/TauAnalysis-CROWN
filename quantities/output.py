@@ -45,6 +45,10 @@ jet_eta_mask_max = Quantity()
 jet_vetomap = Quantity()
 jet_overlap_veto_mask = Quantity()
 njets = Quantity()
+njets_recoil = Quantity()
+recoil_jets_mask = Quantity()
+recoil_jets_mask_higheta = Quantity()
+recoil_jets_mask_vetoed = Quantity()
 nbtag = Quantity()
 jet_p4_1 = Quantity()
 jpt_1 = Quantity()
@@ -98,12 +102,12 @@ btag_weight = Quantity()
 #### event
 
 eventCut_mask = Quantity()
+# Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
+era_split_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
 # raw LHEScaleWeight mu_R = mu_F = 2 / 0.5 of the signal samples, normalized per STXS bin in the friend
-# Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
-era_split_mask = Quantity()
 lhe_scale_up = Quantity()
 lhe_scale_down = Quantity()
 
