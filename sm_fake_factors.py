@@ -53,10 +53,10 @@ NON_CLOSURE = "coarse"
 
 # directory containing fake_factors_<scope>.json.gz and FF_corrections_<scope>.json.gz
 _RUN3_PAYLOADS = {
-    "2022preEE": "payloads/fake_factors/sm/2022/260916",
-    "2022postEE": "payloads/fake_factors/sm/2022/260916",
-    "2023preBPix": "payloads/fake_factors/sm/2023/260916",
-    "2023postBPix": "payloads/fake_factors/sm/2023/260916",
+    "2022preEE": "payloads/fake_factors/sm/2022",
+    "2022postEE": "payloads/fake_factors/sm/2022",
+    "2023preBPix": "payloads/fake_factors/sm/2023",
+    "2023postBPix": "payloads/fake_factors/sm/2023",
     "2024": "payloads/fake_factors/sm/2024",
     "2025": "payloads/fake_factors/sm/2025",
     "2026": "payloads/fake_factors/sm/2025",  # to update later on
