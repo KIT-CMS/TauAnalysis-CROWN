@@ -12,6 +12,7 @@ def run(args):
         "vbf_htautau",
         "vbf_hbb",
         "rem_htautau",
+        "rem_higgs",
         "rem_hbb",
         "embedding",
         "embedding_mc",
