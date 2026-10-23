@@ -286,6 +286,15 @@ with defaults(scopes=["et", "mt"], call='''event::CombineFlags({df}, {output}, {
     _region_inputs_ss_Run2 = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_Run2]
     SR_mask_ss_Run2 = Producer(input=_region_inputs_ss_Run2, output=[q.SR_mask_ss])
 
+    # --- the anti-isolated application region of the fake factors: SR_mask with the tau isolation inverted
+    # (VVVLoose but not the isolation WP), shift-aware
+    def _anti_iso(inputs, leg):
+        iso, vvvloose, noniso = (getattr(q, f"selcut_tau_{name}_{leg}") for name in ("iso", "vvvloose", "noniso"))
+        return [flag for inp in inputs for flag in ((vvvloose, noniso) if inp is iso else (inp,))]
+
+    AR_mask = Producer(input=_anti_iso(_region_inputs, 2), output=[q.AR_mask])
+    AR_mask_Run2 = Producer(input=_anti_iso(_region_inputs_Run2, 2), output=[q.AR_mask])
+
     # --- QCD fake factors ---
     ff_qcd_SRlike = Producer(
         input=[
@@ -761,6 +770,15 @@ with defaults(scopes=["tt"], call='''event::CombineFlags({df}, {output}, {input}
     _region_inputs_tt_ss_Run2 = [q.selcut_ss if inp is q.selcut_os else inp for inp in _region_inputs_tt_Run2]
     SR_mask_ss_tt_Run2 = Producer(input=_region_inputs_tt_ss_Run2, output=[q.SR_mask_ss])
 
+    # --- the anti-isolated application region: exactly one of the two taus fails the isolation, shift-aware ---
+    AR_mask_tt_1 = Producer(input=_anti_iso(_region_inputs_tt, 1), output=[q.AR_mask_leg1])
+    AR_mask_tt_2 = Producer(input=_anti_iso(_region_inputs_tt, 2), output=[q.AR_mask_leg2])
+    AR_mask_tt_1_Run2 = Producer(input=_anti_iso(_region_inputs_tt_Run2, 1), output=[q.AR_mask_leg1])
+    AR_mask_tt_2_Run2 = Producer(input=_anti_iso(_region_inputs_tt_Run2, 2), output=[q.AR_mask_leg2])
+    AR_mask_tt = Producer(
+        call='''event::CombineFlags({df}, {output}, {input}, "any_of")''', input=[q.AR_mask_leg1, q.AR_mask_leg2], output=[q.AR_mask]
+    )
+
     # --- QCD fake factors, leading tau ---
     ff_qcd_SRlike_tt = Producer(
         input=[
@@ -1009,6 +1027,10 @@ class SRMaskSsSwitch(SwitchProducer):
     run2 = SR_mask_ss_Run2
     run3 = SR_mask_ss
 
+class ARMaskSwitch(SwitchProducer):
+    run2 = AR_mask_Run2
+    run3 = AR_mask
+
 class FFQcdSRlikeSwitch(SwitchProducer):
     run2 = ff_qcd_SRlike_Run2
     run3 = ff_qcd_SRlike
@@ -1044,6 +1066,14 @@ class SRMaskTTSwitch(SwitchProducer):
 class SRMaskSsTTSwitch(SwitchProducer):
     run2 = SR_mask_ss_tt_Run2
     run3 = SR_mask_ss_tt
+
+class ARMaskTT1Switch(SwitchProducer):
+    run2 = AR_mask_tt_1_Run2
+    run3 = AR_mask_tt_1
+
+class ARMaskTT2Switch(SwitchProducer):
+    run2 = AR_mask_tt_2_Run2
+    run3 = AR_mask_tt_2
 
 class SRMaskEMSwitch(SwitchProducer):
     run2 = SR_mask_em_Run2

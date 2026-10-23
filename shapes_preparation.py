@@ -1,4 +1,3 @@
-import glob
 import json
 import os
 from typing import List, Union
@@ -7,11 +6,12 @@ from code_generation.friend_trees import FriendTreeConfiguration
 from code_generation.modifiers import EraModifier
 from code_generation.quantity import Quantity
 from code_generation.rules import AppendProducer, RemoveProducer
+from code_generation.systematics import SystematicShift
 
 from .producers import selection as selection
 from .producers import weights as weight_producers
 from .quantities import output as q
-from .config import RUN2_ERAS
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, ZPT_SAMPLES
 from .tau_triggersetup import DOUBLETAU_HPS_ERAS
 
 TEMPLATED_QUANTITY_PRODUCERS = [
@@ -27,12 +27,15 @@ TEMPLATED_QUANTITY_PRODUCERS = [
     selection.TauVVVLooseFlag_2,
 ]
 
+# gen-match-based T/J/L process split, per scope
+GEN_CATEGORY_PRODUCERS = {
+    "et": [selection._gen_category_T_leg1_et, selection._gen_category_T_leg2_et, selection.gen_category_T_et, selection.gen_category_J_et, selection.gen_category_L_et],
+    "mt": [selection._gen_category_T_leg1_mt, selection._gen_category_T_leg2_mt, selection.gen_category_T_mt, selection.gen_category_J_mt, selection.gen_category_L_mt],
+    "tt": [selection._gen_category_T_leg1_tt, selection._gen_category_T_leg2_tt, selection.gen_category_T_tt, selection._gen_category_J_leg1_tt, selection._gen_category_J_leg2_tt, selection.gen_category_J_tt, selection.gen_category_L_tt],
+    "em": [selection._gen_category_T_leg1_em, selection._gen_category_T_leg2_em, selection.gen_category_T_em, selection.gen_category_L_em],
+}
+
 NOMINAL_ONLY_QUANTITIES = (
-    q.presel_mask,
-    q.selcut_tau_noniso_1,
-    q.selcut_tau_noniso_2,
-    q.selcut_tau_vvvloose_1,
-    q.selcut_tau_vvvloose_2,
     q.selcut_lep_antiiso,
     q.selcut_lep_iso_qcd_run2,
     q.selcut_lep_iso_min_qcd_run2,
@@ -285,6 +288,7 @@ def add_selection(
                 selection.TTbarNBtagFlag,
                 selection.SRMaskSwitch.get(era),
                 selection.SRMaskSsSwitch.get(era),
+                selection.ARMaskSwitch.get(era),
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
                 selection.ff_wjets_SRlike,
@@ -311,11 +315,7 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                selection._gen_category_T_leg1_et,
-                selection._gen_category_T_leg2_et,
-                selection.gen_category_T_et,
-                selection.gen_category_J_et,
-                selection.gen_category_L_et,
+                *GEN_CATEGORY_PRODUCERS["et"],
             ],
         )
         configuration.add_outputs(
@@ -324,6 +324,7 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.AR_mask,
                 q.gen_category_T,
                 q.gen_category_J,
                 q.gen_category_L,
@@ -387,6 +388,7 @@ def add_selection(
                 selection.TTbarNBtagFlag,
                 selection.SRMaskSwitch.get(era),
                 selection.SRMaskSsSwitch.get(era),
+                selection.ARMaskSwitch.get(era),
                 selection.FFQcdSRlikeSwitch.get(era),
                 selection.FFQcdARlikeSwitch.get(era),
                 selection.ff_wjets_SRlike,
@@ -413,11 +415,7 @@ def add_selection(
                 selection.ff_wjets_AR_SR_ARlike,
                 selection.ff_wjets_AR_SR_SRlike_ss,
                 selection.ff_wjets_AR_SR_ARlike_ss,
-                selection._gen_category_T_leg1_mt,
-                selection._gen_category_T_leg2_mt,
-                selection.gen_category_T_mt,
-                selection.gen_category_J_mt,
-                selection.gen_category_L_mt,
+                *GEN_CATEGORY_PRODUCERS["mt"],
             ],
         )
         configuration.add_outputs(
@@ -426,6 +424,7 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.AR_mask,
                 q.gen_category_T,
                 q.gen_category_J,
                 q.gen_category_L,
@@ -485,6 +484,9 @@ def add_selection(
                 selection.TauVVVLooseFlag_2,
                 selection.SRMaskTTSwitch.get(era),
                 selection.SRMaskSsTTSwitch.get(era),
+                selection.ARMaskTT1Switch.get(era),
+                selection.ARMaskTT2Switch.get(era),
+                selection.AR_mask_tt,
                 selection.ff_qcd_SRlike_tt,
                 selection.ff_qcd_ARlike_tt,
                 selection.ff_qcd_sub_SRlike_tt,
@@ -501,13 +503,7 @@ def add_selection(
                 selection.ff_qcd_sub_DR_SR_ARlike_tt,
                 selection.ff_qcd_sub_AR_SR_SRlike_tt,
                 selection.ff_qcd_sub_AR_SR_ARlike_tt,
-                selection._gen_category_T_leg1_tt,
-                selection._gen_category_T_leg2_tt,
-                selection.gen_category_T_tt,
-                selection._gen_category_J_leg1_tt,
-                selection._gen_category_J_leg2_tt,
-                selection.gen_category_J_tt,
-                selection.gen_category_L_tt,
+                *GEN_CATEGORY_PRODUCERS["tt"],
             ],
         )
         configuration.add_outputs(
@@ -516,6 +512,7 @@ def add_selection(
                 q.presel_mask,
                 q.SR_mask,
                 q.SR_mask_ss,
+                q.AR_mask,
                 q.gen_category_T,
                 q.gen_category_J,
                 q.gen_category_L,
@@ -557,10 +554,7 @@ def add_selection(
                 selection.MuonIsoFlag_em,
                 selection.SRMaskEMSwitch.get(era),
                 selection.SRMaskSsEMSwitch.get(era),
-                selection._gen_category_T_leg1_em,
-                selection._gen_category_T_leg2_em,
-                selection.gen_category_T_em,
-                selection.gen_category_L_em,
+                *GEN_CATEGORY_PRODUCERS["em"],
             ],
         )
         configuration.add_outputs(
@@ -598,36 +592,14 @@ def add_selection(
     for mod_scopes, rule_cls, producers, rule_filter in [
         (["et", "mt", "tt", "em"], RemoveProducer, [selection.JetVetoMapFlag], {"eras": RUN2_ERAS}),
         (["et", "mt"], AppendProducer, [selection.LepIsoQCDWindowFlag_Run2], {"eras": RUN2_ERAS}),
+        # no gen matching in data/embedding n-tuples
+        *[([scope], RemoveProducer, producers, {"samples": ["data", "embedding", "embedding_mc"]}) for scope, producers in GEN_CATEGORY_PRODUCERS.items()],
     ]:
         mod_scopes = [s for s in mod_scopes if s in scopes]
         if mod_scopes:
             configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
     return configuration
-
-
-def build_norm_table(output_dir: str, sample_database_root: str = None) -> str:
-    # Writes data/normalization/norm_table.json
-    sample_database_root = sample_database_root or os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "sample_database")
-    table = {}
-    for datasets_path in glob.glob(os.path.join(sample_database_root, "*", "datasets.json")):
-        with open(datasets_path) as f:
-            datasets = json.load(f)
-        for entry in datasets.values():
-            if None in (entry.get("xsec"), entry.get("nevents"), entry.get("generator_weight")):
-                continue
-            table[entry["nick"]] = {
-                "xsec": float(entry["xsec"]),
-                "nevents": float(entry["nevents"]),
-                "generator_weight": float(entry["generator_weight"]),
-            }
-    if not table:
-        raise ValueError(f"build_norm_table: no entries found under {sample_database_root}")
-
-    os.makedirs(output_dir, exist_ok=True)
-    with open(os.path.join(output_dir, "norm_table.json"), "w") as f:
-        json.dump(table, f)
-    return "data/normalization/norm_table.json"
 
 
 def _resolve_templated_quantities(configuration, scope: str, templated_producers=TEMPLATED_QUANTITY_PRODUCERS) -> None:
@@ -695,7 +667,9 @@ def restrict_selection_shifts(configuration, scopes, shifts=None):
 def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
     scopes_list = list(configuration.selected_scopes)
     if sample not in ["data", "embedding", "embedding_mc"]: #don't apply normalisation
-        norm_table_path = build_norm_table(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization"))
+        norm_table_path = "data/normalization/norm_table.json"
+        if not os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), norm_table_path)):
+            raise FileNotFoundError(f"{norm_table_path} missing: run `python -m samplemanager.scripts.build_norm_table --output-dir <CROWN>/data/normalization` in sample_database")
         configuration.add_config_parameters(
             scopes_list,
             {"norm_table_path": norm_table_path},
@@ -704,6 +678,49 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
             scopes_list,
             [weight_producers.SampleNormalization],
         )
+        if sample in STXS_SAMPLES:
+            configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
+            configuration.add_outputs(scopes_list, [q.stxs_family])
+        else:
+            configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
+        weight_scopes = [s for s in scopes_list if s in ("et", "mt", "tt", "em")]
+        if sample in STXS_SAMPLES and era not in RUN2_ERAS:
+            ggh = sample in GGH_SAMPLES
+            reweight = [
+                *([weight_producers.IsGGHFamily, weight_producers.GGHNNLOFactor, weight_producers.GGHReweight] if ggh else []),
+                weight_producers.LHEScale,
+                weight_producers.LHEScaleReweightGGH if ggh else weight_producers.LHEScaleReweight,
+            ]
+            configuration.add_config_parameters(
+                weight_scopes, {"lhe_scale_table_path": "data/normalization/lhe_scale_table.json", "lhe_scale_variation": "nominal"}
+            )
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization", "lhe_scale_table.json")) as f:
+                nuisances = [name for name, bins in json.load(f).items() if bins]
+            for nuisance in nuisances:
+                for direction in ("Up", "Down"):
+                    configuration.add_shift(
+                        SystematicShift(
+                            name=f"{nuisance}{direction}",
+                            shift_config={(s,): {"lhe_scale_variation": f"{nuisance}_{direction.lower()}"} for s in weight_scopes},
+                            producers={(s,): [weight_producers.LHEScale] for s in weight_scopes},
+                        )
+                    )
+        elif sample == "ttbar":
+            reweight = [weight_producers.TopPtFactor, weight_producers.TopPtReweight]
+            configuration.add_config_parameters(weight_scopes, {"top_pt_exponent": 1.0})
+            for direction, exponent in (("Up", 2.0), ("Down", 0.0)):
+                configuration.add_shift(
+                    SystematicShift(
+                        name=f"top_pt_reweighting{direction}",
+                        shift_config={(s,): {"top_pt_exponent": exponent} for s in weight_scopes},
+                        producers={(s,): [weight_producers.TopPtFactor] for s in weight_scopes},
+                    )
+                )
+        elif sample in ZPT_SAMPLES and era not in RUN2_ERAS:
+            reweight = [weight_producers.ZPtReweight]
+        else:
+            reweight = [weight_producers.ConstantReweight]
+        weight_switch = weight_producers.weight_switches(reweight)
         for scope in scopes_list:
             configuration.add_config_parameters(
                 scope,
@@ -714,17 +731,12 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                     "luminosity_pb": EraModifier(weight_producers.LUMI_PB),
                     "mc_campaign_split_factor": EraModifier(weight_producers.MC_CAMPAIGN_SPLIT_FACTOR, default=1.0),
+                    "puweight_type": EraModifier(weight_producers.PUWEIGHT_TYPE, default="double"),
                 },
             )
             if scope in ["et", "mt", "tt", "em"]:
-                weight_switch = {
-                    "et": weight_producers.WeightETSwitch,
-                    "mt": weight_producers.WeightMTSwitch,
-                    "tt": weight_producers.WeightTTSwitch,
-                    "em": weight_producers.WeightEMSwitch,
-                }[scope]
-                configuration.add_producers(scope, [weight_switch.get(era)])
-                configuration.add_outputs(scope, [q.weight])
+                configuration.add_producers(scope, [weight_switch[scope].get(era)])
+                configuration.add_outputs(scope, [q.weight, *([] if era in RUN2_ERAS else [q.weight_no_btag])])
                 _resolve_templated_quantities(configuration, scope, weight_producers.TEMPLATED_QUANTITY_PRODUCERS)
             else:
                 configuration.add_producers(scope, [weight_producers.ConstantWeight])
@@ -740,6 +752,9 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
             ],
         )
         configuration.add_outputs(scopes_list, [q.weight])
+        if era not in RUN2_ERAS and (btag_scopes := [s for s in scopes_list if s in ("et", "mt", "tt", "em")]):
+            configuration.add_producers(btag_scopes, [weight_producers.ConstantWeightNoBtag])
+            configuration.add_outputs(btag_scopes, [q.weight_no_btag])
     configuration.add_outputs(
         scopes_list,
         [
