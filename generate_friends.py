@@ -14,6 +14,7 @@ def run(args):
         "vbf_htautau",
         "vbf_hbb",
         "rem_htautau",
+        "rem_higgs",
         "rem_hbb",
         "embedding",
         "embedding_mc",
@@ -68,6 +69,8 @@ def run(args):
     args.logger.info(f"Era: {era}")
     args.logger.info(f"Shifts: {shifts}")
     args.logger.info(f"Scopes: {scopes}")
+    # configs that are shared between analyses take the analysis name given to generate.py (--analysis)
+    extra = {"analysis": args.analysis.lower()} if "analysis" in inspect.signature(config.build_config).parameters else {}
     for scope in scopes:
         code_generation_config = config.build_config(
             era,
@@ -78,6 +81,7 @@ def run(args):
             available_eras,
             available_scopes,
             args.quantities_map,
+            **extra,
         )
         # check if the config is of type FriendTreeConfiguration
         if not isinstance(code_generation_config, FriendTreeConfiguration):
