@@ -401,6 +401,8 @@ raw_fake_factor_2 = Quantity()
 fake_factor = Quantity()
 fake_factor_1 = Quantity()
 fake_factor_2 = Quantity()
+# the fake factor weight of the anti-isolated region: fake_factor_2 for et/mt, half of the failing tau's one for tt
+ff_weight = Quantity()
 
 raw_qcd_fake_factor_1 = Quantity()
 raw_qcd_fake_factor_2 = Quantity()

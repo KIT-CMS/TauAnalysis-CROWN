@@ -47,7 +47,7 @@ def add_fake_factors(
     # legs: hadronic tau leg index -> suffix of its correction names, e.g. {1: "", 2: "_subleading"}
     # non_closure: "coarse" (compound shifts), "fine" (per variable shifts) or "both"
     # iso_wp: the tau vsJet WP of the signal region, selecting the failing tau of the fully hadronic fake factor weight
-    # ml: leg index -> ONNX models replacing the classic corrections of the terms they list (see ML in sm_fake_factors_generic.py)
+    # ml: leg index -> ONNX models replacing the classic corrections of the terms they list (see ML in sm_fake_factors.py)
     # split_info: also write the terms of every process (fake factor, DR->SR, non-closure) and the fractions
     q = importlib.import_module(f"analysis_configurations.{analysis}.quantities.output")
 
@@ -300,7 +300,7 @@ def add_fake_factors(
     # (TAUER's fake_factors/rename_payload_keys.py converts old ones)
     if (int(era[:4]) >= 2022 or ml) and (legacy := [n for n in shifts if not n.startswith("CMS_fake_t_")]):
         raise ValueError(
-            f"the variation keys of {payloads} do not follow CMS_fake_t_<process>_<uncertainty>_<era>_<channel>, "
+            f"the variation keys of {payloads} do not follow CMS_fake_t_<process>_<uncertainty>_<channel>_<era>, "
             f"e.g. {legacy[0]}"
         )
 
@@ -335,8 +335,8 @@ def _find_processes(corrections, suffix, suffixes, ml_names):
         }
         if process["non_closure"]:
             # the compound stacks one correction per variable, the variable is inserted into the variation names
-            # after the prefix, e.g. CMS_fake_t_QCD_non_closure_CorrStatShift_2024_mtUp
-            # -> CMS_fake_t_QCD_non_closure_<variable>_CorrStatShift_2024_mtUp
+            # after the prefix, e.g. CMS_fake_t_QCD_non_closure_CorrStatShift_mt_2024Up
+            # -> CMS_fake_t_QCD_non_closure_<variable>_CorrStatShift_mt_2024Up
             stack = corrections[non_closure]["stack"]
             process["non_closure_variables"] = [
                 c.removeprefix(f"{name}{suffix}_non_closure_").removesuffix("_correction") for c in stack
@@ -355,16 +355,28 @@ def _find_processes(corrections, suffix, suffixes, ml_names):
 
 def _read_model(analysis, path):
     # input features in the order of the model metadata and number of outputs of an ONNX model
-    import onnx
+    import ROOT
 
-    model = onnx.load(os.path.join("analysis_configurations", analysis, path), load_external_data=False)
-    text = next(entry.value for entry in model.metadata_props if entry.key == "input_tensor")
-    dims = lambda value: [dim.dim_value for dim in value.type.tensor_type.shape.dim]
-    features = tuple(line for line in text.split("\n")[2:] if line)
-    n_inputs = math.prod(dims(model.graph.input[0]))
+    if not hasattr(ROOT, "crown_onnx_meta"):
+        ROOT.gSystem.Load("libonnxruntime.so")
+        ROOT.gInterpreter.Declare("""
+        #include <onnxruntime/core/session/onnxruntime_cxx_api.h>
+        std::tuple<std::string, std::vector<int64_t>, std::vector<int64_t>> crown_onnx_meta(const char *path) {
+            Ort::Env env(ORT_LOGGING_LEVEL_ERROR, "crown_onnx_meta");
+            Ort::Session session(env, path, Ort::SessionOptions());
+            Ort::AllocatorWithDefaultOptions allocator;
+            auto text = session.GetModelMetadata().LookupCustomMetadataMapAllocated("input_tensor", allocator);
+            return {text ? text.get() : "", session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape(),
+                    session.GetOutputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape()};
+        }""")
+    meta = ROOT.crown_onnx_meta(os.path.join("analysis_configurations", analysis, path))
+    text, inputs, outputs = (ROOT.std.get[index](meta) for index in range(3))
+    features = tuple(line for line in str(text).split("\n")[2:] if line)
+    # dynamic (batch) dimensions are -1
+    n_inputs = math.prod(dim for dim in inputs if dim > 0)
     if n_inputs != len(features):
         raise ValueError(f"{path} has {n_inputs} inputs for the {len(features)} features of its metadata")
-    return features, math.prod(dims(model.graph.output[0]))
+    return features, math.prod(dim for dim in outputs if dim > 0)
 
 
 def _quantities(q, layout):

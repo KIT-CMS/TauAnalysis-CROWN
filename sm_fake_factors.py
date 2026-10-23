@@ -5,7 +5,7 @@ from typing import List, Union
 from code_generation.friend_trees import FriendTreeConfiguration
 
 from .config import RUN2_ERAS
-from .producers import fakefactors_generic as ff
+from .producers import fakefactors as ff
 
 # hadronic tau leg index -> suffix of its correction names
 LEGS = {"et": {2: ""}, "mt": {2: ""}, "tt": {1: "", 2: "_subleading"}}
@@ -21,10 +21,10 @@ USE_ML = False
 
 # directory (relative to the analysis folder) containing fake_factors_<scope>.json.gz and FF_corrections_<scope>.json.gz
 _RUN3_PAYLOADS = {
-    "2022preEE": "payloads/fake_factors/sm/2022/260916",
-    "2022postEE": "payloads/fake_factors/sm/2022/260916",
-    "2023preBPix": "payloads/fake_factors/sm/2023/260916",
-    "2023postBPix": "payloads/fake_factors/sm/2023/260916",
+    "2022preEE": "payloads/fake_factors/sm/2022",
+    "2022postEE": "payloads/fake_factors/sm/2022",
+    "2023preBPix": "payloads/fake_factors/sm/2023",
+    "2023postBPix": "payloads/fake_factors/sm/2023",
     "2024": "payloads/fake_factors/sm/2024",
     "2025": "payloads/fake_factors/sm/2025",
     "2026": "payloads/fake_factors/sm/2025",  # to update later on
