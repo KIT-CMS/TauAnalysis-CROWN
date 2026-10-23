@@ -108,13 +108,19 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[nanoAODv15.event],
         output=[q.eventCut_mask],
     )
-    EvenIDFilter = BaseFilter(
-        call='''event::filter::Flag({df}, \"EvenIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
+    EraSplitFlag = Producer(
+        call='''event::quantity::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
+        input=[nanoAODv15.event],
+        output=[q.era_split_mask],
     )
-    OddIDFilter = BaseFilter(
-        call='''event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    Era2024SplitFilter = BaseFilter(
+        call='''event::filter::Flag({df}, \"Era2024SplitFilter\", {input})''',
+        input=[q.era_split_mask],
+    )
+    Era2025SplitFilter = BaseFilter(
+        call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
+        input=[q.era_split_mask],
     )
     TopPtReweighting = Producer(
         call='''event::reweighting::TopPtRun3({df}, {output}, {input})''',
