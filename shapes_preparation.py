@@ -730,7 +730,6 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     "vs_ele_wp": "Tight" if scope == "et" else "VVLoose",
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                     "luminosity_pb": EraModifier(weight_producers.LUMI_PB),
-                    "mc_campaign_split_factor": EraModifier(weight_producers.MC_CAMPAIGN_SPLIT_FACTOR, default=1.0),
                     "puweight_type": EraModifier(weight_producers.PUWEIGHT_TYPE, default="double"),
                 },
             )

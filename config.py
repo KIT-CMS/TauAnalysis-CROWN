@@ -14,6 +14,7 @@ from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
+from .producers.weights import MC_SPLIT_FRACTION
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
@@ -82,6 +83,9 @@ def build_config(
         {
             # noise filters
             "met_filters": default_met_filters,
+
+            # Summer24 MC split between 2024 and 2025/2026
+            "mc_split_fraction": MC_SPLIT_FRACTION,
             
             # for LHE weights
             "isr": 1.0,
@@ -138,7 +142,7 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
-                    "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
+                    "2025": "data/root_pileup/Data_PileUp_2025_2026_69p2.root",
                     "2026": "data/root_pileup/Data_PileUp_2026_69p2.root",
                 }
             ),
@@ -1406,9 +1410,9 @@ def build_config(
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
-        # separate MC for 2024 and 2025 by even/odd event number
-        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 

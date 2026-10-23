@@ -102,6 +102,8 @@ eventCut_mask = Quantity()
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
 # raw LHEScaleWeight mu_R = mu_F = 2 / 0.5 of the signal samples, normalized per STXS bin in the friend
+# Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
+era_split_mask = Quantity()
 lhe_scale_up = Quantity()
 lhe_scale_down = Quantity()
 
