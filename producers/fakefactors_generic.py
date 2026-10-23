@@ -355,16 +355,28 @@ def _find_processes(corrections, suffix, suffixes, ml_names):
 
 def _read_model(analysis, path):
     # input features in the order of the model metadata and number of outputs of an ONNX model
-    import onnx
+    import ROOT
 
-    model = onnx.load(os.path.join("analysis_configurations", analysis, path), load_external_data=False)
-    text = next(entry.value for entry in model.metadata_props if entry.key == "input_tensor")
-    dims = lambda value: [dim.dim_value for dim in value.type.tensor_type.shape.dim]
-    features = tuple(line for line in text.split("\n")[2:] if line)
-    n_inputs = math.prod(dims(model.graph.input[0]))
+    if not hasattr(ROOT, "crown_onnx_meta"):
+        ROOT.gSystem.Load("libonnxruntime.so")
+        ROOT.gInterpreter.Declare("""
+        #include <onnxruntime/core/session/onnxruntime_cxx_api.h>
+        std::tuple<std::string, std::vector<int64_t>, std::vector<int64_t>> crown_onnx_meta(const char *path) {
+            Ort::Env env(ORT_LOGGING_LEVEL_ERROR, "crown_onnx_meta");
+            Ort::Session session(env, path, Ort::SessionOptions());
+            Ort::AllocatorWithDefaultOptions allocator;
+            auto text = session.GetModelMetadata().LookupCustomMetadataMapAllocated("input_tensor", allocator);
+            return {text ? text.get() : "", session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape(),
+                    session.GetOutputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape()};
+        }""")
+    meta = ROOT.crown_onnx_meta(os.path.join("analysis_configurations", analysis, path))
+    text, inputs, outputs = (ROOT.std.get[index](meta) for index in range(3))
+    features = tuple(line for line in str(text).split("\n")[2:] if line)
+    # dynamic (batch) dimensions are -1
+    n_inputs = math.prod(dim for dim in inputs if dim > 0)
     if n_inputs != len(features):
         raise ValueError(f"{path} has {n_inputs} inputs for the {len(features)} features of its metadata")
-    return features, math.prod(dims(model.graph.output[0]))
+    return features, math.prod(dim for dim in outputs if dim > 0)
 
 
 def _quantities(q, layout):
