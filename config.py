@@ -13,6 +13,7 @@ from .producers import pairquantities as pairquantities
 from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
@@ -22,21 +23,6 @@ from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-
-# hadronic tau decay modes the analysis accepts
-# the selection masks cut on the very same list
-TAU_DECAY_MODES = "0,1,10,11"
-
-RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
-
-# sample types with the Z pT reweighting (Run 3 shifts included in the weight, see producers/weights.py)
-ZPT_SAMPLES = ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]
-
-# signal sample types with the ggH NNLOPS reweighting (applied to the ggH family events)
-GGH_SAMPLES = ["ggh_htautau", "rem_htautau", "rem_higgs"]
-
-# signal sample types with HTXS information and the LHEScaleWeight variations of the STXS scheme
-STXS_SAMPLES = ["ggh_htautau", "vbf_htautau", "rem_htautau", "rem_higgs"]
 
 
 def build_config(

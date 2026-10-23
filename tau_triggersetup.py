@@ -1,11 +1,11 @@
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 
+from .constants import RUN2_ERAS
+
 DOUBLETAU_HPS_ERAS = ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix"]
 
 def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
-    from .config import RUN2_ERAS  
-
     #######################
     #trigger definitions  #
     #######################

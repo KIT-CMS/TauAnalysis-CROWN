@@ -4,7 +4,7 @@ from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
 
-from .config import RUN2_ERAS
+from .constants import RUN2_ERAS
 from .producers import fakefactors_generic as ff
 
 # hadronic tau leg index -> suffix of its correction names

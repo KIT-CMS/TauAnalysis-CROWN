@@ -11,7 +11,7 @@ from code_generation.systematics import SystematicShift
 from .producers import selection as selection
 from .producers import weights as weight_producers
 from .quantities import output as q
-from .config import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, ZPT_SAMPLES
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, ZPT_SAMPLES
 from .tau_triggersetup import DOUBLETAU_HPS_ERAS
 
 TEMPLATED_QUANTITY_PRODUCERS = [
