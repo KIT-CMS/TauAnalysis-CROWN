@@ -300,7 +300,7 @@ def add_fake_factors(
     # (TAUER's fake_factors/rename_payload_keys.py converts old ones)
     if (int(era[:4]) >= 2022 or ml) and (legacy := [n for n in shifts if not n.startswith("CMS_fake_t_")]):
         raise ValueError(
-            f"the variation keys of {payloads} do not follow CMS_fake_t_<process>_<uncertainty>_<era>_<channel>, "
+            f"the variation keys of {payloads} do not follow CMS_fake_t_<process>_<uncertainty>_<channel>_<era>, "
             f"e.g. {legacy[0]}"
         )
 
@@ -335,8 +335,8 @@ def _find_processes(corrections, suffix, suffixes, ml_names):
         }
         if process["non_closure"]:
             # the compound stacks one correction per variable, the variable is inserted into the variation names
-            # after the prefix, e.g. CMS_fake_t_QCD_non_closure_CorrStatShift_2024_mtUp
-            # -> CMS_fake_t_QCD_non_closure_<variable>_CorrStatShift_2024_mtUp
+            # after the prefix, e.g. CMS_fake_t_QCD_non_closure_CorrStatShift_mt_2024Up
+            # -> CMS_fake_t_QCD_non_closure_<variable>_CorrStatShift_mt_2024Up
             stack = corrections[non_closure]["stack"]
             process["non_closure_variables"] = [
                 c.removeprefix(f"{name}{suffix}_non_closure_").removesuffix("_correction") for c in stack
