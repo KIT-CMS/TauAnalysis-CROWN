@@ -1,10 +1,7 @@
-from code_generation.quantity import NanoAODQuantity
-
 from ..quantities import output as q
-from ..quantities import nanoAODv15, nanoAODv12, nanoAODv9
+from ..quantities import nanoAODv15, nanoAODv12
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup
-from code_generation.producer import SwitchProducer
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 ####################
 # Set of producers used for contruction of met related quantities
@@ -152,11 +149,11 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
 
     with defaults(call='''met::RecoilCorrection({df}, correctionManager, {output}, {input}, "{recoil_corrections_file}", "{recoil_method}", "{DY_order}", "{recoil_variation}", {applyRecoilCorrections})'''):
         ApplyRecoilCorrections = Producer(
-            input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
+            input=[q.puppimet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets_recoil],
             output=[q.puppimet_p4_recoilcorrected],
         )
         ApplyRecoilCorrectionsPFMet = Producer(
-            input=[q.pfmet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets],
+            input=[q.pfmet_p4_leptoncorrected, q.genboson_p4, q.visgenboson_p4, q.njets_recoil],
             output=[q.pfmet_p4_recoilcorrected],
         )
 

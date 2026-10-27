@@ -4,7 +4,6 @@ from .producers import pairquantities as pairquantities
 from .producers import nn_output as nn_output
 from .quantities import output as q
 from code_generation.friend_trees import FriendTreeConfiguration
-from code_generation.modifiers import EraModifier
 
 
 def build_config(
@@ -37,27 +36,6 @@ def build_config(
         {f"is_{e}": 1.0 if era == e else 0.0 for e in available_eras},
         )
 
-    for scope in ["mt", "et", "tt"]:
-        configuration.add_config_parameters(
-            [scope],
-            {
-                "model_file_path": EraModifier(
-                    {
-                        "2016preVFP": "",
-                        "2016postVFP": "",
-                        "2017": "",
-                        "2018": f"payloads/ml/2018/mt/{model_name}/model.onnx",
-                        "2022preEE": f"payloads/DNN/{scope}/model.onnx",
-                        "2022postEE": f"payloads/DNN/{scope}/model.onnx",
-                        "2023preBPix": f"payloads/DNN/{scope}/model.onnx",
-                        "2023postBPix": f"payloads/DNN/{scope}/model.onnx",
-                        "2024": f"payloads/DNN/{scope}/model.onnx",
-                        "2025": f"payloads/DNN/{scope}/model.onnx",
-                    }
-                ),
-            },
-        )
-
     configuration.add_producers(
         ["mt", "et", "tt"],
         [
@@ -67,10 +45,11 @@ def build_config(
         ],
     )
 
-    if int(era[:4]) < 2022:
-        configuration.add_producers(["mt"], [nn_output.Evaluate_DNN_run2],)
-    else:
-        configuration.add_producers(["mt", "et", "tt"], [nn_output.Evaluate_DNN_run3],)
+    run2 = int(era[:4]) < 2022
+    for scope in ["mt"] if run2 else ["mt", "et", "tt"]:
+        model_file_path = f"payloads/ml/{era}/{scope}/{model_name}/model.onnx" if run2 else f"payloads/DNN/{scope}/model.onnx"
+        configuration.add_config_parameters([scope], {"model_file_path": model_file_path})
+        configuration.add_producers([scope], [nn_output.evaluate_dnn(scope, model_file_path)])
 
     configuration.add_outputs(
         ["mt", "et", "tt"],

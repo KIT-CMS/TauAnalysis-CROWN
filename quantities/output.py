@@ -1,5 +1,5 @@
-# from code_generation.quantity import Quantity
-from code_generation.quantity import Quantity, NanoAODQuantity
+from code_generation.quantity import Quantity
+from code_generation.quantity import NanoAODQuantity
 
 # Quantity name is set to the name of the variable automatically.
 # If you want to set a different name explicitly, you can do so by passing an specific name as a string.
@@ -45,6 +45,10 @@ jet_eta_mask_max = Quantity()
 jet_vetomap = Quantity()
 jet_overlap_veto_mask = Quantity()
 njets = Quantity()
+njets_recoil = Quantity()
+recoil_jets_mask = Quantity()
+recoil_jets_mask_higheta = Quantity()
+recoil_jets_mask_vetoed = Quantity()
 nbtag = Quantity()
 jet_p4_1 = Quantity()
 jpt_1 = Quantity()
@@ -489,13 +493,6 @@ deltaEta_12j1 = Quantity()
 deltaEta_12j2 = Quantity()
 deltaEta_12jj = Quantity()
 
-# float quantities
-njets_float = Quantity()
-nbtag_float = Quantity()
-event_parity_float = Quantity()
-tau_decaymode_2_float = Quantity()
-tau_decaymode_1_float = Quantity()
-pzetamissvis_float = Quantity()
 
 # fake factor vectors
 ff_input_lt = Quantity()
@@ -509,10 +506,6 @@ ff_input_dr_tt = Quantity()
 ff_input_nc_qcd_tt = Quantity()
 ff_input_nc_qcdsub_tt = Quantity()
 
-# nn quantities
-nn_output_vector = Quantity()
-nn_predicted_class = Quantity()
-nn_predicted_max_value = Quantity()
 # era flags for nn
 is_2025 = Quantity()
 is_2024 = Quantity()

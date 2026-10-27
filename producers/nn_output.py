@@ -2,6 +2,7 @@ from ..quantities import output as q
 from ..quantities import nanoAODv15 as nanoAOD
 from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup
+from .fakefactors import _read_model, _quantities
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
     with defaults(call='utility::Cast<float, int>({df}, {output}, "float", {input}).first'):
         ConversionToFloatCollection = [
@@ -67,110 +68,19 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         ]
     EraFlags = ProducerGroup(call=None, input=None, output=None, subproducers=EraFlags_ProducerCollection)
 
-inputs_run2 = [
-    q.event_parity_float,
-    q.pt_1,
-    q.pt_2,
-    q.jpt_1,
-    q.jpt_2,
-    q.jeta_1,
-    q.jeta_2,
-    q.m_fastmtt,
-    q.pt_fastmtt,
-    q.puppimet,
-    q.nbtag_float,
-    q.m_vis,
-    q.pt_tt,
-    q.pt_vis,
-    q.mjj,
-    q.pt_dijet,
-    q.pt_ttjj,
-    q.pzetamissvis_float,
-    q.deltaR_ditaupair,
-    q.deltaR_1j1,
-    q.deltaR_1j2,
-    q.deltaR_2j1,
-    q.deltaR_2j2,
-    q.deltaR_12j1,
-    q.njets_float,
-]
 
-inputs_run3 = [
-    q.pt_1,
-    q.pt_2,
-    q.eta_1,
-    q.eta_2,
-    q.jpt_1,
-    q.jpt_2,
-    q.jeta_1,
-    q.jeta_2,
-    q.m_fastmtt,
-    q.m_vis,
-    q.mjj,
-    q.pt_vis,
-    q.pt_dijet,
-    q.pt_tt,
-    q.pt_ttjj,
-    q.njets_float,
-    q.nbtag_float,
-    q.puppimet,
-    q.deltaEta_ditaupair,
-    q.deltaR_ditaupair,
-    q.mt_1,
-    q.mt_2,
-    q.pt_fastmtt,
-    q.mt_tot,
-    # q.pzetamissvis_float,
-    q.deltaR_jj,
-    q.deltaEta_jj,
-    # q.deltaR_1j1,
-    # q.deltaR_2j2,
-    # q.deltaR_2j1,
-    # q.deltaR_1j2,
-    # q.deltaR_12j1,
-    # q.deltaR_12j2,
-    # q.deltaEta_1j1,
-    # q.deltaEta_1j2,
-    # q.deltaEta_2j1,
-    # q.deltaEta_2j2,
-    # q.deltaEta_12j1,
-    # q.deltaEta_12j2,
-    q.is_2025,
-    q.is_2024,
-    q.is_2023postBPix,
-    q.is_2023preBPix,
-    q.is_2022postEE,
-    q.is_2022preEE,
-]
-
-with defaults(
-    output=[
-        q.nn_output_vector,
-        q.nn_predicted_class,
-        q.nn_predicted_max_value,
-    ],
-    scopes=["mt"],
-):
-    Evaluate_DNN_run2 = Producer(
-        call=f'''ml_sm::Extracted_NN_Output<{len(inputs_run2)}>(
+def evaluate_dnn(scope, model_file_path):
+    # inputs in the order of the ONNX model metadata, the <name>_float cast preferred since the evaluator takes floats
+    features = [f"{f}_float" if hasattr(q, f"{f}_float") else f for f in _read_model("tau", model_file_path)[0]]
+    return Producer(
+        name=f"Evaluate_DNN_{scope}",
+        call=f'''ml_sm::Extracted_NN_Output<{len(features)}>(
             {{df}},
             onnxSessionManager,
             {{output}},
             "{{model_file_path}}",
             {{input_vec}})''',
-        input=inputs_run2,
-    )
-
-with defaults(
-    output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
-    scopes=["mt", "et", "tt"],
-):
-    Evaluate_DNN_run3 = Producer(
-        call=f'''ml_sm::Extracted_NN_Output<{len(inputs_run3)}>(
-            {{df}},
-            onnxSessionManager,
-            {{output}},
-            "{{model_file_path}}",
-            {{input_vec}})''',
-        input=[q.event_parity_float] + inputs_run3,
+        input=_quantities(q, features),
+        output=[q.nn_output_vector, q.nn_predicted_class, q.nn_predicted_max_value],
+        scopes=[scope],
     )

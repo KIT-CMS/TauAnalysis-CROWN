@@ -24,14 +24,14 @@ class _Embedding_ES_ID_Scheme_dm_pt_binned:
 class _MC_ES_ID_Scheme_dm_binned:
     producerES = taus.TauPtCorrection_genTau_dm_binned
     producerGroupES = taus.TauEnergyCorrection_ES_dm_binned
-    producerID = scalefactors.Tau_2_VsJetTauID_lt_SF_dm_binned
+    producerID = scalefactors.Tau_2_VsJetTauID_lt_SF_dm_binned_Run2
 
 
 @dataclass
 class _MC_ES_ID_Scheme_dm_pt_binned:
     producerES = taus.TauPtCorrection_genTau_dm_pt_binned
     producerGroupES = taus.TauEnergyCorrection_ES_dm_pt_binned
-    producerID = scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned
+    producerID = scalefactors.Tau_2_VsJetTauID_lt_SF_dm_pt_binned_Run2
 
 @dataclass
 class _MCRun3_ES_ID_Scheme:

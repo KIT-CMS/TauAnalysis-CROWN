@@ -6,6 +6,7 @@ from ..producers import electrons as electrons
 from ..producers import photons as photons
 from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, ExtendedVectorProducer
+
 TrigObj_collection = [
     nanoAOD.TrigObj_filterBits,
     nanoAOD.TrigObj_id,

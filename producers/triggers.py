@@ -16,15 +16,15 @@ TrigObj_collection = [
 ####################
 with defaults(output="flagname"):
     with defaults(
-        call='''trigger::SingleObjectFlag(
+        call='''trigger::experimental::ObjectFlag(
             {df},
             {output},
-            {input},
+            {input_vec},
             "{hlt_path}",
-            {ptcut},
-            {etacut},
-            {trigger_particle_id},
-            {vec_open}{filterbit}{vec_close},
+            {vec_open}{ptcut}{vec_close},
+            {vec_open}{etacut}{vec_close},
+            {vec_open}{trigger_particle_id}{vec_close},
+            {vec_open}{vec_open}{filterbit}{vec_close}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1] + TrigObj_collection):
@@ -37,19 +37,15 @@ with defaults(output="flagname"):
         with defaults(input=[q.p4_2] + TrigObj_collection):
             EMGenerateSingleMuonTriggerFlags = EVP(scopes=["em"], vec_config="singlemuon_trigger")
     with defaults(
-        call='''trigger::DoubleObjectFlag(
+        call='''trigger::experimental::ObjectFlag(
             {df},
             {output},
-            {input},
+            {input_vec},
             "{hlt_path}",
-            {p1_ptcut},
-            {p2_ptcut},
-            {p1_etacut},
-            {p2_etacut},
-            {p1_trigger_particle_id},
-            {p2_trigger_particle_id},
-            {vec_open}{p1_filterbit}{vec_close},
-            {vec_open}{p2_filterbit}{vec_close},
+            {vec_open}{p1_ptcut}, {p2_ptcut}{vec_close},
+            {vec_open}{p1_etacut}, {p2_etacut}{vec_close},
+            {vec_open}{p1_trigger_particle_id}, {p2_trigger_particle_id}{vec_close},
+            {vec_open}{vec_open}{p1_filterbit}{vec_close}, {vec_open}{p2_filterbit}{vec_close}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1, q.p4_2] + TrigObj_collection):
@@ -60,23 +56,15 @@ with defaults(output="flagname"):
             MuMuGenerateDoubleMuonTriggerFlags = EVP(scopes=["mm"], vec_config="doublemuon_trigger")
             ElElGenerateDoubleMuonTriggerFlags = EVP(scopes=["ee"], vec_config="doubleelectron_trigger")
     with defaults(
-        call='''trigger::TripleObjectFlag(
+        call='''trigger::experimental::ObjectFlag(
             {df},
             {output},
-            {input},
+            {input_vec},
             "{hlt_path}",
-            {p1_ptcut},
-            {p2_ptcut},
-            {p3_ptcut},
-            {p1_etacut},
-            {p2_etacut},
-            {p3_etacut},
-            {p1_trigger_particle_id},
-            {p2_trigger_particle_id},
-            {p3_trigger_particle_id},
-            {vec_open}{p1_filterbit}{vec_close},
-            {vec_open}{p2_filterbit}{vec_close},
-            {vec_open}{p3_filterbit}{vec_close},
+            {vec_open}{p1_ptcut}, {p2_ptcut}, {p3_ptcut}{vec_close},
+            {vec_open}{p1_etacut}, {p2_etacut}, {p3_etacut}{vec_close},
+            {vec_open}{p1_trigger_particle_id}, {p2_trigger_particle_id}, {p3_trigger_particle_id}{vec_close},
+            {vec_open}{vec_open}{p1_filterbit}{vec_close}, {vec_open}{p2_filterbit}{vec_close}, {vec_open}{p3_filterbit}{vec_close}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1, q.p4_2, q.jet_p4_1] + TrigObj_collection):
@@ -84,18 +72,15 @@ with defaults(output="flagname"):
             # trigger objects belonging to the same HLT filter
             TTGenerateDoubleTauJetTriggerFlags = EVP(scopes=["tt"], vec_config="doubletau_jet_trigger")
     with defaults(
-        call='''trigger::DoubleObjectFlag(
+        call='''trigger::experimental::ObjectFlag(
             {df},
             {output},
-            {input},
-            {p1_ptcut},
-            {p2_ptcut},
-            {p1_etacut},
-            {p2_etacut},
-            {p1_trigger_particle_id},
-            {p2_trigger_particle_id},
-            {vec_open}{p1_filterbit}{vec_close},
-            {vec_open}{p2_filterbit}{vec_close},
+            {input_vec},
+            "",
+            {vec_open}{p1_ptcut}, {p2_ptcut}{vec_close},
+            {vec_open}{p1_etacut}, {p2_etacut}{vec_close},
+            {vec_open}{p1_trigger_particle_id}, {p2_trigger_particle_id}{vec_close},
+            {vec_open}{vec_open}{p1_filterbit}{vec_close}, {vec_open}{p2_filterbit}{vec_close}{vec_close},
             {max_deltaR_triggermatch})''',
     ):
         with defaults(input=[q.p4_1, q.p4_2] + TrigObj_collection):

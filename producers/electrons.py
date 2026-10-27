@@ -1,8 +1,7 @@
 from ..quantities import output as q
 from ..quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
-from code_generation.producer import Producer, ProducerGroup
-from code_generation.producer import SwitchProducer
+from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 
 ####################
 # Set of producers used for loosest selection of electrons
@@ -126,6 +125,9 @@ with defaults(scopes=["global"]):
             ElectronIsoCut,
         ],
     )
+    class BaseElectronsSwitch(SwitchProducer):
+        run2=BaseElectrons_v9
+        run3=BaseElectrons
 
     DiElectronVeto = ProducerGroup(
         call='''physicsobject::LeptonPairVeto({df}, {output}, {input}, {dileptonveto_dR})''',

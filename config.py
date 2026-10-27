@@ -17,27 +17,13 @@ from .producers import triggers as triggers
 from .producers.weights import MC_SPLIT_FRACTION
 from .quantities import nanoAODv15
 from .quantities import output as q
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-
-# hadronic tau decay modes the analysis accepts
-# the selection masks cut on the very same list
-TAU_DECAY_MODES = "0,1,10,11"
-
-RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
-
-# sample types with the Z pT reweighting (Run 3 shifts included in the weight, see producers/weights.py)
-ZPT_SAMPLES = ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]
-
-# signal sample types with the ggH NNLOPS reweighting (applied to the ggH family events)
-GGH_SAMPLES = ["ggh_htautau", "rem_htautau", "rem_higgs"]
-
-# signal sample types with HTXS information and the LHEScaleWeight variations of the STXS scheme
-STXS_SAMPLES = ["ggh_htautau", "vbf_htautau", "rem_htautau", "rem_higgs"]
 
 
 def build_config(
@@ -156,7 +142,7 @@ def build_config(
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23CSep23-Summer23-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/LUM/Run3-23DSep23-Summer23BPix-NanoAODv12/2024-01-31/puWeights.json.gz",
                     "2024": "data/root_pileup/Data_PileUp_2024_69p2.root",
-                    "2025": "data/root_pileup/Data_PileUp_2025_69p2.root",
+                    "2025": "data/root_pileup/Data_PileUp_2025_2026_69p2.root",
                     "2026": "data/root_pileup/Data_PileUp_2026_69p2.root",
                 }
             ),
@@ -255,6 +241,7 @@ def build_config(
                 default=4.7,
             ),
             "jet_eta_3": 4.7,
+            "recoil_jet_eta_hf": 3.0,
             "jet_id": 2,  #2==pass tight ID and fail tightLepVeto, 6== pass tight and pass tightLepVeto, new minimal selection https://cms-talk.web.cern.ch/t/updated-jet-selection-criterion-for-jet-veto-map/130527
             # bjet selection -> need to be in global
             "min_bjet_pt": 20,
@@ -437,9 +424,9 @@ def build_config(
                     "2022postEE": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023preBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23CSep23-Summer23-NanoAODv12/2025-08-20/btagging.json.gz",
                     "2023postBPix": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-23DSep23-Summer23BPix-NanoAODv12/2025-08-20/btagging.json.gz",
-                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-03-10/btagging.json.gz",
-                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
-                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-09-21/btagging.json.gz",
+                    "2024": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2026-10-20/btagging.json.gz",
+                    "2025": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-10-14/btagging.json.gz",
+                    "2026": "/cvmfs/cms-griddata.cern.ch/cat/metadata/BTV/Run3-25Prompt-Summer24-NanoAODv15/2026-10-14/btagging.json.gz",
                 }
             ),
             "btag_sf_variation": "central",
@@ -596,11 +583,8 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
-            "applyRecoilCorrections": EraModifier( #apply only to single boson processes, not in 2023
-                {
-                    "2023preBPix": False,
-                    "2023postBPix": False,
-                },
+            "applyRecoilCorrections": EraModifier( #apply only to single boson processes
+                {},
                 default=sample in [
                     "dyjets",
                     "dyjets_powheg",
@@ -1168,10 +1152,10 @@ def build_config(
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
-            muons.MuonPtCorrection,
+            muons.MuonPtCorrectionSwitch.get(era),
             muons.BaseMuons,
             electrons.ElectronPtCorrectionMCSwitch.get(era),
-            electrons.BaseElectrons,
+            electrons.BaseElectronsSwitch.get(era),
             jets.GenJet,
             jets.JetSmearingSeed,
             jets.JetBTagSwitch.get(era),
@@ -1186,6 +1170,8 @@ def build_config(
             jets.LooseJets_HighEta,
             jets.GoodJets_loose,
             jets.GoodJets_tight,
+            jets.RecoilJets_HighEta,
+            jets.RecoilJets,
             jets.GoodJetsSwitch.get(era),
             jets.GoodBJetsSwitch.get(era),
             event.DiLeptonVetoSwitch.get(era),
@@ -1416,9 +1402,7 @@ def build_config(
         (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
         ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras":["2025", "2026"]}),
-        ("global", ReplaceProducer, [electrons.ElectronIDCut, electrons.ElectronIDCut_v9], {"eras": RUN2_ERAS}),
         ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
-        ("global", ReplaceProducer, [muons.MuonPtCorrection, muons.MuonPtCorrection_Run2], {"eras": RUN2_ERAS}),
 
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
@@ -1436,7 +1420,7 @@ def build_config(
         "bjet_p4_1", "bjet_p4_2", "jet_p4_1", "jet_p4_2", "p4_dijet", "p4_dilepton", "rawmet_p4",
         "puppimet_p4", "puppimet_p4_jetcorrected", "puppimet_p4_leptoncorrected",
         "puppimet_p4_recoilcorrected", "puppimet_p4_unclustered_corrected",
-        "metcov10", "is_global_1", "is_global_2", "jtag_value_1", "jtag_value_2", "taujet_pt_1", "taujet_pt_2",
+        "metcov10", "is_global_1", "is_global_2", "jtag_value_1", "jtag_value_2", "taujet_pt_1", "taujet_pt_2", "recoil_jets_mask_vetoed",
     }
 
     def used(group, scope):
