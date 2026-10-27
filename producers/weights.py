@@ -12,14 +12,15 @@ LUMI_PB = {
     "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
 # share of the Summer24 MC kept for 2024 (event.EraSplitFlag), the rest goes to 2025, whose lumi includes 2026;
-# the split weight is 1 / the measured generator-weight fraction of each part (norm table split_fraction)
+# the split weight is 1 / the measured generator-weight fraction of each part (norm table split_fraction), else 1 / the lumi share
 MC_SPLIT_FRACTION = LUMI_PB["2024"] / (LUMI_PB["2024"] + LUMI_PB["2025"])
+ERA_SPLIT_FRACTION = {"2024": MC_SPLIT_FRACTION, "2025": 1 - MC_SPLIT_FRACTION, "2026": 1 - MC_SPLIT_FRACTION}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
 # {norm_table_path} set by shapes_preparation.py's build_norm_table()
 SampleNormalization = Producer(
-    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
+    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}", {default_split_fraction})''',
     input=[],
     output=[
         q.crossSectionPerEventWeight, 
