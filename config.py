@@ -583,8 +583,11 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
-            "applyRecoilCorrections": EraModifier( #apply only to single boson processes
-                {},
+            "applyRecoilCorrections": EraModifier( #apply only to single boson processes, not in 2023
+                {
+                    "2023preBPix": False,
+                    "2023postBPix": False,
+                },
                 default=sample in [
                     "dyjets",
                     "dyjets_powheg",
