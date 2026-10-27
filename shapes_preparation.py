@@ -672,7 +672,7 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
             raise FileNotFoundError(f"{norm_table_path} missing: run `python -m samplemanager.scripts.build_norm_table --output-dir <CROWN>/data/normalization` in sample_database")
         configuration.add_config_parameters(
             scopes_list,
-            {"norm_table_path": norm_table_path},
+            {"norm_table_path": norm_table_path, "default_split_fraction": weight_producers.ERA_SPLIT_FRACTION.get(era, 1.0)},
         )
         configuration.add_producers(
             scopes_list,
@@ -730,7 +730,6 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     "vs_ele_wp": "Tight" if scope == "et" else "VVLoose",
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                     "luminosity_pb": EraModifier(weight_producers.LUMI_PB),
-                    "mc_campaign_split_factor": EraModifier(weight_producers.MC_CAMPAIGN_SPLIT_FACTOR, default=1.0),
                     "puweight_type": EraModifier(weight_producers.PUWEIGHT_TYPE, default="double"),
                 },
             )

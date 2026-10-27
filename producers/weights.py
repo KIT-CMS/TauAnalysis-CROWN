@@ -11,19 +11,22 @@ LUMI_PB = {
     "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
     "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
-# 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
-MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
+# share of the Summer24 MC kept for 2024 (event.EraSplitFlag), the rest goes to 2025, whose lumi includes 2026;
+# the split weight is 1 / the measured generator-weight fraction of each part (norm table split_fraction), else 1 / the lumi share
+MC_SPLIT_FRACTION = LUMI_PB["2024"] / (LUMI_PB["2024"] + LUMI_PB["2025"])
+ERA_SPLIT_FRACTION = {"2024": MC_SPLIT_FRACTION, "2025": 1 - MC_SPLIT_FRACTION, "2026": 1 - MC_SPLIT_FRACTION}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
 # {norm_table_path} set by shapes_preparation.py's build_norm_table()
 SampleNormalization = Producer(
-    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
+    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}", {default_split_fraction})''',
     input=[],
     output=[
         q.crossSectionPerEventWeight, 
         q.numberGeneratedEventsWeight, 
-        q.negative_events_fraction
+        q.negative_events_fraction,
+        q.weight_campaign_split,
     ],
     scopes=["et", "mt", "tt", "em"],
 )
@@ -61,7 +64,6 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
-    MCCampaignSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, {mc_campaign_split_factor})''', input=[], output=[q.weight_campaign_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
         NormXsecNgen = Producer(input=[q.crossSectionPerEventWeight, q.numberGeneratedEventsWeight], output=[q.weight_xsec_ngen])
@@ -152,7 +154,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
-_norm = [GenWeightSign, Lumi, MCCampaignSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
+_norm = [GenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
 _tau_2 = [GenuineTau_2, VsJetSF_2]
 _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
 _ids = {
