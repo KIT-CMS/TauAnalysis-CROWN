@@ -14,20 +14,16 @@ from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .producers import triggers as triggers
+from .producers.weights import MC_SPLIT_FRACTION
 from .quantities import nanoAODv15
 from .quantities import output as q
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-
-# hadronic tau decay modes the analysis accepts
-# the selection masks cut on the very same list
-TAU_DECAY_MODES = "0,1,10,11"
-
-RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 
 
 def build_config(
@@ -87,10 +83,11 @@ def build_config(
         {
             # noise filters
             "met_filters": default_met_filters,
+
+            # Summer24 MC split between 2024 and 2025/2026
+            "mc_split_fraction": MC_SPLIT_FRACTION,
             
             # for LHE weights
-            "muR": 1.0,
-            "muF": 1.0,
             "isr": 1.0,
             "fsr": 1.0,
 
@@ -1154,7 +1151,6 @@ def build_config(
             event.npartons,
             event.MetFilter, 
             event.PUweights,
-            event.LHE_Scale_weight,
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
@@ -1355,7 +1351,7 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
@@ -1371,9 +1367,9 @@ def build_config(
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
-        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau", "rem_higgs"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau", "rem_higgs"]}),
+        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ZPT_SAMPLES}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting], {"samples": GGH_SAMPLES}),
+        ("global", AppendProducer, [event.LHE_Scale_up_weight, event.LHE_Scale_down_weight], {"samples": STXS_SAMPLES}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
@@ -1412,9 +1408,9 @@ def build_config(
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
-        # separate MC for 2024 and 2025 by even/odd event number
-        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
@@ -1451,7 +1447,6 @@ def build_config(
             q.npartons,
             nanoAODv15.event,
             q.puweight,
-            q.lhe_scale_weight,
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
@@ -1586,6 +1581,9 @@ def build_config(
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("em")
             ],
         )
+
+    if sample in STXS_SAMPLES:
+        configuration.add_outputs(scopes, [q.lhe_scale_up, q.lhe_scale_down])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(

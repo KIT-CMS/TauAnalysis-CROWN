@@ -98,28 +98,14 @@ btag_weight = Quantity()
 #### event
 
 eventCut_mask = Quantity()
+# Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
+era_split_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
-THU_ggH_Mu = Quantity()
-THU_ggH_Res = Quantity()
-THU_ggH_Mig01 = Quantity()
-THU_ggH_Mig12 = Quantity()
-THU_ggH_VBF2j = Quantity()
-THU_ggH_VBF3j = Quantity()
-THU_ggH_PT60 = Quantity()
-THU_ggH_PT120 = Quantity()
-THU_ggH_qmtop = Quantity()
-THU_qqH_TOT = Quantity()
-THU_qqH_PTH200 = Quantity()
-THU_qqH_Mjj60 = Quantity()
-THU_qqH_Mjj120 = Quantity()
-THU_qqH_Mjj350 = Quantity()
-THU_qqH_Mjj700 = Quantity()
-THU_qqH_Mjj1000 = Quantity()
-THU_qqH_Mjj1500 = Quantity()
-THU_qqH_25 = Quantity()
-THU_qqH_JET01 = Quantity()
+# raw LHEScaleWeight mu_R = mu_F = 2 / 0.5 of the signal samples, normalized per STXS bin in the friend
+lhe_scale_up = Quantity()
+lhe_scale_down = Quantity()
 
 # SampleFlags
 is_data = Quantity()
@@ -147,7 +133,6 @@ is_embedding_mc = Quantity()
 lumi = Quantity()
 npartons = Quantity()
 puweight = Quantity()
-lhe_scale_weight = Quantity()
 lhe_pdf_weight = Quantity()
 lhe_alphaS_weight = Quantity()
 ps_weight = Quantity()
@@ -159,7 +144,6 @@ PuppiMET_pt_nanoAOD_ref = NanoAODQuantity("PuppiMET_pt")
 PuppiMET_phi_nanoAOD_ref = NanoAODQuantity("PuppiMET_phi")
 
 # MetBasics
-met_mask = Quantity()
 rawmet_p4 = Quantity()
 recoil_genboson_p4_vec = Quantity()
 genboson_p4 = Quantity()
@@ -401,6 +385,8 @@ raw_fake_factor_2 = Quantity()
 fake_factor = Quantity()
 fake_factor_1 = Quantity()
 fake_factor_2 = Quantity()
+# the fake factor weight of the anti-isolated region: fake_factor_2 for et/mt, half of the failing tau's one for tt
+ff_weight = Quantity()
 
 raw_qcd_fake_factor_1 = Quantity()
 raw_qcd_fake_factor_2 = Quantity()
@@ -503,13 +489,6 @@ deltaEta_12j1 = Quantity()
 deltaEta_12j2 = Quantity()
 deltaEta_12jj = Quantity()
 
-# float quantities
-njets_float = Quantity()
-nbtag_float = Quantity()
-event_parity_float = Quantity()
-tau_decaymode_2_float = Quantity()
-tau_decaymode_1_float = Quantity()
-pzetamissvis_float = Quantity()
 
 # fake factor vectors
 ff_input_lt = Quantity()
@@ -523,10 +502,6 @@ ff_input_dr_tt = Quantity()
 ff_input_nc_qcd_tt = Quantity()
 ff_input_nc_qcdsub_tt = Quantity()
 
-# nn quantities
-nn_output_vector = Quantity()
-nn_predicted_class = Quantity()
-nn_predicted_max_value = Quantity()
 # era flags for nn
 is_2025 = Quantity()
 is_2024 = Quantity()
@@ -538,6 +513,146 @@ is_2018 = Quantity()
 is_2017 = Quantity()
 is_2016postVFP = Quantity()
 is_2016preVFP = Quantity()
+
+# seelctions
+selcut_presel_vsele_1 = Quantity()
+selcut_presel_vsele_2 = Quantity()
+selcut_presel_vsmu_1 = Quantity()
+selcut_presel_vsmu_2 = Quantity()
+selcut_presel_trigger = Quantity()
+selcut_presel_lep_pt_1 = Quantity()
+selcut_presel_lep_pt_2 = Quantity()
+selcut_jet_veto = Quantity()
+selcut_no_extraelec = Quantity()
+selcut_no_extramuon = Quantity()
+selcut_no_dilepton = Quantity()
+selcut_lepton_veto = Quantity()
+selcut_lepton_veto_inv = Quantity()
+selcut_tau_iso_1 = Quantity()
+selcut_tau_iso_2 = Quantity()
+selcut_tau_noniso_1 = Quantity()
+selcut_tau_noniso_2 = Quantity()
+selcut_tau_vvvloose_1 = Quantity()
+selcut_tau_vvvloose_2 = Quantity()
+selcut_lep_iso = Quantity()
+selcut_lep_antiiso = Quantity()
+selcut_em_ele_iso = Quantity()
+selcut_em_muon_iso = Quantity()
+selcut_lep_iso_qcd_run2 = Quantity()
+selcut_lep_iso_min_qcd_run2 = Quantity()
+selcut_mt_lt_qcd = Quantity()
+selcut_mt_lt_70 = Quantity()
+selcut_wjets_mt = Quantity()
+selcut_nbtag_eq_0 = Quantity()
+selcut_ttbar_nbtag = Quantity()
+selcut_q_prod = Quantity()
+selcut_os = Quantity()
+selcut_ss = Quantity()
+
+presel_mask = Quantity()
+SR_mask = Quantity()
+# SR_mask with the OS requirement swapped for SS -- the QCD same-sign control
+# region, kept shift-aware (unlike the FF masks below) since shape production
+# needs the QCD estimate to follow systematic variations too.
+SR_mask_ss = Quantity()
+# anti-isolated application region of the fake factors (SR_mask with the tau isolation inverted, for tt exactly one tau
+# failing it, the legs combined) -- shift-aware like SR_mask
+AR_mask = Quantity()
+AR_mask_leg1 = Quantity()
+AR_mask_leg2 = Quantity()
+
+# gen-match-based process split (T = genuine tau pair, J = jet->tau fake, L = everything
+# else, mainly lepton fakes) -- shift-aware like SR_mask, since the chosen pair (and so
+# gen_match) can change under energy-scale shifts. T/J/L partition the event space; em has
+# no jet-fake leg, so gen_category_J is not produced there.
+gen_category_T = Quantity()
+gen_category_J = Quantity()
+gen_category_L = Quantity()
+
+# per-file MC normalization constants (weights_friends.py) -- names/semantics match the
+# legacy Python xsec/build_friend_tree.py friend these replace, for drop-in compatibility
+# with existing downstream readers (TauFakeFactors' gen_weight(), TauKITFlow's
+# process_selection.py). Not produced for data/embedding.
+crossSectionPerEventWeight = Quantity()
+numberGeneratedEventsWeight = Quantity()
+negative_events_fraction = Quantity()
+
+# per-bin STXS normalization of the signal samples (STXSNormalization): sample family code, per-bin
+# xsec/fraction factor and the LHE scale weights divided by the per-bin sum-of-weights ratio
+stxs_family = Quantity()
+stxs_norm_weight = Quantity()
+lhe_scale_norm_up = Quantity()
+lhe_scale_norm_down = Quantity()
+
+# combined per-event MC weight of the friend (producers/weights.py): normalization, lumi, pileup,
+# lepton and tau ID, trigger and b-tag scale factors; the intermediate products follow
+weight = Quantity()
+weight_gen_sign = Quantity()
+weight_lumi = Quantity()
+weight_campaign_split = Quantity()
+weight_xsec_ngen = Quantity()
+weight_norm_signed = Quantity()
+weight_norm_lumi = Quantity()
+weight_norm_stxs = Quantity()
+weight_norm_pileup = Quantity()
+weight_ele_id = Quantity()
+weight_mu_id = Quantity()
+weight_mu_iso = Quantity()
+weight_genuine_tau_1 = Quantity()
+weight_genuine_tau_2 = Quantity()
+weight_vsjet_sf_1 = Quantity()
+weight_vsjet_sf_2 = Quantity()
+weight_vsjet_1 = Quantity()
+weight_vsjet_2 = Quantity()
+weight_vsmu_1 = Quantity()
+weight_vsmu_2 = Quantity()
+weight_vsele_1 = Quantity()
+weight_vsele_2 = Quantity()
+weight_trigger = Quantity()
+weight_reweighted = Quantity()
+weight_one = Quantity()
+weight_top_pt = Quantity()
+# signal samples: ggH NNLOPS reweighting of the ggH family and the LHEScaleWeight factor of the nuisance of the shift (1 nominal)
+stxs_is_ggh = Quantity()
+weight_ggh_nnlo = Quantity()
+weight_signal_nnlo = Quantity()
+weight_lhe_scale = Quantity()
+weight_no_btag = Quantity()
+
+ff_qcd_SRlike = Quantity()
+ff_qcd_ARlike = Quantity()
+ff_wjets_SRlike = Quantity()
+ff_wjets_ARlike = Quantity()
+ff_wjets_SRlike_ss = Quantity()
+ff_wjets_ARlike_ss = Quantity()
+ff_ttbar_SR = Quantity()
+ff_ttbar_AR = Quantity()
+ff_ttbar_SRlike = Quantity()
+ff_ttbar_ARlike = Quantity()
+ff_ttbar_SRlike_ss = Quantity()
+ff_ttbar_ARlike_ss = Quantity()
+ff_fraction_SR = Quantity()
+ff_fraction_AR = Quantity()
+ff_qcd_DR_SR_SRlike = Quantity()
+ff_qcd_DR_SR_ARlike = Quantity()
+ff_qcd_AR_SR_SRlike = Quantity()
+ff_qcd_AR_SR_ARlike = Quantity()
+ff_wjets_DR_SR_SRlike = Quantity()
+ff_wjets_DR_SR_ARlike = Quantity()
+ff_wjets_DR_SR_SRlike_ss = Quantity()
+ff_wjets_DR_SR_ARlike_ss = Quantity()
+ff_wjets_AR_SR_SRlike = Quantity()
+ff_wjets_AR_SR_ARlike = Quantity()
+ff_wjets_AR_SR_SRlike_ss = Quantity()
+ff_wjets_AR_SR_ARlike_ss = Quantity()
+ff_qcd_sub_SRlike = Quantity()
+ff_qcd_sub_ARlike = Quantity()
+ff_fraction_sub_SR = Quantity()
+ff_fraction_sub_AR = Quantity()
+ff_qcd_sub_DR_SR_SRlike = Quantity()
+ff_qcd_sub_DR_SR_ARlike = Quantity()
+ff_qcd_sub_AR_SR_SRlike = Quantity()
+ff_qcd_sub_AR_SR_ARlike = Quantity()
 
 # trigger scale factor of the event (Run 3 et/mt/tt) and of the legs of the triggers
 trg_wgt = Quantity()
