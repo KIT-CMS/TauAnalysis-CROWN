@@ -1159,7 +1159,7 @@ def build_config(
             event.SampleFlags,
             event.Lumi,
             event.npartons,
-            event.MetFilter, 
+            event.MetFilter,
             event.PUweights,
             event.LHE_Scale_weight,
             event.LHE_PDF_weight,
@@ -1189,7 +1189,6 @@ def build_config(
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             met.MetBasicsSwitch.get(era),
-            event.EvenOddIDFlag,
         ],
     )
     configuration.add_producers(
@@ -1362,8 +1361,7 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),

@@ -103,11 +103,6 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
-    EvenOddIDFlag = Producer(
-        call='''event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})''',
-        input=[nanoAODv15.event],
-        output=[q.eventCut_mask],
-    )
     # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
     EraSplitFlag = Producer(
         call='''event::quantity::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
