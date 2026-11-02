@@ -565,7 +565,7 @@ gen_category_J = Quantity()
 gen_category_L = Quantity()
 
 # per-file MC normalization constants
-nick = Quantity()
+nick = NanoAODQuantity("nick")
 xsec = Quantity()
 one_over_nevents = Quantity()
 negative_events_fraction = Quantity()
