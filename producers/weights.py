@@ -16,35 +16,6 @@ MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
-# {norm_table_path} set by shapes_preparation.py's build_norm_table()
-SampleNormalization = Producer(
-    call='''event::quantity::SampleNormalization({df}, correctionManager, {output}, "{norm_table_path}")''',
-    input=[],
-    output=[
-        q.crossSectionPerEventWeight, 
-        q.numberGeneratedEventsWeight, 
-        q.negative_events_fraction
-    ],
-    scopes=["et", "mt", "tt", "em"],
-)
-
-# signal samples: per-bin STXS normalization, family code and per-bin normalized LHE scale weights
-STXSNormalization = Producer(
-    call='''event::quantity::STXSNormalization({df}, correctionManager, {output}, "{norm_table_path}", {input})''',
-    input=[nanoAOD.HTXS_stage1_2_cat_pTjet30GeV, q.lhe_scale_up, q.lhe_scale_down],
-    output=[q.stxs_family, q.stxs_norm_weight, q.lhe_scale_norm_up, q.lhe_scale_norm_down],
-    scopes=["et", "mt", "tt", "em"],
-)
-
-# data/embedding: constant no-op normalization and weight
-with defaults(scopes=["et", "mt", "tt", "em"], call='''event::quantity::Define<float>({df}, {output}, 1.0f)''', input=[]):
-    ConstantCrossSectionPerEventWeight = Producer(output=[q.crossSectionPerEventWeight])
-    ConstantNumberGeneratedEventsWeight = Producer(output=[q.numberGeneratedEventsWeight])
-    ConstantNegativeEventsFraction = Producer(output=[q.negative_events_fraction])
-
-with defaults(scopes=["et", "mt", "tt", "em"], call='''event::quantity::Define<double>({df}, {output}, 1.0)''', input=[]):
-    ConstantSTXSNormWeight = Producer(output=[q.stxs_norm_weight])
-
 # data/embedding and mm/ee: constant no-op weight
 with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"], call='''event::quantity::Define<double>({df}, {output}, 1.0)''', input=[]):
     ConstantWeight = Producer(output=[q.weight])
@@ -55,16 +26,17 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"], call='''event::quanti
 ##############################################################################
 
 with defaults(scopes=["et", "mt", "tt", "em"]):
-    GenWeightSign = Producer(
-        call='''event::quantity::NormalizedGenWeightSign({df}, {output}, {input})''',
-        input=[nanoAOD.genWeight, q.negative_events_fraction],
+    GenWeightSign = Producer(call='''event::quantity::Sign<float>({df}, {output}, {input})''', input=[nanoAOD.genWeight], output=[q.weight_gen_sign_before_norm])
+    NormalizedGenWeightSign = Producer(
+        call='''event::quantity::Divide<double,double>({df}, {output}, {input})''',
+        input=[q.weight_gen_sign_before_norm, q.negative_events_fraction],
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
     MCCampaignSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, {mc_campaign_split_factor})''', input=[], output=[q.weight_campaign_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
-        NormXsecNgen = Producer(input=[q.crossSectionPerEventWeight, q.numberGeneratedEventsWeight], output=[q.weight_xsec_ngen])
+        NormXsecNgen = Producer(input=[q.xsec, q.one_over_nevents], output=[q.weight_xsec_ngen])
         NormSigned = Producer(input=[q.weight_xsec_ngen, q.weight_gen_sign], output=[q.weight_norm_signed])
         NormLumi = Producer(input=[q.weight_norm_signed, q.weight_lumi], output=[q.weight_norm_lumi])
         NormStxs = Producer(input=[q.weight_norm_lumi, q.stxs_norm_weight], output=[q.weight_norm_stxs])
@@ -77,14 +49,14 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
 with defaults(scopes=["et", "mt", "tt"]):
     GenuineTau_2 = Producer(call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''', input=[q.gen_match_2], output=[q.weight_genuine_tau_2])
     VsJetSF_2 = Producer(
-        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
+        call='''event::quantity::IfElse<double>({df}, {output}, {input})''',
         input=[q.weight_genuine_tau_2, Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_2")],
         output=[q.weight_vsjet_sf_2],
     )
 with defaults(scopes=["tt"]):
     GenuineTau_1 = Producer(call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 5)''', input=[q.gen_match_1], output=[q.weight_genuine_tau_1])
     VsJetSF_1 = Producer(
-        call='''event::quantity::Gate<double>({df}, {output}, {input})''',
+        call='''event::quantity::IfElse<double>({df}, {output}, {input})''',
         input=[q.weight_genuine_tau_1, Quantity("id_wgt_tau_vsJet_{vs_jet_wp}_1")],
         output=[q.weight_vsjet_sf_1],
     )
@@ -139,20 +111,15 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     ConstantOne = Producer(call='''event::quantity::Define<double>({df}, {output}, 1.0)''', input=[], output=[q.weight_one])
     # signal samples: ggH NNLOPS reweighting of the ggH family (stxs_family 1), then the LHEScaleWeight factor of the shifted nuisance
     IsGGHFamily = Producer(call='''event::quantity::EqualFlag<int>({df}, {output}, {input}, 1)''', input=[q.stxs_family], output=[q.stxs_is_ggh])
-    GGHNNLOFactor = Producer(call='''event::quantity::Gate<double>({df}, {output}, {input})''', input=[q.stxs_is_ggh, q.ggh_NNLO_weight], output=[q.weight_ggh_nnlo])
+    GGHNNLOFactor = Producer(call='''event::quantity::IfElse<double>({df}, {output}, {input})''', input=[q.stxs_is_ggh, q.ggh_NNLO_weight], output=[q.weight_ggh_nnlo])
     GGHReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_ggh_nnlo], output=[q.weight_signal_nnlo])
-    LHEScale = Producer(
-        call='''event::quantity::STXSLheScale({df}, correctionManager, {output}, "{lhe_scale_table_path}", "{lhe_scale_variation}", {input})''',
-        input=[q.stxs_family, nanoAOD.HTXS_stage1_2_cat_pTjet30GeV, q.lhe_scale_norm_up, q.lhe_scale_norm_down],
-        output=[q.weight_lhe_scale],
-    )
     LHEScaleReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_lhe_scale], output=[q.weight_reweighted])
     LHEScaleReweightGGH = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_signal_nnlo, q.weight_lhe_scale], output=[q.weight_reweighted])
     # weight_no_btag: the weight the b-tag efficiencies are measured with
     NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
-_norm = [GenWeightSign, Lumi, MCCampaignSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
+_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, MCCampaignSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
 _tau_2 = [GenuineTau_2, VsJetSF_2]
 _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
 _ids = {

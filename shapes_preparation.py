@@ -1,5 +1,3 @@
-import json
-import os
 from typing import List, Union
 
 from code_generation.friend_trees import FriendTreeConfiguration
@@ -667,44 +665,13 @@ def restrict_selection_shifts(configuration, scopes, shifts=None):
 def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
     scopes_list = list(configuration.selected_scopes)
     if sample not in ["data", "embedding", "embedding_mc"]: #don't apply normalisation
-        norm_table_path = "data/normalization/norm_table.json"
-        if not os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), norm_table_path)):
-            raise FileNotFoundError(f"{norm_table_path} missing: run `python -m samplemanager.scripts.build_norm_table --output-dir <CROWN>/data/normalization` in sample_database")
-        configuration.add_config_parameters(
-            scopes_list,
-            {"norm_table_path": norm_table_path},
-        )
-        configuration.add_producers(
-            scopes_list,
-            [weight_producers.SampleNormalization],
-        )
-        if sample in STXS_SAMPLES:
-            configuration.add_producers(scopes_list, [weight_producers.STXSNormalization])
-            configuration.add_outputs(scopes_list, [q.stxs_family])
-        else:
-            configuration.add_producers(scopes_list, [weight_producers.ConstantSTXSNormWeight])
         weight_scopes = [s for s in scopes_list if s in ("et", "mt", "tt", "em")]
         if sample in STXS_SAMPLES and era not in RUN2_ERAS:
             ggh = sample in GGH_SAMPLES
             reweight = [
                 *([weight_producers.IsGGHFamily, weight_producers.GGHNNLOFactor, weight_producers.GGHReweight] if ggh else []),
-                weight_producers.LHEScale,
                 weight_producers.LHEScaleReweightGGH if ggh else weight_producers.LHEScaleReweight,
             ]
-            configuration.add_config_parameters(
-                weight_scopes, {"lhe_scale_table_path": "data/normalization/lhe_scale_table.json", "lhe_scale_variation": "nominal"}
-            )
-            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization", "lhe_scale_table.json")) as f:
-                nuisances = [name for name, bins in json.load(f).items() if bins]
-            for nuisance in nuisances:
-                for direction in ("Up", "Down"):
-                    configuration.add_shift(
-                        SystematicShift(
-                            name=f"{nuisance}{direction}",
-                            shift_config={(s,): {"lhe_scale_variation": f"{nuisance}_{direction.lower()}"} for s in weight_scopes},
-                            producers={(s,): [weight_producers.LHEScale] for s in weight_scopes},
-                        )
-                    )
         elif sample == "ttbar":
             reweight = [weight_producers.TopPtFactor, weight_producers.TopPtReweight]
             configuration.add_config_parameters(weight_scopes, {"top_pt_exponent": 1.0})
@@ -745,9 +712,6 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
         configuration.add_producers(
             scopes_list,
             [
-                weight_producers.ConstantCrossSectionPerEventWeight,
-                weight_producers.ConstantNumberGeneratedEventsWeight,
-                weight_producers.ConstantNegativeEventsFraction,
                 weight_producers.ConstantWeight,
             ],
         )
@@ -755,14 +719,6 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
         if era not in RUN2_ERAS and (btag_scopes := [s for s in scopes_list if s in ("et", "mt", "tt", "em")]):
             configuration.add_producers(btag_scopes, [weight_producers.ConstantWeightNoBtag])
             configuration.add_outputs(btag_scopes, [q.weight_no_btag])
-    configuration.add_outputs(
-        scopes_list,
-        [
-            q.crossSectionPerEventWeight,
-            q.numberGeneratedEventsWeight,
-            q.negative_events_fraction,
-        ],
-    )
 
 
 def build_config(

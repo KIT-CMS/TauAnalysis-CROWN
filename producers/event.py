@@ -146,7 +146,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         run3 = TopPtReweighting
 
     GGH_NNLO_Reweighting = Producer(
-        call='''htxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})''',
+        call='''stxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})''',
         input=[nanoAODv15.HTXS_Higgs_pt, nanoAODv15.HTXS_njets30],
         output=[q.ggh_NNLO_weight],
     )
@@ -155,15 +155,26 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[nanoAODv15.PSWeight],
         output=[q.ps_weight],
     )
-    LHE_Scale_up_weight = Producer(
-        call='''event::reweighting::LHEscale({df}, {output}, {input}, 2.0, 2.0)''',
+    LHE_Scale_weight = Producer(
+        call='''event::reweighting::LHEscale({df}, {output}, {input}, {muR}, {muF})''',
         input=[nanoAODv15.LHEScaleWeight],
-        output=[q.lhe_scale_up],
+        output=[q.weight_lhe_scale],
     )
-    LHE_Scale_down_weight = Producer(
-        call='''event::reweighting::LHEscale({df}, {output}, {input}, 0.5, 0.5)''',
-        input=[nanoAODv15.LHEScaleWeight],
-        output=[q.lhe_scale_down],
+    STXSNormalization = Producer(
+        call='''stxs::Normalization({df}, correctionManager, {output}, "{stxs_table_path}", {input})''',
+        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
+        output=[q.stxs_family, q.stxs_norm_weight],
+    )
+    STXSLHEScale = Producer(
+        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_table_path}", "{stxs_lhe_scale_variation}", {input})''',
+        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
+        output=[q.weight_lhe_scale],
+    )
+    # other MC samples: constant no-op STXS normalization
+    ConstantSTXSNormWeight = Producer(
+        call='''event::quantity::Define<double>({df}, {output}, 1.0)''',
+        input=[],
+        output=[q.stxs_norm_weight],
     )
     LHE_PDF_weight = Producer(
         call='''event::reweighting::LHEpdf({df}, {output}, {input}, "{pdf_variation}")''',

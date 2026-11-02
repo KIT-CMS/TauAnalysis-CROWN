@@ -84,6 +84,8 @@ def build_config(
             "met_filters": default_met_filters,
             
             # for LHE weights
+            "muR": 1.0,
+            "muF": 1.0,
             "isr": 1.0,
             "fsr": 1.0,
 
@@ -646,6 +648,14 @@ def build_config(
             "ggH_generator": "powheg",
         },
     )
+    # STXS normalization and LHE scale weights of the signal samples (from https://github.com/KIT-CMS/TAUER/blob/master/analyses/smhtt/common/stxs_tools.py)
+    configuration.add_config_parameters(
+        "global",
+        {
+            "stxs_table_path": "data/normalization/stxs_table.json",
+            "stxs_lhe_scale_variation": "nominal",
+        },
+    )
     ###### scope Specifics ######
     # from 2025 the TauPOG TES is one bin per DM again, so the DM-only (v12-style) producer matches the json
     tau_es_version = "v12" if int(era[:4]) >= 2025 else None
@@ -1147,6 +1157,7 @@ def build_config(
             event.npartons,
             event.MetFilter, 
             event.PUweights,
+            event.LHE_Scale_weight,
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
@@ -1348,6 +1359,7 @@ def build_config(
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
@@ -1365,9 +1377,10 @@ def build_config(
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ZPT_SAMPLES}),
         (scopes, AppendProducer, [event.GGH_NNLO_Reweighting], {"samples": GGH_SAMPLES}),
-        ("global", AppendProducer, [event.LHE_Scale_up_weight, event.LHE_Scale_down_weight], {"samples": STXS_SAMPLES}),
+        ("global", AppendProducer, [event.STXSNormalization], {"samples": STXS_SAMPLES}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
+        ("global", ReplaceProducer, [event.LHE_Scale_weight, event.STXSLHEScale], {"samples": STXS_SAMPLES}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era, tau_es_version), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
@@ -1579,7 +1592,10 @@ def build_config(
         )
 
     if sample in STXS_SAMPLES:
-        configuration.add_outputs(scopes, [q.lhe_scale_up, q.lhe_scale_down])
+        configuration.add_outputs(scopes, [q.stxs_family, q.stxs_norm_weight, q.weight_lhe_scale])
+    elif sample not in DATA_ONLY:
+        configuration.add_producers("global", [event.ConstantSTXSNormWeight])
+        configuration.add_outputs(scopes, [q.stxs_norm_weight])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(

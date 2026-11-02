@@ -101,9 +101,6 @@ eventCut_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
-# raw LHEScaleWeight mu_R = mu_F = 2 / 0.5 of the signal samples, normalized per STXS bin in the friend
-lhe_scale_up = Quantity()
-lhe_scale_down = Quantity()
 
 # SampleFlags
 is_data = Quantity()
@@ -567,24 +564,21 @@ gen_category_T = Quantity()
 gen_category_J = Quantity()
 gen_category_L = Quantity()
 
-# per-file MC normalization constants (weights_friends.py) -- names/semantics match the
-# legacy Python xsec/build_friend_tree.py friend these replace, for drop-in compatibility
-# with existing downstream readers (TauFakeFactors' gen_weight(), TauKITFlow's
-# process_selection.py). Not produced for data/embedding.
-crossSectionPerEventWeight = Quantity()
-numberGeneratedEventsWeight = Quantity()
+# per-file MC normalization constants
+nick = Quantity()
+xsec = Quantity()
+one_over_nevents = Quantity()
 negative_events_fraction = Quantity()
 
-# per-bin STXS normalization of the signal samples (STXSNormalization): sample family code, per-bin
-# xsec/fraction factor and the LHE scale weights divided by the per-bin sum-of-weights ratio
+# per-bin STXS normalization of the signal samples (ntuple, event.STXSNormalization): sample family code and per-bin
+# xsec/fraction factor
 stxs_family = Quantity()
 stxs_norm_weight = Quantity()
-lhe_scale_norm_up = Quantity()
-lhe_scale_norm_down = Quantity()
 
 # combined per-event MC weight of the friend (producers/weights.py): normalization, lumi, pileup,
 # lepton and tau ID, trigger and b-tag scale factors; the intermediate products follow
 weight = Quantity()
+weight_gen_sign_before_norm = Quantity()
 weight_gen_sign = Quantity()
 weight_lumi = Quantity()
 weight_campaign_split = Quantity()
