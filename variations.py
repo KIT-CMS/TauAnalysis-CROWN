@@ -1,4 +1,6 @@
-from __future__ import annotations 
+from __future__ import annotations
+import json
+import os
 from typing import List
 
 from code_generation.configuration import Configuration
@@ -13,6 +15,7 @@ from .producers import muons as muons
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
+from .constants import STXS_SAMPLES
 from code_generation.helpers import defaults
 from code_generation.systematics import get_add_shift
 
@@ -37,7 +40,8 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
     
     #########################
-    # LHE Scale Weight variations
+    # LHE PDF / alphaS and parton shower variations (the scale variations are the
+    # STXS LHE scale shifts below)
     #########################
     lhe_scale_production_mode_postfixes = {
         "ggh": ["ggH"],
@@ -52,14 +56,30 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         with defaults(scopes="global"):
             with defaults(shift_map={"Up": 2.0, "Down": 0.5}):
                 for postfix in lhe_scale_postfixes:
-                    add_shift(name=f"QCDscale_ren_{postfix}", shift_key="muR", producers=[event.LHE_Scale_weight])
-                    add_shift(name=f"QCDscale_fac_{postfix}", shift_key="muF", producers=[event.LHE_Scale_weight])
+                    if sample not in STXS_SAMPLES:  # STXS samples have their own LHE scale shifts (event.STXSLHEScale) and don't need these
+                        add_shift(name=f"QCDscale_ren_{postfix}", shift_key="muR", producers=[event.LHE_Scale_weight])
+                        add_shift(name=f"QCDscale_fac_{postfix}", shift_key="muF", producers=[event.LHE_Scale_weight])
                     add_shift(name=f"ps_fsr_{postfix}", shift_key="fsr", producers=[event.PS_weight])
                     add_shift(name=f"ps_isr_{postfix}", shift_key="isr", producers=[event.PS_weight])
             with defaults(shift_map={"Up": "up", "Down": "down"}):
                 for postfix in lhe_scale_postfixes:
                     add_shift(name=f"pdf_Higgs_{postfix}", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
                     add_shift(name=f"pdf_alphas_{postfix}", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
+
+    #########################
+    # STXS LHE scale shifts: one per nuisance of the stxs_table, only rerunning the weight_lhe_scale column
+    #########################
+    if sample in STXS_SAMPLES:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization", "stxs_table.json")) as f:
+            nuisances = [name for name, bins in json.load(f)["lhe_scale_nuisances"].items() if bins]
+        for nuisance in nuisances:
+            add_shift(
+                name=nuisance,
+                shift_key="stxs_lhe_scale_variation",
+                shift_map={"Up": f"{nuisance}_up", "Down": f"{nuisance}_down"},
+                scopes="global",
+                producers=[event.STXSLHEScale],
+            )
 
     #########################
     # Pileup Shifts
@@ -467,7 +487,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 add_shift(name="CMS_btag_fullShape_cferr2", shift_map={"Up": "up_cferr2", "Down": "down_cferr2"})
         else:
             with defaults(
-                scopes=("mt", "et", "tt"),
+                scopes=("mt", "et", "tt", "em"),
                 producers=[scalefactors.btaggingWP_SF],
             ):
                 add_shift(

@@ -5,6 +5,7 @@ from code_generation.producer import BaseFilter, Producer, ProducerGroup, Vector
 from ..producers import electrons as electrons
 from ..producers import muons as muons
 from ..producers import genparticles as genparticles
+from code_generation.producer import SwitchProducer
 
 ####################
 # Set of general producers for event quantities
@@ -145,44 +146,9 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         run3 = TopPtReweighting
 
     GGH_NNLO_Reweighting = Producer(
-        call='''htxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})''',
+        call='''stxs::ggHNNLOWeights({df}, {output}, "{ggHNNLOweightsRootfile}", "{ggH_generator}", {input})''',
         input=[nanoAODv15.HTXS_Higgs_pt, nanoAODv15.HTXS_njets30],
         output=[q.ggh_NNLO_weight],
-    )
-    GGH_WG1_Uncertainties = Producer(
-        call='''htxs::ggH_WG1_uncertainties({df}, {output_vec}, {input})''',
-        input=[
-            nanoAODv15.HTXS_stage_1_pTjet30,
-            nanoAODv15.HTXS_Higgs_pt,
-            nanoAODv15.HTXS_njets30,
-        ],  # using non-updated stage1 flag required by the used macro
-        output=[
-            q.THU_ggH_Mu,
-            q.THU_ggH_Res,
-            q.THU_ggH_Mig01,
-            q.THU_ggH_Mig12,
-            q.THU_ggH_VBF2j,
-            q.THU_ggH_VBF3j,
-            q.THU_ggH_PT60,
-            q.THU_ggH_PT120,
-            q.THU_ggH_qmtop,
-        ],
-    )
-    QQH_WG1_Uncertainties = Producer(
-        call='''htxs::qqH_WG1_uncertainties({df}, {output_vec}, {input})''',
-        input=[nanoAODv15.HTXS_stage1_1_fine_cat_pTjet30GeV],  # using fine stage1.1 flag required by the used macro
-        output=[
-            q.THU_qqH_TOT,
-            q.THU_qqH_PTH200,
-            q.THU_qqH_Mjj60,
-            q.THU_qqH_Mjj120,
-            q.THU_qqH_Mjj350,
-            q.THU_qqH_Mjj700,
-            q.THU_qqH_Mjj1000,
-            q.THU_qqH_Mjj1500,
-            q.THU_qqH_25,
-            q.THU_qqH_JET01,
-        ],
     )
     PS_weight = Producer(
         call='''event::reweighting::PartonShower({df}, {output}, {input}, {isr}, {fsr})''',
@@ -192,7 +158,23 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     LHE_Scale_weight = Producer(
         call='''event::reweighting::LHEscale({df}, {output}, {input}, {muR}, {muF})''',
         input=[nanoAODv15.LHEScaleWeight],
-        output=[q.lhe_scale_weight],
+        output=[q.weight_lhe_scale],
+    )
+    STXSNormalization = Producer(
+        call='''stxs::Normalization({df}, correctionManager, {output}, "{stxs_table_path}", {input})''',
+        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
+        output=[q.stxs_family, q.stxs_norm_weight],
+    )
+    STXSLHEScale = Producer(
+        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_table_path}", "{stxs_lhe_scale_variation}", {input})''',
+        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
+        output=[q.weight_lhe_scale],
+    )
+    # other MC samples: constant no-op STXS normalization
+    ConstantSTXSNormWeight = Producer(
+        call='''event::quantity::Define<double>({df}, {output}, 1.0)''',
+        input=[],
+        output=[q.stxs_norm_weight],
     )
     LHE_PDF_weight = Producer(
         call='''event::reweighting::LHEpdf({df}, {output}, {input}, "{pdf_variation}")''',

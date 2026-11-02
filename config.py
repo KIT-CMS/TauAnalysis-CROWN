@@ -16,18 +16,13 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
 from code_generation.configuration import Configuration
 from code_generation.modifiers import EraModifier, SampleModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
-
-# hadronic tau decay modes the analysis accepts
-# the selection masks cut on the very same list
-TAU_DECAY_MODES = "0,1,10,11"
-
-RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 
 
 def build_config(
@@ -651,6 +646,14 @@ def build_config(
             # STXS weights
             "ggHNNLOweightsRootfile": "data/htxs/NNLOPS_reweight.root",
             "ggH_generator": "powheg",
+        },
+    )
+    # STXS normalization and LHE scale weights of the signal samples (from https://github.com/KIT-CMS/TAUER/blob/master/analyses/smhtt/common/stxs_tools.py)
+    configuration.add_config_parameters(
+        "global",
+        {
+            "stxs_table_path": "data/normalization/stxs_table.json",
+            "stxs_lhe_scale_variation": "nominal",
         },
     )
     ###### scope Specifics ######
@@ -1355,7 +1358,8 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
@@ -1371,11 +1375,12 @@ def build_config(
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global", AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter], {"samples": ["dyjets_amcatnlo_ll"]}),
-        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
-        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau", "rem_higgs"]}),
-        (scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau", "rem_higgs"]}),
+        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ZPT_SAMPLES}),
+        (scopes, AppendProducer, [event.GGH_NNLO_Reweighting], {"samples": GGH_SAMPLES}),
+        ("global", AppendProducer, [event.STXSNormalization], {"samples": STXS_SAMPLES}),
         (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
 
+        ("global", ReplaceProducer, [event.LHE_Scale_weight, event.STXSLHEScale], {"samples": STXS_SAMPLES}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
         ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era, tau_es_version), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
@@ -1451,7 +1456,6 @@ def build_config(
             q.npartons,
             nanoAODv15.event,
             q.puweight,
-            q.lhe_scale_weight,
             q.ps_weight,
             q.lhe_pdf_weight,
             q.lhe_alphaS_weight,
@@ -1586,6 +1590,12 @@ def build_config(
                 ] + [p for p in scalefactors.MuonIDIso_SF.get_outputs("em")
             ],
         )
+
+    if sample in STXS_SAMPLES:
+        configuration.add_outputs(scopes, [q.stxs_family, q.stxs_norm_weight, q.weight_lhe_scale])
+    elif sample not in DATA_ONLY:
+        configuration.add_producers("global", [event.ConstantSTXSNormWeight])
+        configuration.add_outputs(scopes, [q.stxs_norm_weight])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(
