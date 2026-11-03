@@ -14,10 +14,9 @@ from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .producers import triggers as triggers
-from .producers.weights import MC_SPLIT_FRACTION
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_VALUES
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -86,6 +85,9 @@ def build_config(
 
             # Summer24 MC split between 2024 and 2025/2026
             "mc_split_fraction": MC_SPLIT_FRACTION,
+            "master_seed_sample_split": 8102013,
+            "mc_split_value_min": ERA_SPLIT_VALUES[era]["min"],
+            "mc_split_value_max": ERA_SPLIT_VALUES[era]["max"],
             
             # for LHE weights
             "muR": 1.0,
@@ -1420,8 +1422,9 @@ def build_config(
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
         # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        # ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter, event.Era2024SplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        # ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter, event.Era2025SplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.EventHashForSampleSplit, event.SampleSplitHashFlag, event.SampleSplitFilter, event.SampleSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024", "2025", "2026"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 

@@ -4,17 +4,6 @@ from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 from code_generation.quantity import Quantity
 
-# per-era luminosity in pb^-1; "2025" is 2025+2026 data combined
-LUMI_PB = {
-    "2016preVFP": 19500.0, "2016postVFP": 16800.0, "2017": 41500.0, "2018": 59830.0,
-    "2022preEE": 8086.069205, "2022postEE": 26674.924045,
-    "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
-    "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
-}
-# share of the Summer24 MC kept for 2024 (event.EraSplitFlag), the rest goes to 2025, whose lumi includes 2026;
-# the split weight is 1 / the measured generator-weight fraction of each part (norm table split_fraction), else 1 / the lumi share
-MC_SPLIT_FRACTION = LUMI_PB["2024"] / (LUMI_PB["2024"] + LUMI_PB["2025"])
-ERA_SPLIT_FRACTION = {"2024": MC_SPLIT_FRACTION, "2025": 1 - MC_SPLIT_FRACTION, "2026": 1 - MC_SPLIT_FRACTION}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
