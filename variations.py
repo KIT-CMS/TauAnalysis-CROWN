@@ -277,7 +277,7 @@ def add_Variations(
             shift_key="zpt_variation",
             name=f"CMS_htt_zptReweight_{shift_era_tag}",
             shift_map={"Up": "up", "Down": "down"},
-            samples=["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
+            samples=["dyjets","dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
         )
     
     #########################
@@ -596,21 +596,6 @@ def add_Variations(
                     name="CMS_scale_j_HEMIssue_2018",
                     shift_key=["jet_jes_shift", "jet_jes_source"],
                     shift_map={"Up": [1, "HEMIssue"], "Down": [-1, "HEMIssue"]},
-                )
-
-        with defaults(name="CMS_scale_j_Total"):  # two components of CMS_scale_j_Total
-            add_shift(
-                shift_key=["jet_jes_shift", "jet_jes_source"],
-                shift_map={"Up": [1, "Total"], "Down": [-1, "Total"]},
-                scopes="global",
-                producers=[JES_CONFIG.jet_pt_correction_producer]
-            )
-            if year < 2022:
-                add_shift(
-                    shift_key="btag_sf_variation",
-                    shift_map={"Up": "up_jes", "Down": "down_jes"},
-                    scopes=("mt", "et", "tt"),
-                    producers=[scalefactors.btagging_SF]
                 )
 
         if not JES_CONFIG.REGROUPED:

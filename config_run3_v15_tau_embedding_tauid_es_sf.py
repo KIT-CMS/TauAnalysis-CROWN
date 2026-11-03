@@ -933,7 +933,7 @@ def build_config(
         ("global", AppendProducer, [event.JSONFilter], {"samples": DATA_ONLY}),
         ## producer to add a cut on DYto2L affected by pythia bug where DYto2Tau has been reprocessed
         ("global",AppendProducer, [genparticles.GenDYFlavor, genparticles.GenDYFilter],{"samples": ["dyjets_amcatnlo_ll"]}),
-        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjet","dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
+        (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ["dyjets","dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]}),
         (available_scopes,AppendProducer, [event.GGH_NNLO_Reweighting, event.GGH_WG1_Uncertainties], {"samples": ["ggh_htautau", "rem_htautau"]}),
         (available_scopes, AppendProducer, [event.QQH_WG1_Uncertainties], {"samples": ["vbf_htautau", "rem_htautau"]}),
         (available_scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
