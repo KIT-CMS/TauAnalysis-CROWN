@@ -4,15 +4,6 @@ from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 from code_generation.quantity import Quantity
 
-# per-era luminosity in pb^-1; "2025" is 2025+2026 data combined
-LUMI_PB = {
-    "2016preVFP": 19500.0, "2016postVFP": 16800.0, "2017": 41500.0, "2018": 59830.0,
-    "2022preEE": 8086.069205, "2022postEE": 26674.924045,
-    "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
-    "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
-}
-# 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
-MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
@@ -33,7 +24,6 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
-    MCCampaignSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, {mc_campaign_split_factor})''', input=[], output=[q.weight_campaign_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
         NormXsecNgen = Producer(input=[q.xsec, q.one_over_nevents], output=[q.weight_xsec_ngen])
@@ -119,7 +109,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
-_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, MCCampaignSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
+_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
 _tau_2 = [GenuineTau_2, VsJetSF_2]
 _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
 _ids = {
