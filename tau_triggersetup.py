@@ -344,7 +344,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                                 "p2_ptcut": 35,
                                 "p1_etacut": 2.1,
                                 "p2_etacut": 2.1,
-                                "p1_filterbit": 2,
+                                "p1_filterbit": 17,  # NanoAOD v15 electron bit 17 = 1e-1tau PNet (bit 2 = WPLoose never fires)
                                 "p2_filterbit": "1, 4, 12",
                                 **electron_tau_cross_trigger_defaults,
                             },
@@ -359,7 +359,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                             "p2_ptcut": 35,
                             "p1_etacut": 2.1,
                             "p2_etacut": 2.1,
-                            "p1_filterbit": 2,
+                            "p1_filterbit": 7,  # NanoAOD v15 electron bit 7 = 1e-1tau
                             "p2_filterbit": "3, 12",
                             **electron_tau_cross_trigger_defaults,
                         },
@@ -654,12 +654,10 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
     doubletau_jet_trigger_defaults = {
         "p1_trigger_particle_id": 15,
         "p2_trigger_particle_id": 15,
-        "p3_trigger_particle_id": 1,  # Jet (see include/triggers.hxx matchParticle docstring)
-        # offline jet pT from AN-25-055 Table 24 (both 2022/2023 and 2024: >= 65, i.e. +5 GeV
-        # over the native 60 GeV HLT jet threshold, matching the convention used for the tau legs)
+        "p3_trigger_particle_id": 1,  # Jet
+        # offline jet pT from AN-25-055 Table 24
         "p3_ptcut": 65,
         # not given by a specific offline table entry; using the analysis' general jet
-        # acceptance (AN-25-055 Sec. 5.4: pT > 30, |eta| < 4.7) as a non-restrictive bound
         "p3_etacut": 4.7,
         # Jet-type filter bit 17 = "DiTau+Jet (Jet) Signal" / "hltHpsOverlapFilterDeepTauDoublePFTau*PFJet*"
         # (nanoAODv12_run3 and nanoAODv15_run3 TrigObj_filterBits, Jet section) - same bit index in
