@@ -86,8 +86,8 @@ def build_config(
             # Summer24 MC split between 2024 and 2025/2026
             "mc_split_fraction": MC_SPLIT_FRACTION,
             "master_seed_sample_split": 8102013,
-            "mc_split_value_min": ERA_SPLIT_VALUES[era]["min"],
-            "mc_split_value_max": ERA_SPLIT_VALUES[era]["max"],
+            "mc_split_value_min": ERA_SPLIT_VALUES[era]["min"] if era in ERA_SPLIT_VALUES else 0.0,
+            "mc_split_value_max": ERA_SPLIT_VALUES[era]["max"] if era in ERA_SPLIT_VALUES else 1.0,
             
             # for LHE weights
             "muR": 1.0,
@@ -1365,6 +1365,8 @@ def build_config(
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        # no b-tag efficiency measured for the dilepton control regions so far
+        ([s for s in ["mm", "ee"] if s in scopes], RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"exclude_samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": DATA_ONLY}),
