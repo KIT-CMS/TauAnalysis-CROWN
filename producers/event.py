@@ -103,19 +103,57 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
-    EvenOddIDFlag = Producer(
-        call='''event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})''',
+    # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
+    # Version with split based on event ID hash only
+    EventHashForSampleSplit = Producer(
+        call="event::quantity::GenerateSeed({df}, {output}, {input}, {master_seed_sample_split})",
+        input=[
+            nanoAODv15.luminosityBlock,
+            nanoAODv15.run,
+            nanoAODv15.event,
+        ],
+        output=[q.event_split_hash],
+    )
+    SampleSplitHashFlag = Producer(
+        call="event::quantity::HashFlag({df}, {output}, {input}, {mc_split_value_min}, {mc_split_value_max})",
+        input=[q.event_split_hash],
+        output=[q.era_split_mask],
+    )
+    SampleSplitFilter = BaseFilter(
+        call='''event::filter::Flag({df}, \"SampleSplitFilter\", {input})''',
+        input=[q.era_split_mask],
+    )
+
+    SampleSplitWeight = Producer(
+        call="event::quantity::HashSplitWeight({df}, {output}, {mc_split_value_min}, {mc_split_value_max})",
+        input=[],
+        output=[q.wgt_sample_split],
+    )
+    # Version with split based on precalculated generator weight fraction
+    EraSplitFlag = Producer(
+        call='''event::normalization::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
         input=[nanoAODv15.event],
-        output=[q.eventCut_mask],
+        output=[q.era_split_mask],
     )
-    EvenIDFilter = BaseFilter(
-        call='''event::filter::Flag({df}, \"EvenIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    Era2024SplitFilter = BaseFilter(
+        call='''event::filter::Flag({df}, \"Era2024SplitFilter\", {input})''',
+        input=[q.era_split_mask],
     )
-    OddIDFilter = BaseFilter(
-        call='''event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    Era2025SplitFilter = BaseFilter(
+        call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
+        input=[q.era_split_mask],
     )
+    Era2024SplitWeight = Producer(
+        call="event::quantity::HashSplitWeight({df}, {output}, 0., {mc_split_fraction})",
+        input=[],
+        output=[q.wgt_sample_split],
+    )
+    Era2025SplitWeight = Producer(
+        call="event::quantity::HashSplitWeight({df}, {output}, {mc_split_fraction}, 1.)",
+        input=[],
+        output=[q.wgt_sample_split],
+    )
+
     TopPtReweighting = Producer(
         call='''event::reweighting::TopPtRun3({df}, {output}, {input})''',
         input=[

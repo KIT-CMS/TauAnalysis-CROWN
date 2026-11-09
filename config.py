@@ -16,7 +16,7 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_VALUES
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -82,6 +82,12 @@ def build_config(
         {
             # noise filters
             "met_filters": default_met_filters,
+
+            # Summer24 MC split between 2024 and 2025/2026
+            "mc_split_fraction": MC_SPLIT_FRACTION,
+            "master_seed_sample_split": 8102013,
+            "mc_split_value_min": ERA_SPLIT_VALUES[era]["min"] if era in ERA_SPLIT_VALUES else 0.0,
+            "mc_split_value_max": ERA_SPLIT_VALUES[era]["max"] if era in ERA_SPLIT_VALUES else 1.0,
             
             # for LHE weights
             "muR": 1.0,
@@ -1155,7 +1161,7 @@ def build_config(
             event.SampleFlags,
             event.Lumi,
             event.npartons,
-            event.MetFilter, 
+            event.MetFilter,
             event.PUweights,
             event.LHE_Scale_weight,
             event.LHE_PDF_weight,
@@ -1185,7 +1191,6 @@ def build_config(
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             met.MetBasicsSwitch.get(era),
-            event.EvenOddIDFlag,
         ],
     )
     configuration.add_producers(
@@ -1358,9 +1363,10 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        # no b-tag efficiency measured for the dilepton control regions so far
+        ([s for s in ["mm", "ee"] if s in scopes], RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"exclude_samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": DATA_ONLY}),
@@ -1417,9 +1423,10 @@ def build_config(
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
-        # separate MC for 2024 and 2025 by even/odd event number
-        ("global", AppendProducer, [event.EvenIDFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.OddIDFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
+        # ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter, event.Era2024SplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        # ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter, event.Era2025SplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.EventHashForSampleSplit, event.SampleSplitHashFlag, event.SampleSplitFilter, event.SampleSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024", "2025", "2026"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
