@@ -605,11 +605,10 @@ def _resolve_templated_quantities(configuration, scope: str, templated_producers
     for producer in templated_producers:
         if scope not in producer.scopes:
             continue
-        producer.input[scope] = [
-            Quantity(template.name.format(**parameters))
-            for template in producer.input[scope]
-        ]
-        for column in producer.input[scope]:
+        # only the templated inputs are replaced: a new Quantity has none of the shifts of the produced ones
+        resolved = [Quantity(t.name.format(**parameters)) if "{" in t.name else None for t in producer.input[scope]]
+        producer.input[scope] = [r or t for r, t in zip(resolved, producer.input[scope])]
+        for column in filter(None, resolved):
             for output_quantity in producer.output:
                 column.adopt(output_quantity, scope)
 
