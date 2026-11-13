@@ -9,6 +9,8 @@ from code_generation.producer import Producer
 from code_generation.quantity import Quantity
 from code_generation.systematics import SystematicShift
 
+from ..constants import ANALYSIS_ID
+
 # payload inputs that are not event quantities
 NON_QUANTITY_INPUTS = ("process", "syst")
 # variation keys look like "<name>Up" or "<name>_up"
@@ -305,6 +307,9 @@ def add_fake_factors(
         )
 
     for name, (shift_config, shift_producers) in shifts.items():
+        # Run 3 shifts carry the analysis-specific datacard name, the payload keys stay CMS_fake_t_
+        if int(era[:4]) >= 2022:
+            name = name.replace("CMS_fake_t_", f"CMS_{ANALYSIS_ID}_fake_t_", 1)
         configuration.add_shift(SystematicShift(
             name=name, shift_config={(scope,): shift_config}, producers={(scope,): shift_producers},
         ))

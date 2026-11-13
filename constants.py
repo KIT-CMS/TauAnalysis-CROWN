@@ -4,6 +4,9 @@ TAU_DECAY_MODES = "0,1,10,11"
 
 RUN2_ERAS = ["2016preVFP", "2016postVFP", "2017", "2018"]
 
+# CMS_<analysisID>_ prefix of the analysis-specific Run 3 shifts (datacard names, CAT naming conventions)
+ANALYSIS_ID = "HIG26018"
+
 # sample types with the Z pT reweighting (Run 3 shifts included in the weight, see producers/weights.py)
 ZPT_SAMPLES = ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]
 

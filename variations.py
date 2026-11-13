@@ -15,6 +15,7 @@ from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
 from code_generation.helpers import defaults
 from code_generation.systematics import get_add_shift
+from .constants import ANALYSIS_ID
 
 # Map internal era names to JERC JSON era names for JERC sources
 ERA_MAP = {
@@ -35,6 +36,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     add_shift = get_add_shift(configuration)
     era_tag = ERA_MAP[era]  
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
+    run3 = int(era[:4]) >= 2022
     
     #########################
     # LHE PDF / alphaS and parton shower variations (the scale variations are the
@@ -65,7 +67,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     if era == "2025" or era == "2026":
         add_shift(
-            name=f"PileUp",
+            name=f"CMS_pileup_{shift_era_tag}",
             shift_key="PU_reweighting_variation",
             shift_map={"Up": "data/root_pileup/Data_PileUp_2025_2026_72p3832.root", "Down": "data/root_pileup/Data_PileUp_2025_2026_66p0168.root"},
             scopes="global",
@@ -115,9 +117,9 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
         exclude_samples=["data", "embedding", "embedding_mc"],
     ):
         add_shift(name=f"CMS_scale_m_stat_{shift_era_tag}", shift_map={"Up": "ScaleStatUp", "Down": "ScaleStatDown"})
-        add_shift(name=f"CMS_scale_m_syst", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
+        add_shift(name="CMS_scale_m_syst", shift_map={"Up": "ScaleSystUp", "Down": "ScaleSystDown"})
         add_shift(name=f"CMS_res_m_stat_{shift_era_tag}", shift_map={"Up": "ResoStatUp", "Down": "ResoStatDown"})
-        add_shift(name=f"CMS_res_m_syst", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
+        add_shift(name="CMS_res_m_syst", shift_map={"Up": "ResoSystUp", "Down": "ResoSystDown"})
 
     #########################
     # Muon ID shifts
@@ -130,7 +132,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             add_shift(
                 name="CMS_eff_m_id_syst",
                 shift_key="muon_id_variation",
-                shift_map={"Up":"systup", "Down":"systdown"},
+                shift_map={"Up":"systonlyup", "Down":"systonlydown"},
             )
             add_shift(
                 name=f"CMS_eff_m_id_stat_{shift_era_tag}",
@@ -149,7 +151,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             add_shift(
                 name="CMS_eff_m_iso_syst",
                 shift_key="muon_iso_variation",
-                shift_map={"Up":"systup", "Down":"systdown"},
+                shift_map={"Up":"systonlyup", "Down":"systonlydown"},
             )
             add_shift(
                 name=f"CMS_eff_m_iso_stat_{shift_era_tag}",
@@ -176,14 +178,14 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             producers=[electrons.ElectronPtCorrectionMC],
             exclude_samples=["data", "embedding", "embedding_mc"],
         ):
-            add_shift(name="CMS_res_e", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
-            add_shift(name="CMS_scale_e", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
+            add_shift(name="CMS_res_e_13p6TeV", shift_map={"Up": "resolutionUp", "Down": "resolutionDown"})
+            add_shift(name="CMS_scale_e_13p6TeV", shift_map={"Up": "scaleUp", "Down": "scaleDown"})
 
     #########################
     # Electron ID shifts
     #########################
     add_shift(
-        name="CMS_eff_e_id",
+        name="CMS_eff_e_id_13p6TeV" if run3 else "CMS_eff_e_id_13TeV",
         scopes=("et", "ee", "em"),
         shift_key="ele_sf_variation",
         shift_map={"Up":"sfup", "Down":"sfdown"},
@@ -253,11 +255,11 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             shift_key="recoil_variation",
         ):
             add_shift(
-                name=f"CMS_scale_met_recoil_response_{shift_era_tag}",
+                name=f"CMS_{ANALYSIS_ID}_scale_met_recoil_response_{shift_era_tag}",
                 shift_map={"Up":"RespUp", "Down":"RespDown"}
             )
             add_shift(
-                name=f"CMS_res_met_recoil_resolution_{shift_era_tag}",
+                name=f"CMS_{ANALYSIS_ID}_res_met_recoil_resolution_{shift_era_tag}",
                 shift_map={"Up":"ResolUp", "Down":"ResolDown"}
             )
 
@@ -269,7 +271,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[event.ZPtReweighting],
             shift_key="zpt_variation",
-            name=f"CMS_htt_zptReweight_{shift_era_tag}",
+            name=f"CMS_{ANALYSIS_ID}_zptReweight_{shift_era_tag}",
             shift_map={"Up": "up", "Down": "down"},
             samples=["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"],
         )
@@ -311,25 +313,24 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 with defaults(producers=[taus.TauEnergyCorrection]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
+                        # the 2024 json is measured per pt bin, with an uncertainty per bin
                         for pt in ["20to40", "40to60", "60toInf"]:
-                            add_shift(name=f"CMS_scale_t_DM{dm}_genTau_pT{pt}_{shift_era_tag}", shift_key=f"tau_es_DM{dm}_pt{pt}")
+                            add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genTau_pT{pt}_{shift_era_tag}", shift_key=f"tau_es_DM{dm}_pt{pt}")
                         # ele fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genElectron_{shift_era_tag}", shift_key=[f"tau_elefake_es_DM{dm}_barrel", f"tau_elefake_es_DM{dm}_endcap"], shift_map={"Up": ["up"] * 2, "Down": ["down"] * 2})
                         # muon fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genMuon", shift_key=f"tau_mufake_es_DM{dm}")
         else:
             # 2022, 2023, 2025, 2026: one TES per DM (correlated across pt), same scheme for all these eras
             with defaults(scopes=("et", "mt", "tt")):
                 with defaults(producers=[taus.TauEnergyCorrection_v12]): # propagate to mass too
                     for dm in ["0", "1", "10", "11"]:
                         # genuine tau
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genTau_{shift_era_tag}", shift_key=f"tau_es_DM{dm}")
                         # ele fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_barrel_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_barrel")
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genElectron_endcap_{shift_era_tag}", shift_key=f"tau_elefake_es_DM{dm}_endcap")
+                        add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genElectron_{shift_era_tag}", shift_key=[f"tau_elefake_es_DM{dm}_barrel", f"tau_elefake_es_DM{dm}_endcap"], shift_map={"Up": ["up"] * 2, "Down": ["down"] * 2})
                         # muon fake
-                        add_shift(name=f"CMS_scale_t_DM{dm}_genMuon_{shift_era_tag}", shift_key=f"tau_mufake_es_DM{dm}")
+                        add_shift(name=f"CMS_scale_t_DeepTau2018v2p5_DM{dm}_genMuon", shift_key=f"tau_mufake_es_DM{dm}")
 
     #########################
     # TauID scale factor shifts
@@ -383,10 +384,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             vsjet_dms = ["0", "1", "10", "11"]
             for dm in vsjet_dms:
                 # vs Ele
-                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_barrel_{shift_era_tag}", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_eta_bin1_{shift_era_tag}", shift_key=f"tau_id_vsele_DM{dm}_barrel"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
-                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_endcap_{shift_era_tag}", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSe_DM{dm}_eta_bin2_{shift_era_tag}", shift_key=f"tau_id_vsele_DM{dm}_endcap"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsEleTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsEleTauID_SF])
                 # vs Jet
@@ -399,16 +400,16 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     #  - 1 syst. (TES-induced) uncertainty per DM, uncorrelated across DM and era
                     json_era_tag = TAU_JSON_ERA_MAP[era]
                     with defaults(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12], shift_key=f"tau_id_vsjet_DM{dm}"):
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_TES_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
                     with defaults(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12], shift_key=f"tau_id_vsjet_DM{dm}"):
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
-                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_TES_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_stat1_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat1_dm{dm}_up", "Down": f"stat1_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_stat2_DM{dm}_{shift_era_tag}", shift_map={"Up": f"stat2_dm{dm}_up", "Down": f"stat2_dm{dm}_down"})
+                        add_shift(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_DM{dm}_{shift_era_tag}", shift_map={"Up": f"syst_TES_{json_era_tag}_dm{dm}_up", "Down": f"syst_TES_{json_era_tag}_dm{dm}_down"})
                 else:
-                    for pt in ["20to40", "40to60", "60toInf"]:
-                        with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_DM{dm}_pT{pt}_{shift_era_tag}", shift_key=f"tau_id_vsjet_DM{dm}_pt{pt}"):
+                    for pt_bin, pt in enumerate(["20to40", "40to60", "60toInf"], 1):
+                        with defaults(name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_DM{dm}_pt_bin{pt_bin}_{shift_era_tag}", shift_key=f"tau_id_vsjet_DM{dm}_pt{pt}"):
                             add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsJetTauID_SF])
                             add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsJetTauID_SF])
 
@@ -419,25 +420,25 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                 with defaults(shift_key=[f"tau_id_vsjet_DM{dm}" for dm in vsjet_dms]):
                     with defaults(scopes=("et", "mt", "tt"), producers=[scalefactors.Tau_2_VsJetTauID_SF_v12]):
                         add_shift(
-                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_syst_alleras",
+                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_alleras",
                             shift_map={"Up": ["syst_alleras_up"] * len(vsjet_dms), "Down": ["syst_alleras_down"] * len(vsjet_dms)},
                         )
                         add_shift(
-                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_{shift_era_tag}",
+                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_{shift_era_tag}",
                             shift_map={"Up": [f"syst_{json_era_tag}_up"] * len(vsjet_dms), "Down": [f"syst_{json_era_tag}_down"] * len(vsjet_dms)},
                         )
                     with defaults(scopes=("tt"), producers=[scalefactors.Tau_1_VsJetTauID_SF_v12]):
                         add_shift(
-                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_syst_alleras",
+                            name="CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_alleras",
                             shift_map={"Up": ["syst_alleras_up"] * len(vsjet_dms), "Down": ["syst_alleras_down"] * len(vsjet_dms)},
                         )
                         add_shift(
-                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_syst_{shift_era_tag}",
+                            name=f"CMS_eff_t_DeepTau2018v2p5_VSjet_dm_syst_{shift_era_tag}",
                             shift_map={"Up": [f"syst_{json_era_tag}_up"] * len(vsjet_dms), "Down": [f"syst_{json_era_tag}_down"] * len(vsjet_dms)},
                         )
             # vs Muon
             for wheel in range(1, 6):
-                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSmu_wheel{wheel}_{shift_era_tag}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
+                with defaults(name=f"CMS_fake_t_DeepTau2018v2p5_VSmu_eta_bin{wheel}_{shift_era_tag}", shift_key=f"tau_id_vsmu_wheel{wheel}"):
                     add_shift(scopes=("et", "mt", "tt"),producers=[scalefactors.Tau_2_VsMuTauID_SF])
                     add_shift(scopes=("tt"),producers=[scalefactors.Tau_1_VsMuTauID_SF])
 
@@ -446,7 +447,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     
     class JES_CONFIG:
-        REGROUPED = True
+        SCHEME = "regrouped"  # "regrouped" (preferred), "full" (all sources) or "total" (CMS_scale_j_Total only)
         jet_pt_correction_producer = jets.JetEnergyCorrection_Run2 if int(era[:4])<2022 else jets.JetEnergyCorrection
 
     with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
@@ -510,23 +511,26 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     shift_map={"Up": [1, "HEMIssue"], "Down": [-1, "HEMIssue"]},
                 )
 
-        with defaults(name="CMS_scale_j_Total"):  # two components of CMS_scale_j_Total
-            add_shift(
-                shift_key=["jet_jes_shift", "jet_jes_source"],
-                shift_map={"Up": [1, "Total"], "Down": [-1, "Total"]},
-                scopes="global",
-                producers=[JES_CONFIG.jet_pt_correction_producer]
-            )
-            if int(era[:4]) < 2022:
+        # the sources add up in quadrature to the total, so the total is booked only without the sources (JME)
+        if JES_CONFIG.SCHEME == "total":
+            with defaults(name="CMS_scale_j_Total"):  # two components of CMS_scale_j_Total
                 add_shift(
-                    shift_key="btag_sf_variation",
-                    shift_map={"Up": "up_jes", "Down": "down_jes"},
-                    scopes=("mt", "et", "tt"),
-                    producers=[scalefactors.btagging_SF]
+                    shift_key=["jet_jes_shift", "jet_jes_source"],
+                    shift_map={"Up": [1, "Total"], "Down": [-1, "Total"]},
+                    scopes="global",
+                    producers=[JES_CONFIG.jet_pt_correction_producer]
                 )
-            add_jet_leg_trigger_shift("Total")
+                if int(era[:4]) < 2022:
+                    add_shift(
+                        shift_key="btag_sf_variation",
+                        shift_map={"Up": "up_jes", "Down": "down_jes"},
+                        scopes=("mt", "et", "tt"),
+                        producers=[scalefactors.btagging_SF]
+                    )
+                add_jet_leg_trigger_shift("Total")
 
-        if not JES_CONFIG.REGROUPED:
+        elif JES_CONFIG.SCHEME == "full":
+            # no jet leg trigger shift: the jet leg payload has only the total and the regrouped sources
             for name in [
                 # --- CMS_scale_j_Absolute ---
                 "SinglePionECAL",
@@ -583,7 +587,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                             producers=[scalefactors.btagging_SF]
                         )
 
-        else:  # preferred configuration
+        elif JES_CONFIG.SCHEME == "regrouped":  # preferred configuration
             for name, JES_source, *is_yearly in [
                 ("Absolute", "Regrouped_Absolute"),
                 ("FlavorQCD", "Regrouped_FlavorQCD"),
@@ -626,8 +630,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     if int(era[:4]) >= 2022:
         with defaults(exclude_samples=["data", "embedding", "embedding_mc"]):
             add_shift(name=f"CMS_eff_e_trigger_{shift_era_tag}", scopes="et", shift_key="trigger_electron_variation", shift_map={"Up": "sfup", "Down": "sfdown"}, producers=[scalefactors.ElectronTriggerSF])
-            # systup/systdown are the combined stat+syst variations (XPOG convention)
-            add_shift(name=f"CMS_eff_m_trigger_{shift_era_tag}", scopes=("mt", "em"), shift_key="trigger_muon_variation", shift_map={"Up": "systup", "Down": "systdown"}, producers={"mt": [scalefactors.MuonTriggerSF], "em": [scalefactors.SingleMuonTriggerSF_em]})
+            # MUO scheme: syst correlated across eras, stat per era
+            with defaults(scopes=("mt", "em"), shift_key="trigger_muon_variation", producers={"mt": [scalefactors.MuonTriggerSF], "em": [scalefactors.SingleMuonTriggerSF_em]}):
+                add_shift(name="CMS_eff_m_trigger_syst", shift_map={"Up": "systonlyup", "Down": "systonlydown"})
+                add_shift(name=f"CMS_eff_m_trigger_stat_{shift_era_tag}", shift_map={"Up": "statup", "Down": "statdown"})
             # tau legs (TauPOG combined up/down of the SF)
             for trigger, scope, key, group in [
                 ("etau", "et", "trigger_tau_variation", scalefactors.TauCrossTriggerSF),
@@ -643,7 +649,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     producers=[group],
                 )
             with defaults(shift_map={"Up": "up", "Down": "down"}):
-                add_shift(name=f"CMS_trig_j_ditaujet_{shift_era_tag}", scopes="tt", shift_key="trigger_jet_variation", producers=[scalefactors.DiTauJet_JetTriggerSF])
+                add_shift(name=f"CMS_{ANALYSIS_ID}_trig_j_ditaujet_{shift_era_tag}", scopes="tt", shift_key="trigger_jet_variation", producers=[scalefactors.DiTauJet_JetTriggerSF])
 
     #########################
     # Trigger scale factor shifts (Run 2, embedding framework)
