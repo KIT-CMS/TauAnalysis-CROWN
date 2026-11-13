@@ -142,8 +142,8 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     # Muon iso shifts
     #########################
     for muon_scopes, muon_producer in [
-        (("mt", "mm"), scalefactors.Muon_1_ID_SF),
-        (("mm", "em"), scalefactors.Muon_2_ID_SF),
+        (("mt", "mm"), scalefactors.Muon_1_Iso_SF),
+        (("mm", "em"), scalefactors.Muon_2_Iso_SF),
     ]:
         with defaults(scopes=muon_scopes, producers=[muon_producer]):
             add_shift(
