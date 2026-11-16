@@ -5,8 +5,9 @@ from code_generation.helpers import defaults
 from code_generation.modifiers import EraModifier
 from code_generation.rules import AppendProducer, RemoveProducer, ReplaceProducer
 from code_generation.systematics import SystematicShift, get_add_shift
+from code_generation.producer import ExtendedVectorProducer
 
-from .producers import electrons, embedding, genparticles, pairquantities, taus
+from .producers import electrons, embedding, genparticles, pairquantities, taus, scalefactors, taus
 
 measure_tauES = True
 measure_eleES = False
@@ -894,24 +895,138 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                 "tau_ES_shift_DM11": 1.0,
             },
         )
+        ###erste Implementierung für varaiations pro TauES shift
+        write_muon_es_variations = (
+            era == "2024"
+            and configuration.sample == "embedding"
+            and "mt" in scopes
+        )
+
+        if write_muon_es_variations:
+            # Separate muon-SF variations evaluated for each ES-dependent pair.
+            for kind, base_producer in (
+                ("id", scalefactors.Muon_1_ID_SF),
+                ("iso", scalefactors.Muon_1_Iso_SF),
+            ):
+                config_key = f"emb_muon_{kind}_variations"
+
+                configuration.add_config_parameters(
+                    "mt",
+                    {
+                        config_key: [
+                            {
+                                "sf_output": (
+                                    f"{kind}_wgt_mu_1_{source}{direction}"
+                                ),
+                                f"muon_{kind}_variation": (
+                                    f"{source}{direction.lower()}"
+                                ),
+                            }
+                            for source in ("stat", "syst")
+                            for direction in ("Up", "Down")
+                        ]
+                    },
+                )
+
+                producer = ExtendedVectorProducer(
+                    name=f"EmbeddingMuon_{kind}_Variations",
+                    call=base_producer.call,
+                    input=base_producer.get_inputs("mt"),
+                    output="sf_output",
+                    scopes=["mt"],
+                    vec_config=config_key,
+                )
+
+                configuration.add_producers("mt", producer)
+                configuration.add_outputs("mt", producer.output_group)
+
+            configuration.add_config_parameters(
+                "mt",
+                {
+                    "emb_muon_trigger_variations": [
+                        {
+                            **entry,
+                            "singlemuon_trigger_flagname": (
+                                f"{entry['singlemuon_trigger_flagname']}"
+                                f"_syst{direction}"
+                            ),
+                            "singlemuon_trigger_variation": (
+                                f"syst{direction.lower()}"
+                            ),
+                        }
+                        for entry in configuration.config_parameters["mt"][
+                            "singlemuon_trigger_sf"
+                        ]
+                        for direction in ("Up", "Down")
+                    ]
+                },
+            )
+
+            producer = ExtendedVectorProducer(
+                name="EmbeddingMuon_trigger_Variations",
+                call=scalefactors.SingleMuTriggerSF.call,
+                input=scalefactors.SingleMuTriggerSF.get_inputs("mt"),
+                output="singlemuon_trigger_flagname",
+                scopes=["mt"],
+                vec_config="emb_muon_trigger_variations",
+            )
+
+            configuration.add_producers("mt", producer)
+            configuration.add_outputs("mt", producer.output_group)
+        # Über pt_1 und eta_1 werden die Tau-ES-Shifts an die SF-Producer weitergegeben.
+        # CROWN erzeugt die zugehörigen Gewichtsspalten und hängt den ES-Shift an ihren Namen an.
+        
         tauESvariations = [x / 10 for x in range(200, -201, -1) if x != 0] # get variations from 20% to -20% in steps of 0.1%, excluding 0
         #tauESvariations = [x for x in np.arange(20.0, -20.0 - 0.2, -0.2).round(2).tolist() if x < -12.0 or x > 8.0] # even
         # tauESvariations = [x for x in np.arange(19.9, -20.0, -0.2).round(2).tolist()] # odd
         #tauESvariations = []
         for tauESvariation in tauESvariations:
-            name = str(round(tauESvariation, 2)).replace("-", "minus").replace(".", "p")
+            name = (
+                str(round(tauESvariation, 2))
+                .replace("-", "minus")
+                .replace(".", "p")
+            )
+            shift_name = f"EMBtauESshift_{name}"
+
+            shift_parameters = {
+                "tau_ES_shift_DM0": (
+                    1.0 + round(tauESvariation / 100.0, 5)
+                ),
+                "tau_ES_shift_DM1": (
+                    1.0 + round(tauESvariation / 100.0, 5)
+                ),
+                "tau_ES_shift_DM10": (
+                    1.0 + round(tauESvariation / 100.0, 5)
+                ),
+                "tau_ES_shift_DM11": (
+                    1.0 + round(tauESvariation / 100.0, 5)
+                ),
+            }
+
+            if write_muon_es_variations:
+                # Trigger flags are config strings, not Quantity dependencies. Also muss ich es extra bauen sonst wieder errooooorrrrr
+                for config_key in (
+                    "singlemuon_trigger_sf",
+                    "emb_muon_trigger_variations",
+                ):
+                    shift_parameters[config_key] = [
+                        {
+                            **entry,
+                            "singlemuon_trigger_flag": (
+                                f"{entry['singlemuon_trigger_flag']}"
+                                f"__{shift_name}"
+                            ),
+                        }
+                        for entry in configuration.config_parameters["mt"][
+                            config_key
+                        ]
+                    ]
+
             configuration.add_shift(
                 SystematicShift(
-                    name=f"EMBtauESshift_{name}",
-                    shift_config={
-                        ("mt"): {
-                            "tau_ES_shift_DM0": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM1": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM10": 1.0 + (round(tauESvariation / 100.0, 5)),
-                            "tau_ES_shift_DM11": 1.0 + (round(tauESvariation / 100.0, 5)),
-                        }
-                    },
-                    producers={("mt"): taus.TauPtCorrection_byValue},
+                    name=shift_name,
+                    shift_config={"mt": shift_parameters},
+                    producers={"mt": taus.TauPtCorrection_byValue},
                 ),
                 samples=["embedding"],
             )
