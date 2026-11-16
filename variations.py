@@ -60,7 +60,7 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
             with defaults(shift_map={"Up": "up", "Down": "down"}):
                 for postfix in lhe_scale_postfixes:
                     add_shift(name=f"pdf_Higgs_{postfix}", shift_key="pdf_variation", producers=[event.LHE_PDF_weight])
-                    add_shift(name=f"pdf_alphas_{postfix}", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
+                    add_shift(name=f"alphaS_{postfix}", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
 
     #########################
     # Pileup Shifts
