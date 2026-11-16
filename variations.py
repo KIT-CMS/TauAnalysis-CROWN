@@ -37,6 +37,7 @@ def add_Variations(
 ) -> Configuration:
 
     year = int(era[:4])
+    muon_syst_prefix = "systonly"# damit wir es richtig machen 
     add_shift = get_add_shift(configuration)
     era_tag = ERA_MAP[era]  
     shift_era_tag = era if era in ("2016preVFP", "2016postVFP") else era_tag  # keeps 2016 sub-eras
@@ -136,7 +137,7 @@ def add_Variations(
             add_shift(
                 name="CMS_eff_m_id_syst",
                 shift_key="muon_id_variation",
-                shift_map={"Up":"systup", "Down":"systdown"},
+                shift_map={"Up":f"{muon_syst_prefix}up", "Down":f"{muon_syst_prefix}down"},
             )
             add_shift(
                 name=f"CMS_eff_m_id_stat_{shift_era_tag}",
@@ -155,7 +156,7 @@ def add_Variations(
             add_shift(
                 name="CMS_eff_m_iso_syst",
                 shift_key="muon_iso_variation",
-                shift_map={"Up":"systup", "Down":"systdown"},
+                shift_map={"Up":f"{muon_syst_prefix}up", "Down":f"{muon_syst_prefix}down"},
             )
             add_shift(
                 name=f"CMS_eff_m_iso_stat_{shift_era_tag}",
@@ -760,7 +761,7 @@ def add_Variations(
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
                                     "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": f"syst{variation}",
+                                    "singlemuon_trigger_variation": f"{muon_syst_prefix}{variation}",
                                 },
                             ],
                         }

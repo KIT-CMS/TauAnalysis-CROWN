@@ -919,12 +919,15 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                                     f"{kind}_wgt_mu_1_{source}{direction}"
                                 ),
                                 f"muon_{kind}_variation": (
-                                    f"{source}{direction.lower()}"
+                                    f"{sf_variation}{direction.lower()}"
                                 ),
                             }
-                            for source in ("stat", "syst")
+                            for source, sf_variation in (
+                                ("stat", "stat"),
+                                ("syst", "systonly"),
+                            )
                             for direction in ("Up", "Down")
-                        ]
+                        ],
                     },
                 )
 
