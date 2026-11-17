@@ -143,14 +143,10 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
         input=[q.era_split_mask],
     )
-    Era2024SplitWeight = Producer(
-        call="event::quantity::HashSplitWeight({df}, {output}, 0., {mc_split_fraction})",
-        input=[],
-        output=[q.wgt_sample_split],
-    )
-    Era2025SplitWeight = Producer(
-        call="event::quantity::HashSplitWeight({df}, {output}, {mc_split_fraction}, 1.)",
-        input=[],
+    # 1 / measured fraction of the sample kept for this era, looked up by nick (falls back to the lumi share)
+    EraSplitWeight = Producer(
+        call='''event::normalization::FractionSplitWeight({df}, correctionManager, {output}, {input}, "{split_fractions_file}", {default_split_fraction})''',
+        input=[q.nick],
         output=[q.wgt_sample_split],
     )
 
