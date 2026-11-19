@@ -5,6 +5,9 @@ from .producers import nn_output as nn_output
 from .quantities import output as q
 from code_generation.friend_trees import FriendTreeConfiguration
 
+# directory (relative to the analysis folder) of the Run 3 models, <dir>/<scope>/model.onnx
+MODEL_DIR = "payloads/DNN"
+
 
 def build_config(
     era: str,
@@ -47,7 +50,7 @@ def build_config(
 
     run2 = int(era[:4]) < 2022
     for scope in ["mt"] if run2 else ["mt", "et", "tt"]:
-        model_file_path = f"payloads/ml/{era}/{scope}/{model_name}/model.onnx" if run2 else f"payloads/DNN/{scope}/model.onnx"
+        model_file_path = f"payloads/ml/{era}/{scope}/{model_name}/model.onnx" if run2 else f"{MODEL_DIR}/{scope}/model.onnx"
         configuration.add_config_parameters([scope], {"model_file_path": model_file_path})
         configuration.add_producers([scope], [nn_output.evaluate_dnn(scope, model_file_path)])
 
