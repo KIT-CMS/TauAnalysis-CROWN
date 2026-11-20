@@ -39,18 +39,5 @@ FractionSplitFlag(ROOT::RDF::RNode df, const std::string &outputname,
                      },
                      {quantity});
 }
-ROOT::RDF::RNode
-FractionSplitWeight(ROOT::RDF::RNode df,
-                    correctionManager::CorrectionManager &correctionManager,
-                    const std::string &outputname, const std::string &nick,
-                    const std::string &split_fractions_path,
-                    const double &default_split_fraction);
-ROOT::RDF::RNode
-SampleNormalization(ROOT::RDF::RNode df,
-                    correctionManager::CorrectionManager &correctionManager,
-                    const std::string &xsec_output,
-                    const std::string &ngen_weight_output,
-                    const std::string &genweight_output,
-                    const std::string &norm_table_path);
-}
+} // namespace event::normalization
 #endif /* GUARD_NORMALIZATION_H */

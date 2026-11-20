@@ -104,32 +104,6 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         output=[q.zPtReweightWeight],
     )
     # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
-    # Version with split based on event ID hash only
-    EventHashForSampleSplit = Producer(
-        call="event::quantity::GenerateSeed({df}, {output}, {input}, {master_seed_sample_split})",
-        input=[
-            nanoAODv15.luminosityBlock,
-            nanoAODv15.run,
-            nanoAODv15.event,
-        ],
-        output=[q.event_split_hash],
-    )
-    SampleSplitHashFlag = Producer(
-        call="event::quantity::HashFlag({df}, {output}, {input}, {mc_split_value_min}, {mc_split_value_max})",
-        input=[q.event_split_hash],
-        output=[q.era_split_mask],
-    )
-    SampleSplitFilter = BaseFilter(
-        call='''event::filter::Flag({df}, \"SampleSplitFilter\", {input})''',
-        input=[q.era_split_mask],
-    )
-
-    SampleSplitWeight = Producer(
-        call="event::quantity::HashSplitWeight({df}, {output}, {mc_split_value_min}, {mc_split_value_max})",
-        input=[],
-        output=[q.wgt_sample_split],
-    )
-    # Version with split based on precalculated generator weight fraction
     EraSplitFlag = Producer(
         call='''event::normalization::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
         input=[nanoAODv15.event],
@@ -143,10 +117,20 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
         input=[q.era_split_mask],
     )
-    # 1 / measured fraction of the sample kept for this era, looked up by nick (falls back to the lumi share)
+    # measured fraction of the sample kept for this era from the sample information (falls back to the lumi share)
+    EraSplitFraction = Producer(
+        call='''event::quantity::SampleInfo({df}, correctionManager, {output}, "split_fraction", {default_split_fraction})''',
+        input=[],
+        output=[q.era_split_fraction],
+    )
     EraSplitWeight = Producer(
-        call='''event::normalization::FractionSplitWeight({df}, correctionManager, {output}, {input}, "{split_fractions_file}", {default_split_fraction})''',
-        input=[q.nick],
+        call='''event::quantity::Power<double>({df}, {output}, {input}, -1.)''',
+        input=[q.era_split_fraction],
+        output=[q.wgt_sample_split],
+    )
+    ConstantSplitWeight = Producer(
+        call='''event::quantity::Define<double>({df}, {output}, 1.0)''',
+        input=[],
         output=[q.wgt_sample_split],
     )
 
@@ -195,13 +179,13 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         output=[q.weight_lhe_scale],
     )
     STXSNormalization = Producer(
-        call='''stxs::Normalization({df}, correctionManager, {output}, "{stxs_table_path}", {input})''',
-        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
+        call='''stxs::Normalization({df}, correctionManager, {output}, {input})''',
+        input=[nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
         output=[q.stxs_family, q.stxs_norm_weight],
     )
     STXSLHEScale = Producer(
-        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_table_path}", "{stxs_lhe_scale_variation}", {input})''',
-        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
+        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_lhe_scale_nuisances_path}", "{stxs_lhe_scale_variation}", {input})''',
+        input=[nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
         output=[q.weight_lhe_scale],
     )
     # other MC samples: constant no-op STXS normalization

@@ -86,11 +86,11 @@ with defaults(scopes=["et", "mt", "tt"], call='''event::quantity::Product<double
     Trigger_ettt = Producer(input=[q.weight_vsele_2, q.trg_wgt], output=[q.weight_trigger])
     # Run 2 has no trigger SF: weight_trigger is the weight entering the reweighting step
     NoTrigger_ettt = Producer(input=[q.weight_vsele_2, q.weight_one], output=[q.weight_trigger])
-    Weight_ettt_Run2 = Producer(input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight])
+    Weight_ettt_Run2 = Producer(input=[q.weight_reweighted, q.weight_one], output=[q.weight])
 with defaults(scopes=["em"], call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
     Trigger_em = Producer(input=[q.weight_mu_iso, q.trg_wgt], output=[q.weight_trigger])
     NoTrigger_em = Producer(input=[q.weight_mu_iso, q.weight_one], output=[q.weight_trigger])
-    Weight_em_Run2 = Producer(input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight])
+    Weight_em_Run2 = Producer(input=[q.weight_reweighted, q.weight_one], output=[q.weight])
 with defaults(scopes=["et", "mt", "tt", "em"]):
     # process-dependent reweighting: Z pT of the DY-like samples (Run 3), top pT of ttbar, 1 for the others
     ZPtReweight = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_trigger, q.zPtReweightWeight], output=[q.weight_reweighted])
@@ -106,7 +106,7 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     LHEScaleReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_lhe_scale], output=[q.weight_reweighted])
     LHEScaleReweightGGH = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_signal_nnlo, q.weight_lhe_scale], output=[q.weight_reweighted])
     # weight_no_btag: the weight the b-tag efficiencies are measured with
-    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight_no_btag])
+    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.wgt_sample_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
 _norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]

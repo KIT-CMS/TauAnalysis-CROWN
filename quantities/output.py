@@ -99,7 +99,7 @@ btag_weight = Quantity()
 
 # Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
 era_split_mask = Quantity()
-event_split_hash = Quantity()
+era_split_fraction = Quantity()
 wgt_sample_split = Quantity()
 
 # HTXS quantities 
@@ -584,7 +584,6 @@ weight = Quantity()
 weight_gen_sign_before_norm = Quantity()
 weight_gen_sign = Quantity()
 weight_lumi = Quantity()
-weight_campaign_split = Quantity()
 weight_xsec_ngen = Quantity()
 weight_norm_signed = Quantity()
 weight_norm_lumi = Quantity()

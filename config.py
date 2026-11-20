@@ -16,7 +16,7 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_VALUES
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_FRACTION
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -85,11 +85,7 @@ def build_config(
 
             # Summer24 MC split between 2024 and 2025/2026
             "mc_split_fraction": MC_SPLIT_FRACTION,
-            "split_fractions_file": "payloads/normalization/split_fractions.json",
-            "default_split_fraction": MC_SPLIT_FRACTION if era == "2024" else 1 - MC_SPLIT_FRACTION,
-            "master_seed_sample_split": 8102013,
-            "mc_split_value_min": ERA_SPLIT_VALUES[era]["min"] if era in ERA_SPLIT_VALUES else 0.0,
-            "mc_split_value_max": ERA_SPLIT_VALUES[era]["max"] if era in ERA_SPLIT_VALUES else 1.0,
+            "default_split_fraction": ERA_SPLIT_FRACTION.get(era, 1.0),
             
             # for LHE weights
             "muR": 1.0,
@@ -660,7 +656,7 @@ def build_config(
     configuration.add_config_parameters(
         "global",
         {
-            "stxs_table_path": "data/normalization/stxs_table.json",
+            "stxs_lhe_scale_nuisances_path": "payloads/normalization/stxs_lhe_scale_nuisances.json",
             "stxs_lhe_scale_variation": "nominal",
         },
     )
@@ -1426,9 +1422,9 @@ def build_config(
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
         # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
-        # ("global", AppendProducer, [event.EventHashForSampleSplit, event.SampleSplitHashFlag, event.SampleSplitFilter, event.SampleSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024", "2025", "2026"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter, event.EraSplitFraction, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter, event.EraSplitFraction, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.ConstantSplitWeight], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS + ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
@@ -1605,6 +1601,8 @@ def build_config(
     elif sample not in DATA_ONLY:
         configuration.add_producers("global", [event.ConstantSTXSNormWeight])
         configuration.add_outputs(scopes, [q.stxs_norm_weight])
+    if sample not in DATA_ONLY:
+        configuration.add_outputs(scopes, [q.wgt_sample_split])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(
