@@ -795,8 +795,21 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         ]
                         for era in ["2016postVFP", "2016preVFP"]
                     },
+                    **{
+                        era: [
+                            {
+                                "flagname": "trg_cross_mu23ele12",
+                                "hlt_path": "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
+                                "p1_ptcut": 12,
+                                "p2_ptcut": 24,
+                                **elmu_cross_trigger_defaults,
+                                "p1_filterbit": 6,  # NanoAOD v15 electron bit 6 = 1e-1mu (bit 5 = 2e leg 2)
+                            },
+                        ]
+                        for era in ["2024", "2025", "2026"]
+                    },
                 },
-                default=[  ## TODO: not implemented, here as a placeholder (2022preEE, 2022postEE, 2023preBPix, 2023postBPix, 2024, 2025, 2026)
+                default=[  ## TODO: not implemented, here as a placeholder (2022preEE, 2022postEE, 2023preBPix, 2023postBPix)
                     {
                         "flagname": "trg_cross_mu23ele12",
                         "hlt_path": "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
