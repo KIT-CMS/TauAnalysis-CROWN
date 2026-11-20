@@ -33,6 +33,7 @@ def build_config(
     available_sample_types: List[str],
     available_eras: List[str],
     available_scopes: List[str],
+    nanoaod_version: str = None,
 ) -> Configuration:
     configuration = Configuration(
         era,
@@ -1143,18 +1144,18 @@ def build_config(
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
-            muons.MuonPtCorrectionSwitch.get(era),
+            muons.MuonPtCorrectionSwitch.get(era, nanoaod_version),
             muons.BaseMuons,
-            electrons.ElectronPtCorrectionMCSwitch.get(era),
-            electrons.BaseElectronsSwitch.get(era),
+            electrons.ElectronPtCorrectionMCSwitch.get(era, nanoaod_version),
+            electrons.BaseElectronsSwitch.get(era, nanoaod_version),
             jets.GenJet,
             jets.JetSmearingSeed,
-            jets.JetBTagSwitch.get(era),
-            jets.JetRhoSwitch.get(era),
-            jets.JetIDSwitch.get(era),
+            jets.JetBTagSwitch.get(era, nanoaod_version),
+            jets.JetRhoSwitch.get(era, nanoaod_version),
+            jets.JetIDSwitch.get(era, nanoaod_version),
             jets.JetVetoMapVeto,
             jets.JetIDCut,
-            jets.JetEnergyCorrectionSwitch.get(era),
+            jets.JetEnergyCorrectionSwitch.get(era, nanoaod_version),
             jets.JetPtCut_loose,
             jets.JetEtaCut_Max3,
             jets.LooseJets_LowEta,
@@ -1163,12 +1164,12 @@ def build_config(
             jets.GoodJets_tight,
             jets.RecoilJets_HighEta,
             jets.RecoilJets,
-            jets.GoodJetsSwitch.get(era),
-            jets.GoodBJetsSwitch.get(era),
-            event.DiLeptonVetoSwitch.get(era),
+            jets.GoodJetsSwitch.get(era, nanoaod_version),
+            jets.GoodBJetsSwitch.get(era, nanoaod_version),
+            event.DiLeptonVetoSwitch.get(era, nanoaod_version),
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
-            met.MetBasicsSwitch.get(era),
+            met.MetBasicsSwitch.get(era, nanoaod_version),
         ],
     )
     configuration.add_producers(
@@ -1178,12 +1179,12 @@ def build_config(
             jets.BasicJetQuantities, 
             jets.BJetCollection,
             jets.BasicBJetQuantities,
-            met.MetCorrectionsSwitch.get(era),
-            # met.PFMetCorrectionsSwitch.get(era),
+            met.MetCorrectionsSwitch.get(era, nanoaod_version),
+            # met.PFMetCorrectionsSwitch.get(era, nanoaod_version),
             pairquantities.DiTauPairMETQuantities,
             pairquantities.DiObjectAngleQuantities,
             genparticles.GenMatching,
-            scalefactors.btaggingWP_SFSwitch.get(era),
+            scalefactors.btaggingWP_SFSwitch.get(era, nanoaod_version),
         ],
     )
     configuration.add_producers(
@@ -1194,8 +1195,8 @@ def build_config(
             muons.VetoMuons,
             muons.ExtraMuonsVeto,
             taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
-            taus.BaseTausSwitch.get(era),
-            taus.GoodTausSwitch.get(era),
+            taus.BaseTausSwitch.get(era, nanoaod_version),
+            taus.GoodTausSwitch.get(era, nanoaod_version),
             taus.NumberOfGoodTaus,
             electrons.ExtraElectronsVeto,
             pairselection.MTPairSelection,
@@ -1204,10 +1205,10 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVMu1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.MTDiTauPairQuantitiesSwitch.get(era),
+            pairquantities.MTDiTauPairQuantitiesSwitch.get(era, nanoaod_version),
             genparticles.MTGenDiTauPairQuantities,
             scalefactors.MuonIDIso_SF,
-            scalefactors.TauID_SFSwitch.get(era),
+            scalefactors.TauID_SFSwitch.get(era, nanoaod_version),
             triggers.MTGenerateSingleMuonTriggerFlags,
             triggers.MTGenerateCrossTriggerFlags,
             scalefactors.MuTauTriggerSF,
@@ -1238,8 +1239,8 @@ def build_config(
         [
             electrons.GoodElectrons,
             taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
-            taus.BaseTausSwitch.get(era),
-            taus.GoodTausSwitch.get(era),
+            taus.BaseTausSwitch.get(era, nanoaod_version),
+            taus.GoodTausSwitch.get(era, nanoaod_version),
             taus.NumberOfGoodTaus,
             electrons.NumberOfGoodElectrons,
             electrons.VetoElectrons,
@@ -1251,9 +1252,9 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVEl1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.ETDiTauPairQuantitiesSwitch.get(era),
+            pairquantities.ETDiTauPairQuantitiesSwitch.get(era, nanoaod_version),
             genparticles.ETGenDiTauPairQuantities,
-            scalefactors.TauID_SFSwitch.get(era),
+            scalefactors.TauID_SFSwitch.get(era, nanoaod_version),
             scalefactors.EleID_SF,
             triggers.ETGenerateSingleElectronTriggerFlags,
             triggers.ETGenerateCrossTriggerFlags,
@@ -1313,8 +1314,8 @@ def build_config(
             electrons.ExtraElectronsVeto,
             muons.ExtraMuonsVeto,
             taus.TauEnergyCorrectionSwitch.get(era, tau_es_version),
-            taus.BaseTausSwitch.get(era),
-            taus.GoodTausSwitch.get(era),
+            taus.BaseTausSwitch.get(era, nanoaod_version),
+            taus.GoodTausSwitch.get(era, nanoaod_version),
             taus.NumberOfGoodTaus,
             pairselection.TTPairSelection,
             pairselection.GoodTTPairFilter,
@@ -1322,9 +1323,9 @@ def build_config(
             pairselection.LVTau2,
             pairselection.LVTau1Uncorrected,
             pairselection.LVTau2Uncorrected,
-            pairquantities.TTDiTauPairQuantitiesSwitch.get(era),
+            pairquantities.TTDiTauPairQuantitiesSwitch.get(era, nanoaod_version),
             genparticles.TTGenDiTauPairQuantities,
-            scalefactors.TauID_SFSwitch.get(era),
+            scalefactors.TauID_SFSwitch.get(era, nanoaod_version),
             triggers.TTGenerateDoubleTauTriggerFlags,
             triggers.TTGenerateDoubleTauJetTriggerFlags,
             scalefactors.TauTauTriggerSF,
@@ -1342,11 +1343,11 @@ def build_config(
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
         ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
-        (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era, nanoaod_version)], {"samples": DATA_ONLY}),
         # no b-tag efficiency measured for the dilepton control regions so far
-        ([s for s in ["mm", "ee"] if s in scopes], RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"exclude_samples": DATA_ONLY}),
+        ([s for s in ["mm", "ee"] if s in scopes], RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era, nanoaod_version)], {"exclude_samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
-        (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era, nanoaod_version)], {"samples": DATA_ONLY}),
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": DATA_ONLY}),
         (["et", "ee", "em"], RemoveProducer, [scalefactors.EleID_SF], {"samples": DATA_ONLY}),
         (["mt"], RemoveProducer, [genparticles.MTGenDiTauPairQuantities], {"samples": ["data"]}),
@@ -1362,11 +1363,11 @@ def build_config(
         (scopes, AppendProducer, [event.ZPtReweighting], {"samples": ZPT_SAMPLES}),
         (scopes, AppendProducer, [event.GGH_NNLO_Reweighting], {"samples": GGH_SAMPLES}),
         ("global", AppendProducer, [event.STXSNormalization], {"samples": STXS_SAMPLES}),
-        (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era)], {"samples": ["ttbar"]}),
+        (scopes, AppendProducer, [event.TopPtReweightingSwitch.get(era, nanoaod_version)], {"samples": ["ttbar"]}),
 
         ("global", ReplaceProducer, [event.LHE_Scale_weight, event.STXSLHEScale], {"samples": STXS_SAMPLES}),
         ("global", ReplaceProducer, [jets.GenJet, jets.GenJet_data], {"samples": DATA_ONLY}),
-        ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era), electrons.ElectronPtCorrectionDataSwitch.get(era)], {"samples": DATA_ONLY}),
+        ("global", ReplaceProducer, [electrons.ElectronPtCorrectionMCSwitch.get(era, nanoaod_version), electrons.ElectronPtCorrectionDataSwitch.get(era, nanoaod_version)], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], ReplaceProducer, [taus.TauEnergyCorrectionSwitch.get(era, tau_es_version), taus.TauEnergyCorrection_data], {"samples": DATA_ONLY}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **sample_filter))
@@ -1395,7 +1396,7 @@ def build_config(
         (["ee"], AppendProducer, [scalefactors.PrivateElectronIDSF_1_MC, scalefactors.PrivateElectronIsoSF_1_MC, scalefactors.PrivateElectronIDSF_2_MC, scalefactors.PrivateElectronIsoSF_2_MC, scalefactors.ETGenerateSingleElectronTriggerSF_MC], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
         ("global", ReplaceProducer, [event.PUweights, event.PUweights_root], {"exclude_samples": DATA_ONLY, "eras":["2025", "2026"]}),
-        ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
+        ("global", ReplaceProducer, [jets.JetEnergyCorrectionSwitch.get(era, nanoaod_version), jets.JetEnergyCorrection_data], {"samples": DATA_ONLY, "eras": RUN2_ERAS}),
 
         ("global", AppendProducer, [event.PrefireWeight], {"eras": [e for e in RUN2_ERAS if e != "2018"]}),
         # Broken sfs file for 2016. If nlo is used, this reweighting is not even needed. !!!
@@ -1451,7 +1452,7 @@ def build_config(
             ] + [p for scope in scopes for p in used(pairquantities.DiTauPairMETQuantities, scope)] + [
             q.dilepton_veto,
             ] + [p for scope in scopes for p in used(pairquantities.DiObjectAngleQuantities, scope)
-            ] + [p for scope in scopes for p in used(met.MetCorrectionsSwitch.get(era), scope)
+            ] + [p for scope in scopes for p in used(met.MetCorrectionsSwitch.get(era, nanoaod_version), scope)
         ],
     )
     # add genWeight for everything but data
@@ -1472,7 +1473,7 @@ def build_config(
             triggers.MTGenerateSingleMuonTriggerFlags.output_group,
             q.extramuon_veto,
             q.extraelec_veto,
-            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("mt")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era, nanoaod_version).get_outputs("mt")
         ],
     )
     configuration.add_outputs(
@@ -1488,7 +1489,7 @@ def build_config(
             triggers.ETGenerateSingleElectronTriggerFlags.output_group,
             q.extramuon_veto,
             q.extraelec_veto,
-            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("et")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era, nanoaod_version).get_outputs("et")
         ],
     )
     configuration.add_outputs(
@@ -1516,15 +1517,15 @@ def build_config(
             triggers.TTGenerateDoubleTauTriggerFlags.output_group,
             q.extramuon_veto,
             q.extraelec_veto,
-            ] + [p for p in scalefactors.TauID_SFSwitch.get(era).get_outputs("tt")
+            ] + [p for p in scalefactors.TauID_SFSwitch.get(era, nanoaod_version).get_outputs("tt")
         ],
     )
 
-    configuration.add_outputs("global", used(met.MetBasicsSwitch.get(era), "global"),)
+    configuration.add_outputs("global", used(met.MetBasicsSwitch.get(era, nanoaod_version), "global"),)
 
-    configuration.add_outputs("mt", used(pairquantities.MTDiTauPairQuantitiesSwitch.get(era), "mt"),)
-    configuration.add_outputs("et", used(pairquantities.ETDiTauPairQuantitiesSwitch.get(era), "et"),)
-    configuration.add_outputs("tt", used(pairquantities.TTDiTauPairQuantitiesSwitch.get(era), "tt"),)
+    configuration.add_outputs("mt", used(pairquantities.MTDiTauPairQuantitiesSwitch.get(era, nanoaod_version), "mt"),)
+    configuration.add_outputs("et", used(pairquantities.ETDiTauPairQuantitiesSwitch.get(era, nanoaod_version), "et"),)
+    configuration.add_outputs("tt", used(pairquantities.TTDiTauPairQuantitiesSwitch.get(era, nanoaod_version), "tt"),)
 
     if int(era[:4]) < 2022:
         configuration.add_outputs(
@@ -1624,7 +1625,7 @@ def build_config(
     #########################
     # Import triggersetup and sf 
     #########################
-    configuration = add_diTauTriggerSetup(configuration)
+    configuration = add_diTauTriggerSetup(configuration, nanoaod_version)
 
     #########################
     # Systematics shifts

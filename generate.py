@@ -41,6 +41,9 @@ def run(args):
     sample_group = args.sample
     era = args.era
     scopes = list(set([scope.lower() for scope in args.scopes]))
+    # NanoAOD version of samples that do not have the default of their era, also in the executable name
+    nanoaod_version = None if getattr(args, "nanoaod_version", "none") == "none" else args.nanoaod_version
+    executable_name = f"{args.config}_{sample_group}_{era}" + (f"_{nanoaod_version}" if nanoaod_version else "")
 
     ## load config
     configname = args.config
@@ -48,7 +51,6 @@ def run(args):
         f"analysis_configurations.{analysis_name}.{configname}"
     )
     ## Setting up executable
-    executable = f"{configname}_{sample_group}_{era}.cxx"
     args.logger.info(f"Generating code for {sample_group}...")
     args.logger.info(f"Configuration used: {config}")
     args.logger.info(f"Era: {era}")
@@ -61,13 +63,14 @@ def run(args):
         available_samples,
         available_eras,
         available_scopes,
+        nanoaod_version=nanoaod_version,
     )
     # create a CodeGenerator object
     generator = CodeGenerator(
         main_template_path=args.template,
         sub_template_path=args.subset_template,
         configuration=config,
-        executable_name=f"{configname}_{sample_group}_{era}",
+        executable_name=executable_name,
         analysis_name=analysis_name,
         config_name=configname,
         output_folder=args.output,
