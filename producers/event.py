@@ -105,7 +105,7 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
     )
     # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
     EraSplitFlag = Producer(
-        call='''event::normalization::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
+        call='''event::quantity::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
         input=[nanoAODv15.event],
         output=[q.era_split_mask],
     )

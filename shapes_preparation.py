@@ -9,7 +9,7 @@ from code_generation.systematics import SystematicShift
 from .producers import selection as selection
 from .producers import weights as weight_producers
 from .quantities import output as q
-from .constants import GGH_SAMPLES, LUMI_PB, RUN2_ERAS, STXS_SAMPLES, ZPT_SAMPLES
+from .constants import ERA_SPLIT_FRACTION, GGH_SAMPLES, LUMI_PB, RUN2_ERAS, STXS_SAMPLES, ZPT_SAMPLES
 from .tau_triggersetup import DOUBLETAU_HPS_ERAS
 
 TEMPLATED_QUANTITY_PRODUCERS = [
@@ -697,6 +697,7 @@ def _add_normalization_and_weight(configuration, era: str, sample: str) -> None:
                     "vs_ele_wp": "Tight" if scope == "et" else "VVLoose",
                     "vs_jet_wp": EraModifier({era: "Tight" for era in RUN2_ERAS}, default="Medium"),
                     "luminosity_pb": EraModifier(LUMI_PB),
+                    "default_split_fraction": EraModifier(ERA_SPLIT_FRACTION, default=1.0),
                     "puweight_type": EraModifier(weight_producers.PUWEIGHT_TYPE, default="double"),
                 },
             )
