@@ -15,3 +15,6 @@ GGH_SAMPLES = ["ggh_htautau", "rem_htautau", "rem_higgs"]
 
 # signal sample types with HTXS information and the LHEScaleWeight variations of the STXS scheme
 STXS_SAMPLES = ["ggh_htautau", "vbf_htautau", "rem_htautau", "rem_higgs"]
+
+# CMS_<analysisID>_ prefix of the analysis-specific Run 3 shifts (datacard names, CAT naming conventions)
+ANALYSIS_ID = "HIG26018"

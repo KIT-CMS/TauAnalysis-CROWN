@@ -15,7 +15,7 @@ from .producers import muons as muons
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
-from .constants import STXS_SAMPLES
+from .constants import ANALYSIS_ID, STXS_SAMPLES
 from code_generation.helpers import defaults
 from code_generation.systematics import get_add_shift
 from .constants import ANALYSIS_ID
