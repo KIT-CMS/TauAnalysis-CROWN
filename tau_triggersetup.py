@@ -3,7 +3,9 @@ from code_generation.modifiers import EraModifier, SampleModifier
 
 DOUBLETAU_HPS_ERAS = ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix"]
 
-def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
+def add_diTauTriggerSetup(configuration: Configuration, nanoaod_version: str = None) -> Configuration:
+    # the v14 re-NANO skims of 2022/2023 have the trigger-object bits of NanoAOD v15
+    v14 = nanoaod_version == "v14"
     from .config import RUN2_ERAS  
 
     #######################
@@ -251,7 +253,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "p1_ptcut": 20,
                         "p2_ptcut": 32,
                         "p1_filterbit": 1,
-                        "p2_filterbit": "3, 9",
+                        "p2_filterbit": "3, 13" if v14 else "3, 9",
                         **mutau_cross_trigger_defaults,
                     },
                 ],
@@ -483,11 +485,11 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "p2_ptcut": 35,
                         "p1_etacut": 2.1,
                         "p2_etacut": 2.1,
-                        "p1_filterbit": -1,
-                        "p2_filterbit": "3, 8",
+                        "p1_filterbit": 7 if v14 else -1,
+                        "p2_filterbit": "3, 12" if v14 else "3, 8",
                         **electron_tau_cross_trigger_defaults,
                         # NanoAOD v12: no electron trigger-object matching (HLepRare twiki)
-                        "p1_trigger_particle_id": -1,
+                        "p1_trigger_particle_id": 11 if v14 else -1,
                     },
                 ],
             ),
@@ -640,8 +642,8 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "p2_ptcut": 40,
                         "p1_etacut": 2.1,
                         "p2_etacut": 2.1,
-                        "p1_filterbit": "3, 7",
-                        "p2_filterbit": "3, 7",
+                        "p1_filterbit": "3, 11" if v14 else "3, 7",
+                        "p2_filterbit": "3, 11" if v14 else "3, 7",
                         **doubletau_trigger_defaults,
                     },
                 ],
@@ -816,6 +818,7 @@ def add_diTauTriggerSetup(configuration: Configuration) -> Configuration:
                         "p1_ptcut": 12,
                         "p2_ptcut": 24,
                         **elmu_cross_trigger_defaults,
+                        "p1_filterbit": 6 if v14 else 5,
                     },
                 ],
             ),

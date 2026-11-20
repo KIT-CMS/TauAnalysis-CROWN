@@ -246,6 +246,7 @@ with defaults(scopes=["et", "mt", "tt", "em", "mm", "ee"]):
         run2 = MetCorrections_Run2
         class run3:
             v12 = MetCorrections_v12
+            v14 = MetCorrections_v12
             v15 = MetCorrections
 
     class PFMetCorrectionsSwitch(SwitchProducer):
@@ -256,4 +257,5 @@ class MetBasicsSwitch(SwitchProducer):
     run2 = MetBasics_v12
     class run3:
         v12 = MetBasics_v12
+        v14 = MetBasics  # PFMET and PuppiMET covariance as in v15
         v15 = MetBasics
