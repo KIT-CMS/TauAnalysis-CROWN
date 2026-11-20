@@ -388,7 +388,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
 
     configuration.add_shift(
         SystematicShift(
-            name="singleMuonTriggerSFUp",
+            name="CMS_eff_m_trigger_syst_emb_2024Up" if era == "2024" else "singleMuonTriggerSFUp",
             shift_config={
                 ("mt", "mm"): {
                     "singlemuon_trigger_sf": EraModifier(
@@ -406,7 +406,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
                                     "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_GlobalMuons_and_CutBasedIdMedium_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": "systup",
+                                    "singlemuon_trigger_variation": "systonlyup",
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
@@ -502,7 +502,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
     )
     configuration.add_shift(
         SystematicShift(
-            name="singleMuonTriggerSFDown",
+            name="CMS_eff_m_trigger_syst_emb_2024Down" if era == "2024" else "singleMuonTriggerSFDown",
             shift_config={
                 ("mt", "mm"): {
                     "singlemuon_trigger_sf": EraModifier(
@@ -520,7 +520,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
                                     "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_GlobalMuons_and_CutBasedIdMedium_and_PFIsoTight",
-                                    "singlemuon_trigger_variation": "systdown",
+                                    "singlemuon_trigger_variation": "systonlydown",
                                 },
                             ],
                             "2023postBPix": [  # TODO: not implemented yet
@@ -614,7 +614,19 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
         ),
         samples=["embedding", "embedding_mc"],
     )
-
+    if era == "2024": #Trennung in Syst only + stat
+        nominal, = configuration.config_parameters["mt"]["singlemuon_trigger_sf"]
+        get_add_shift(configuration)(
+            name="CMS_eff_m_trigger_stat_emb_2024",
+            scopes=("mt", "mm"),
+            shift_key="singlemuon_trigger_sf",
+            shift_map={
+                "Up": [{**nominal, "singlemuon_trigger_variation": "statup"}],
+                "Down": [{**nominal, "singlemuon_trigger_variation": "statdown"}],
+            },
+            producers=[embedding.TauEmbeddingSingleMuTriggerSF_Switch.get(era)],
+            samples=["embedding", "embedding_mc"],
+        )
     #############
     # Producer modifications #
     #############
@@ -997,15 +1009,16 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                             **entry,
                             "singlemuon_trigger_flagname": (
                                 f"{entry['singlemuon_trigger_flagname']}"
-                                f"_syst{direction}"
+                                f"_{source}{direction}"
                             ),
                             "singlemuon_trigger_variation": (
-                                f"syst{direction.lower()}"
+                                f"{mode}{direction.lower()}"
                             ),
                         }
                         for entry in configuration.config_parameters["mt"][
                             "singlemuon_trigger_sf"
                         ]
+                        for source, mode in (("stat", "stat"), ("syst", "systonly"))
                         for direction in ("Up", "Down")
                     ]
                 },
