@@ -159,7 +159,7 @@ with defaults(scopes=["tt"]):
 
     taujet_pt_1 = Producer(
         call='''event::quantity::GetJetForObject<float>({df}, {output}, {input}, 0)''',
-        input=[nanoAODv15.Jet_pt, nanoAODv15.Tau_jetIdx, q.dileptonpair],
+        input=[q.jet_pt_corrected, nanoAODv15.Tau_jetIdx, q.dileptonpair],
         output=[q.taujet_pt_1],
     )
 
@@ -253,7 +253,7 @@ with defaults(scopes=["et", "mt", "tt"]):
 
     taujet_pt_2 = Producer(
         call='''event::quantity::GetJetForObject<float>({df}, {output}, {input}, 1)''',
-        input=[nanoAODv15.Jet_pt, nanoAODv15.Tau_jetIdx, q.dileptonpair],
+        input=[q.jet_pt_corrected, nanoAODv15.Tau_jetIdx, q.dileptonpair],
         output=[q.taujet_pt_2],
     )
 
