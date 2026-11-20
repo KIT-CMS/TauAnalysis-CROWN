@@ -56,7 +56,7 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                     "2022postEE": '""',
                     "2023preBPix": '""',
                     "2023postBPix": '""',
-                    "2024": "data/embedding/embeddingselection_2024C.json.gz",
+                    "2024": "data/embedding/embeddingselection_2024C_full_uncorrelated.json.gz",
                     "2025": '""',
                 }
             ),
@@ -648,6 +648,8 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
         ),
     )
 
+
+
     configuration.add_modification_rule(
         scopes,
         AppendProducer(
@@ -655,6 +657,50 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
             samples=["embedding", "embedding_mc"],
         ),
     )
+
+    # Jetzt noch hier die Variationen der Selektionsgewichte hinzugefügt - hierfür beachten, dass ich keine TauES Variationen brauche, da es hier um die Source Muonen geht 
+    selection_variation_producers = {}
+
+    if era == "2024" and configuration.sample == "embedding":
+        for channel in ("mt", "mm"):
+            if channel not in scopes:
+                continue
+
+            config_key = "embedding_selection_variations"
+
+            configuration.add_config_parameters(
+                channel,
+                {
+                    config_key: [
+                        {
+                            "sf_output": f"emb_selection_wgt_{source}{direction}",
+                            "embedding_selection_trigger_sf": (
+                                f"emb_selection_weight_{source}{direction}"
+                            ),
+                        }
+                        for source in ("stat", "syst")
+                        for direction in ("Up", "Down")
+                    ]
+                },
+            )
+
+            # Vollständige Selektionsgewichte: ID beider Ursprungsmyonen + Trigger.
+            base = embedding.TauEmbeddingTriggerSelectionSF #ist ein Workaround, liest das komplette weight aus ID+Trigger aus !
+
+            producer = ExtendedVectorProducer(
+                name=f"EmbeddingSelectionVariations_{channel}",
+                call=base.call,
+                input=base.get_inputs(channel),
+                output="sf_output",
+                scopes=[channel],
+                vec_config=config_key,
+            )
+
+            configuration.add_producers(channel, producer)
+            configuration.add_outputs(channel, producer.output_group)
+            selection_variation_producers[channel] = producer
+
+    
     configuration.add_modification_rule(
         ["mt"],
         AppendProducer(
@@ -1024,12 +1070,14 @@ def setup_embedding(configuration: Configuration, scopes: List[str], era: str, t
                             config_key
                         ]
                     ]
-
             configuration.add_shift(
                 SystematicShift(
                     name=shift_name,
                     shift_config={"mt": shift_parameters},
                     producers={"mt": taus.TauPtCorrection_byValue},
+                    ignore_producers={
+                        "mt": selection_variation_producers.get("mt", []), #Wenn wir die rekonstruierte Tau-Energie um beispielsweise +1 % verändern, bleiben diese ursprünglichen Koordinaten gleich also dafür keine shifts 
+                    },
                 ),
                 samples=["embedding"],
             )
