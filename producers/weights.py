@@ -106,7 +106,8 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     LHEScaleReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_lhe_scale], output=[q.weight_reweighted])
     LHEScaleReweightGGH = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_signal_nnlo, q.weight_lhe_scale], output=[q.weight_reweighted])
     # weight_no_btag: the weight the b-tag efficiencies are measured with
-    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.wgt_sample_split], output=[q.weight_no_btag])
+    # 1 / the share of the Summer24 MC kept for this era (split_fraction, 1 for unsplit samples)
+    NoBtag = Producer(call='''event::quantity::Divide<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.split_fraction], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
 _norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]

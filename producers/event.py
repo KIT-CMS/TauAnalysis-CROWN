@@ -117,22 +117,6 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
         input=[q.era_split_mask],
     )
-    # measured fraction of the sample kept for this era from the sample information (falls back to the lumi share)
-    EraSplitFraction = Producer(
-        call='''event::quantity::SampleInfo({df}, correctionManager, {output}, "split_fraction", {default_split_fraction})''',
-        input=[],
-        output=[q.era_split_fraction],
-    )
-    EraSplitWeight = Producer(
-        call='''event::quantity::Power<double>({df}, {output}, {input}, -1.)''',
-        input=[q.era_split_fraction],
-        output=[q.wgt_sample_split],
-    )
-    ConstantSplitWeight = Producer(
-        call='''event::quantity::Define<double>({df}, {output}, 1.0)''',
-        input=[],
-        output=[q.wgt_sample_split],
-    )
 
     TopPtReweighting = Producer(
         call='''event::reweighting::TopPtRun3({df}, {output}, {input})''',
