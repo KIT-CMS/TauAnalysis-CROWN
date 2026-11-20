@@ -10,6 +10,12 @@ ANALYSIS_ID = "HIG26018"
 # sample types with the Z pT reweighting (Run 3 shifts included in the weight, see producers/weights.py)
 ZPT_SAMPLES = ["dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "electroweak_boson"]
 
+# sample types with the MET recoil corrections and their shifts (single boson and Higgs, not ttH), never in 2023
+RECOIL_SAMPLES = [
+    "dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo",
+    "electroweak_boson", "ggh_htautau", "vbf_htautau", "rem_htautau", "ggh_hww", "vbf_hww", "rem_VH",
+]
+
 # signal sample types with the ggH NNLOPS reweighting (applied to the ggH family events)
 GGH_SAMPLES = ["ggh_htautau", "rem_htautau", "rem_higgs"]
 

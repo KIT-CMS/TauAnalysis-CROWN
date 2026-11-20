@@ -16,7 +16,7 @@ from .producers import taus as taus
 from .producers import triggers as triggers
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_FRACTION
+from .constants import GGH_SAMPLES, RECOIL_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_FRACTION
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -585,29 +585,7 @@ def build_config(
             ),
             "recoil_method": "QuantileMapHist", #other option is pure "Resclaing"
             "recoil_variation": "nom",
-            "applyRecoilCorrections": EraModifier( #apply only to single boson processes, not in 2023
-                {
-                    "2023preBPix": False,
-                    "2023postBPix": False,
-                },
-                default=sample in [
-                    "dyjets",
-                    "dyjets_powheg",
-                    "dyjets_amcatnlo",
-                    "dyjets_amcatnlo_ll",
-                    "dyjets_amcatnlo_tt",
-                    "wjets",
-                    "wjets_amcatnlo",
-                    "electroweak_boson",
-                    "ggh_htautau",
-                    "vbf_htautau",
-                    "rem_htautau",
-                    "rem_higgs",
-                    "ggh_hww",
-                    "vbf_hww",
-                    "rem_VH",
-                ],
-            ),
+            "applyRecoilCorrections": EraModifier({"2023preBPix": False, "2023postBPix": False}, default=sample in RECOIL_SAMPLES),
             "apply_recoil_resolution_systematic": False,
             "apply_recoil_response_systematic": False,
             "recoil_systematic_shift_up": False,

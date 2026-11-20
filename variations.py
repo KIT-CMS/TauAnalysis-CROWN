@@ -15,7 +15,7 @@ from .producers import muons as muons
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .quantities import nanoAODv15, nanoAODv9
-from .constants import ANALYSIS_ID, STXS_SAMPLES
+from .constants import ANALYSIS_ID, RECOIL_SAMPLES, STXS_SAMPLES
 from code_generation.helpers import defaults
 from code_generation.systematics import get_add_shift
 
@@ -241,11 +241,11 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
     #########################
     # MET Recoil Shifts
     #########################
-    if int(era[:4]) < 2022:
+    recoil = sample in RECOIL_SAMPLES and not era.startswith("2023")
+    if recoil and int(era[:4]) < 2022:
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[met.ApplyRecoilCorrections_Run2],
-            exclude_samples=["data", "embedding", "embedding_mc"],
             shift_key=[
                 "apply_recoil_resolution_systematic",  # set either to True or False
                 "apply_recoil_response_systematic",  # set either to True or False
@@ -267,11 +267,10 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     "Down": [True, False, False, True],
                 },
             )
-    else:
+    elif recoil:
         with defaults(
             scopes=("et", "mt", "tt", "em", "ee", "mm"),
             producers=[met.ApplyRecoilCorrections],
-            exclude_samples=["data", "embedding", "embedding_mc"],
             shift_key="recoil_variation",
         ):
             add_shift(
