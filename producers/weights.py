@@ -4,15 +4,6 @@ from code_generation.helpers import defaults
 from code_generation.producer import Producer, ProducerGroup, SwitchProducer
 from code_generation.quantity import Quantity
 
-# per-era luminosity in pb^-1; "2025" is 2025+2026 data combined
-LUMI_PB = {
-    "2016preVFP": 19500.0, "2016postVFP": 16800.0, "2017": 41500.0, "2018": 59830.0,
-    "2022preEE": 8086.069205, "2022postEE": 26674.924045,
-    "2023preBPix": 17964.217998, "2023postBPix": 9676.737966,
-    "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
-}
-# 2024/2025/2026 Summer24 campaigns split in half, one per era (EvenIDFilter/OddIDFilter)
-MC_CAMPAIGN_SPLIT_FACTOR = {"2024": 2.0, "2025": 2.0, "2026": 2.0}
 # puweight column type in the ntuples: PUWeightROOT (2025/2026) writes float, the correctionlib Pileup double
 PUWEIGHT_TYPE = {"2025": "float", "2026": "float"}
 
@@ -33,7 +24,6 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
-    MCCampaignSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, {mc_campaign_split_factor})''', input=[], output=[q.weight_campaign_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
         NormXsecNgen = Producer(input=[q.xsec, q.one_over_nevents], output=[q.weight_xsec_ngen])
@@ -96,11 +86,11 @@ with defaults(scopes=["et", "mt", "tt"], call='''event::quantity::Product<double
     Trigger_ettt = Producer(input=[q.weight_vsele_2, q.trg_wgt], output=[q.weight_trigger])
     # Run 2 has no trigger SF: weight_trigger is the weight entering the reweighting step
     NoTrigger_ettt = Producer(input=[q.weight_vsele_2, q.weight_one], output=[q.weight_trigger])
-    Weight_ettt_Run2 = Producer(input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight])
+    Weight_ettt_Run2 = Producer(input=[q.weight_reweighted, q.weight_one], output=[q.weight])
 with defaults(scopes=["em"], call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
     Trigger_em = Producer(input=[q.weight_mu_iso, q.trg_wgt], output=[q.weight_trigger])
     NoTrigger_em = Producer(input=[q.weight_mu_iso, q.weight_one], output=[q.weight_trigger])
-    Weight_em_Run2 = Producer(input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight])
+    Weight_em_Run2 = Producer(input=[q.weight_reweighted, q.weight_one], output=[q.weight])
 with defaults(scopes=["et", "mt", "tt", "em"]):
     # process-dependent reweighting: Z pT of the DY-like samples (Run 3), top pT of ttbar, 1 for the others
     ZPtReweight = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_trigger, q.zPtReweightWeight], output=[q.weight_reweighted])
@@ -116,10 +106,10 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     LHEScaleReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_lhe_scale], output=[q.weight_reweighted])
     LHEScaleReweightGGH = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_signal_nnlo, q.weight_lhe_scale], output=[q.weight_reweighted])
     # weight_no_btag: the weight the b-tag efficiencies are measured with
-    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.weight_campaign_split], output=[q.weight_no_btag])
+    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.wgt_sample_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
-_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, MCCampaignSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
+_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
 _tau_2 = [GenuineTau_2, VsJetSF_2]
 _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
 _ids = {

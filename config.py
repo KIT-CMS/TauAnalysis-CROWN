@@ -14,10 +14,9 @@ from .producers import pairselection as pairselection
 from .producers import scalefactors as scalefactors
 from .producers import taus as taus
 from .producers import triggers as triggers
-from .producers.weights import MC_SPLIT_FRACTION
 from .quantities import nanoAODv15
 from .quantities import output as q
-from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES
+from .constants import GGH_SAMPLES, RUN2_ERAS, STXS_SAMPLES, TAU_DECAY_MODES, ZPT_SAMPLES, MC_SPLIT_FRACTION, ERA_SPLIT_FRACTION
 from .tau_triggersetup import add_diTauTriggerSetup
 from .variations import add_Variations
 from .tau_embedding_settings import setup_embedding
@@ -86,8 +85,11 @@ def build_config(
 
             # Summer24 MC split between 2024 and 2025/2026
             "mc_split_fraction": MC_SPLIT_FRACTION,
+            "default_split_fraction": ERA_SPLIT_FRACTION.get(era, 1.0),
             
             # for LHE weights
+            "muR": 1.0,
+            "muF": 1.0,
             "isr": 1.0,
             "fsr": 1.0,
 
@@ -655,7 +657,7 @@ def build_config(
     configuration.add_config_parameters(
         "global",
         {
-            "stxs_table_path": "data/normalization/stxs_table.json",
+            "stxs_lhe_scale_nuisances_path": "payloads/normalization/stxs_lhe_scale_nuisances.json",
             "stxs_lhe_scale_variation": "nominal",
         },
     )
@@ -1158,8 +1160,9 @@ def build_config(
             event.SampleFlags,
             event.Lumi,
             event.npartons,
-            event.MetFilter, 
+            event.MetFilter,
             event.PUweights,
+            event.LHE_Scale_weight,
             event.LHE_PDF_weight,
             event.LHE_alphaS_weight,
             event.PS_weight,
@@ -1189,7 +1192,6 @@ def build_config(
             genparticles.CalculateGenBosonVector,
             genparticles.CalculateVisGenBosonVector,
             met.MetBasicsSwitch.get(era),
-            event.EvenOddIDFlag,
         ],
     )
     configuration.add_producers(
@@ -1362,9 +1364,10 @@ def build_config(
         ("global", RemoveProducer, [event.npartons],
             {"exclude_samples": ["dyjets", "dyjets_powheg", "dyjets_amcatnlo", "dyjets_amcatnlo_ll", "dyjets_amcatnlo_tt", "wjets", "wjets_amcatnlo", "electroweak_boson"]}),
         ("global", RemoveProducer, [event.PUweights, event.PS_weight], {"samples": DATA_ONLY}),
-        ("global", RemoveProducer, [event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
-        ("global", RemoveProducer, [event.LHE_Scale_weight], {"samples": DATA_ONLY + ["diboson"]}),
+        ("global", RemoveProducer, [event.LHE_Scale_weight, event.LHE_PDF_weight, event.LHE_alphaS_weight], {"samples": DATA_ONLY + ["diboson"]}),
         (scopes, RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"samples": DATA_ONLY}),
+        # no b-tag efficiency measured for the dilepton control regions so far
+        ([s for s in ["mm", "ee"] if s in scopes], RemoveProducer, [scalefactors.btaggingWP_SFSwitch.get(era)], {"exclude_samples": DATA_ONLY}),
         (scopes, RemoveProducer, [genparticles.GenMatching], {"samples": DATA_ONLY}),
         (["et", "mt", "tt"], RemoveProducer, [scalefactors.TauID_SFSwitch.get(era)], {"samples": DATA_ONLY}),
         (["mt", "em", "mm"], RemoveProducer, [scalefactors.MuonIDIso_SF], {"samples": DATA_ONLY}),
@@ -1422,8 +1425,9 @@ def build_config(
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
         # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": ["data", "embedding"], "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter, event.EraSplitFraction, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter, event.EraSplitFraction, event.EraSplitWeight], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.ConstantSplitWeight], {"exclude_samples": DATA_ONLY, "eras": RUN2_ERAS + ["2022preEE", "2022postEE", "2023preBPix", "2023postBPix"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
@@ -1600,6 +1604,8 @@ def build_config(
     elif sample not in DATA_ONLY:
         configuration.add_producers("global", [event.ConstantSTXSNormWeight])
         configuration.add_outputs(scopes, [q.stxs_norm_weight])
+    if sample not in DATA_ONLY:
+        configuration.add_outputs(scopes, [q.wgt_sample_split])
 
     if "data" not in sample and "embedding" not in sample:
         configuration.add_outputs(
