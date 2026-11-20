@@ -19,6 +19,34 @@ ROOT::RDF::RNode build_model_input_column(
 std::string joinAndReplace(const std::vector<std::string> &strings,
                            const std::string &delimiter);
 
+/**
+ * @brief This function creates the fake factor weight of the fully hadronic
+ * anti-isolated region, where exactly one of the two taus fails the
+ * isolation: `0.5 * (ff_1 * [id_1 == 0] + ff_2 * [id_2 == 0])`, i.e. half of
+ * the fake factor of the failing tau.
+ *
+ * @param df input dataframe
+ * @param outputname name of the new column
+ * @param ff_1 name of the fake factor column of the leading tau (`float`)
+ * @param ff_2 name of the fake factor column of the subleading tau (`float`)
+ * @param id_1 name of the isolation flag column of the leading tau (`int`)
+ * @param id_2 name of the isolation flag column of the subleading tau (`int`)
+ *
+ * @return a dataframe with the new column of type `double`
+ */
+inline ROOT::RDF::RNode
+AntiIsoFakeFactor(ROOT::RDF::RNode df, const std::string &outputname,
+                  const std::string &ff_1, const std::string &ff_2,
+                  const std::string &id_1, const std::string &id_2) {
+    return df.Define(
+        outputname,
+        [](float fake_factor_1, float fake_factor_2, int id1, int id2) {
+            return 0.5 *
+                   (fake_factor_1 * (id1 == 0) + fake_factor_2 * (id2 == 0));
+        },
+        {ff_1, ff_2, id_1, id_2});
+}
+
 namespace sm{
 
     struct NonClosureHandler {
