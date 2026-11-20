@@ -574,6 +574,7 @@ nick = NanoAODQuantity("nick")
 xsec = Quantity()
 one_over_nevents = Quantity()
 split_fraction = Quantity()
+wgt_sample_split = Quantity()
 negative_events_fraction = Quantity()
 
 # per-bin STXS normalization of the signal samples (ntuple, event.STXSNormalization): sample family code and per-bin

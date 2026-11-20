@@ -24,6 +24,8 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
+    # 1 / the share of a sample shared by several eras kept for this one: measured split_fraction, else {default_split_fraction}
+    SampleSplit = Producer(call='''event::quantity::SplitWeight({df}, {output}, {input}, {default_split_fraction})''', input=[q.split_fraction], output=[q.wgt_sample_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
         NormXsecNgen = Producer(input=[q.xsec, q.one_over_nevents], output=[q.weight_xsec_ngen])
@@ -106,11 +108,10 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
     LHEScaleReweight = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_trigger, q.weight_lhe_scale], output=[q.weight_reweighted])
     LHEScaleReweightGGH = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_signal_nnlo, q.weight_lhe_scale], output=[q.weight_reweighted])
     # weight_no_btag: the weight the b-tag efficiencies are measured with
-    # 1 / the share of the Summer24 MC kept for this era (split_fraction, 1 for unsplit samples)
-    NoBtag = Producer(call='''event::quantity::Divide<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.split_fraction], output=[q.weight_no_btag])
+    NoBtag = Producer(call='''event::quantity::Product<double,double>({df}, {output}, {input})''', input=[q.weight_reweighted, q.wgt_sample_split], output=[q.weight_no_btag])
     Btag = Producer(call='''event::quantity::Product<double,float>({df}, {output}, {input})''', input=[q.weight_no_btag, q.btag_weight], output=[q.weight])
 
-_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
+_norm = [GenWeightSign, NormalizedGenWeightSign, Lumi, SampleSplit, ConstantOne, NormXsecNgen, NormSigned, NormLumi, NormStxs, NormPileup]
 _tau_2 = [GenuineTau_2, VsJetSF_2]
 _tau_12 = [GenuineTau_1, VsJetSF_1, GenuineTau_2, VsJetSF_2]
 _ids = {
