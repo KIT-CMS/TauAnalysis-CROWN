@@ -97,7 +97,8 @@ btag_weight = Quantity()
 
 #### event
 
-eventCut_mask = Quantity()
+# Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
+era_split_mask = Quantity()
 
 # HTXS quantities 
 ggh_NNLO_weight = Quantity()
@@ -568,6 +569,8 @@ gen_category_L = Quantity()
 nick = NanoAODQuantity("nick")
 xsec = Quantity()
 one_over_nevents = Quantity()
+split_fraction = Quantity()
+wgt_sample_split = Quantity()
 negative_events_fraction = Quantity()
 
 # per-bin STXS normalization of the signal samples (ntuple, event.STXSNormalization): sample family code and per-bin
@@ -581,7 +584,6 @@ weight = Quantity()
 weight_gen_sign_before_norm = Quantity()
 weight_gen_sign = Quantity()
 weight_lumi = Quantity()
-weight_campaign_split = Quantity()
 weight_xsec_ngen = Quantity()
 weight_norm_signed = Quantity()
 weight_norm_lumi = Quantity()
