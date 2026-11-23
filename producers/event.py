@@ -103,19 +103,26 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         input=[q.genboson_p4],
         output=[q.zPtReweightWeight],
     )
-    EvenOddIDFlag = Producer(
-        call='''event::quantity::EvenOddFlag<ULong64_t>({df}, {output}, {input})''',
-        input=[nanoAODv15.event],
-        output=[q.eventCut_mask],
+    # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
+    EraSplitSeed = Producer(
+        call='''event::quantity::GenerateSeed({df}, {output}, {input}, {era_split_seed})''',
+        input=[nanoAODv15.luminosityBlock, nanoAODv15.run, nanoAODv15.event],
+        output=[q.era_split_seed],
     )
-    EvenIDFilter = BaseFilter(
-        call='''event::filter::Flag({df}, \"EvenIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    EraSplitFlag = Producer(
+        call='''event::quantity::HashFlag({df}, {output}, {input}, 0., {mc_split_fraction})''',
+        input=[q.era_split_seed],
+        output=[q.era_split_mask],
     )
-    OddIDFilter = BaseFilter(
-        call='''event::filter::InvertedFlag({df}, \"OddIDFilter\", {input})''',
-        input=[q.eventCut_mask],
+    Era2024SplitFilter = BaseFilter(
+        call='''event::filter::Flag({df}, \"Era2024SplitFilter\", {input})''',
+        input=[q.era_split_mask],
     )
+    Era2025SplitFilter = BaseFilter(
+        call='''event::filter::InvertedFlag({df}, \"Era2025SplitFilter\", {input})''',
+        input=[q.era_split_mask],
+    )
+
     TopPtReweighting = Producer(
         call='''event::reweighting::TopPtRun3({df}, {output}, {input})''',
         input=[
@@ -161,13 +168,13 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         output=[q.weight_lhe_scale],
     )
     STXSNormalization = Producer(
-        call='''stxs::Normalization({df}, correctionManager, {output}, "{stxs_table_path}", {input})''',
-        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
+        call='''stxs::Normalization({df}, correctionManager, {output}, {input})''',
+        input=[nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV],
         output=[q.stxs_family, q.stxs_norm_weight],
     )
     STXSLHEScale = Producer(
-        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_table_path}", "{stxs_lhe_scale_variation}", {input})''',
-        input=[q.nick, nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
+        call='''stxs::LHEScale({df}, correctionManager, {output}, "{stxs_lhe_scale_nuisances_path}", "{stxs_lhe_scale_variation}", {input})''',
+        input=[nanoAODv15.HTXS_stage1_2_cat_pTjet30GeV, nanoAODv15.LHEScaleWeight],
         output=[q.weight_lhe_scale],
     )
     # other MC samples: constant no-op STXS normalization

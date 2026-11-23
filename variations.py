@@ -67,11 +67,11 @@ def add_Variations(configuration: Configuration, sample: str, era: str) -> Confi
                     add_shift(name=f"pdf_alphas_{postfix}", shift_key="pdf_alphaS_variation", producers=[event.LHE_alphaS_weight])
 
     #########################
-    # STXS LHE scale shifts: one per nuisance of the stxs_table, only rerunning the weight_lhe_scale column
+    # STXS LHE scale shifts: one per nuisance of the nuisance table, only rerunning the weight_lhe_scale column
     #########################
     if sample in STXS_SAMPLES:
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "normalization", "stxs_table.json")) as f:
-            nuisances = [name for name, bins in json.load(f)["lhe_scale_nuisances"].items() if bins]
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "payloads", "normalization", "stxs_lhe_scale_nuisances.json")) as f:
+            nuisances = [name for name, bins in json.load(f).items() if bins]
         for nuisance in nuisances:
             add_shift(
                 name=nuisance,
