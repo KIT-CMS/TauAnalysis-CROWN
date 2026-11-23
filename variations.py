@@ -760,7 +760,7 @@ def add_Variations(
                                 {
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdMedium_and_PFIsoTight",
                                     "singlemuon_trigger_variation": f"{muon_syst_prefix}{variation}",
                                 },
                             ],
@@ -779,7 +779,7 @@ def add_Variations(
                                 {
                                     "singlemuon_trigger_flagname": "trg_wgt_single_mu24",
                                     "singlemuon_trigger_flag": "trg_single_mu24",
-                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight",
+                                    "singlemuon_trigger_sf_name": "NUM_IsoMu24_DEN_CutBasedIdMedium_and_PFIsoTight",
                                     "singlemuon_trigger_variation": f"stat{variation}",
                                 },
                             ],
