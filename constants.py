@@ -30,6 +30,6 @@ LUMI_PB = {
     "2024": 109816.515335, "2025": 135047.093128, "2026": 25148.977841,
 }
 # share of the Summer24 MC kept for 2024 (event.EraSplitFlag), the rest goes to 2025, whose lumi includes 2026;
-# the split weight is 1 / the measured generator-weight fraction of each part (split_fraction of the sample database), else 1 / ERA_SPLIT_FRACTION
+# the split weight is 1 / ERA_SPLIT_FRACTION, the lumi share of the era, for every sample
 MC_SPLIT_FRACTION = LUMI_PB["2024"] / (LUMI_PB["2024"] + LUMI_PB["2025"])
 ERA_SPLIT_FRACTION = {"2024": MC_SPLIT_FRACTION, "2025": 1 - MC_SPLIT_FRACTION, "2026": 1 - MC_SPLIT_FRACTION}

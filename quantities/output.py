@@ -102,6 +102,7 @@ btag_weight = Quantity()
 #### event
 
 # Summer24 MC split between 2024 (True) and 2025/2026 (False), see event.EraSplitFlag
+era_split_seed = Quantity()
 era_split_mask = Quantity()
 
 # HTXS quantities 
@@ -573,7 +574,6 @@ gen_category_L = Quantity()
 nick = NanoAODQuantity("nick")
 xsec = Quantity()
 one_over_nevents = Quantity()
-split_fraction = Quantity()
 wgt_sample_split = Quantity()
 negative_events_fraction = Quantity()
 

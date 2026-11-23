@@ -24,8 +24,8 @@ with defaults(scopes=["et", "mt", "tt", "em"]):
         output=[q.weight_gen_sign],
     )
     Lumi = Producer(call='''event::quantity::Define<double>({df}, {output}, {luminosity_pb})''', input=[], output=[q.weight_lumi])
-    # 1 / the share of a sample shared by several eras kept for this one: measured split_fraction, else {default_split_fraction}
-    SampleSplit = Producer(call='''event::quantity::SplitWeight({df}, {output}, {input}, {default_split_fraction})''', input=[q.split_fraction], output=[q.wgt_sample_split])
+    # 1 / the share of a sample shared by several eras kept for this one (1 for unsplit eras)
+    SampleSplit = Producer(call='''event::quantity::Define<double>({df}, {output}, 1. / {era_split_fraction})''', input=[], output=[q.wgt_sample_split])
     
     with defaults(call='''event::quantity::Product<double,double>({df}, {output}, {input})'''):
         NormXsecNgen = Producer(input=[q.xsec, q.one_over_nevents], output=[q.weight_xsec_ngen])

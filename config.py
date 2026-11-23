@@ -86,6 +86,7 @@ def build_config(
 
             # Summer24 MC split between 2024 and 2025/2026
             "mc_split_fraction": MC_SPLIT_FRACTION,
+            "era_split_seed": 2024,
             
             # for LHE weights
             "muR": 1.0,
@@ -1403,8 +1404,8 @@ def build_config(
         (scopes, AppendProducer, [event.ZPtReweighting_Run2], {"samples": ["dyjets", "electroweak_boson"], "eras": [e for e in RUN2_ERAS if "2016" not in e]}),
 
         # separate the Summer24 MC for 2024 and 2025/2026 by luminosity
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
-        ("global", AppendProducer, [event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
+        ("global", AppendProducer, [event.EraSplitSeed, event.EraSplitFlag, event.Era2024SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2024"]}),
+        ("global", AppendProducer, [event.EraSplitSeed, event.EraSplitFlag, event.Era2025SplitFilter], {"exclude_samples": DATA_ONLY, "eras": ["2025", "2026"]}),
     ]:
         configuration.add_modification_rule(mod_scopes, rule_cls(producers=producers, **rule_filter))
 
