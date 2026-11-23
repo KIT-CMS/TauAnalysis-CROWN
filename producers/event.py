@@ -104,9 +104,14 @@ with defaults(scopes=["global", "em", "et", "mt", "tt", "mm", "ee"]):
         output=[q.zPtReweightWeight],
     )
     # Summer24 MC is shared by 2024 and 2025/2026: split by luminosity through a hash of the event number
+    EraSplitSeed = Producer(
+        call='''event::quantity::GenerateSeed({df}, {output}, {input}, {era_split_seed})''',
+        input=[nanoAODv15.luminosityBlock, nanoAODv15.run, nanoAODv15.event],
+        output=[q.era_split_seed],
+    )
     EraSplitFlag = Producer(
-        call='''event::quantity::FractionSplitFlag<ULong64_t>({df}, {output}, {input}, {mc_split_fraction})''',
-        input=[nanoAODv15.event],
+        call='''event::quantity::HashFlag({df}, {output}, {input}, 0., {mc_split_fraction})''',
+        input=[q.era_split_seed],
         output=[q.era_split_mask],
     )
     Era2024SplitFilter = BaseFilter(
