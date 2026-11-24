@@ -553,7 +553,7 @@ def build_config(
                     "tau_2_vsmu_sf_outputname": f"id_wgt_tau_vsMu_{wp}_{wp_ele}_2",
                     "vsmu_tau_id_WP": f"{wp}",
                     "vsele_tau_id_WP": f"{wp_ele}",
-                    "vsjet_tau_id_WP": "Medium",  # eventually add more if available and used
+                    "vsjet_tau_id_WP": "Tight",  # eventually add more if available and used, Änderung zu tight weil in smhttul das ganze doch auch tight braucht oder ?
                     "tau_1_vsmu_id_outputname": f"id_tau_vsMu_{wp}_{wp_ele}_1",
                     "tau_2_vsmu_id_outputname": f"id_tau_vsMu_{wp}_{wp_ele}_2",
                     "vsmu_tau_id_WPbit": bit,
@@ -572,7 +572,7 @@ def build_config(
                 )
             ],
             # wp for tau pt correction
-            "tau_vsjet_wp": "Medium",  ##change again to Loose if it becomes available
+            "tau_vsjet_wp": "Loose",  ##change again to Loose if it becomes available
             "tau_vsele_wp": "VVLoose",
             # ID flags where scalefactors do not exist or are requiered withouth them
             # for Run 3 new TAU corrections, only the Medium wp sf are provided
